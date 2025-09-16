@@ -13,12 +13,5 @@ The feature list is still being finalized. Planned core functionalities include:
 ## Tech Stack
 The technology stack will be determined during the development phase.
 
-## Team Members
-- Son Bui – Project Leader & Main Developer
-- Khanh Huy – Business Analyst & Documentation Specialist
-- Dai An – Backend Developer & Tester
-- Thu Lan – Frontend Developer & Tester
-- Ha Phuong - Undetermined
-
 ## How to Run
 Instructions will be updated once implementation begins.

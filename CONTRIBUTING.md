@@ -6,7 +6,7 @@ This document outlines the contribution workflow for our capstone project team.
 - **Business Analyst & Documentation, Frontend Developer (Khanh Huy):** Requirements, documentation, client-side dev, overall testing
 - **Backend Support & Testing (Dai An):** API support, backend testing
 - **Frontend Support & Testing (Thu Lan):** UI/UX, usability testing
-- **Undetermined (Ha Phuong):**
+- **Frontend Developer (Ha Phuong):** UI/UX , client-side dev 
 
 ## Workflow
 1. **Branching Strategy**

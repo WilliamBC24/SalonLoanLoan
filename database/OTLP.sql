@@ -166,7 +166,7 @@ CREATE TABLE loyalty(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id INT NOT NULL UNIQUE REFERENCES user_account(id),
     point INT NOT NULL DEFAULT 0 CHECK (point >= 0),
-    level_id INT NOT NULL REFERENCES loyalty_level(id)
+    level_id INT NOT NULL REFERENCES loyalty_level(id) DEFAULT 0
 );
 
 CREATE TABLE loyalty_level(
@@ -598,6 +598,66 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql
 
+CREATE FUNCTION add_loyalty_record()
+RETURNS trigger AS $$
+BEGIN
+    INSERT INTO loyalty(user_id)
+    VALUES (NEW.id);
+
+    RETURN NULL;     
+END;
+$$ LANGUAGE plpgsql
+
+CREATE FUNCTION add_loyalty_point()
+RETURNS trigger AS $$
+DECLARE 
+    serviced_user_id INT;
+BEGIN
+    SELECT user_id
+    INTO serviced_user_id
+    FROM appointment_details
+    WHERE appointment_id = NEW.appointment_id;
+
+    IF serviced_user_id IS NULL THEN
+        RETURN NULL;
+    ELSE 
+        UPDATE loyalty
+        SET point = point + (NEW.total_price / 100.0)
+        WHERE user_id = serviced_user_id;
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql
+
+CREATE FUNCTION assign_loyalty_rank()
+RETURNS trigger AS $$
+DECLARE
+    current_rank INT;
+    new_rank INT;
+BEGIN
+    SELECT id 
+    INTO current_rank
+    FROM loyalty_level
+    WHERE point_required <= OLD.point
+    ORDER BY point_required DESC LIMIT 1;
+
+    SELECT id 
+    INTO new_rank
+    FROM loyalty_level
+    WHERE point_required <= NEW.point
+    ORDER BY point_required DESC LIMIT 1;
+
+    IF current_rank <> new_rank THEN
+        UPDATE loyalty
+        SET level_id = new_rank
+        WHERE user_id = NEW.user_id;
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql
+
 CREATE TRIGGER normalize_email_and_phone_trigger_account
 BEFORE INSERT OR UPDATE ON user_account
 FOR EACH ROW
@@ -675,3 +735,19 @@ CREATE TRIGGER create_inventory_consignment_trigger
 AFTER INSERT ON inventory_invoice_detail
 FOR EACH ROW
 EXECUTE FUNCTION create_inventory_consignment();
+
+CREATE TRIGGER add_loyalty_record_trigger
+AFTER INSERT ON user_account
+FOR EACH ROW
+EXECUTE FUNCTION add_loyalty_record();
+
+CREATE TRIGGER add_loyalty_point_trigger
+AFTER INSERT OR UPDATE ON appointment_invoice
+FOR EACH ROW
+EXECUTE FUNCTION add_loyalty_point();
+
+CREATE TRIGGER assign_loyalty_rank_trigger
+AFTER UPDATE ON loyalty
+FOR EACH ROW
+WHEN (NEW.point <> OLD.point)
+EXECUTE FUNCTION assign_loyalty_rank();

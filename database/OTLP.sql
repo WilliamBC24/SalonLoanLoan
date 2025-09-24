@@ -93,7 +93,7 @@ CREATE TABLE appointment_details(
     scheduled_end TIMESTAMP NOT NULL,
     actual_start TIMESTAMP,
     actual_end TIMESTAMP,
-    duration_minutes INT GENERATED AS (
+    duration_minutes INT GENERATED ALWAYS AS (
         CASE WHEN actual_end IS NOT NULL AND actual_start IS NOT NULL
         THEN ROUND(EXTRACT(EPOCH FROM (actual_end - actual_start)) / 60)::int
         ELSE NULL END
@@ -223,7 +223,7 @@ CREATE TABLE shift_attendance(
     assignment_id INT NOT NULL REFERENCES shift_assignment(id),
     check_in TIMESTAMP,
     check_out TIMESTAMP,
-    duration_hours NUMERIC(12,2) GENERATED AS (
+    duration_hours NUMERIC(12,2) GENERATED ALWAYS AS (
         CASE WHEN check_in IS NOT NULL AND check_out IS NOT NULL 
         THEN EXTRACT(EPOCH FROM (check_out - check_in)) / 3600
         ELSE NULL END

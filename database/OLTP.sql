@@ -35,7 +35,7 @@ CREATE TABLE user_account(
 
 CREATE TABLE user_shipping_info(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES user_account(id),
+    user_account_id INT NOT NULL REFERENCES user_account(id),
     shipping_address TEXT NOT NULL,
     phone_number TEXT NOT NULL
 );
@@ -243,7 +243,7 @@ CREATE TABLE requested_service(
 
 CREATE TABLE reminder_log(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES user_account(id),
+    user_account_id INT NOT NULL REFERENCES user_account(id),
     reminder_reason reminder_reason_enum NOT NULL,
     reminder_type reminder_type_enum NOT NULL,
     reminded_date DATE
@@ -266,13 +266,13 @@ CREATE TABLE shift_instance(
 CREATE TABLE shift_assignment(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     shift_instance_id INT NOT NULL REFERENCES shift_instance(id),
-    assigned_staff BIGINT NOT NULL REFERENCES staff(id),
+    assigned_staff_id BIGINT NOT NULL REFERENCES staff(id),
     UNIQUE (shift_instance_id, assigned_staff)
 );
 
 CREATE TABLE shift_attendance(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    assignment_id INT NOT NULL REFERENCES shift_assignment(id),
+    shift_assignment_id INT NOT NULL REFERENCES shift_assignment(id),
     check_in TIMESTAMP,
     check_out TIMESTAMP,
     duration_minutes INT GENERATED ALWAYS AS (
@@ -293,7 +293,7 @@ CREATE TABLE shift_cash_payment_record(
     shift_instance_id INT NOT NULL REFERENCES shift_instance(id),
     amount INT NOT NULL CHECK (amount >= 0),
     recorded_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    responsible_staff BIGINT NOT NULL REFERENCES staff(id),
+    responsible_staff_id BIGINT NOT NULL REFERENCES staff(id),
     note TEXT
 );
 
@@ -330,7 +330,7 @@ CREATE TABLE supplier(
     name VARCHAR(100) NOT NULL UNIQUE,
     phone_number VARCHAR(20),
     email VARCHAR(100),
-    category_id INT NOT NULL REFERENCES supplier_category(id),
+    supplier_category_id INT NOT NULL REFERENCES supplier_category(id),
     note TEXT
 );
 
@@ -341,7 +341,7 @@ CREATE TABLE expense_category(
 
 CREATE TABLE expense(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    category SMALLINT NOT NULL REFERENCES expense_category(id),
+    expense_category SMALLINT NOT NULL REFERENCES expense_category(id),
     amount INT NOT NULL CHECK (amount > 0),
     note TEXT,
     date DATE NOT NULL
@@ -355,7 +355,7 @@ CREATE TABLE financial_transaction_category(
 --FOR INCOMING AND OUTGOING MONEY, FOR ANALYTICS
 CREATE TABLE financial_transaction(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    category SMALLINT NOT NULL REFERENCES financial_transaction_category(id),
+    financial_transaction_category_id SMALLINT NOT NULL REFERENCES financial_transaction_category(id),
     amount INT NOT NULL CHECK (amount > 0),
     note TEXT,
     date DATE NOT NULL
@@ -364,7 +364,7 @@ CREATE TABLE financial_transaction(
 CREATE TABLE promotion_condition(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     promotion_id INT NOT NULL REFERENCES promotion(id),
-    min_user_level_id INT REFERENCES loyalty_level(id),
+    min_user_level_id SMALLINT REFERENCES loyalty_level(id),
     min_bill INT,
     first_time_user BOOLEAN
 );
@@ -372,7 +372,7 @@ CREATE TABLE promotion_condition(
 CREATE TABLE promotion_redemption(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     promotion_id INT NOT NULL REFERENCES promotion(id),
-    user_id INT NOT NULL REFERENCES user_account(id),
+    user_account_id INT NOT NULL REFERENCES user_account(id),
     redeemed_date TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -382,7 +382,7 @@ CREATE TABLE location(
 );
 
 CREATE TABLE cart(
-    user_id INT NOT NULL REFERENCES user_account(id),
+    user_account_id INT NOT NULL REFERENCES user_account(id),
     product_id INT NOT NULL REFERENCES product(id),
     amount INT NOT NULL,
     PRIMARY KEY (user_id, product_id)
@@ -397,7 +397,7 @@ CREATE TABLE order_invoice(
 
 CREATE TABLE order_invoice_details(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    invoice_id INT NOT NULL REFERENCES order_invoice(id),
+    order_invoice_id INT NOT NULL REFERENCES order_invoice(id),
     product_id INT NOT NULL REFERENCES product(id),
     quantity INT NOT NULL CHECK (quantity > 0),
     price_at_sale INT NOT NULL CHECK (price_at_sale > 0),
@@ -443,7 +443,7 @@ CREATE TABLE inventory_request(
 CREATE TABLE inventory_request_detail(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     inventory_request_id INT NOT NULL REFERENCES inventory_request(id),
-    consignment_id INT NOT NULL REFERENCES inventory_consignment(id),
+    inventory_consignment_id INT NOT NULL REFERENCES inventory_consignment(id),
     product_id INT NOT NULL REFERENCES product(id),
     requested_quantity INT NOT NULL,
     expiry_date DATE NOT NULL,
@@ -452,7 +452,7 @@ CREATE TABLE inventory_request_detail(
 
 CREATE TABLE inventory_lot(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    consignment_id INT NOT NULL REFERENCES inventory_consignment(id),
+    inventory_consignment_id INT NOT NULL REFERENCES inventory_consignment(id),
     product_id INT NOT NULL REFERENCES product(id),
     available_quantity INT NOT NULL,
     expiry_date DATE NOT NULL,
@@ -461,7 +461,7 @@ CREATE TABLE inventory_lot(
 
 CREATE TABLE inventory_transaction(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    lot_id INT NOT NULL REFERENCES inventory_lot(id),
+    inventory_lot_id INT NOT NULL REFERENCES inventory_lot(id),
     staff_id INT NOT NULL REFERENCES staff(id),
     transaction_type inventory_transaction_type_enum NOT NULL,
     transaction_time TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -471,7 +471,7 @@ CREATE TABLE inventory_transaction(
 );
 
 CREATE TABLE loyalty_level(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     point_required INT NOT NULL CHECK (point_required >= 0)
 );

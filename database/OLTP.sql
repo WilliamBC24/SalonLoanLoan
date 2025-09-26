@@ -1,7 +1,11 @@
+--STORE MONEY AS THE SMALLEST UNIT WITH INT
+--CREATE INDEX LATER
+
 CREATE TYPE gender_enum AS ENUM ('male', 'female');
-CREATE TYPE account_status_enum AS ENUM ('active', 'deactivated');
-CREATE TYPE account_role_enum AS ENUM ('customer', 'staff', 'manager', 'owner', 'admin');
+CREATE TYPE account_status_enum AS ENUM ('active', 'deactivated', 'banned');
+CREATE TYPE account_role_enum AS ENUM ('customer', 'admin');
 CREATE TYPE staff_position_enum AS ENUM ('staff', 'manager', 'owner');
+CREATE TYPE commission_type_enum AS ENUM ('appointment', 'product');
 CREATE TYPE staff_status_enum AS ENUM ('active', 'on_leave', 'terminated');
 CREATE TYPE appointment_status_enum AS ENUM ('pending', 'registered', 'started', 'completed', 'rescheduled', 'cancelled');
 CREATE TYPE service_type_enum AS ENUM ('single', 'combo');
@@ -15,16 +19,33 @@ CREATE TYPE inventory_invoice_status_enum AS ENUM ('awaiting', 'complete');
 CREATE TYPE inventory_request_status_enum AS ENUM ('pending', 'approved', 'rejected');
 CREATE TYPE inventory_transaction_type_enum AS ENUM ('in', 'out');
 CREATE TYPE inventory_transaction_reason_enum AS ENUM ('service', 'shipment');
+CREATE TYPE payment_type_enum AS ENUM ('cash', 'QR');
 
 CREATE TABLE user_account(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    username TEXT NOT NULL,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
     gender gender_enum NOT NULL,
     role account_role_enum NOT NULL DEFAULT 'customer',
     phone_number VARCHAR(20) NOT NULL,
-    email TEXT,
+    email VARCHAR(100),
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
-    account_status account_status_enum DEFAULT 'active'
+    account_status account_status_enum DEFAULT 'deactivated'
+);
+
+CREATE TABLE user_shipping_info(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES user_account(id),
+    shipping_address TEXT NOT NULL,
+    phone_number TEXT NOT NULL
+);
+
+--INSERT ON TRANSACTION
+CREATE TABLE customer_info(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    shipping_address TEXT
 );
 
 CREATE UNIQUE INDEX uq_user_phone_active
@@ -37,24 +58,60 @@ CREATE UNIQUE INDEX uq_user_email_active
 
 CREATE TABLE staff(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE REFERENCES user_account(id),
-    salary NUMERIC(12,2) NOT NULL CHECK (salary > 0),
     date_hired DATE NOT NULL DEFAULT CURRENT_DATE,
     end_of_contract_date DATE,
-    position staff_position_enum NOT NULL DEFAULT 'staff',
     staff_status staff_status_enum NOT NULL DEFAULT 'active'
 );
 
-CREATE TABLE staff_salary(
+--GENERATE WITH TRIGGER
+CREATE TABLE staff_account(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    role account_role_enum NOT NULL UNIQUE,
-    base NUMERIC(12,2) NOT NULL CHECK (base > 0)
+    staff_id INT NOT NULL REFERENCES staff(id),
+    username VARCHAR(100) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    active_status BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-INSERT INTO staff_salary(role, base) VALUES
-    ('staff', 10000.0),
-    ('manager', 20000.0),
-    ('owner', 30000.0);
+CREATE TABLE staff_position(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    staff_id INT NOT NULL REFERENCES staff(id),
+    position staff_position_enum NOT NULL DEFAULT 'staff'
+);
+
+CREATE TABLE staff_promotion_history(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    staff_id INT NOT NULL REFERENCES staff(id),
+    position staff_position_enum NOT NULL,
+    effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
+    effective_to TIMESTAMP
+);
+
+CREATE TABLE staff_commission(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    role staff_position_enum NOT NULL,
+    type commission_type_enum NOT NULL,
+    commission SMALLINT NOT NULL CHECK (commission >= 0 AND commission <= 100),
+    UNIQUE (role, type)
+);
+
+CREATE TABLE staff_commission_history(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    staff_commission_id INT NOT NULL REFERENCES staff_commission(id),
+    commission SMALLINT NOT NULL CHECK (commission >= 0 AND commission <= 100),
+    effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
+    effective_to TIMESTAMP
+);
+
+--CALCULATE TOTAL WITH TRIGGER USING COMMISSION AND APPOINTMENT, MONTHLY
+CREATE TABLE staff_payroll(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    staff_id INT NOT NULL REFERENCES staff(id),
+    pay_period_start DATE NOT NULL,
+    pay_period_end DATE NOT NULL,
+    appointment_commission INT NOT NULL CHECK (appointment_commission >= 0),
+    product_commission INT NOT NULL CHECK (product_commission >= 0),
+    total_payment INT GENERATED ALWAYS AS (appointment_commission + product_commission) STORED
+);
 
 CREATE TABLE promotion(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -62,9 +119,9 @@ CREATE TABLE promotion(
     description TEXT NOT NULL,
     code TEXT NOT NULL UNIQUE,
     discount_type discount_type_enum NOT NULL DEFAULT 'amount',
-    discount_amount NUMERIC(12,4) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
+    discount_amount INT NOT NULL,
+    effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
+    effective_to TIMESTAMP NOT NULL,
     max_usage INT NOT NULL DEFAULT 0,
     used_count INT NOT NULL DEFAULT 0,
     status promotion_status_enum NOT NULL DEFAULT 'deactivated',
@@ -86,7 +143,7 @@ CREATE TABLE appointment(
 );
 
 CREATE TABLE appointment_details(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     appointment_id INT NOT NULL REFERENCES appointment(id),
     user_id INT REFERENCES user_account(id),
     scheduled_start TIMESTAMP NOT NULL,
@@ -111,7 +168,8 @@ CREATE TABLE appointment_details(
 CREATE TABLE appointment_invoice(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     appointment_id INT NOT NULL REFERENCES appointment(id),
-    total_price NUMERIC(12,2) NOT NULL CHECK (total_price >= 0),
+    total_price INT NOT NULL CHECK (total_price >= 0),
+    payment_type payment_type_enum NOT NULL,
     promotion_id INT REFERENCES promotion(id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -119,7 +177,7 @@ CREATE TABLE appointment_invoice(
 CREATE TABLE appointment_feedback(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     appointment_id INT NOT NULL UNIQUE REFERENCES appointment(id),
-    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    rating SMALLINT NOT NULL CHECK (rating >= 1 AND rating <= 5),
     comment TEXT
 );
 
@@ -132,7 +190,7 @@ CREATE TABLE appointment_feedback_image(
 CREATE TABLE satisfaction_rating(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     appointment_id INT NOT NULL UNIQUE REFERENCES appointment(id),
-    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    rating SMALLINT NOT NULL CHECK (rating >= 1 AND rating <= 5),
     comment TEXT
 );
 
@@ -141,17 +199,24 @@ CREATE TABLE service_category(
     name TEXT NOT NULL
 );
 
+-- CHANGE PRICE WITH TRIGGER
 CREATE TABLE service(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_name TEXT NOT NULL,
     service_category_id INT NOT NULL REFERENCES service_category(id),
     type service_type_enum NOT NULL DEFAULT 'single',
-    price NUMERIC(12,2) CHECK (
-        (type = 'single' AND price IS NOT NULL AND price > 0) OR
-        (type = 'combo')
-    ),
-    duration_minutes INT NOT NULL CHECK (duration_minutes > 0),
-    description TEXT
+    price INT NOT NULL CHECK (price > 0),
+    duration_minutes SMALLINT NOT NULL CHECK (duration_minutes > 0),
+    description TEXT,
+    active_status BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE service_price_history(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    service_id INT NOT NULL REFERENCES service(id),
+    service_price INT NOT NULL CHECK (service_price > 0),
+    effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
+    effective_to TIMESTAMP
 );
 
 CREATE TABLE service_combo(
@@ -170,8 +235,9 @@ CREATE TABLE service_image(
 );
 
 CREATE TABLE requested_service(
-    appointment_id INT NOT NULL REFERENCES appointment(id),
+    appointment_id BIGINT NOT NULL REFERENCES appointment(id),
     service_id INT NOT NULL REFERENCES service(id),
+    price_at_booking INT NOT NULL CHECK (price_at_booking > 0),
     PRIMARY KEY (appointment_id, service_id)
 );
 
@@ -183,26 +249,7 @@ CREATE TABLE reminder_log(
     reminded_date DATE
 );
 
-CREATE TABLE loyalty_level(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,
-    point_required INT NOT NULL CHECK (point_required >= 0)
-);
-
-INSERT INTO loyalty_level (name, point_required) VALUES
-     ('Bronze', 0),
-     ('Silver', 10000),
-     ('Gold', 50000),
-     ('Platinum', 100000);
-
-CREATE TABLE loyalty(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE REFERENCES user_account(id),
-    point INT NOT NULL DEFAULT 0 CHECK (point >= 0),
-    level_id INT NOT NULL REFERENCES loyalty_level(id) DEFAULT 1
-);
-
-CREATE TABLE shift(
+CREATE TABLE shift_template(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     shift_start TIMESTAMP NOT NULL,
     shift_end TIMESTAMP NOT NULL,
@@ -210,22 +257,27 @@ CREATE TABLE shift(
     UNIQUE (shift_start, shift_end)
 );
 
+CREATE TABLE shift_instance(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    shift_template_id INT NOT NULL REFERENCES shift_template(id),
+    shift_date DATE NOT NULL
+);
+
 CREATE TABLE shift_assignment(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    shift_id INT NOT NULL REFERENCES shift(id),
-    assignment_date DATE NOT NULL,
-    assigned_staff INT NOT NULL REFERENCES staff(id),
-    UNIQUE (shift_id, assignment_date, assigned_staff)
+    shift_instance_id INT NOT NULL REFERENCES shift_instance(id),
+    assigned_staff BIGINT NOT NULL REFERENCES staff(id),
+    UNIQUE (shift_instance_id, assigned_staff)
 );
 
 CREATE TABLE shift_attendance(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     assignment_id INT NOT NULL REFERENCES shift_assignment(id),
     check_in TIMESTAMP,
     check_out TIMESTAMP,
-    duration_hours NUMERIC(12,2) GENERATED ALWAYS AS (
+    duration_minutes INT GENERATED ALWAYS AS (
         CASE WHEN check_in IS NOT NULL AND check_out IS NOT NULL 
-        THEN EXTRACT(EPOCH FROM (check_out - check_in)) / 3600
+        THEN EXTRACT(EPOCH FROM (check_out - check_in)) / 60
         ELSE NULL END
     ) STORED,
     status shift_attendance_status_enum NOT NULL DEFAULT 'missed',
@@ -236,12 +288,30 @@ CREATE TABLE shift_attendance(
         )
 );
 
+CREATE TABLE shift_cash_payment_record(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    shift_instance_id INT NOT NULL REFERENCES shift_instance(id),
+    amount INT NOT NULL CHECK (amount >= 0),
+    recorded_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    responsible_staff BIGINT NOT NULL REFERENCES staff(id),
+    note TEXT
+);
+
+-- CHANGE PRICE WITH TRIGGER
 CREATE TABLE product(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
-    unit_price NUMERIC(12,2) NOT NULL CHECK (unit_price > 0),
+    current_price INT NOT NULL,
     description TEXT NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT FALSE
+    active_status BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE product_price_history(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    product_id INT NOT NULL REFERENCES product(id),
+    unit_price INT NOT NULL CHECK (unit_price > 0),
+    effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
+    effective_to TIMESTAMP
 );
 
 CREATE TABLE product_image(
@@ -250,36 +320,43 @@ CREATE TABLE product_image(
     image_path TEXT
 );
 
+CREATE TABLE supplier_category(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
 CREATE TABLE supplier(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL UNIQUE,
     phone_number VARCHAR(20),
-    email TEXT,
+    email VARCHAR(100),
+    category_id INT NOT NULL REFERENCES supplier_category(id),
     note TEXT
 );
 
 CREATE TABLE expense_category(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL
 );
 
 CREATE TABLE expense(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    category INT NOT NULL REFERENCES expense_category(id),
-    amount NUMERIC(12,2) NOT NULL CHECK (amount > 0),
+    category SMALLINT NOT NULL REFERENCES expense_category(id),
+    amount INT NOT NULL CHECK (amount > 0),
     note TEXT,
     date DATE NOT NULL
 );
 
 CREATE TABLE financial_transaction_category(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL
 );
 
+--FOR INCOMING AND OUTGOING MONEY, FOR ANALYTICS
 CREATE TABLE financial_transaction(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    category INT NOT NULL REFERENCES financial_transaction_category(id),
-    amount NUMERIC(12,2) NOT NULL CHECK (amount > 0),
+    category SMALLINT NOT NULL REFERENCES financial_transaction_category(id),
+    amount INT NOT NULL CHECK (amount > 0),
     note TEXT,
     date DATE NOT NULL
 );
@@ -288,7 +365,7 @@ CREATE TABLE promotion_condition(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     promotion_id INT NOT NULL REFERENCES promotion(id),
     min_user_level_id INT REFERENCES loyalty_level(id),
-    min_bill NUMERIC(12,2),
+    min_bill INT,
     first_time_user BOOLEAN
 );
 
@@ -311,6 +388,22 @@ CREATE TABLE cart(
     PRIMARY KEY (user_id, product_id)
 );
 
+CREATE TABLE order_invoice(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    customer_info_id INT NOT NULL REFERENCES customer_info(id),
+    total_price INT NOT NULL CHECK (total_price > 0),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE order_invoice_details(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    invoice_id INT NOT NULL REFERENCES order_invoice(id),
+    product_id INT NOT NULL REFERENCES product(id),
+    quantity INT NOT NULL CHECK (quantity > 0),
+    price_at_sale INT NOT NULL CHECK (price_at_sale > 0),
+    subtotal INT GENERATED ALWAYS AS (price_at_sale * quantity) STORED
+);
+
 CREATE TABLE inventory_invoice(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     staff_id INT NOT NULL REFERENCES staff(id),
@@ -325,7 +418,8 @@ CREATE TABLE inventory_invoice_detail(
     inventory_invoice_id INT NOT NULL REFERENCES inventory_invoice(id),
     product_id INT NOT NULL REFERENCES product(id),
     ordered_quantity INT NOT NULL,
-    unit_price NUMERIC(12,2) NOT NULL,
+    unit_price INT NOT NULL,
+    subtotal INT GENERATED ALWAYS AS (unit_price * ordered_quantity) STORED,
     CHECK (ordered_quantity > 0),
     CHECK (unit_price > 0)
 );
@@ -366,7 +460,7 @@ CREATE TABLE inventory_lot(
 );
 
 CREATE TABLE inventory_transaction(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     lot_id INT NOT NULL REFERENCES inventory_lot(id),
     staff_id INT NOT NULL REFERENCES staff(id),
     transaction_type inventory_transaction_type_enum NOT NULL,
@@ -374,6 +468,38 @@ CREATE TABLE inventory_transaction(
     quantity INT NOT NULL,
     reason inventory_transaction_reason_enum NOT NULL,
     CHECK (quantity > 0)
+);
+
+CREATE TABLE loyalty_level(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    point_required INT NOT NULL CHECK (point_required >= 0)
+);
+
+INSERT INTO loyalty_level (name, point_required) VALUES
+     ('Bronze', 0),
+     ('Silver', 10000),
+     ('Gold', 50000),
+     ('Platinum', 100000);
+
+CREATE TABLE loyalty(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE REFERENCES user_account(id),
+    point INT NOT NULL DEFAULT 0 CHECK (point >= 0),
+    level_id SMALLINT NOT NULL REFERENCES loyalty_level(id) DEFAULT 1
+);
+
+CREATE TABLE loyalty_history(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    loyalty_id INT NOT NULL REFERENCES loyalty(id),
+    appointment_invoice_id INT REFERENCES appointment_invoice(id),
+    order_id INT REFERENCES order_invoice(id),
+    amount INT NOT NULL,
+    creditted_date DATE NOT NULL DEFAULT NOW(),
+    CHECK (
+        (appointment_invoice_id IS NOT NULL AND order_id IS NULL) OR
+        (appointment_invoice_id IS NULL AND order_id IS NOT NULL)
+    )
 );
 
 CREATE FUNCTION normalize_phone_number()
@@ -409,10 +535,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--FIX
 CREATE FUNCTION create_staff()
 RETURNS trigger AS $$
 DECLARE
-    base_salary NUMERIC(12,2);
+    base_salary INT;
 BEGIN
     IF NEW.role = ANY(ARRAY['staff', 'manager', 'owner']) THEN
         IF EXISTS (SELECT 1 FROM staff WHERE user_id = NEW.id) THEN
@@ -422,7 +549,7 @@ BEGIN
 
         SELECT base
         INTO base_salary
-        FROM staff_salary
+        FROM staff_commission
         WHERE role = NEW.role;
 
         IF NOT FOUND THEN
@@ -439,16 +566,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--FIX
 CREATE FUNCTION update_staff()
 RETURNS trigger AS $$
 DECLARE
-    base_salary NUMERIC(12,2);
+    base_salary INT;
     staff_roles TEXT[] := ARRAY['staff', 'manager', 'owner'];
 BEGIN
     IF NEW.role = ANY(staff_roles) AND OLD.role <> NEW.role THEN
         SELECT base
         INTO base_salary
-        FROM staff_salary
+        FROM staff_commission
         WHERE role = NEW.role;
 
         IF NOT FOUND THEN
@@ -555,7 +683,7 @@ CREATE FUNCTION create_appointment_invoice()
 RETURNS trigger AS $$
 DECLARE
     selected_service_ids INT[];
-    total_price NUMERIC(12,2);
+    total_price INT;
 BEGIN
     IF EXISTS (
         SELECT 1 FROM appointment_invoice WHERE appointment_id = NEW.id

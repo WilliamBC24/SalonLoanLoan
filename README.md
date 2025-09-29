@@ -11,7 +11,13 @@ The feature list is still being finalized. Planned core functionalities include:
 - Customer and staff records
 
 ## Tech Stack
-The technology stack will be determined during the development phase.
+- **Backend (OLTP):** Spring Boot (Java)
+- **Frontend:** HTML, CSS, JavaScript (with dashboard/analytics page)
+- **Database:** PostgreSQL
+- **Analytics & Data Pipelines (OLAP):**
+  - Python
+  - Apache Airflow
+- **Containerization & Orchestration:** Docker, Kubernetes
 
 ## How to Run
 Instructions will be updated once implementation begins.

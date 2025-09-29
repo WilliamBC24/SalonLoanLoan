@@ -3,30 +3,26 @@
 
 CREATE TYPE gender_enum AS ENUM ('male', 'female');
 CREATE TYPE account_status_enum AS ENUM ('active', 'deactivated', 'banned');
-CREATE TYPE account_role_enum AS ENUM ('customer', 'admin');
-CREATE TYPE staff_position_enum AS ENUM ('staff', 'manager', 'owner');
 CREATE TYPE commission_type_enum AS ENUM ('appointment', 'product');
 CREATE TYPE staff_status_enum AS ENUM ('active', 'on_leave', 'terminated');
 CREATE TYPE appointment_status_enum AS ENUM ('pending', 'registered', 'started', 'completed', 'rescheduled', 'cancelled');
 CREATE TYPE service_type_enum AS ENUM ('single', 'combo');
-CREATE TYPE service_image_state_enum AS ENUM ('before', 'after');
-CREATE TYPE reminder_reason_enum AS ENUM ('promotion', 'remind');
-CREATE TYPE reminder_type_enum AS ENUM ('zalo', 'email', 'text');
 CREATE TYPE shift_attendance_status_enum AS ENUM ('full', 'partial', 'missed');
-CREATE TYPE promotion_status_enum AS ENUM ('activated', 'deactivated');
 CREATE TYPE discount_type_enum AS ENUM ('amount', 'percentage');
-CREATE TYPE inventory_invoice_status_enum AS ENUM ('awaiting', 'complete');
+CREATE TYPE inventory_invoice_status_enum AS ENUM ('awaiting', 'complete', 'cancelled');
 CREATE TYPE inventory_request_status_enum AS ENUM ('pending', 'approved', 'rejected');
 CREATE TYPE inventory_transaction_type_enum AS ENUM ('in', 'out');
 CREATE TYPE inventory_transaction_reason_enum AS ENUM ('service', 'shipment');
-CREATE TYPE payment_type_enum AS ENUM ('cash', 'QR');
+CREATE TYPE payroll_adjustment_enum AS ENUM ('bonus', 'deduction');
+CREATE TYPE job_posting_status_enum AS ENUM ('active', 'deactivated');
+CREATE TYPE job_posting_application_status_enum AS ENUM ('pending', 'accepted', 'rejected');
 
 CREATE TABLE user_account(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     gender gender_enum NOT NULL,
-    role account_role_enum NOT NULL DEFAULT 'customer',
+    birth_date DATE,
     phone_number VARCHAR(20) NOT NULL,
     email VARCHAR(100),
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
@@ -60,49 +56,62 @@ CREATE TABLE staff(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     date_hired DATE NOT NULL DEFAULT CURRENT_DATE,
     end_of_contract_date DATE,
+    social_security_num VARCHAR(60),
+    name TEXT NOT NULL,
+    birth_date DATE NOT NULL,
+    email TEXT,
     staff_status staff_status_enum NOT NULL DEFAULT 'active'
+);
+
+CREATE TABLE staff_position(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    position_name TEXT NOT NULL
 );
 
 --GENERATE WITH TRIGGER
 CREATE TABLE staff_account(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    staff_id INT NOT NULL REFERENCES staff(id),
-    username VARCHAR(100) NOT NULL,
+    staff_id INT NOT NULL UNIQUE REFERENCES staff(id),
+    username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     active_status BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE staff_position(
+CREATE TABLE staff_current_position(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     staff_id INT NOT NULL REFERENCES staff(id),
-    position staff_position_enum NOT NULL DEFAULT 'staff'
+    position_id INT NOT NULL REFERENCES staff_position(id)
 );
 
 CREATE TABLE staff_promotion_history(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     staff_id INT NOT NULL REFERENCES staff(id),
-    position staff_position_enum NOT NULL,
+    position_id INT NOT NULL REFERENCES staff_position(id),
     effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
-    effective_to TIMESTAMP
+    effective_to TIMESTAMP,
+    CHECK (effective_to IS NULL OR effective_to > effective_from)
 );
 
+--INSERT DEFAULT VALUES
 CREATE TABLE staff_commission(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    role staff_position_enum NOT NULL,
-    type commission_type_enum NOT NULL,
+    position_id INT NOT NULL REFERENCES staff_position(id),
+    commission_type commission_type_enum NOT NULL,
     commission SMALLINT NOT NULL CHECK (commission >= 0 AND commission <= 100),
-    UNIQUE (role, type)
+    UNIQUE (position_id, commission_type)
 );
 
 CREATE TABLE staff_commission_history(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     staff_commission_id INT NOT NULL REFERENCES staff_commission(id),
+    commission_type commission_type_enum NOT NULL,
     commission SMALLINT NOT NULL CHECK (commission >= 0 AND commission <= 100),
     effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
-    effective_to TIMESTAMP
+    effective_to TIMESTAMP,
+    CHECK (effective_to IS NULL OR effective_to > effective_from)
 );
 
---CALCULATE TOTAL WITH TRIGGER USING COMMISSION AND APPOINTMENT, MONTHLY
+--CALCULATE TOTAL WITH TRIGGER USING COMMISSION, APPOINTMENT AND ADJUSTMENT, MONTHLY
 CREATE TABLE staff_payroll(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     staff_id INT NOT NULL REFERENCES staff(id),
@@ -110,24 +119,60 @@ CREATE TABLE staff_payroll(
     pay_period_end DATE NOT NULL,
     appointment_commission INT NOT NULL CHECK (appointment_commission >= 0),
     product_commission INT NOT NULL CHECK (product_commission >= 0),
-    total_payment INT GENERATED ALWAYS AS (appointment_commission + product_commission) STORED
+    payroll_deduction INT NOT NULL DEFAULT 0 CHECK (payroll_deduction >= 0),
+    payroll_bonus INT NOT NULL DEFAULT 0 CHECK (payroll_bonus >= 0),
+    total_payment INT GENERATED ALWAYS AS (appointment_commission + product_commission + payroll_bonus - payroll_deduction) STORED
 );
 
-CREATE TABLE promotion(
+CREATE TABLE staff_payroll_adjustment (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name TEXT NOT NULL,
-    description TEXT NOT NULL,
-    code TEXT NOT NULL UNIQUE,
+    staff_id INT NOT NULL REFERENCES staff(id),
+    adjustment_type payroll_adjustment_enum NOT NULL,
+    amount INT NOT NULL CHECK (amount > 0),
+    note TEXT,
+    effective_date DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+CREATE TABLE voucher_status(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE promotion_status(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE voucher(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    voucher_name TEXT NOT NULL,
+    voucher_description TEXT NOT NULL,
+    voucher_code TEXT NOT NULL UNIQUE,
     discount_type discount_type_enum NOT NULL DEFAULT 'amount',
     discount_amount INT NOT NULL,
     effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
     effective_to TIMESTAMP NOT NULL,
-    max_usage INT NOT NULL DEFAULT 0,
+    max_usage INT NOT NULL CHECK (max_usage > 0),
     used_count INT NOT NULL DEFAULT 0,
-    status promotion_status_enum NOT NULL DEFAULT 'deactivated',
+    voucher_status INT NOT NULL REFERENCES voucher_status(id),
     CHECK (used_count <= max_usage),
     CHECK (
-        (discount_type = 'percentage' AND discount_amount > 0 AND discount_amount <= 1)
+        (discount_type = 'percentage' AND discount_amount > 0 AND discount_amount <= 100)
+        OR (discount_type = 'amount' AND discount_amount > 0)
+    )
+);
+
+CREATE TABLE promotion(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    promotion_name TEXT NOT NULL,
+    promotion_description TEXT,
+    discount_type discount_type_enum NOT NULL DEFAULT 'amount',
+    discount_amount INT NOT NULL,
+    effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
+    effective_to TIMESTAMP NOT NULL,
+    promotion_status INT NOT NULL REFERENCES promotion_status(id),
+    CHECK (
+        (discount_type = 'percentage' AND discount_amount > 0 AND discount_amount <= 100)
         OR (discount_type = 'amount' AND discount_amount > 0)
     )
 );
@@ -143,7 +188,7 @@ CREATE TABLE appointment(
 );
 
 CREATE TABLE appointment_details(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     appointment_id INT NOT NULL REFERENCES appointment(id),
     user_id INT REFERENCES user_account(id),
     scheduled_start TIMESTAMP NOT NULL,
@@ -155,7 +200,6 @@ CREATE TABLE appointment_details(
         THEN ROUND(EXTRACT(EPOCH FROM (actual_end - actual_start)) / 60)::int
         ELSE NULL END
     ) STORED,
-    UNIQUE (appointment_id, user_id),
     CHECK (scheduled_end > scheduled_start),
     CHECK (
         (actual_start IS NULL AND actual_end IS NULL) OR
@@ -165,12 +209,18 @@ CREATE TABLE appointment_details(
         )
 );
 
+CREATE TABLE payment_type(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
 CREATE TABLE appointment_invoice(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     appointment_id INT NOT NULL REFERENCES appointment(id),
     total_price INT NOT NULL CHECK (total_price >= 0),
-    payment_type payment_type_enum NOT NULL,
-    promotion_id INT REFERENCES promotion(id),
+    payment_type_id INT NOT NULL REFERENCES payment_type(id),
+    voucher_id INT REFERENCES voucher(id),
+    responsible_staff_id INT NOT NULL REFERENCES staff(id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -179,6 +229,12 @@ CREATE TABLE appointment_feedback(
     appointment_id INT NOT NULL UNIQUE REFERENCES appointment(id),
     rating SMALLINT NOT NULL CHECK (rating >= 1 AND rating <= 5),
     comment TEXT
+);
+
+CREATE TABLE after_appointment_image(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    appointment_id INT NOT NULL REFERENCES appointment(id),
+    image_path TEXT NOT NULL
 );
 
 CREATE TABLE appointment_feedback_image(
@@ -204,48 +260,63 @@ CREATE TABLE service(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_name TEXT NOT NULL,
     service_category_id INT NOT NULL REFERENCES service_category(id),
-    type service_type_enum NOT NULL DEFAULT 'single',
-    price INT NOT NULL CHECK (price > 0),
+    service_type service_type_enum NOT NULL DEFAULT 'single',
+    service_price INT NOT NULL CHECK (service_price > 0),
     duration_minutes SMALLINT NOT NULL CHECK (duration_minutes > 0),
-    description TEXT,
+    service_description TEXT,
     active_status BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE service_price_history(
+CREATE TABLE service_change_history(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_id INT NOT NULL REFERENCES service(id),
+    service_name TEXT NOT NULL,
+    service_category_id INT NOT NULL REFERENCES service_category(id),
     service_price INT NOT NULL CHECK (service_price > 0),
+    duration_minutes SMALLINT NOT NULL CHECK (duration_minutes > 0),
+    service_description TEXT,
     effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
-    effective_to TIMESTAMP
+    effective_to TIMESTAMP,
+    CHECK (effective_to IS NULL OR effective_to > effective_from)
 );
 
 CREATE TABLE service_combo(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     combo_id INT NOT NULL REFERENCES service(id),
     service_id INT NOT NULL REFERENCES service(id),
-    UNIQUE (combo_id, service_id)
+    UNIQUE (combo_id, service_id),
+    CHECK (combo_id <> service_id)
 );
 
 CREATE TABLE service_image(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_id INT NOT NULL REFERENCES service(id),
-    state service_image_state_enum NOT NULL,
-    image_path TEXT,
-    UNIQUE (service_id, state)
+    image_path TEXT
 );
 
 CREATE TABLE requested_service(
-    appointment_id BIGINT NOT NULL REFERENCES appointment(id),
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    appointment_id INT NOT NULL REFERENCES appointment(id),
     service_id INT NOT NULL REFERENCES service(id),
     price_at_booking INT NOT NULL CHECK (price_at_booking > 0),
-    PRIMARY KEY (appointment_id, service_id)
+    responsible_staff_id INT NOT NULL REFERENCES staff(id)
+);
+
+CREATE TABLE reminder_reason(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE reminder_type(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL
 );
 
 CREATE TABLE reminder_log(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_account_id INT NOT NULL REFERENCES user_account(id),
-    reminder_reason reminder_reason_enum NOT NULL,
-    reminder_type reminder_type_enum NOT NULL,
+    reminder_reason_id INT NOT NULL REFERENCES reminder_reason(id),
+    reminder_type_id INT NOT NULL REFERENCES reminder_type(id),
     reminded_date DATE
 );
 
@@ -266,18 +337,18 @@ CREATE TABLE shift_instance(
 CREATE TABLE shift_assignment(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     shift_instance_id INT NOT NULL REFERENCES shift_instance(id),
-    assigned_staff_id BIGINT NOT NULL REFERENCES staff(id),
-    UNIQUE (shift_instance_id, assigned_staff)
+    assigned_staff_id INT NOT NULL REFERENCES staff(id),
+    UNIQUE (shift_instance_id, assigned_staff_id)
 );
 
 CREATE TABLE shift_attendance(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     shift_assignment_id INT NOT NULL REFERENCES shift_assignment(id),
     check_in TIMESTAMP,
     check_out TIMESTAMP,
     duration_minutes INT GENERATED ALWAYS AS (
         CASE WHEN check_in IS NOT NULL AND check_out IS NOT NULL 
-        THEN EXTRACT(EPOCH FROM (check_out - check_in)) / 60
+        THEN ROUND(EXTRACT(EPOCH FROM (check_out - check_in)) / 60)::int
         ELSE NULL END
     ) STORED,
     status shift_attendance_status_enum NOT NULL DEFAULT 'missed',
@@ -293,25 +364,28 @@ CREATE TABLE shift_cash_payment_record(
     shift_instance_id INT NOT NULL REFERENCES shift_instance(id),
     amount INT NOT NULL CHECK (amount >= 0),
     recorded_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    responsible_staff_id BIGINT NOT NULL REFERENCES staff(id),
+    responsible_staff_id INT NOT NULL REFERENCES staff(id),
     note TEXT
 );
 
 -- CHANGE PRICE WITH TRIGGER
 CREATE TABLE product(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name TEXT NOT NULL,
-    current_price INT NOT NULL,
-    description TEXT NOT NULL,
+    product_name TEXT NOT NULL,
+    current_price INT NOT NULL CHECK (current_price > 0),
+    product_description TEXT NOT NULL,
     active_status BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE product_price_history(
+CREATE TABLE product_change_history(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     product_id INT NOT NULL REFERENCES product(id),
+    product_name TEXT NOT NULL, 
     unit_price INT NOT NULL CHECK (unit_price > 0),
+    product_description TEXT NOT NULL,
     effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
-    effective_to TIMESTAMP
+    effective_to TIMESTAMP,
+    CHECK (effective_to IS NULL OR effective_to > effective_from)
 );
 
 CREATE TABLE product_image(
@@ -327,7 +401,7 @@ CREATE TABLE supplier_category(
 
 CREATE TABLE supplier(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
+    supplier_name VARCHAR(100) NOT NULL UNIQUE,
     phone_number VARCHAR(20),
     email VARCHAR(100),
     supplier_category_id INT NOT NULL REFERENCES supplier_category(id),
@@ -344,7 +418,7 @@ CREATE TABLE expense(
     expense_category SMALLINT NOT NULL REFERENCES expense_category(id),
     amount INT NOT NULL CHECK (amount > 0),
     note TEXT,
-    date DATE NOT NULL
+    date_incurred DATE NOT NULL
 );
 
 CREATE TABLE financial_transaction_category(
@@ -358,22 +432,7 @@ CREATE TABLE financial_transaction(
     financial_transaction_category_id SMALLINT NOT NULL REFERENCES financial_transaction_category(id),
     amount INT NOT NULL CHECK (amount > 0),
     note TEXT,
-    date DATE NOT NULL
-);
-
-CREATE TABLE promotion_condition(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    promotion_id INT NOT NULL REFERENCES promotion(id),
-    min_user_level_id SMALLINT REFERENCES loyalty_level(id),
-    min_bill INT,
-    first_time_user BOOLEAN
-);
-
-CREATE TABLE promotion_redemption(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    promotion_id INT NOT NULL REFERENCES promotion(id),
-    user_account_id INT NOT NULL REFERENCES user_account(id),
-    redeemed_date TIMESTAMP NOT NULL DEFAULT NOW()
+    time_incurred TIMESTAMP NOT NULL
 );
 
 CREATE TABLE location(
@@ -385,18 +444,19 @@ CREATE TABLE cart(
     user_account_id INT NOT NULL REFERENCES user_account(id),
     product_id INT NOT NULL REFERENCES product(id),
     amount INT NOT NULL,
-    PRIMARY KEY (user_id, product_id)
+    PRIMARY KEY (user_account_id, product_id)
 );
 
 CREATE TABLE order_invoice(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     customer_info_id INT NOT NULL REFERENCES customer_info(id),
     total_price INT NOT NULL CHECK (total_price > 0),
+    payment_type_id INT NOT NULL REFERENCES payment_type(id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE order_invoice_details(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     order_invoice_id INT NOT NULL REFERENCES order_invoice(id),
     product_id INT NOT NULL REFERENCES product(id),
     quantity INT NOT NULL CHECK (quantity > 0),
@@ -410,7 +470,7 @@ CREATE TABLE inventory_invoice(
     supplier_id INT NOT NULL REFERENCES supplier(id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     note TEXT, 
-    status inventory_invoice_status_enum NOT NULL DEFAULT 'awaiting'
+    invoice_status inventory_invoice_status_enum NOT NULL DEFAULT 'awaiting'
 );
 
 CREATE TABLE inventory_invoice_detail(
@@ -437,7 +497,7 @@ CREATE TABLE inventory_request(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     staff_id INT NOT NULL REFERENCES staff(id),
     request_date TIMESTAMP NOT NULL DEFAULT NOW(),
-    status inventory_request_status_enum NOT NULL DEFAULT 'pending'
+    inventory_request_status inventory_request_status_enum NOT NULL DEFAULT 'pending'
 );
 
 CREATE TABLE inventory_request_detail(
@@ -446,7 +506,7 @@ CREATE TABLE inventory_request_detail(
     inventory_consignment_id INT NOT NULL REFERENCES inventory_consignment(id),
     product_id INT NOT NULL REFERENCES product(id),
     requested_quantity INT NOT NULL,
-    expiry_date DATE NOT NULL,
+    product_expiry_date DATE NOT NULL,
     CHECK (requested_quantity > 0)
 );
 
@@ -455,12 +515,12 @@ CREATE TABLE inventory_lot(
     inventory_consignment_id INT NOT NULL REFERENCES inventory_consignment(id),
     product_id INT NOT NULL REFERENCES product(id),
     available_quantity INT NOT NULL,
-    expiry_date DATE NOT NULL,
+    product_expiry_date DATE NOT NULL,
     CHECK (available_quantity >= 0)
 );
 
 CREATE TABLE inventory_transaction(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     inventory_lot_id INT NOT NULL REFERENCES inventory_lot(id),
     staff_id INT NOT NULL REFERENCES staff(id),
     transaction_type inventory_transaction_type_enum NOT NULL,
@@ -490,7 +550,7 @@ CREATE TABLE loyalty(
 );
 
 CREATE TABLE loyalty_history(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     loyalty_id INT NOT NULL REFERENCES loyalty(id),
     appointment_invoice_id INT REFERENCES appointment_invoice(id),
     order_id INT REFERENCES order_invoice(id),
@@ -502,399 +562,436 @@ CREATE TABLE loyalty_history(
     )
 );
 
-CREATE FUNCTION normalize_phone_number()
-RETURNS trigger AS $$
-BEGIN
-    IF NEW.phone_number IS NOT NULL THEN
-        NEW.phone_number := REPLACE(TRIM(NEW.phone_number), ' ', '');
-        IF NEW.phone_number !~ '^\+?\d+$' THEN
-            RAISE EXCEPTION 'Invalid phone number: %', NEW.phone_number;
-        END IF;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+CREATE TABLE voucher_condition(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    voucher_id INT NOT NULL REFERENCES voucher(id),
+    min_user_level_id SMALLINT REFERENCES loyalty_level(id),
+    min_bill INT CHECK (min_bill IS NULL OR min_bill > 0),
+    first_time_user BOOLEAN
+);
 
-CREATE FUNCTION normalize_email_and_phone()
-RETURNS trigger AS $$
-BEGIN
-    IF NEW.email IS NOT NULL THEN
-        NEW.email := LOWER(TRIM(NEW.email));
+CREATE TABLE voucher_redemption(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    voucher_id INT NOT NULL REFERENCES voucher(id),
+    user_account_id INT NOT NULL REFERENCES user_account(id),
+    redeemed_date TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (voucher_id, user_account_id)
+);
 
-        IF NEW.email !~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' THEN
-            RAISE EXCEPTION 'Invalid email format: %', NEW.email;
-        END IF;
-    END IF;
-    IF NEW.phone_number IS NOT NULL THEN
-        NEW.phone_number := REPLACE(TRIM(NEW.phone_number), ' ', '');
-        IF NEW.phone_number !~ '^\+?\d+$' THEN
-            RAISE EXCEPTION 'Invalid phone number: %', NEW.phone_number;
-        END IF;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+CREATE TABLE job_posting(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    job_posting_name TEXT NOT NULL,
+    job_posting_description TEXT NOT NULL,
+    max_application INT NOT NULL CHECK (max_application > 0),
+    effective_from DATE NOT NULL DEFAULT CURRENT_DATE,
+    effective_to DATE CHECK (effective_to IS NULL OR effective_to >= effective_from),
+    status job_posting_status_enum NOT NULL DEFAULT 'deactivated'
+);
 
---FIX
-CREATE FUNCTION create_staff()
-RETURNS trigger AS $$
-DECLARE
-    base_salary INT;
-BEGIN
-    IF NEW.role = ANY(ARRAY['staff', 'manager', 'owner']) THEN
-        IF EXISTS (SELECT 1 FROM staff WHERE user_id = NEW.id) THEN
-            RAISE NOTICE 'Staff record already exists for user %', NEW.id;
-            RETURN NULL;
-        END IF;
+CREATE TABLE job_posting_application(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    job_posting_id INT NOT NULL REFERENCES job_posting(id),
+    applicant_name TEXT NOT NULL,
+    applicant_dob DATE NOT NULL,
+    applicant_phone_number VARCHAR(20) NOT NULL,
+    application_date TIMESTAMP NOT NULL DEFAULT NOW(),
+    status job_posting_application_status_enum NOT NULL DEFAULT 'pending'
+);
 
-        SELECT base
-        INTO base_salary
-        FROM staff_commission
-        WHERE role = NEW.role;
+-- CREATE FUNCTION normalize_phone_number()
+-- RETURNS trigger AS $$
+-- BEGIN
+--     IF NEW.phone_number IS NOT NULL THEN
+--         NEW.phone_number := REPLACE(TRIM(NEW.phone_number), ' ', '');
+--         IF NEW.phone_number !~ '^\+?\d+$' THEN
+--             RAISE EXCEPTION 'Invalid phone number: %', NEW.phone_number;
+--         END IF;
+--     END IF;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-        IF NOT FOUND THEN
-            RAISE EXCEPTION 'No base salary defined for role %', NEW.role;
-        END IF;
+-- CREATE FUNCTION normalize_email_and_phone()
+-- RETURNS trigger AS $$
+-- BEGIN
+--     IF NEW.email IS NOT NULL THEN
+--         NEW.email := LOWER(TRIM(NEW.email));
 
-        INSERT INTO staff(user_id, salary, position)
-        VALUES (NEW.id, base_salary, NEW.role);
+--         IF NEW.email !~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' THEN
+--             RAISE EXCEPTION 'Invalid email format: %', NEW.email;
+--         END IF;
+--     END IF;
+--     IF NEW.phone_number IS NOT NULL THEN
+--         NEW.phone_number := REPLACE(TRIM(NEW.phone_number), ' ', '');
+--         IF NEW.phone_number !~ '^\+?\d+$' THEN
+--             RAISE EXCEPTION 'Invalid phone number: %', NEW.phone_number;
+--         END IF;
+--     END IF;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-        RETURN NULL;
-    END IF;
+-- FIX
+-- CREATE FUNCTION create_staff()
+-- RETURNS trigger AS $$
+-- DECLARE
+--     base_salary INT;
+-- BEGIN
+--     IF NEW.role = ANY(ARRAY['staff', 'manager', 'owner']) THEN
+--         IF EXISTS (SELECT 1 FROM staff WHERE user_id = NEW.id) THEN
+--             RAISE NOTICE 'Staff record already exists for user %', NEW.id;
+--             RETURN NULL;
+--         END IF;
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+--         SELECT base
+--         INTO base_salary
+--         FROM staff_commission
+--         WHERE role = NEW.role;
 
---FIX
-CREATE FUNCTION update_staff()
-RETURNS trigger AS $$
-DECLARE
-    base_salary INT;
-    staff_roles TEXT[] := ARRAY['staff', 'manager', 'owner'];
-BEGIN
-    IF NEW.role = ANY(staff_roles) AND OLD.role <> NEW.role THEN
-        SELECT base
-        INTO base_salary
-        FROM staff_commission
-        WHERE role = NEW.role;
+--         IF NOT FOUND THEN
+--             RAISE EXCEPTION 'No base salary defined for role %', NEW.role;
+--         END IF;
 
-        IF NOT FOUND THEN
-            RAISE EXCEPTION 'No base salary defined for role %', NEW.role;
-        END IF;
-        IF EXISTS (SELECT 1 FROM staff WHERE user_id = NEW.id) THEN
-            UPDATE staff 
-            SET position = NEW.role,
-                salary = base_salary
-            WHERE user_id = NEW.id;
-        ELSE 
-            INSERT INTO staff(user_id, salary, position)
-            VALUES (NEW.id, base_salary, NEW.role);
-        END IF;
-    ELSIF NEW.role <> ALL(staff_roles) AND OLD.role = ANY(staff_roles) THEN
-        UPDATE staff
-        SET end_of_contract_date = CURRENT_DATE,
-            staff_status = 'terminated'
-        WHERE user_id = NEW.id;
-    END IF;
+--         INSERT INTO staff(user_id, salary, position)
+--         VALUES (NEW.id, base_salary, NEW.role);
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+--         RETURN NULL;
+--     END IF;
 
-CREATE FUNCTION update_appointment_status_registered()
-RETURNS trigger AS $$
-BEGIN
-    NEW.status := 'registered';
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- FIX
+-- CREATE FUNCTION update_staff()
+-- RETURNS trigger AS $$
+-- DECLARE
+--     base_salary INT;
+--     staff_roles TEXT[] := ARRAY['staff', 'manager', 'owner'];
+-- BEGIN
+--     IF NEW.role = ANY(staff_roles) AND OLD.role <> NEW.role THEN
+--         SELECT base
+--         INTO base_salary
+--         FROM staff_commission
+--         WHERE role = NEW.role;
 
-CREATE FUNCTION update_appointment_status_rescheduled()
-RETURNS trigger AS $$
-BEGIN
-    NEW.status := 'rescheduled';
+--         IF NOT FOUND THEN
+--             RAISE EXCEPTION 'No base salary defined for role %', NEW.role;
+--         END IF;
+--         IF EXISTS (SELECT 1 FROM staff WHERE user_id = NEW.id) THEN
+--             UPDATE staff 
+--             SET position = NEW.role,
+--                 salary = base_salary
+--             WHERE user_id = NEW.id;
+--         ELSE 
+--             INSERT INTO staff(user_id, salary, position)
+--             VALUES (NEW.id, base_salary, NEW.role);
+--         END IF;
+--     ELSIF NEW.role <> ALL(staff_roles) AND OLD.role = ANY(staff_roles) THEN
+--         UPDATE staff
+--         SET end_of_contract_date = CURRENT_DATE,
+--             staff_status = 'terminated'
+--         WHERE user_id = NEW.id;
+--     END IF;
 
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION update_appointment_status_started()
-RETURNS trigger AS $$
-BEGIN
-    UPDATE appointment
-    SET status = 'started'
-    WHERE id = NEW.appointment_id;
+-- CREATE FUNCTION update_appointment_status_registered()
+-- RETURNS trigger AS $$
+-- BEGIN
+--     NEW.status := 'registered';
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION update_appointment_status_completed()
-RETURNS trigger AS $$
-BEGIN
-    UPDATE appointment
-    SET status = 'completed'
-    WHERE id = NEW.appointment_id;
+-- CREATE FUNCTION update_appointment_status_rescheduled()
+-- RETURNS trigger AS $$
+-- BEGIN
+--     NEW.status := 'rescheduled';
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION update_appointment_status_cancelled()
-RETURNS trigger AS $$
-BEGIN
-    UPDATE appointment
-    SET status = 'cancelled'
-    WHERE id = NEW.appointment_id;
+-- CREATE FUNCTION update_appointment_status_started()
+-- RETURNS trigger AS $$
+-- BEGIN
+--     UPDATE appointment
+--     SET status = 'started'
+--     WHERE id = NEW.appointment_id;
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION create_appointment_detail()
-RETURNS trigger AS $$
-DECLARE
-    selected_service_ids INT[];
-    total_time INT;
-    calculated_scheduled_end TIMESTAMP;
-BEGIN
-    SELECT ARRAY_AGG(service_id)
-    INTO selected_service_ids
-    FROM requested_service
-    WHERE appointment_id = NEW.id;
+-- CREATE FUNCTION update_appointment_status_completed()
+-- RETURNS trigger AS $$
+-- BEGIN
+--     UPDATE appointment
+--     SET status = 'completed'
+--     WHERE id = NEW.appointment_id;
 
-    SELECT COALESCE(SUM(duration_minutes), 0)
-    INTO total_time 
-    FROM service
-    WHERE id = ANY(selected_service_ids);
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-    calculated_scheduled_end := NEW.scheduled_at + make_interval(mins => total_time);
+-- CREATE FUNCTION update_appointment_status_cancelled()
+-- RETURNS trigger AS $$
+-- BEGIN
+--     UPDATE appointment
+--     SET status = 'cancelled'
+--     WHERE id = NEW.appointment_id;
 
-    INSERT INTO appointment_details(appointment_id, scheduled_start, scheduled_end)
-    VALUES (NEW.id, NEW.scheduled_at, calculated_scheduled_end);
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+-- FIX
+-- CREATE FUNCTION create_appointment_detail()
+-- RETURNS trigger AS $$
+-- DECLARE
+--     selected_service_ids INT[];
+--     total_time INT;
+--     calculated_scheduled_end TIMESTAMP;
+-- BEGIN
+--     SELECT ARRAY_AGG(service_id)
+--     INTO selected_service_ids
+--     FROM requested_service
+--     WHERE appointment_id = NEW.id;
 
-CREATE FUNCTION create_appointment_invoice()
-RETURNS trigger AS $$
-DECLARE
-    selected_service_ids INT[];
-    total_price INT;
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM appointment_invoice WHERE appointment_id = NEW.id
-    ) THEN
-        RETURN NULL;
-    END IF;
+--     SELECT COALESCE(SUM(duration_minutes), 0)
+--     INTO total_time 
+--     FROM service
+--     WHERE id = ANY(selected_service_ids);
 
-    SELECT ARRAY_AGG(service_id)
-    INTO selected_service_ids
-    FROM requested_service
-    WHERE appointment_id = NEW.id;
+--     calculated_scheduled_end := NEW.scheduled_at + make_interval(mins => total_time);
 
-    SELECT SUM(price)
-    INTO total_price
-    FROM service s
-    WHERE s.type = 'single'
-    AND s.id IN (
-        SELECT id FROM service WHERE id = ANY(selected_service_ids) AND type = 'single'
-        UNION
-        SELECT sc.service_id
-        FROM service_combo sc
-        WHERE sc.combo_id = ANY(selected_service_ids)
-    );
+--     INSERT INTO appointment_details(appointment_id, scheduled_start, scheduled_end)
+--     VALUES (NEW.id, NEW.scheduled_at, calculated_scheduled_end);
 
-    INSERT INTO appointment_invoice(appointment_id, total_price)
-    VALUES (NEW.id, total_price);
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE FUNCTION create_appointment_invoice()
+-- RETURNS trigger AS $$
+-- DECLARE
+--     selected_service_ids INT[];
+--     total_price INT;
+-- BEGIN
+--     IF EXISTS (
+--         SELECT 1 FROM appointment_invoice WHERE appointment_id = NEW.id
+--     ) THEN
+--         RETURN NULL;
+--     END IF;
 
-CREATE FUNCTION prevent_taking_expired_product()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.expiry_date <= CURRENT_DATE THEN
-        RAISE EXCEPTION 'Expiry date must be in the future';
-    END IF;
+--     SELECT ARRAY_AGG(service_id)
+--     INTO selected_service_ids
+--     FROM requested_service
+--     WHERE appointment_id = NEW.id;
 
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+--     SELECT SUM(price)
+--     INTO total_price
+--     FROM service s
+--     WHERE s.type = 'single'
+--     AND s.id IN (
+--         SELECT id FROM service WHERE id = ANY(selected_service_ids) AND type = 'single'
+--         UNION
+--         SELECT sc.service_id
+--         FROM service_combo sc
+--         WHERE sc.combo_id = ANY(selected_service_ids)
+--     );
 
-CREATE FUNCTION create_inventory_consignment()
-RETURNS TRIGGER AS $$
-DECLARE
-    source_supplier_id INT;
-BEGIN
-    SELECT supplier_id
-    INTO source_supplier_id
-    FROM inventory_invoice
-    WHERE id = NEW.inventory_invoice_id;
+--     INSERT INTO appointment_invoice(appointment_id, total_price)
+--     VALUES (NEW.id, total_price);
 
-    INSERT INTO inventory_consignment(inventory_invoice_detail_id, product_id, supplier_id, received_quantity)
-    VALUES (NEW.id, NEW.product_id, source_supplier_id, NEW.ordered_quantity);
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE FUNCTION prevent_taking_expired_product()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--     IF NEW.expiry_date <= CURRENT_DATE THEN
+--         RAISE EXCEPTION 'Expiry date must be in the future';
+--     END IF;
 
-CREATE FUNCTION add_loyalty_record()
-RETURNS trigger AS $$
-BEGIN
-    INSERT INTO loyalty(user_id)
-    VALUES (NEW.id)
-    ON CONFLICT (user_id) DO NOTHING;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-    RETURN NULL;     
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE FUNCTION create_inventory_consignment()
+-- RETURNS TRIGGER AS $$
+-- DECLARE
+--     source_supplier_id INT;
+-- BEGIN
+--     SELECT supplier_id
+--     INTO source_supplier_id
+--     FROM inventory_invoice
+--     WHERE id = NEW.inventory_invoice_id;
 
-CREATE FUNCTION add_loyalty_point()
-RETURNS trigger AS $$
-DECLARE 
-    serviced_user_id INT;
-BEGIN
-    SELECT user_id
-    INTO serviced_user_id
-    FROM appointment_details
-    WHERE appointment_id = NEW.appointment_id
-    LIMIT 1;
+--     INSERT INTO inventory_consignment(inventory_invoice_detail_id, product_id, supplier_id, received_quantity)
+--     VALUES (NEW.id, NEW.product_id, source_supplier_id, NEW.ordered_quantity);
 
-    IF serviced_user_id IS NULL THEN
-        RETURN NULL;
-    ELSE 
-        UPDATE loyalty
-        SET point = point + ROUND(NEW.total_price / 100)::int
-        WHERE user_id = serviced_user_id;
-    END IF;
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE FUNCTION add_loyalty_record()
+-- RETURNS trigger AS $$
+-- BEGIN
+--     INSERT INTO loyalty(user_id)
+--     VALUES (NEW.id)
+--     ON CONFLICT (user_id) DO NOTHING;
 
-CREATE FUNCTION assign_loyalty_rank()
-RETURNS trigger AS $$
-DECLARE
-    current_rank INT;
-    new_rank INT;
-BEGIN
-    SELECT id 
-    INTO current_rank
-    FROM loyalty_level
-    WHERE point_required <= OLD.point
-    ORDER BY point_required DESC LIMIT 1;
+--     RETURN NULL;     
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-    SELECT id 
-    INTO new_rank
-    FROM loyalty_level
-    WHERE point_required <= NEW.point
-    ORDER BY point_required DESC LIMIT 1;
+-- CREATE FUNCTION add_loyalty_point()
+-- RETURNS trigger AS $$
+-- DECLARE 
+--     serviced_user_id INT;
+-- BEGIN
+--     SELECT user_id
+--     INTO serviced_user_id
+--     FROM appointment_details
+--     WHERE appointment_id = NEW.appointment_id
+--     LIMIT 1;
 
-    IF current_rank IS DISTINCT FROM new_rank THEN
-        UPDATE loyalty
-        SET level_id = new_rank
-        WHERE user_id = NEW.user_id;
-    END IF;
+--     IF serviced_user_id IS NULL THEN
+--         RETURN NULL;
+--     ELSE 
+--         UPDATE loyalty
+--         SET point = point + ROUND(NEW.total_price / 100)::int
+--         WHERE user_id = serviced_user_id;
+--     END IF;
 
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER normalize_email_and_phone_trigger_account
-BEFORE INSERT OR UPDATE ON user_account
-FOR EACH ROW
-EXECUTE FUNCTION normalize_email_and_phone();
+-- CREATE FUNCTION assign_loyalty_rank()
+-- RETURNS trigger AS $$
+-- DECLARE
+--     current_rank INT;
+--     new_rank INT;
+-- BEGIN
+--     SELECT id 
+--     INTO current_rank
+--     FROM loyalty_level
+--     WHERE point_required <= OLD.point
+--     ORDER BY point_required DESC LIMIT 1;
 
-CREATE TRIGGER normalize_email_and_phone_trigger_supplier
-BEFORE INSERT OR UPDATE ON supplier
-FOR EACH ROW
-EXECUTE FUNCTION normalize_email_and_phone();
+--     SELECT id 
+--     INTO new_rank
+--     FROM loyalty_level
+--     WHERE point_required <= NEW.point
+--     ORDER BY point_required DESC LIMIT 1;
 
-CREATE TRIGGER normalize_phone_number_trigger_appointment
-BEFORE INSERT OR UPDATE ON appointment
-FOR EACH ROW
-EXECUTE FUNCTION normalize_phone_number();
+--     IF current_rank IS DISTINCT FROM new_rank THEN
+--         UPDATE loyalty
+--         SET level_id = new_rank
+--         WHERE user_id = NEW.user_id;
+--     END IF;
 
-CREATE TRIGGER create_staff_trigger
-AFTER INSERT ON user_account
-FOR EACH ROW
-EXECUTE FUNCTION create_staff();
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_staff_trigger
-AFTER UPDATE ON user_account
-FOR EACH ROW
-WHEN (OLD.role <> NEW.role)
-EXECUTE FUNCTION update_staff();
+-- CREATE TRIGGER normalize_email_and_phone_trigger_account
+-- BEFORE INSERT OR UPDATE ON user_account
+-- FOR EACH ROW
+-- EXECUTE FUNCTION normalize_email_and_phone();
 
-CREATE TRIGGER update_appointment_status_registered_trigger
-BEFORE UPDATE ON appointment
-FOR EACH ROW
-WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NULL)
-EXECUTE FUNCTION update_appointment_status_registered();
+-- CREATE TRIGGER normalize_email_and_phone_trigger_supplier
+-- BEFORE INSERT OR UPDATE ON supplier
+-- FOR EACH ROW
+-- EXECUTE FUNCTION normalize_email_and_phone();
 
-CREATE TRIGGER update_appointment_status_rescheduled_trigger
-BEFORE UPDATE ON appointment
-FOR EACH ROW
-WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NOT NULL AND OLD.scheduled_at <> NEW.scheduled_at)
-EXECUTE FUNCTION update_appointment_status_rescheduled();
+-- CREATE TRIGGER normalize_phone_number_trigger_appointment
+-- BEFORE INSERT OR UPDATE ON appointment
+-- FOR EACH ROW
+-- EXECUTE FUNCTION normalize_phone_number();
 
-CREATE TRIGGER update_appointment_status_started_trigger
-AFTER UPDATE ON appointment_details
-FOR EACH ROW
-WHEN (NEW.actual_start IS NOT NULL AND (OLD.actual_start IS NULL OR OLD.actual_start <> NEW.actual_start))
-EXECUTE FUNCTION update_appointment_status_started();
+-- CREATE TRIGGER create_staff_trigger
+-- AFTER INSERT ON user_account
+-- FOR EACH ROW
+-- EXECUTE FUNCTION create_staff();
 
-CREATE TRIGGER update_appointment_status_completed_trigger
-AFTER UPDATE ON appointment_details
-FOR EACH ROW
-WHEN (NEW.actual_end IS NOT NULL AND OLD.actual_end IS NULL)
-EXECUTE FUNCTION update_appointment_status_completed();
+-- CREATE TRIGGER update_staff_trigger
+-- AFTER UPDATE ON user_account
+-- FOR EACH ROW
+-- WHEN (OLD.role <> NEW.role)
+-- EXECUTE FUNCTION update_staff();
 
-CREATE TRIGGER update_appointment_status_cancelled_trigger
-AFTER UPDATE ON appointment_details
-FOR EACH ROW
-WHEN (NEW.actual_end IS NOT NULL AND NEW.actual_start IS NULL)
-EXECUTE FUNCTION update_appointment_status_cancelled();
+-- CREATE TRIGGER update_appointment_status_registered_trigger
+-- BEFORE UPDATE ON appointment
+-- FOR EACH ROW
+-- WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NULL)
+-- EXECUTE FUNCTION update_appointment_status_registered();
 
-CREATE TRIGGER create_appointment_detail_trigger
-AFTER UPDATE ON appointment
-FOR EACH ROW
-WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'registered')
-EXECUTE FUNCTION create_appointment_detail();
+-- CREATE TRIGGER update_appointment_status_rescheduled_trigger
+-- BEFORE UPDATE ON appointment
+-- FOR EACH ROW
+-- WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NOT NULL AND OLD.scheduled_at <> NEW.scheduled_at)
+-- EXECUTE FUNCTION update_appointment_status_rescheduled();
 
-CREATE TRIGGER create_appointment_invoice_trigger
-AFTER UPDATE ON appointment
-FOR EACH ROW
-WHEN (NEW.status = 'completed' AND OLD.status IS DISTINCT FROM NEW.status)
-EXECUTE FUNCTION create_appointment_invoice();
+-- CREATE TRIGGER update_appointment_status_started_trigger
+-- AFTER UPDATE ON appointment_details
+-- FOR EACH ROW
+-- WHEN (NEW.actual_start IS NOT NULL AND (OLD.actual_start IS NULL OR OLD.actual_start <> NEW.actual_start))
+-- EXECUTE FUNCTION update_appointment_status_started();
 
-CREATE TRIGGER prevent_taking_expired_product_trigger
-BEFORE INSERT ON inventory_request_detail
-FOR EACH ROW
-EXECUTE FUNCTION prevent_taking_expired_product();
+-- CREATE TRIGGER update_appointment_status_completed_trigger
+-- AFTER UPDATE ON appointment_details
+-- FOR EACH ROW
+-- WHEN (NEW.actual_end IS NOT NULL AND OLD.actual_end IS NULL)
+-- EXECUTE FUNCTION update_appointment_status_completed();
 
-CREATE TRIGGER create_inventory_consignment_trigger
-AFTER INSERT ON inventory_invoice_detail
-FOR EACH ROW
-EXECUTE FUNCTION create_inventory_consignment();
+-- CREATE TRIGGER update_appointment_status_cancelled_trigger
+-- AFTER UPDATE ON appointment_details
+-- FOR EACH ROW
+-- WHEN (NEW.actual_end IS NOT NULL AND NEW.actual_start IS NULL)
+-- EXECUTE FUNCTION update_appointment_status_cancelled();
 
-CREATE TRIGGER add_loyalty_record_trigger
-AFTER INSERT ON user_account
-FOR EACH ROW
-EXECUTE FUNCTION add_loyalty_record();
+-- CREATE TRIGGER create_appointment_detail_trigger
+-- AFTER UPDATE ON appointment
+-- FOR EACH ROW
+-- WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'registered')
+-- EXECUTE FUNCTION create_appointment_detail();
 
-CREATE TRIGGER add_loyalty_point_trigger
-AFTER INSERT OR UPDATE ON appointment_invoice
-FOR EACH ROW
-EXECUTE FUNCTION add_loyalty_point();
+-- CREATE TRIGGER create_appointment_invoice_trigger
+-- AFTER UPDATE ON appointment
+-- FOR EACH ROW
+-- WHEN (NEW.status = 'completed' AND OLD.status IS DISTINCT FROM NEW.status)
+-- EXECUTE FUNCTION create_appointment_invoice();
 
-CREATE TRIGGER assign_loyalty_rank_trigger
-AFTER UPDATE ON loyalty
-FOR EACH ROW
-WHEN (NEW.point <> OLD.point)
-EXECUTE FUNCTION assign_loyalty_rank();
+-- CREATE TRIGGER prevent_taking_expired_product_trigger
+-- BEFORE INSERT ON inventory_request_detail
+-- FOR EACH ROW
+-- EXECUTE FUNCTION prevent_taking_expired_product();
+
+-- CREATE TRIGGER create_inventory_consignment_trigger
+-- AFTER INSERT ON inventory_invoice_detail
+-- FOR EACH ROW
+-- EXECUTE FUNCTION create_inventory_consignment();
+
+-- CREATE TRIGGER add_loyalty_record_trigger
+-- AFTER INSERT ON user_account
+-- FOR EACH ROW
+-- EXECUTE FUNCTION add_loyalty_record();
+
+-- CREATE TRIGGER add_loyalty_point_trigger
+-- AFTER INSERT OR UPDATE ON appointment_invoice
+-- FOR EACH ROW
+-- EXECUTE FUNCTION add_loyalty_point();
+
+-- CREATE TRIGGER assign_loyalty_rank_trigger
+-- AFTER UPDATE ON loyalty
+-- FOR EACH ROW
+-- WHEN (NEW.point <> OLD.point)
+-- EXECUTE FUNCTION assign_loyalty_rank();

@@ -5,11 +5,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import service.sllbackend.entity.UserAccount;
-import service.sllbackend.entity.enums.AccountRole;
-import service.sllbackend.entity.enums.Gender;
-import service.sllbackend.repo.UserAccountRepo;
+import service.sllbackend.enumerator.AccountRole;
+import service.sllbackend.enumerator.Gender;
+import service.sllbackend.repository.UserAccountRepo;
 
 import java.util.List;
+
+// TODO: Solidify
 
 @Service
 public class UserAccountService implements UserDetailsService {
@@ -36,9 +38,9 @@ public class UserAccountService implements UserDetailsService {
         userAccountRepo.save(UserAccount.builder()
                 .username(username)
                 .password(hashedPassword)
-                .gender(Gender.male)
+                .gender(Gender.MALE)
                 .phoneNumber("0991991991")
-                .role(AccountRole.admin)
+                .role(AccountRole.ADMIN)
                 .build());
     }
 }

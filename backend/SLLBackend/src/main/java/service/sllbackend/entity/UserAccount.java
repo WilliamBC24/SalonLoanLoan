@@ -1,15 +1,16 @@
-package service.sllbackend.auth.entity;
+package service.sllbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import service.sllbackend.enumerator.AccountRole;
+import service.sllbackend.enumerator.AccountStatus;
+import service.sllbackend.enumerator.Gender;
+
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-import service.sllbackend.auth.entity.enums.AccountRole;
-import service.sllbackend.auth.entity.enums.AccountStatus;
-import service.sllbackend.auth.entity.enums.Gender;
 
 @Data
 @Builder
@@ -38,7 +39,7 @@ public class UserAccount {
     @Column(columnDefinition = "account_role_enum")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     @Builder.Default
-    private AccountRole role = AccountRole.customer;
+    private AccountRole role = AccountRole.CUSTOMER;
 
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
@@ -53,5 +54,6 @@ public class UserAccount {
     @Enumerated(EnumType.STRING)
     @Column(name = "account_status", columnDefinition = "account_status_enum")
     @JdbcType(PostgreSQLEnumJdbcType.class)
-    private AccountStatus accountStatus = AccountStatus.deactivated;
+    @Builder.Default
+    private AccountStatus accountStatus = AccountStatus.DEACTIVATED;
 }

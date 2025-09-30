@@ -11,16 +11,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import service.sllbackend.auth.service.UserAccountService;
+
+import service.sllbackend.service.impl.UserAccountServiceImpl;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-    private final UserAccountService userAccountService;
+    private final UserAccountServiceImpl userAccountService;
     private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(UserAccountService userAccountService, PasswordEncoder passwordEncoder) {
+    public SecurityConfig(UserAccountServiceImpl userAccountService, PasswordEncoder passwordEncoder) {
         this.userAccountService = userAccountService;
         this.passwordEncoder = passwordEncoder;
     }

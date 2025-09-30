@@ -34,7 +34,6 @@ public class UserAccountServiceImpl implements UserAccountService {
                 .password(hashedPassword)
                 .gender(Gender.MALE)
                 .phoneNumber("0991991991")
-                .role(AccountRole.ADMIN)
                 .build());
     } */
 }

@@ -1,4 +1,4 @@
-package service.sllbackend.auth.controller;
+package service.sllbackend.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import service.sllbackend.service.UserAccountService;
 
+// TODO: move to /web/
+
 @RestController
 @RequestMapping("/api")
 public class AuthRestController {

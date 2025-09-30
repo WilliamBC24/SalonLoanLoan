@@ -1,13 +1,13 @@
-package service.sllbackend.auth.service;
+package service.sllbackend.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import service.sllbackend.auth.entity.UserAccount;
-import service.sllbackend.auth.entity.enums.AccountRole;
-import service.sllbackend.auth.entity.enums.Gender;
-import service.sllbackend.auth.repo.UserAccountRepo;
+import service.sllbackend.entity.UserAccount;
+import service.sllbackend.entity.enums.AccountRole;
+import service.sllbackend.entity.enums.Gender;
+import service.sllbackend.repo.UserAccountRepo;
 
 import java.util.List;
 

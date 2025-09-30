@@ -1,4 +1,4 @@
-package service.sllbackend.auth.entity;
+package service.sllbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,9 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-import service.sllbackend.auth.entity.enums.AccountRole;
-import service.sllbackend.auth.entity.enums.AccountStatus;
-import service.sllbackend.auth.entity.enums.Gender;
+import service.sllbackend.entity.enums.AccountRole;
+import service.sllbackend.entity.enums.AccountStatus;
+import service.sllbackend.entity.enums.Gender;
 
 @Data
 @Builder

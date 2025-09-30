@@ -1,5 +1,4 @@
 --STORE MONEY AS THE SMALLEST UNIT WITH INT
---CREATE INDEX LATER
 
 CREATE TYPE gender_enum AS ENUM ('male', 'female');
 CREATE TYPE account_status_enum AS ENUM ('active', 'deactivated', 'banned');

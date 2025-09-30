@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import service.sllbackend.enumerator.AccountRole;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.enumerator.Gender;
 
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -35,11 +36,8 @@ public class UserAccount {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private Gender gender;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "account_role_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
-    @Builder.Default
-    private AccountRole role = AccountRole.CUSTOMER;
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
@@ -47,7 +45,7 @@ public class UserAccount {
     @Column(length = 100)
     private String email;
 
-    @Column(name = "email_verified")
+    @Column(name = "email_verified", nullable = false)
     @Builder.Default
     private Boolean emailVerified = false;
 

@@ -1,9 +1,9 @@
-package service.sllbackend.auth.controller;
+package service.sllbackend.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.sllbackend.auth.service.UserAccountService;
+import service.sllbackend.service.UserAccountService;
 
 @RestController
 @RequestMapping("/api")

@@ -1,4 +1,4 @@
-package service.sllbackend.auth.entity.enums;
+package service.sllbackend.entity.enums;
 
 public enum AccountStatus {
     active,

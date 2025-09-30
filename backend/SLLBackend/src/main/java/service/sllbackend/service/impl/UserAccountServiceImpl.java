@@ -24,16 +24,4 @@ public class UserAccountServiceImpl implements UserAccountService {
                 List.of() // authorities
         );
     }
-
-    // TODO: move to a separate dev/dataLoader service
-
-    /* public void registerUser(String username, String rawPassword) {
-        String hashedPassword = passwordEncoder.encode(rawPassword);
-        userAccountRepo.save(UserAccount.builder()
-                .username(username)
-                .password(hashedPassword)
-                .gender(Gender.MALE)
-                .phoneNumber("0991991991")
-                .build());
-    } */
 }

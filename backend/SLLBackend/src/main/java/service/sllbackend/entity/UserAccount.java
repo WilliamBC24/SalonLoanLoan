@@ -45,9 +45,9 @@ public class UserAccount {
     @Column(length = 100)
     private String email;
 
-    @Column(name = "email_verified", nullable = false)
+    @Column(name = "phone_verified", nullable = false)
     @Builder.Default
-    private Boolean emailVerified = false;
+    private Boolean phoneVerified = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "account_status", columnDefinition = "account_status_enum")

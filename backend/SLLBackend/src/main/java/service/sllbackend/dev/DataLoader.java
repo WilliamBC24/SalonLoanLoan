@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.UserAccount;
-import service.sllbackend.enumerator.AccountRole;
 import service.sllbackend.enumerator.Gender;
 import service.sllbackend.repository.UserAccountRepo;
 
@@ -26,7 +25,6 @@ public class DataLoader {
                 .password(hashedPassword)
                 .gender(Gender.MALE)
                 .phoneNumber("0991991991")
-                .role(AccountRole.ADMIN)
                 .build());
     }
 }

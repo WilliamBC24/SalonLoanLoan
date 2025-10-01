@@ -1,5 +1,4 @@
 --STORE MONEY AS THE SMALLEST UNIT WITH INT
---CREATE INDEX LATER
 
 CREATE TYPE gender_enum AS ENUM ('male', 'female');
 CREATE TYPE account_status_enum AS ENUM ('active', 'deactivated', 'banned');
@@ -25,7 +24,7 @@ CREATE TABLE user_account(
     birth_date DATE,
     phone_number VARCHAR(20) NOT NULL,
     email VARCHAR(100),
-    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    phone_verified BOOLEAN NOT NULL DEFAULT FALSE,
     account_status account_status_enum DEFAULT 'deactivated'
 );
 
@@ -339,6 +338,12 @@ CREATE TABLE shift_assignment(
     shift_instance_id INT NOT NULL REFERENCES shift_instance(id),
     assigned_staff_id INT NOT NULL REFERENCES staff(id),
     UNIQUE (shift_instance_id, assigned_staff_id)
+);
+
+CREATE TABLE shift_assignment_history(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    shift_instance_id INT NOT NULL REFERENCES shift_instance(id),
+    assigned_staff_id INT NOT NULL REFERENCES staff(id)
 );
 
 CREATE TABLE shift_attendance(

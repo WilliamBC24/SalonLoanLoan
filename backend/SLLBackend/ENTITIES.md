@@ -4,7 +4,7 @@ This document lists all entity classes created based on the database schema in `
 
 ## Summary
 
-- **Total Entity Classes**: 65
+- **Total Entity Classes**: 66
 - **Total Enumerator Classes**: 16 (3 existing + 13 new)
 
 ## Enumerators
@@ -103,12 +103,13 @@ This document lists all entity classes created based on the database schema in `
 3. `FinancialTransaction` - Financial transaction records
 4. `FinancialTransactionCategory` - Transaction categories
 
-### Shift Management (5 entities)
+### Shift Management (6 entities)
 1. `ShiftTemplate` - Shift time templates
 2. `ShiftInstance` - Scheduled shift instances
 3. `ShiftAssignment` - Staff shift assignments
-4. `ShiftAttendance` - Shift check-in/out records
-5. `ShiftCashPaymentRecord` - Cash payments during shifts
+4. `ShiftAssignmentHistory` - Historical shift assignments
+5. `ShiftAttendance` - Shift check-in/out records
+6. `ShiftCashPaymentRecord` - Cash payments during shifts
 
 ### Miscellaneous (5 entities)
 1. `Location` - Location/branch information

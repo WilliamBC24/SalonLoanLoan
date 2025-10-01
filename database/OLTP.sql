@@ -1,20 +1,20 @@
 --STORE MONEY AS THE SMALLEST UNIT WITH INT
 
-CREATE TYPE gender_enum AS ENUM ('male', 'female');
-CREATE TYPE account_status_enum AS ENUM ('active', 'deactivated', 'banned');
-CREATE TYPE commission_type_enum AS ENUM ('appointment', 'product');
-CREATE TYPE staff_status_enum AS ENUM ('active', 'on_leave', 'terminated');
-CREATE TYPE appointment_status_enum AS ENUM ('pending', 'registered', 'started', 'completed', 'rescheduled', 'cancelled');
-CREATE TYPE service_type_enum AS ENUM ('single', 'combo');
-CREATE TYPE shift_attendance_status_enum AS ENUM ('full', 'partial', 'missed');
-CREATE TYPE discount_type_enum AS ENUM ('amount', 'percentage');
-CREATE TYPE inventory_invoice_status_enum AS ENUM ('awaiting', 'complete', 'cancelled');
-CREATE TYPE inventory_request_status_enum AS ENUM ('pending', 'approved', 'rejected');
-CREATE TYPE inventory_transaction_type_enum AS ENUM ('in', 'out');
-CREATE TYPE inventory_transaction_reason_enum AS ENUM ('service', 'shipment');
-CREATE TYPE payroll_adjustment_enum AS ENUM ('bonus', 'deduction');
-CREATE TYPE job_posting_status_enum AS ENUM ('active', 'deactivated');
-CREATE TYPE job_posting_application_status_enum AS ENUM ('pending', 'accepted', 'rejected');
+CREATE TYPE gender_enum AS ENUM ('MALE', 'FEMALE');
+CREATE TYPE account_status_enum AS ENUM ('ACTIVE', 'DEACTIVATED', 'BANNED');
+CREATE TYPE commission_type_enum AS ENUM ('APPOINTMENT', 'PRODUCT');
+CREATE TYPE staff_status_enum AS ENUM ('ACTIVE', 'ON_LEAVE', 'TERMINATED');
+CREATE TYPE appointment_status_enum AS ENUM ('PENDING', 'REGISTERED', 'STARTED', 'COMPLETED', 'RESCHEDULED', 'CANCELLED');
+CREATE TYPE service_type_enum AS ENUM ('SINGLE', 'COMBO');
+CREATE TYPE shift_attendance_status_enum AS ENUM ('FULL', 'PARTIAL', 'MISSED');
+CREATE TYPE discount_type_enum AS ENUM ('AMOUNT', 'PERCENTAGE');
+CREATE TYPE inventory_invoice_status_enum AS ENUM ('AWAITING', 'COMPLETE', 'CANCELLED');
+CREATE TYPE inventory_request_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+CREATE TYPE inventory_transaction_type_enum AS ENUM ('IN', 'OUT');
+CREATE TYPE inventory_transaction_reason_enum AS ENUM ('SERVICE', 'SHIPMENT');
+CREATE TYPE payroll_adjustment_enum AS ENUM ('BONUS', 'DEDUCTION');
+CREATE TYPE job_posting_status_enum AS ENUM ('ACTIVE', 'DEACTIVATED');
+CREATE TYPE job_posting_application_status_enum AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED');
 
 CREATE TABLE user_account(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -25,7 +25,7 @@ CREATE TABLE user_account(
     phone_number VARCHAR(20) NOT NULL,
     email VARCHAR(100),
     phone_verified BOOLEAN NOT NULL DEFAULT FALSE,
-    account_status account_status_enum DEFAULT 'deactivated'
+    account_status account_status_enum DEFAULT 'DEACTIVATED'
 );
 
 CREATE TABLE user_shipping_info(
@@ -45,11 +45,11 @@ CREATE TABLE customer_info(
 
 CREATE UNIQUE INDEX uq_user_phone_active
     ON user_account(phone_number)
-    WHERE account_status = 'active';
+    WHERE account_status = 'ACTIVE';
 
 CREATE UNIQUE INDEX uq_user_email_active
     ON user_account(LOWER(email))
-    WHERE account_status = 'active';
+    WHERE account_status = 'ACTIVE';
 
 CREATE TABLE staff(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -59,7 +59,7 @@ CREATE TABLE staff(
     name TEXT NOT NULL,
     birth_date DATE NOT NULL,
     email TEXT,
-    staff_status staff_status_enum NOT NULL DEFAULT 'active'
+    staff_status staff_status_enum NOT NULL DEFAULT 'ACTIVE'
 );
 
 CREATE TABLE staff_position(
@@ -147,7 +147,7 @@ CREATE TABLE voucher(
     voucher_name TEXT NOT NULL,
     voucher_description TEXT NOT NULL,
     voucher_code TEXT NOT NULL UNIQUE,
-    discount_type discount_type_enum NOT NULL DEFAULT 'amount',
+    discount_type discount_type_enum NOT NULL DEFAULT 'AMOUNT',
     discount_amount INT NOT NULL,
     effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
     effective_to TIMESTAMP NOT NULL,
@@ -156,8 +156,8 @@ CREATE TABLE voucher(
     voucher_status INT NOT NULL REFERENCES voucher_status(id),
     CHECK (used_count <= max_usage),
     CHECK (
-        (discount_type = 'percentage' AND discount_amount > 0 AND discount_amount <= 100)
-        OR (discount_type = 'amount' AND discount_amount > 0)
+        (discount_type = 'PERCENTAGE' AND discount_amount > 0 AND discount_amount <= 100)
+        OR (discount_type = 'AMOUNT' AND discount_amount > 0)
     )
 );
 
@@ -165,14 +165,14 @@ CREATE TABLE promotion(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     promotion_name TEXT NOT NULL,
     promotion_description TEXT,
-    discount_type discount_type_enum NOT NULL DEFAULT 'amount',
+    discount_type discount_type_enum NOT NULL DEFAULT 'AMOUNT',
     discount_amount INT NOT NULL,
     effective_from TIMESTAMP NOT NULL DEFAULT NOW(),
     effective_to TIMESTAMP NOT NULL,
     promotion_status INT NOT NULL REFERENCES promotion_status(id),
     CHECK (
-        (discount_type = 'percentage' AND discount_amount > 0 AND discount_amount <= 100)
-        OR (discount_type = 'amount' AND discount_amount > 0)
+        (discount_type = 'PERCENTAGE' AND discount_amount > 0 AND discount_amount <= 100)
+        OR (discount_type = 'AMOUNT' AND discount_amount > 0)
     )
 );
 
@@ -182,7 +182,7 @@ CREATE TABLE appointment(
     scheduled_at TIMESTAMP,
     name TEXT NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
-    status appointment_status_enum NOT NULL DEFAULT 'pending',
+    status appointment_status_enum NOT NULL DEFAULT 'PENDING',
     CHECK (scheduled_at IS NULL OR scheduled_at >= registered_at)
 );
 
@@ -259,7 +259,7 @@ CREATE TABLE service(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_name TEXT NOT NULL,
     service_category_id INT NOT NULL REFERENCES service_category(id),
-    service_type service_type_enum NOT NULL DEFAULT 'single',
+    service_type service_type_enum NOT NULL DEFAULT 'SINGLE',
     service_price INT NOT NULL CHECK (service_price > 0),
     duration_minutes SMALLINT NOT NULL CHECK (duration_minutes > 0),
     service_description TEXT,
@@ -356,7 +356,7 @@ CREATE TABLE shift_attendance(
         THEN ROUND(EXTRACT(EPOCH FROM (check_out - check_in)) / 60)::int
         ELSE NULL END
     ) STORED,
-    status shift_attendance_status_enum NOT NULL DEFAULT 'missed',
+    status shift_attendance_status_enum NOT NULL DEFAULT 'MISSED',
     CHECK (
         (check_in IS NULL AND check_out IS NULL) OR
         (check_in IS NOT NULL AND check_out IS NULL) OR
@@ -475,7 +475,7 @@ CREATE TABLE inventory_invoice(
     supplier_id INT NOT NULL REFERENCES supplier(id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     note TEXT, 
-    invoice_status inventory_invoice_status_enum NOT NULL DEFAULT 'awaiting'
+    invoice_status inventory_invoice_status_enum NOT NULL DEFAULT 'AWAITING'
 );
 
 CREATE TABLE inventory_invoice_detail(
@@ -502,7 +502,7 @@ CREATE TABLE inventory_request(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     staff_id INT NOT NULL REFERENCES staff(id),
     request_date TIMESTAMP NOT NULL DEFAULT NOW(),
-    inventory_request_status inventory_request_status_enum NOT NULL DEFAULT 'pending'
+    inventory_request_status inventory_request_status_enum NOT NULL DEFAULT 'PENDING'
 );
 
 CREATE TABLE inventory_request_detail(
@@ -590,7 +590,7 @@ CREATE TABLE job_posting(
     max_application INT NOT NULL CHECK (max_application > 0),
     effective_from DATE NOT NULL DEFAULT CURRENT_DATE,
     effective_to DATE CHECK (effective_to IS NULL OR effective_to >= effective_from),
-    status job_posting_status_enum NOT NULL DEFAULT 'deactivated'
+    status job_posting_status_enum NOT NULL DEFAULT 'DEACTIVATED'
 );
 
 CREATE TABLE job_posting_application(
@@ -600,7 +600,7 @@ CREATE TABLE job_posting_application(
     applicant_dob DATE NOT NULL,
     applicant_phone_number VARCHAR(20) NOT NULL,
     application_date TIMESTAMP NOT NULL DEFAULT NOW(),
-    status job_posting_application_status_enum NOT NULL DEFAULT 'pending'
+    status job_posting_application_status_enum NOT NULL DEFAULT 'PENDING'
 );
 
 -- CREATE FUNCTION normalize_phone_number()

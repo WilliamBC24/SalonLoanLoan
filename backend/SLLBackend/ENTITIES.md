@@ -15,7 +15,7 @@ Enumerators define fixed sets of values used throughout the application.
 **Values**: CUSTOMER, ADMIN
 
 ### AccountStatus
-**Values**: ACTIVE, DEACTIVATED
+**Values**: ACTIVE, DEACTIVATED, BANNED
 
 ### AppointmentStatus
 **Values**: PENDING, REGISTERED, STARTED, COMPLETED, RESCHEDULED, CANCELLED

@@ -51,8 +51,10 @@ public class SecurityConfig {
                 formLogin.loginPage("/login")
                         .usernameParameter("username")
                         .passwordParameter("password")
+                        .defaultSuccessUrl("/login?login", true)
         ).logout(logout ->
                 logout.logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
         ).build();
     }
 }

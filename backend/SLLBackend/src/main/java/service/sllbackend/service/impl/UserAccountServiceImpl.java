@@ -1,6 +1,7 @@
 package service.sllbackend.service.impl;
 
-import org.springframework.context.annotation.Primary;
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,6 @@ import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.UserAccountService;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

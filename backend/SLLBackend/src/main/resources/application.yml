@@ -17,8 +17,8 @@ spring:
       pool-name: sonbui
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: create
+    show-sql: false
     properties:
       hibernate:
         jdbc:

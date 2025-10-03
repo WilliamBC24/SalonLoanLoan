@@ -31,23 +31,32 @@ public class DataLoader implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		System.out.println("############ \n            Loading initial data\n ############");
-		registerUser("admin", "admin");
+		System.out.println("############ \n            Loading initial data\n############");
+		registerUser();
+		registerStaff();
 	}
 
-	public void registerUser(String username, String rawPassword) {
+	public void registerUser() {
+		String username = "alice";
+		String rawPassword = "alice";
+
 		String hashedPassword = passwordEncoder.encode(rawPassword);
 		userAccountRepo.save(UserAccount.builder()
 				.username(username)
 				.password(hashedPassword)
 				.gender(Gender.MALE)
 				.birthDate(LocalDate.of(2004, 9, 6))
-				.phoneNumber("0991991991")
-				.email("admin@admin.com")
+				.phoneNumber("0999999999")
+				.email("alice@wonderland.com")
 				.build());
 	}
 
-	public void registerStaff(String username, String rawPassword, String role, String name) {
+	public void registerStaff() {
+		String name = "admin";
+		String role = "Administrator";
+		String username = "admin";
+		String rawPassword = "admin";
+
 		Staff staff = staffRepo.save(Staff.builder()
 				.name(name)
 				.birthDate(LocalDate.of(2004, 1, 1))

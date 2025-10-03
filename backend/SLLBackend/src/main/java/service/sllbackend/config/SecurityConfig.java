@@ -1,9 +1,14 @@
 package service.sllbackend.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -12,49 +17,85 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import service.sllbackend.service.impl.StaffAccountServiceImpl;
 import service.sllbackend.service.impl.UserAccountServiceImpl;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-    private final UserAccountServiceImpl userAccountService;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationProvider userAuthenticationProvider;
+    private final AuthenticationProvider staffAuthenticationProvider;
 
-    public SecurityConfig(UserAccountServiceImpl userAccountService, PasswordEncoder passwordEncoder) {
-        this.userAccountService = userAccountService;
-        this.passwordEncoder = passwordEncoder;
+    public SecurityConfig(@Qualifier("userAuthenticationProvider") AuthenticationProvider userAuthenticationProvider,
+                          @Qualifier("staffAuthenticationProvider") AuthenticationProvider staffAuthenticationProvider) {
+
+        this.userAuthenticationProvider = userAuthenticationProvider;
+        this.staffAuthenticationProvider = staffAuthenticationProvider;
+    }
+
+    //    @Bean
+//    public AuthenticationManager authenticationManager(
+//            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//    }
+    @Bean
+    public ProviderManager userProviderManager() {
+        return new ProviderManager(userAuthenticationProvider);
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userAccountService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return authProvider;
+    public ProviderManager staffProviderManager() {
+        return new ProviderManager(staffAuthenticationProvider);
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilter(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain userSecurityFilter(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/**")
                 ).authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/logout", "/css/**", "/js/**", "/api/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/add").permitAll()
-                .anyRequest().authenticated()
-        ).formLogin(formLogin ->
-                formLogin.loginPage("/login")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .defaultSuccessUrl("/login?login", true)
-        ).logout(logout ->
-                logout.logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-        ).build();
+                        .requestMatchers("/auth/user/**", "/css/**", "/js/**", "/api/**").permitAll()
+                        .anyRequest().authenticated()
+                ).formLogin(formLogin ->
+                        formLogin.loginPage("/auth/user/login")
+                                .usernameParameter("username")
+                                .passwordParameter("password")
+                                .failureUrl("/auth/user/login?error")
+                ).logout(logout ->
+                                logout.logoutUrl("/auth/user/logout")
+                                        .logoutSuccessUrl("/auth/user/login?logout")
+                                        .invalidateHttpSession(true)
+                                        .deleteCookies("JSESSIONID")
+//        ).authenticationProvider(userAuthenticationProvider()
+                ).authenticationManager(userProviderManager()
+                ).build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain staffSecurityFilter(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**")
+                ).authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/staff/**", "/css/**", "/js/**", "/api/**").permitAll()
+                        .anyRequest().authenticated()
+                ).formLogin(formLogin ->
+                        formLogin.loginPage("/auth/staff/login")
+                                .usernameParameter("username")
+                                .passwordParameter("password")
+                                .failureUrl("/auth/staff/login?error")
+                ).logout(logout ->
+                                logout.logoutUrl("/auth/staff/logout")
+                                        .logoutSuccessUrl("/auth/staff/login?logout")
+                                        .invalidateHttpSession(true)
+                                        .deleteCookies("JSESSIONID")
+//        ).authenticationProvider(userAuthenticationProvider()
+                ).authenticationManager(staffProviderManager()
+                ).build();
     }
 }

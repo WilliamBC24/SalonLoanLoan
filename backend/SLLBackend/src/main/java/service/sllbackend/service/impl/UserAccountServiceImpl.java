@@ -1,10 +1,15 @@
 package service.sllbackend.service.impl;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import service.sllbackend.config.exceptions.BannedException;
+import service.sllbackend.config.exceptions.DisabledException;
 import service.sllbackend.entity.UserAccount;
+import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.UserAccountService;
 
@@ -17,7 +22,14 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        UserAccount user = userAccountRepo.findByUsername(username);
+        UserAccount user = userAccountRepo.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        if (user.getAccountStatus() == AccountStatus.DEACTIVATED) {
+            throw new DisabledException(user.getUsername());
+        }
+        if (user.getAccountStatus() == AccountStatus.BANNED) {
+            throw new BannedException(user.getUsername());
+        }
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),

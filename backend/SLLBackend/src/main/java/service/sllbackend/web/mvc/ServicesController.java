@@ -2,6 +2,7 @@ package service.sllbackend.web.mvc;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -17,20 +18,13 @@ import service.sllbackend.enumerator.ServiceType;
 import service.sllbackend.repository.ServiceCategoryRepo;
 import service.sllbackend.repository.ServiceComboRepo;
 import service.sllbackend.repository.ServiceRepo;
+import service.sllbackend.service.ServicesService;
 
 @Controller
 @RequestMapping("/")
+@RequiredArgsConstructor
 public class ServicesController {
-
-    private final ServiceRepo serviceRepo;
-    private final ServiceCategoryRepo serviceCategoryRepo;
-    private final ServiceComboRepo serviceComboRepo;
-
-    public ServicesController(ServiceRepo serviceRepo, ServiceCategoryRepo serviceCategoryRepo, ServiceComboRepo serviceComboRepo) {
-        this.serviceRepo = serviceRepo;
-        this.serviceCategoryRepo = serviceCategoryRepo;
-        this.serviceComboRepo = serviceComboRepo;
-    }
+    private final ServicesService servicesService;
 
     @GetMapping("services")
     @Transactional(readOnly = true)
@@ -39,26 +33,14 @@ public class ServicesController {
             @RequestParam(required = false) List<Integer> categories,
             @RequestParam(required = false) String name,
             Model model) {
-        
+
         // Get all categories for filters
-        List<ServiceCategory> allCategories = serviceCategoryRepo.findAll();
-        model.addAttribute("allCategories", allCategories);
-        
+        List<ServiceCategory> allCategories = servicesService.getAllCategories();
+
         // Get services based on filters
-        List<Service> services;
-        if (types != null || categories != null || (name != null && !name.trim().isEmpty())) {
-            List<ServiceType> serviceTypes = null;
-            if (types != null && !types.isEmpty()) {
-                serviceTypes = types.stream()
-                    .map(ServiceType::valueOf)
-                    .toList();
-            }
-            String searchName = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
-            services = serviceRepo.searchServices(serviceTypes, categories, searchName);
-        } else {
-            services = serviceRepo.findAllWithCategory();
-        }
-        
+        List<Service> services = servicesService.getFilteredServices(types, categories, name);
+
+        model.addAttribute("allCategories", allCategories);
         model.addAttribute("services", services);
         model.addAttribute("selectedTypes", types);
         model.addAttribute("selectedCategories", categories);
@@ -70,14 +52,13 @@ public class ServicesController {
     @GetMapping("services/{id}")
     @Transactional(readOnly = true)
     public String viewServiceDetails(@PathVariable Integer id, Model model) {
-        Service service = serviceRepo.findByIdWithCategory(id)
-            .orElseThrow(() -> new RuntimeException("Service not found"));
+        Service service = servicesService.getServiceDetails(id);
         
         model.addAttribute("service", service);
         
         // If it's a combo, get the combo services
         if (service.getServiceType() == ServiceType.COMBO) {
-            List<ServiceCombo> comboServices = serviceComboRepo.findByComboIdWithDetails(id);
+            List<ServiceCombo> comboServices = servicesService.getComboServices(id);
             model.addAttribute("comboServices", comboServices);
             return "combo-details";
         }

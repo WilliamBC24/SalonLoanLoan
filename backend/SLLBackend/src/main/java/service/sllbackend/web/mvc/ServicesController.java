@@ -37,6 +37,7 @@ public class ServicesController {
     public String listServices(
             @RequestParam(required = false) List<String> types,
             @RequestParam(required = false) List<Integer> categories,
+            @RequestParam(required = false) String name,
             Model model) {
         
         // Get all categories for filters
@@ -45,14 +46,15 @@ public class ServicesController {
         
         // Get services based on filters
         List<Service> services;
-        if (types != null || categories != null) {
+        if (types != null || categories != null || (name != null && !name.trim().isEmpty())) {
             List<ServiceType> serviceTypes = null;
             if (types != null && !types.isEmpty()) {
                 serviceTypes = types.stream()
                     .map(ServiceType::valueOf)
                     .toList();
             }
-            services = serviceRepo.searchServices(serviceTypes, categories);
+            String searchName = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
+            services = serviceRepo.searchServices(serviceTypes, categories, searchName);
         } else {
             services = serviceRepo.findAllWithCategory();
         }
@@ -60,6 +62,7 @@ public class ServicesController {
         model.addAttribute("services", services);
         model.addAttribute("selectedTypes", types);
         model.addAttribute("selectedCategories", categories);
+        model.addAttribute("searchName", name);
         
         return "services";
     }

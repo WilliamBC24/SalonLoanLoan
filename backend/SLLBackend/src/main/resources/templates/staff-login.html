@@ -6,10 +6,6 @@
 </head>
 <body>
 <h2>Staff Login</h2>
-<div th:if="${#request.userPrincipal != null}">
-    You are already logged in as <b th:text="${#request.remoteUser}">username</b>.
-    <a th:href="@{/auth/staff/logout}">Logout</a>
-</div>
 <form th:action="@{/auth/staff/login}" method="post">
     <div>
         <label for="username">Username:</label>

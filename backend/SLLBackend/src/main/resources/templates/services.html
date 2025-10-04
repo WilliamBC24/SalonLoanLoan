@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Services</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .search-bar {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        .filter-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-item input {
+            margin-right: 5px;
+        }
+        .search-buttons {
+            margin-top: 15px;
+        }
+        .search-buttons button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .search-btn {
+            background: #007bff;
+            color: white;
+        }
+        .search-btn:hover {
+            background: #0056b3;
+        }
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #545b62;
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            text-align: left;
+        }
+        th { 
+            background: #f4f4f4; 
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .view-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .view-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Services</h1>
+
+    <!-- Search and Filter Bar -->
+    <div class="search-bar">
+        <form method="get" action="/services">
+            <div class="filter-group">
+                <label for="search-name">Search by Name:</label>
+                <input type="text" id="search-name" name="name" 
+                       th:value="${searchName}" 
+                       placeholder="Enter service name..."
+                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+
+            <div class="filter-group">
+                <label>Service Type:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="type-single" name="types" value="SINGLE" 
+                               th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
+                        <label for="type-single">Single</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="type-combo" name="types" value="COMBO"
+                               th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
+                        <label for="type-combo">Combo</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Service Category:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item" th:each="category : ${allCategories}">
+                        <input type="checkbox" th:id="'category-' + ${category.id}" 
+                               name="categories" th:value="${category.id}"
+                               th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
+                        <label th:for="'category-' + ${category.id}" th:text="${category.name}">Category</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-buttons">
+                <button type="submit" class="search-btn">Search</button>
+                <button type="button" class="reset-btn" onclick="window.location.href='/services'">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Services Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Duration (min)</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="svc : ${services}">
+                <td th:text="${svc.id}">1</td>
+                <td th:text="${svc.serviceName}">Service name</td>
+                <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
+                <td th:text="${svc.serviceType}">SINGLE</td>
+                <td th:text="${svc.servicePrice}">0</td>
+                <td th:text="${svc.durationMinutes}">0</td>
+                <td th:text="${svc.activeStatus}">false</td>
+                <td>
+                    <a th:href="@{/services/{id}(id=${svc.id})}" class="view-link">View Details</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -39,15 +40,35 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	@Order(0)
+	public SecurityFilterChain staticResourcesSecurityFilter(HttpSecurity http) throws Exception {
+		return http
+				.securityMatcher("/css/**", "/js/**", "/api/**")
+				.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+				.build();
+	}
+
+	@Bean
 	@Order(1)
+	public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
+		return http
+				.securityMatcher("/", "/services", "/services/**", "/products", "/products/**")
+				.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/", "/services", "/services/**", "/products", "/products/**").permitAll()
+						.anyRequest().denyAll())
+				.build();
+	}
+
+	@Bean
+	@Order(2)
 	public SecurityFilterChain userSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/auth/user/**")
-				.csrf(csrf -> csrf
-						.ignoringRequestMatchers("/api/**"))
+				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/user/**", "/css/**", "/js/**", "/api/**")
-						.permitAll()
+						.requestMatchers("/auth/user/**").permitAll()
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
 						.usernameParameter("username")
@@ -58,15 +79,13 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@Order(2)
+	@Order(3)
 	public SecurityFilterChain staffSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/auth/staff/**")
-				.csrf(csrf -> csrf
-						.ignoringRequestMatchers("/api/**"))
+				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/staff/**", "/css/**", "/js/**", "/api/**")
-						.permitAll()
+						.requestMatchers("/auth/staff/**").permitAll()
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
 						.usernameParameter("username")
@@ -77,12 +96,11 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@Order(3)
+	@Order(4)
 	public SecurityFilterChain logoutSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/auth/logout")
-				.csrf(csrf -> csrf
-						.ignoringRequestMatchers("/api/**"))
+				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/auth/logout").permitAll()
 						.anyRequest().authenticated())
@@ -94,15 +112,12 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@Order(4)
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	public SecurityFilterChain defaultSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/**")
-				.csrf(csrf -> csrf
-						.ignoringRequestMatchers("/api/**"))
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/css/**", "/js/**", "/api/**").permitAll()
-						.anyRequest().authenticated())
+				.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
 						.usernameParameter("username")
 						.passwordParameter("password")

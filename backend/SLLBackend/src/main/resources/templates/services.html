@@ -90,6 +90,14 @@
     <div class="search-bar">
         <form method="get" action="/services">
             <div class="filter-group">
+                <label for="search-name">Search by Name:</label>
+                <input type="text" id="search-name" name="name" 
+                       th:value="${searchName}" 
+                       placeholder="Enter service name..."
+                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+
+            <div class="filter-group">
                 <label>Service Type:</label>
                 <div class="checkbox-group">
                     <div class="checkbox-item">

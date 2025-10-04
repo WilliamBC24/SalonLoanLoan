@@ -20,8 +20,10 @@ public interface ServiceRepo extends JpaRepository<Service, Integer> {
 
 	@Query("select s from Service s left join fetch s.serviceCategory " +
 		   "where (:types is null or s.serviceType in :types) " +
-		   "and (:categoryIds is null or s.serviceCategory.id in :categoryIds)")
+		   "and (:categoryIds is null or s.serviceCategory.id in :categoryIds) " +
+		   "and (:name is null or lower(s.serviceName) like lower(concat('%', :name, '%')))")
 	List<Service> searchServices(@Param("types") List<ServiceType> types, 
-								  @Param("categoryIds") List<Integer> categoryIds);
+								  @Param("categoryIds") List<Integer> categoryIds,
+								  @Param("name") String name);
 
 }

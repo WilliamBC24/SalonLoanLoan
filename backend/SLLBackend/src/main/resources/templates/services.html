@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Services</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>All Services</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Duration (min)</th>
+                <th>Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="svc : ${services}">
+                <td th:text="${svc.id}">1</td>
+                <td th:text="${svc.serviceName}">Service name</td>
+                <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
+                <td th:text="${svc.serviceType}">SINGLE</td>
+                <td th:text="${svc.servicePrice}">0</td>
+                <td th:text="${svc.durationMinutes}">0</td>
+                <td th:text="${svc.activeStatus}">false</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

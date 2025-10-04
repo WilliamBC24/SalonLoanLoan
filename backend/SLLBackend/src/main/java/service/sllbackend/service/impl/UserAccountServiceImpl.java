@@ -21,18 +21,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        UserAccount user = userAccountRepo.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+        UserAccount user = userAccountRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        
         if (user.getAccountStatus() == AccountStatus.DEACTIVATED) {
             throw new DisabledException(user.getUsername());
         }
         if (user.getAccountStatus() == AccountStatus.BANNED) {
             throw new BannedException(user.getUsername());
         }
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                List.of() // authorities
-        );
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), List.of());
     }
 }

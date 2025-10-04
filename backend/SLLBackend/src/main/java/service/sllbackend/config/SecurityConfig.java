@@ -27,11 +27,6 @@ public class SecurityConfig {
 		this.staffAuthenticationProvider = staffAuthenticationProvider;
 	}
 
-	// @Bean
-	// public AuthenticationManager authenticationManager(
-	// AuthenticationConfiguration authenticationConfiguration) throws Exception {
-	// return authenticationConfiguration.getAuthenticationManager();
-	// }
 	@Bean
 	@Primary
 	public ProviderManager userProviderManager() {
@@ -58,10 +53,6 @@ public class SecurityConfig {
 						.usernameParameter("username")
 						.passwordParameter("password")
 						.failureUrl("/auth/user/login?error"))
-				.logout(logout -> logout.logoutUrl("/auth/user/logout")
-						.logoutSuccessUrl("/auth/user/login?logout")
-						.invalidateHttpSession(true)
-						.deleteCookies("JSESSIONID"))
 				.authenticationManager(userProviderManager())
 				.build();
 	}
@@ -81,11 +72,42 @@ public class SecurityConfig {
 						.usernameParameter("username")
 						.passwordParameter("password")
 						.failureUrl("/auth/staff/login?error"))
-				.logout(logout -> logout.logoutUrl("/auth/staff/logout")
-						.logoutSuccessUrl("/auth/staff/login?logout")
+				.authenticationManager(staffProviderManager())
+				.build();
+	}
+
+	@Bean
+	@Order(3)
+	public SecurityFilterChain logoutSecurityFilter(HttpSecurity http) throws Exception {
+		return http
+				.securityMatcher("/auth/logout")
+				.csrf(csrf -> csrf
+						.ignoringRequestMatchers("/api/**"))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/auth/logout").permitAll()
+						.anyRequest().authenticated())
+				.logout(logout -> logout.logoutUrl("/auth/logout")
+						.logoutSuccessUrl("/?logout")
 						.invalidateHttpSession(true)
 						.deleteCookies("JSESSIONID"))
-				.authenticationManager(staffProviderManager())
+				.build();
+	}
+
+	@Bean
+	@Order(4)
+	public SecurityFilterChain defaultSecurityFilter(HttpSecurity http) throws Exception {
+		return http
+				.securityMatcher("/**")
+				.csrf(csrf -> csrf
+						.ignoringRequestMatchers("/api/**"))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/css/**", "/js/**", "/api/**").permitAll()
+						.anyRequest().authenticated())
+				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
+						.usernameParameter("username")
+						.passwordParameter("password")
+						.failureUrl("/auth/user/login?error"))
+				.authenticationManager(userProviderManager())
 				.build();
 	}
 }

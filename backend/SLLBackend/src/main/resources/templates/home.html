@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Salon Loan Loan | Home</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<header>
+    <h1>Welcome to Salon Loan Loan</h1>
+    <nav>
+        <a th:href="@{/}">Home</a> |
+        <a th:href="@{/products}">Products</a> |
+        <a th:href="@{/services}">Services</a> |
+        <a th:href="@{/auth/user/login}">User Login</a> |
+        <a th:href="@{/auth/staff/login}">Staff Login</a>
+    </nav>
+</header>
+
+<hr>
+
+<section>
+    <h2>Our Services</h2>
+    <div th:if="${#lists.isEmpty(services)}">
+        <p>No services available at the moment.</p>
+    </div>
+    <div th:each="service : ${services}">
+        <div class="service-card">
+            <h3 th:text="${service.serviceName}">Service Name</h3>
+            <p th:text="${service.serviceDescription}">Description</p>
+            <p><strong>Price:</strong> ₫<span th:text="${service.servicePrice}">0</span></p>
+        </div>
+    </div>
+</section>
+
+<hr>
+
+<section>
+    <h2>Our Products</h2>
+    <div th:if="${#lists.isEmpty(products)}">
+        <p>No products available at the moment.</p>
+    </div>
+    <div th:each="product : ${products}">
+        <div class="product-card">
+            <h3 th:text="${product.productName}">Product Name</h3>
+            <p th:text="${product.productDescription}">Description</p>
+            <p><strong>Price:</strong> ₫<span th:text="${product.currentPrice}">0</span></p>
+        </div>
+    </div>
+</section>
+
+<hr>
+
+<footer>
+    <p>&copy; 2025 Salon Loan Loan. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

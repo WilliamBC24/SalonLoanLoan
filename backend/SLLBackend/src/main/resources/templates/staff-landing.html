@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Dashboard | Salon Loan Loan</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f9f9f9, #f0f4ff);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #3b5bdb;
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+        }
+
+        main {
+            max-width: 700px;
+            margin: 3rem auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1, h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: #555;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #3b5bdb;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .button:hover {
+            background-color: #3249b2;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Salon Loan Loan Staff Portal</h1>
+</header>
+
+<main>
+    <h2>Welcome, <span th:text="${#authentication.name}">Staff</span>!</h2>
+    <p>You're now logged in to the staff dashboard. From here, you can manage appointments, view customer info, and oversee salon operations.</p>
+
+    <div style="margin-top: 2rem;">
+        <a href="/" class="button">Go to Homepage</a>
+        <a href="/staff/profile" class="button">View Profile</a>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline;">
+            <button type="submit" class="button" style="background-color:#dc3545;">Logout</button>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Salon Loan Loan. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

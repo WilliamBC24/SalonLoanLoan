@@ -2,6 +2,7 @@ package service.sllbackend.dev;
 
 import java.time.LocalDate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import service.sllbackend.entity.UserAccount;
 import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.Product;
+import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.enumerator.Gender;
 import service.sllbackend.enumerator.ServiceType;
 import service.sllbackend.repository.StaffAccountRepo;
@@ -28,6 +30,7 @@ import service.sllbackend.repository.ProductRepo;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DataLoader implements CommandLineRunner {
 	private final UserAccountRepo userAccountRepo;
 	private final StaffRepo staffRepo;
@@ -41,7 +44,7 @@ public class DataLoader implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		System.out.println("############ \n            Loading initial data\n############");
+		log.info("############ \n            Loading initial data\n############");
 		registerUser();
 		registerStaff();
 		registerServices();
@@ -60,6 +63,7 @@ public class DataLoader implements CommandLineRunner {
 				.birthDate(LocalDate.of(2004, 9, 6))
 				.phoneNumber("0999999999")
 				.email("alice@wonderland.com")
+				.accountStatus(AccountStatus.ACTIVE)
 				.build());
 	}
 
@@ -420,7 +424,7 @@ public class DataLoader implements CommandLineRunner {
 				.activeStatus(true)
 				.build());
 
-		System.out.println("Successfully loaded 30 services across 5 categories");
+		log.info("Successfully loaded 30 services across 5 categories");
 	}
 
 	public void registerProducts() {
@@ -638,6 +642,6 @@ public class DataLoader implements CommandLineRunner {
 				.activeStatus(true)
 				.build());
 
-		System.out.println("Successfully loaded 30 products");
+		log.info("Successfully loaded 30 products");
 	}
 }

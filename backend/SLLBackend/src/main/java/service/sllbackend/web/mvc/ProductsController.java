@@ -33,8 +33,8 @@ public class ProductsController {
         // Get products based on filters
         List<Product> products;
         if ((name != null && !name.trim().isEmpty()) || activeStatus != null) {
-            String searchName = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
-            products = productRepo.searchProducts(searchName, activeStatus);
+            String pattern = (name != null && !name.trim().isEmpty()) ? "%" + name.trim() + "%" : null;
+            products = productRepo.searchProducts(pattern, activeStatus);
         } else {
             products = productRepo.findAllProducts();
         }

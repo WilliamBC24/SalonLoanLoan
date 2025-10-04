@@ -17,10 +17,6 @@ public interface ProductRepo extends JpaRepository<Product, Integer> {
 	@Query("select p from Product p where p.id = :id")
 	Optional<Product> findProductById(@Param("id") Integer id);
 
-	@Query("select p from Product p " +
-		   "where (:name is null or lower(p.productName) like lower(concat('%', :name, '%'))) " +
-		   "and (:activeStatus is null or p.activeStatus = :activeStatus)")
-	List<Product> searchProducts(@Param("name") String name, 
-								  @Param("activeStatus") Boolean activeStatus);
-
+	@Query(value = "SELECT * FROM product p WHERE (:pattern IS NULL OR LOWER(p.product_name) LIKE LOWER(:pattern)) AND (:activeStatus IS NULL OR p.active_status = :activeStatus)", nativeQuery = true)
+	List<Product> searchProducts(@Param("pattern") String pattern, @Param("activeStatus") Boolean activeStatus);
 }

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Staff - Edit Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 800px;
+        }
+        h1 {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-group .error {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 5px;
+            display: none;
+        }
+        .form-group input.invalid,
+        .form-group select.invalid {
+            border-color: #dc3545;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            width: auto;
+            margin-right: 8px;
+        }
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+        .info-text {
+            color: #6c757d;
+            font-size: 0.875em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Service</h1>
+    <p class="info-text">Service ID: <span th:text="${service.id}">1</span></p>
+
+    <!-- Error Messages -->
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+    <form id="editServiceForm" method="post" th:action="@{/staff/service/edit/{id}(id=${service.id})}">
+        <div class="form-group">
+            <label for="serviceName" class="required">Service Name</label>
+            <input type="text" id="serviceName" name="serviceName" 
+                   th:value="${service.serviceName}" required>
+            <div class="error" id="serviceNameError">Service name is required</div>
+        </div>
+
+        <div class="form-group">
+            <label for="serviceCategoryId" class="required">Service Category</label>
+            <select id="serviceCategoryId" name="serviceCategoryId" required>
+                <option value="">-- Select Category --</option>
+                <option th:each="category : ${categories}" 
+                        th:value="${category.id}" 
+                        th:text="${category.name}"
+                        th:selected="${service.serviceCategory.id == category.id}">Category</option>
+            </select>
+            <div class="error" id="serviceCategoryIdError">Service category is required</div>
+        </div>
+
+        <div class="form-group">
+            <label for="serviceType" class="required">Service Type</label>
+            <select id="serviceType" name="serviceType" required>
+                <option value="">-- Select Type --</option>
+                <option value="SINGLE" th:selected="${service.serviceType.name() == 'SINGLE'}">Single</option>
+                <option value="COMBO" th:selected="${service.serviceType.name() == 'COMBO'}">Combo</option>
+            </select>
+            <div class="error" id="serviceTypeError">Service type is required</div>
+        </div>
+
+        <div class="form-group">
+            <label for="servicePrice" class="required">Service Price (VND)</label>
+            <input type="number" id="servicePrice" name="servicePrice" min="0" 
+                   th:value="${service.servicePrice}" required>
+            <div class="error" id="servicePriceError">Service price is required and must be a positive number</div>
+        </div>
+
+        <div class="form-group">
+            <label for="durationMinutes" class="required">Duration (minutes)</label>
+            <input type="number" id="durationMinutes" name="durationMinutes" min="1" max="32767" 
+                   th:value="${service.durationMinutes}" required>
+            <div class="error" id="durationMinutesError">Duration is required and must be between 1 and 32767 minutes</div>
+        </div>
+
+        <div class="form-group">
+            <label for="serviceDescription">Service Description</label>
+            <textarea id="serviceDescription" name="serviceDescription" 
+                      th:text="${service.serviceDescription}"></textarea>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="activeStatus" name="activeStatus" value="true"
+                       th:checked="${service.activeStatus}">
+                <label for="activeStatus">Active Status</label>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary">Update Service</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/service/list'">Cancel</button>
+        </div>
+    </form>
+
+    <script>
+        document.getElementById('editServiceForm').addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Validate service name
+            const serviceName = document.getElementById('serviceName');
+            const serviceNameError = document.getElementById('serviceNameError');
+            if (!serviceName.value.trim()) {
+                serviceName.classList.add('invalid');
+                serviceNameError.style.display = 'block';
+                isValid = false;
+            } else {
+                serviceName.classList.remove('invalid');
+                serviceNameError.style.display = 'none';
+            }
+
+            // Validate service category
+            const serviceCategoryId = document.getElementById('serviceCategoryId');
+            const serviceCategoryIdError = document.getElementById('serviceCategoryIdError');
+            if (!serviceCategoryId.value) {
+                serviceCategoryId.classList.add('invalid');
+                serviceCategoryIdError.style.display = 'block';
+                isValid = false;
+            } else {
+                serviceCategoryId.classList.remove('invalid');
+                serviceCategoryIdError.style.display = 'none';
+            }
+
+            // Validate service type
+            const serviceType = document.getElementById('serviceType');
+            const serviceTypeError = document.getElementById('serviceTypeError');
+            if (!serviceType.value) {
+                serviceType.classList.add('invalid');
+                serviceTypeError.style.display = 'block';
+                isValid = false;
+            } else {
+                serviceType.classList.remove('invalid');
+                serviceTypeError.style.display = 'none';
+            }
+
+            // Validate service price
+            const servicePrice = document.getElementById('servicePrice');
+            const servicePriceError = document.getElementById('servicePriceError');
+            if (!servicePrice.value || parseInt(servicePrice.value) < 0) {
+                servicePrice.classList.add('invalid');
+                servicePriceError.style.display = 'block';
+                isValid = false;
+            } else {
+                servicePrice.classList.remove('invalid');
+                servicePriceError.style.display = 'none';
+            }
+
+            // Validate duration minutes
+            const durationMinutes = document.getElementById('durationMinutes');
+            const durationMinutesError = document.getElementById('durationMinutesError');
+            const duration = parseInt(durationMinutes.value);
+            if (!durationMinutes.value || duration < 1 || duration > 32767) {
+                durationMinutes.classList.add('invalid');
+                durationMinutesError.style.display = 'block';
+                isValid = false;
+            } else {
+                durationMinutes.classList.remove('invalid');
+                durationMinutesError.style.display = 'none';
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                alert('Please correct the errors in the form before submitting.');
+            }
+        });
+
+        // Real-time validation on input
+        document.getElementById('serviceName').addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('invalid');
+                document.getElementById('serviceNameError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('serviceCategoryId').addEventListener('change', function() {
+            if (this.value) {
+                this.classList.remove('invalid');
+                document.getElementById('serviceCategoryIdError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('serviceType').addEventListener('change', function() {
+            if (this.value) {
+                this.classList.remove('invalid');
+                document.getElementById('serviceTypeError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('servicePrice').addEventListener('input', function() {
+            if (this.value && parseInt(this.value) >= 0) {
+                this.classList.remove('invalid');
+                document.getElementById('servicePriceError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('durationMinutes').addEventListener('input', function() {
+            const duration = parseInt(this.value);
+            if (this.value && duration >= 1 && duration <= 32767) {
+                this.classList.remove('invalid');
+                document.getElementById('durationMinutesError').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

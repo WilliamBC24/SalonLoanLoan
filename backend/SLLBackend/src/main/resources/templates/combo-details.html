@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Combo Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 1000px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .details-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .detail-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: bold;
+            width: 200px;
+            color: #555;
+        }
+        .detail-value {
+            flex: 1;
+            color: #333;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .service-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #28a745;
+            color: white;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .active-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .active-true {
+            background: #28a745;
+            color: white;
+        }
+        .active-false {
+            background: #dc3545;
+            color: white;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+            font-weight: bold;
+        }
+        tr:hover {
+            background: #f9f9f9;
+        }
+        .no-services {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <a href="/services" class="back-link">← Back to Services</a>
+    
+    <h1>
+        <span th:text="${service.serviceName}">Combo Name</span>
+        <span class="service-type">COMBO</span>
+        <span class="active-badge" 
+              th:classappend="${service.activeStatus} ? 'active-true' : 'active-false'"
+              th:text="${service.activeStatus} ? 'Active' : 'Inactive'">Active</span>
+    </h1>
+
+    <div class="details-card">
+        <div class="detail-row">
+            <div class="detail-label">Combo ID:</div>
+            <div class="detail-value" th:text="${service.id}">1</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Combo Name:</div>
+            <div class="detail-value" th:text="${service.serviceName}">Combo Name</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Category:</div>
+            <div class="detail-value" th:text="${service.serviceCategory != null ? service.serviceCategory.name : 'N/A'}">Category</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Total Price:</div>
+            <div class="detail-value" th:text="${service.servicePrice} + ' VND'">0 VND</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Total Duration:</div>
+            <div class="detail-value" th:text="${service.durationMinutes} + ' minutes'">0 minutes</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Description:</div>
+            <div class="detail-value" th:text="${service.serviceDescription != null ? service.serviceDescription : 'No description available'}">Description</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Status:</div>
+            <div class="detail-value" th:text="${service.activeStatus} ? 'Active' : 'Inactive'">Active</div>
+        </div>
+    </div>
+
+    <h2>Services Included in This Combo</h2>
+    
+    <div th:if="${comboServices != null and !comboServices.isEmpty()}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Service ID</th>
+                    <th>Service Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Duration (min)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cs : ${comboServices}">
+                    <td th:text="${cs.service.id}">1</td>
+                    <td th:text="${cs.service.serviceName}">Service Name</td>
+                    <td th:text="${cs.service.serviceCategory != null ? cs.service.serviceCategory.name : 'N/A'}">Category</td>
+                    <td th:text="${cs.service.servicePrice} + ' VND'">0 VND</td>
+                    <td th:text="${cs.service.durationMinutes}">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div th:if="${comboServices == null or comboServices.isEmpty()}" class="no-services">
+        No services found in this combo.
+    </div>
+
+</body>
+</html>

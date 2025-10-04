@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Product Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 800px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .details-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .detail-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: bold;
+            width: 200px;
+            color: #555;
+        }
+        .detail-value {
+            flex: 1;
+            color: #333;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .active-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .active-true {
+            background: #28a745;
+            color: white;
+        }
+        .active-false {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <a href="/products" class="back-link">← Back to Products</a>
+    
+    <h1>
+        <span th:text="${product.productName}">Product Name</span>
+        <span class="active-badge" 
+              th:classappend="${product.activeStatus} ? 'active-true' : 'active-false'"
+              th:text="${product.activeStatus} ? 'Active' : 'Inactive'">Active</span>
+    </h1>
+
+    <div class="details-card">
+        <div class="detail-row">
+            <div class="detail-label">Product ID:</div>
+            <div class="detail-value" th:text="${product.id}">1</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Product Name:</div>
+            <div class="detail-value" th:text="${product.productName}">Product Name</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Price:</div>
+            <div class="detail-value" th:text="${product.currentPrice} + ' VND'">0 VND</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Description:</div>
+            <div class="detail-value" th:text="${product.productDescription}">Description</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Status:</div>
+            <div class="detail-value" th:text="${product.activeStatus} ? 'Active' : 'Inactive'">Active</div>
+        </div>
+    </div>
+
+</body>
+</html>

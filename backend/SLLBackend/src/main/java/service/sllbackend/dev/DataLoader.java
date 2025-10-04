@@ -14,6 +14,7 @@ import service.sllbackend.entity.StaffPosition;
 import service.sllbackend.entity.UserAccount;
 import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
+import service.sllbackend.entity.Product;
 import service.sllbackend.enumerator.Gender;
 import service.sllbackend.enumerator.ServiceType;
 import service.sllbackend.repository.StaffAccountRepo;
@@ -23,6 +24,7 @@ import service.sllbackend.repository.StaffRepo;
 import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.repository.ServiceRepo;
 import service.sllbackend.repository.ServiceCategoryRepo;
+import service.sllbackend.repository.ProductRepo;
 
 @Component
 @RequiredArgsConstructor
@@ -35,6 +37,7 @@ public class DataLoader implements CommandLineRunner {
 	private final PasswordEncoder passwordEncoder;
 	private final ServiceRepo serviceRepo;
 	private final ServiceCategoryRepo serviceCategoryRepo;
+	private final ProductRepo productRepo;
 
 	@Override
 	public void run(String... args) {
@@ -42,6 +45,7 @@ public class DataLoader implements CommandLineRunner {
 		registerUser();
 		registerStaff();
 		registerServices();
+		registerProducts();
 	}
 
 	public void registerUser() {
@@ -417,5 +421,223 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		System.out.println("Successfully loaded 30 services across 5 categories");
+	}
+
+	public void registerProducts() {
+		// Hair Care Products (8 products)
+		productRepo.save(Product.builder()
+				.productName("Professional Shampoo")
+				.currentPrice(250000)
+				.productDescription("Premium salon-grade shampoo for all hair types")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Luxury Conditioner")
+				.currentPrice(280000)
+				.productDescription("Deep conditioning formula for silky smooth hair")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Hair Serum")
+				.currentPrice(350000)
+				.productDescription("Anti-frizz serum for shiny, manageable hair")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Hair Oil Treatment")
+				.currentPrice(320000)
+				.productDescription("Nourishing oil for damaged hair repair")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Styling Gel")
+				.currentPrice(180000)
+				.productDescription("Strong hold gel for long-lasting styles")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Hair Spray")
+				.currentPrice(220000)
+				.productDescription("Professional finishing spray for all-day hold")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Hair Mask")
+				.currentPrice(400000)
+				.productDescription("Intensive repair mask for damaged hair")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Dry Shampoo")
+				.currentPrice(200000)
+				.productDescription("Quick refresh between washes")
+				.activeStatus(true)
+				.build());
+
+		// Skin Care Products (8 products)
+		productRepo.save(Product.builder()
+				.productName("Facial Cleanser")
+				.currentPrice(300000)
+				.productDescription("Gentle cleansing for all skin types")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Vitamin C Serum")
+				.currentPrice(550000)
+				.productDescription("Brightening serum with antioxidants")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Hyaluronic Acid Moisturizer")
+				.currentPrice(480000)
+				.productDescription("Intense hydration for plump, youthful skin")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Retinol Night Cream")
+				.currentPrice(620000)
+				.productDescription("Anti-aging night treatment")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("SPF 50 Sunscreen")
+				.currentPrice(350000)
+				.productDescription("Broad spectrum sun protection")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Exfoliating Scrub")
+				.currentPrice(280000)
+				.productDescription("Gentle exfoliation for smooth skin")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Eye Cream")
+				.currentPrice(420000)
+				.productDescription("Reduces dark circles and fine lines")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Face Mask Set")
+				.currentPrice(380000)
+				.productDescription("5-piece variety mask collection")
+				.activeStatus(true)
+				.build());
+
+		// Nail Care Products (7 products)
+		productRepo.save(Product.builder()
+				.productName("Gel Polish Set")
+				.currentPrice(450000)
+				.productDescription("12 colors long-lasting gel polish")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Nail Strengthener")
+				.currentPrice(250000)
+				.productDescription("Protein treatment for weak nails")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Cuticle Oil")
+				.currentPrice(180000)
+				.productDescription("Nourishing oil for healthy cuticles")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Top Coat")
+				.currentPrice(200000)
+				.productDescription("Quick-dry glossy finish")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Base Coat")
+				.currentPrice(200000)
+				.productDescription("Protective base for nail polish")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Nail File Set")
+				.currentPrice(150000)
+				.productDescription("Professional quality nail files")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Nail Art Kit")
+				.currentPrice(500000)
+				.productDescription("Complete nail art design tools")
+				.activeStatus(true)
+				.build());
+
+		// Makeup Products (7 products)
+		productRepo.save(Product.builder()
+				.productName("Foundation")
+				.currentPrice(580000)
+				.productDescription("Full coverage matte foundation")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Eyeshadow Palette")
+				.currentPrice(650000)
+				.productDescription("24-color professional palette")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Mascara")
+				.currentPrice(320000)
+				.productDescription("Volumizing and lengthening mascara")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Lipstick Set")
+				.currentPrice(480000)
+				.productDescription("6 shades long-lasting lipstick")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Makeup Brushes")
+				.currentPrice(550000)
+				.productDescription("15-piece professional brush set")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Setting Spray")
+				.currentPrice(350000)
+				.productDescription("All-day makeup setting spray")
+				.activeStatus(true)
+				.build());
+
+		productRepo.save(Product.builder()
+				.productName("Makeup Remover")
+				.currentPrice(280000)
+				.productDescription("Gentle oil-free makeup remover")
+				.activeStatus(true)
+				.build());
+
+		System.out.println("Successfully loaded 30 products");
 	}
 }

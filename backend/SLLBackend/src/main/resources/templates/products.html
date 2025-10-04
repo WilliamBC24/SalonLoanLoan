@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Services</title>
+    <title>Products</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -84,79 +84,68 @@
     </style>
 </head>
 <body>
-    <h1>All Services</h1>
+    <h1>All Products</h1>
 
     <!-- Search and Filter Bar -->
     <div class="search-bar">
-        <form method="get" action="/services">
+        <form method="get" action="/products">
             <div class="filter-group">
                 <label for="search-name">Search by Name:</label>
                 <input type="text" id="search-name" name="name" 
                        th:value="${searchName}" 
-                       placeholder="Enter service name..."
+                       placeholder="Enter product name..."
                        style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
             </div>
 
             <div class="filter-group">
-                <label>Service Type:</label>
+                <label>Active Status:</label>
                 <div class="checkbox-group">
                     <div class="checkbox-item">
-                        <input type="checkbox" id="type-single" name="types" value="SINGLE" 
-                               th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
-                        <label for="type-single">Single</label>
+                        <input type="radio" id="status-all" name="activeStatus" value="" 
+                               th:checked="${selectedActiveStatus == null}">
+                        <label for="status-all">All</label>
                     </div>
                     <div class="checkbox-item">
-                        <input type="checkbox" id="type-combo" name="types" value="COMBO"
-                               th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
-                        <label for="type-combo">Combo</label>
+                        <input type="radio" id="status-active" name="activeStatus" value="true" 
+                               th:checked="${selectedActiveStatus != null and selectedActiveStatus == true}">
+                        <label for="status-active">Active Only</label>
                     </div>
-                </div>
-            </div>
-
-            <div class="filter-group">
-                <label>Service Category:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item" th:each="category : ${allCategories}">
-                        <input type="checkbox" th:id="'category-' + ${category.id}" 
-                               name="categories" th:value="${category.id}"
-                               th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
-                        <label th:for="'category-' + ${category.id}" th:text="${category.name}">Category</label>
+                    <div class="checkbox-item">
+                        <input type="radio" id="status-inactive" name="activeStatus" value="false"
+                               th:checked="${selectedActiveStatus != null and selectedActiveStatus == false}">
+                        <label for="status-inactive">Inactive Only</label>
                     </div>
                 </div>
             </div>
 
             <div class="search-buttons">
                 <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/services'">Reset</button>
+                <button type="button" class="reset-btn" onclick="window.location.href='/products'">Reset</button>
             </div>
         </form>
     </div>
 
-    <!-- Services Table -->
+    <!-- Products Table -->
     <table>
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Duration (min)</th>
+                <th>Price (VND)</th>
+                <th>Description</th>
                 <th>Active</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr th:each="svc : ${services}">
-                <td th:text="${svc.id}">1</td>
-                <td th:text="${svc.serviceName}">Service name</td>
-                <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
-                <td th:text="${svc.serviceType}">SINGLE</td>
-                <td th:text="${svc.servicePrice}">0</td>
-                <td th:text="${svc.durationMinutes}">0</td>
-                <td th:text="${svc.activeStatus}">false</td>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.id}">1</td>
+                <td th:text="${product.productName}">Product name</td>
+                <td th:text="${product.currentPrice}">0</td>
+                <td th:text="${product.productDescription}">Description</td>
+                <td th:text="${product.activeStatus}">false</td>
                 <td>
-                    <a th:href="@{/services/{id}(id=${svc.id})}" class="view-link">View Details</a>
+                    <a th:href="@{/products/{id}(id=${product.id})}" class="view-link">View Details</a>
                 </td>
             </tr>
         </tbody>

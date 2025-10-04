@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -36,6 +37,18 @@ public class SecurityConfig {
 	@Bean
 	public ProviderManager staffProviderManager() {
 		return new ProviderManager(staffAuthenticationProvider);
+	}
+
+	@Bean
+	@Order(0)
+	public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
+		return http
+				.securityMatcher("/", "/services", "/services/**")
+				.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/", "/services", "/services/**").permitAll()
+						.anyRequest().denyAll())
+				.build();
 	}
 
 	@Bean
@@ -94,7 +107,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@Order(4)
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	public SecurityFilterChain defaultSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/**")

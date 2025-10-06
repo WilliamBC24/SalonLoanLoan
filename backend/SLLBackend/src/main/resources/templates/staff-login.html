@@ -2,28 +2,121 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Staff Login | Salon Loan Loan</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff, #dfe6ff);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 360px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #3b5bdb;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b5bdb;
+            box-shadow: 0 0 0 2px rgba(59, 91, 219, 0.2);
+        }
+
+        button {
+            background-color: #3b5bdb;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #3249b2;
+        }
+
+        .message {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #dc3545;
+        }
+
+        .logout-message {
+            color: #28a745;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
-<h2>Staff Login</h2>
-<form th:action="@{/auth/staff/login}" method="post">
-    <div>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-    </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-    </div>
-    <div>
-        <button type="submit">Login</button>
-    </div>
-    <div th:if="${param.error}">
-        Invalid username or password
-    </div>
-    <div th:if="${param.logout}">
-        You have been logged out
-    </div>
-</form>
+
+<div class="login-container">
+    <h2>Staff Login</h2>
+
+    <form th:action="@{/auth/staff/login}" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+        </div>
+
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <div>
+            <button type="submit">Login</button>
+        </div>
+
+        <div th:if="${param.error}" class="message">
+            Invalid username or password.
+        </div>
+
+        <div th:if="${param.logout}" class="message logout-message">
+            You have been logged out successfully.
+        </div>
+    </form>
+</div>
+
 </body>
 </html>

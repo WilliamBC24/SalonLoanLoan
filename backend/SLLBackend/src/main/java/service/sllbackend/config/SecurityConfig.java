@@ -53,10 +53,10 @@ public class SecurityConfig {
 	@Order(1)
 	public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/", "/services", "/services/**", "/products", "/products/**")
+				.securityMatcher("/", "/services", "/services/**", "/products", "/products/**", "/staff/service/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/services", "/services/**", "/products", "/products/**").permitAll()
+						.requestMatchers("/", "/services", "/services/**", "/products", "/products/**", "/staff/service/**").permitAll()
 						.anyRequest().denyAll())
 				.build();
 	}
@@ -73,7 +73,8 @@ public class SecurityConfig {
 				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
 						.usernameParameter("username")
 						.passwordParameter("password")
-						.failureUrl("/auth/user/login?error"))
+						.failureUrl("/auth/user/login?error")
+						.defaultSuccessUrl("/auth/user/landing", true))
 				.authenticationManager(userProviderManager())
 				.build();
 	}
@@ -90,7 +91,8 @@ public class SecurityConfig {
 				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
 						.usernameParameter("username")
 						.passwordParameter("password")
-						.failureUrl("/auth/staff/login?error"))
+						.failureUrl("/auth/staff/login?error")
+						.defaultSuccessUrl("/auth/staff/landing", true))
 				.authenticationManager(staffProviderManager())
 				.build();
 	}

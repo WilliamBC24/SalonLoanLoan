@@ -3,14 +3,19 @@ package service.sllbackend.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import service.sllbackend.entity.Product;
 import service.sllbackend.entity.Service;
 import service.sllbackend.enumerator.ServiceType;
 
 public interface ServiceRepo extends JpaRepository<Service, Integer> {
+
+	@Query("select s from Service s")
+	List<Service> findAllServices(Pageable pageable);
 
 	@Query("select s from Service s left join fetch s.serviceCategory")
 	List<Service> findAllWithCategory();

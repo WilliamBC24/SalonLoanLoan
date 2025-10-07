@@ -111,20 +111,4 @@ public class StaffProductController {
             return "redirect:/staff/products/edit/" + id;
         }
     }
-
-    @PostMapping("/delete/{id}")
-    @Transactional
-    public String deleteProduct(
-            @PathVariable Integer id,
-            RedirectAttributes redirectAttributes) {
-        
-        try {
-            productsService.deleteProduct(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Product deleted successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting product: " + e.getMessage());
-        }
-        
-        return "redirect:/staff/products/list";
-    }
 }

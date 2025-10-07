@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import service.sllbackend.entity.Product;
-import service.sllbackend.entity.Service;
 
 public interface ProductRepo extends JpaRepository<Product, Integer> {
 

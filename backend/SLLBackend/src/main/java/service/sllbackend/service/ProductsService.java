@@ -15,6 +15,4 @@ public interface ProductsService {
     Product createProduct(Product product);
     
     Product updateProduct(Integer id, Product product);
-    
-    void deleteProduct(Integer id);
 }

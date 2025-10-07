@@ -37,4 +37,32 @@ public class ProductsServiceImpl implements ProductsService {
     public List<Product> getTenProducts() {
         return productRepo.findAllProducts(PageRequest.of(0, 10));
     }
+    
+    @Override
+    @Transactional
+    public Product createProduct(Product product) {
+        return productRepo.save(product);
+    }
+    
+    @Override
+    @Transactional
+    public Product updateProduct(Integer id, Product product) {
+        Product existingProduct = productRepo.findProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        
+        existingProduct.setProductName(product.getProductName());
+        existingProduct.setCurrentPrice(product.getCurrentPrice());
+        existingProduct.setProductDescription(product.getProductDescription());
+        existingProduct.setActiveStatus(product.getActiveStatus());
+        
+        return productRepo.save(existingProduct);
+    }
+    
+    @Override
+    @Transactional
+    public void deleteProduct(Integer id) {
+        Product product = productRepo.findProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        productRepo.delete(product);
+    }
 }

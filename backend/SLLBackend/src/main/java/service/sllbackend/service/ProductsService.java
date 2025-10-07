@@ -11,4 +11,10 @@ public interface ProductsService {
     Product getProductById(Integer id);
 
     List<Product> getTenProducts();
+    
+    Product createProduct(Product product);
+    
+    Product updateProduct(Integer id, Product product);
+    
+    void deleteProduct(Integer id);
 }

@@ -15,9 +15,6 @@ import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.ServiceCombo;
 import service.sllbackend.enumerator.ServiceType;
-import service.sllbackend.repository.ServiceCategoryRepo;
-import service.sllbackend.repository.ServiceComboRepo;
-import service.sllbackend.repository.ServiceRepo;
 import service.sllbackend.service.ServicesService;
 
 @Controller

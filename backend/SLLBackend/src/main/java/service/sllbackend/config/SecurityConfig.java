@@ -53,10 +53,10 @@ public class SecurityConfig {
 	@Order(1)
 	public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/", "/services", "/services/**", "/products", "/products/**", "/staff/service/**")
+				.securityMatcher("/", "/services", "/services/**", "/products", "/products/**", "/staff/service/**", "/staff/products/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/services", "/services/**", "/products", "/products/**", "/staff/service/**").permitAll()
+						.requestMatchers("/", "/services", "/services/**", "/products", "/products/**", "/staff/service/**", "/staff/products/**").permitAll()
 						.anyRequest().denyAll())
 				.build();
 	}

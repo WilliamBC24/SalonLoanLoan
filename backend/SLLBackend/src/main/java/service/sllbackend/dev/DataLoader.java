@@ -72,6 +72,7 @@ public class DataLoader implements CommandLineRunner {
 		String role = "Administrator";
 		String username = "admin";
 		String rawPassword = "admin";
+		String hashedPassword = passwordEncoder.encode(rawPassword);
 
 		Staff staff = staffRepo.save(Staff.builder()
 				.name(name)
@@ -86,8 +87,6 @@ public class DataLoader implements CommandLineRunner {
 				.staff(staff)
 				.position(staffPosition)
 				.build());
-
-		String hashedPassword = passwordEncoder.encode(rawPassword);
 
 		staffAccountRepo.save(StaffAccount.builder()
 				.staff(staff)

@@ -3,7 +3,6 @@ package service.sllbackend.web.mvc;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +23,6 @@ public class ServicesController {
     private final ServicesService servicesService;
 
     @GetMapping("services")
-    @Transactional(readOnly = true)
     public String listServices(
             @RequestParam(required = false) List<String> types,
             @RequestParam(required = false) List<Integer> categories,
@@ -47,7 +45,6 @@ public class ServicesController {
     }
 
     @GetMapping("services/{id}")
-    @Transactional(readOnly = true)
     public String viewServiceDetails(@PathVariable Integer id, Model model) {
         Service service = servicesService.getServiceDetails(id);
         

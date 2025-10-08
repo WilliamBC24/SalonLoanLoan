@@ -75,7 +75,7 @@ public class ProfileUtils {
         List<UserAccount> conflicts = userAccountRepo.findConflicts(username, email, phoneNumber, currentUserId);
 
         for (UserAccount conflict : conflicts) {
-            if (username != null && username.equals(conflict.getUsername())) {
+            if (username != null && StringUtils.hasText(username) && username.equals(conflict.getUsername())) {
                 throw new IllegalArgumentException("Username is already taken");
             }
             if (email != null && email.equals(conflict.getEmail())) {

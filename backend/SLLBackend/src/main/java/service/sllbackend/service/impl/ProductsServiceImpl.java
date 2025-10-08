@@ -1,15 +1,15 @@
 package service.sllbackend.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Product;
 import service.sllbackend.repository.ProductRepo;
 import service.sllbackend.service.ProductsService;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,5 +36,25 @@ public class ProductsServiceImpl implements ProductsService {
     @Override
     public List<Product> getTenProducts() {
         return productRepo.findAllProducts(PageRequest.of(0, 10));
+    }
+
+    @Override
+    @Transactional
+    public Product createProduct(Product product) {
+        return productRepo.save(product);
+    }
+
+    @Override
+    @Transactional
+    public Product updateProduct(Integer id, Product product) {
+        Product existingProduct = productRepo.findProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        existingProduct.setProductName(product.getProductName());
+        existingProduct.setCurrentPrice(product.getCurrentPrice());
+        existingProduct.setProductDescription(product.getProductDescription());
+        existingProduct.setActiveStatus(product.getActiveStatus());
+
+        return productRepo.save(existingProduct);
     }
 }

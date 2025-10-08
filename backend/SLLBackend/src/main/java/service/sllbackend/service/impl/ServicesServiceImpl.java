@@ -1,8 +1,12 @@
 package service.sllbackend.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.ServiceCombo;
@@ -11,8 +15,6 @@ import service.sllbackend.repository.ServiceCategoryRepo;
 import service.sllbackend.repository.ServiceComboRepo;
 import service.sllbackend.repository.ServiceRepo;
 import service.sllbackend.service.ServicesService;
-
-import java.util.List;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
@@ -38,7 +40,20 @@ public class ServicesServiceImpl implements ServicesService {
                         .toList();
             }
             String searchName = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
-            return serviceRepo.searchServices(serviceTypes, categories, searchName);
+            List<Service> allServices = serviceRepo.findAllWithCategory();
+            List<Service> filteredServices = new ArrayList<>();
+
+            for(Service s : allServices) {
+                boolean matchesType = (serviceTypes == null || serviceTypes.contains(s.getServiceType()));
+                boolean matchesCategory = (categories == null || categories.isEmpty() || (s.getServiceCategory() != null && categories.contains(s.getServiceCategory().getId())));
+                boolean matchesName = (searchName == null || s.getServiceName().toLowerCase().contains(searchName.toLowerCase()));
+
+                if (matchesType && matchesCategory && matchesName) {
+                    filteredServices.add(s);
+                }
+            }
+
+            return filteredServices;
         } else {
             return serviceRepo.findAllWithCategory();
         }
@@ -59,7 +74,7 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Service> getTenServices(){
-        return serviceRepo.findAllServices(PageRequest.of(0,10));
+    public List<Service> getTenServices() {
+        return serviceRepo.findAllServices(PageRequest.of(0, 10));
     }
 }

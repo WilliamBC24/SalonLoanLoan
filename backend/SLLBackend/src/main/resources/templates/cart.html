@@ -61,28 +61,11 @@
             font-weight: bold;
             color: #28a745;
         }
-        .quantity-form {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
         .quantity-input {
             width: 60px;
             padding: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
-        }
-        .update-btn {
-            padding: 5px 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .update-btn:hover {
-            background: #0056b3;
         }
         .remove-btn {
             padding: 5px 10px;
@@ -165,18 +148,18 @@
                         <span class="price" th:text="${item.product.currentPrice} + ' VND'">0 VND</span>
                     </td>
                     <td>
-                        <form action="/cart/adjust" method="post" class="quantity-form">
-                            <input type="hidden" name="productId" th:value="${item.product.id}" />
-                            <input type="number" 
-                                   name="amount" 
-                                   th:value="${item.amount}" 
-                                   min="1" 
-                                   class="quantity-input" />
-                            <button type="submit" class="update-btn">Update</button>
-                        </form>
+                        <input type="number" 
+                               th:data-product-id="${item.product.id}"
+                               th:data-price="${item.product.currentPrice}"
+                               th:value="${item.amount}" 
+                               min="1" 
+                               class="quantity-input"
+                               onchange="updateQuantity(this)" />
                     </td>
                     <td>
-                        <span class="price" th:text="${item.product.currentPrice * item.amount} + ' VND'">0 VND</span>
+                        <span class="price" 
+                              th:id="'item-total-' + ${item.product.id}"
+                              th:text="${item.product.currentPrice * item.amount} + ' VND'">0 VND</span>
                     </td>
                     <td>
                         <form action="/cart/remove" method="post" style="display: inline;">
@@ -191,12 +174,55 @@
         <div class="cart-summary">
             <div class="summary-row summary-total">
                 <span>Total Cart Price:</span>
-                <span th:text="${totalPrice} + ' VND'">0 VND</span>
+                <span id="total-price" th:text="${totalPrice} + ' VND'">0 VND</span>
             </div>
         </div>
 
         <a href="/products" class="continue-shopping">Continue Shopping</a>
     </div>
+
+    <script>
+        function updateQuantity(input) {
+            const productId = input.getAttribute('data-product-id');
+            const amount = input.value;
+            const price = parseInt(input.getAttribute('data-price'));
+            
+            if (amount < 1) {
+                input.value = 1;
+                return;
+            }
+            
+            // Send AJAX request to update quantity
+            fetch('/cart/api/update-quantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `productId=${productId}&amount=${amount}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the item total
+                    const itemTotalElement = document.getElementById('item-total-' + productId);
+                    if (itemTotalElement && data.itemTotal !== undefined) {
+                        itemTotalElement.textContent = data.itemTotal + ' VND';
+                    }
+                    
+                    // Update the total price
+                    const totalPriceElement = document.getElementById('total-price');
+                    if (totalPriceElement && data.totalPrice !== undefined) {
+                        totalPriceElement.textContent = data.totalPrice + ' VND';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error updating quantity:', error);
+                // Optionally reload the page on error
+                // location.reload();
+            });
+        }
+    </script>
 
 </body>
 </html>

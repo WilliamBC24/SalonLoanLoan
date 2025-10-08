@@ -53,10 +53,10 @@ public class SecurityConfig {
 	@Order(1)
 	public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/", "/services", "/services/**", "/products", "/products/**", "/staff/service/**", "/staff/products/**")
+				.securityMatcher("/", "/services", "/services/**", "/products", "/products/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/services", "/services/**", "/products", "/products/**", "/staff/service/**", "/staff/products/**").permitAll()
+						.requestMatchers("/", "/services", "/services/**", "/products", "/products/**").permitAll()
 						.anyRequest().denyAll())
 				.build();
 	}
@@ -65,10 +65,11 @@ public class SecurityConfig {
 	@Order(2)
 	public SecurityFilterChain userSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/auth/user/**")
+				.securityMatcher("/auth/user/**", "/cart/**", "/profile/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/user/**").permitAll()
+						.requestMatchers("/auth/user/login", "/auth/user/register").permitAll()
+						.requestMatchers("/cart/**", "/profile/**").authenticated()
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
 						.usernameParameter("username")
@@ -83,10 +84,11 @@ public class SecurityConfig {
 	@Order(3)
 	public SecurityFilterChain staffSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/auth/staff/**")
+				.securityMatcher("/auth/staff/**", "/staff/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/staff/**").permitAll()
+						.requestMatchers("/auth/staff/login").permitAll()
+						.requestMatchers("/staff/**").authenticated()
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
 						.usernameParameter("username")

@@ -3,6 +3,7 @@ package service.sllbackend.utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import service.sllbackend.entity.Staff;
 import service.sllbackend.entity.UserAccount;
 import service.sllbackend.repository.StaffRepo;
 import service.sllbackend.repository.UserAccountRepo;
@@ -28,10 +29,18 @@ public class ValidationUtils {
     }
 
     public void validateStaffProfile(Long currentStaffId, String username) {
-        checkConflicts(currentStaffId, username);
+        checkStaffNameConflicts(currentStaffId, username);
+    }
+
+    public void validateStaffProfileAdmin(Long currentStaffId, String name, String email, String ssn) throws Exception {
+        checkStaffProfileConflicts(currentStaffId, name, email, ssn);
     }
 
     private void validateBirthDate(LocalDate birthDate) {
+        if (birthDate == null) {
+            return;
+        }
+
         int age = Period.between(birthDate, LocalDate.now()).getYears();
         if (age < 0 || age > 150) {
             throw new IllegalArgumentException("Invalid age: " + age);
@@ -66,9 +75,25 @@ public class ValidationUtils {
         }
     }
 
-    private void checkConflicts(Long currentUserId, String name) {
-        if (staffRepo.existsByNameAndIdNot(name, currentUserId)) {
+    private void checkStaffNameConflicts(Long currentUserId, String name) {
+        if (Boolean.TRUE.equals(staffRepo.existsByNameAndIdNot(name, currentUserId))) {
             throw new IllegalArgumentException("Staff name is already in use");
+        }
+    }
+
+    private void checkStaffProfileConflicts(Long currentUserId, String name, String email, String ssn) throws Exception {
+        String encryptedSSN = EncryptSSN.encrypt(ssn);
+        List<Staff> conflicts = staffRepo.findConflicts(name, email, encryptedSSN, currentUserId);
+        for (Staff conflict : conflicts) {
+            if (StringUtils.hasText(name) && name.equals(conflict.getName())) {
+                throw new IllegalArgumentException("Name is already taken");
+            }
+            if (StringUtils.hasText(email) && email.equals(conflict.getEmail())) {
+                throw new IllegalArgumentException("Email is already in use");
+            }
+            if (StringUtils.hasText(ssn) && encryptedSSN.equals(conflict.getSocialSecurityNum())) {
+                throw new IllegalArgumentException("SSN is already in use");
+            }
         }
     }
 }

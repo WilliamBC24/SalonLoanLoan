@@ -146,12 +146,14 @@
             </tr>
         </thead>
         <tbody>
-        <tr th:each="account : ${accounts}">
-            <td th:text="${account.username}">Staff Name</td>
-            <td th:text="${account.accountStatus}">true</td>
-<!--            <td>-->
-<!--                <a th:href="@{}" class="view-link">View Details</a>-->
-<!--            </td>-->
+        <tr th:each="account : ${accounts}"
+            th:with="editUrl=${type == 'staff'} ? @{/staff/edit/{username}(username=${account.username})}
+                                  : @{/user/edit/{username}(username=${account.username})}">
+            <td th:text="${account.username}">Username</td>
+            <td th:text="${account.accountStatus}">ACTIVE</td>
+            <td>
+                <a th:href="${editUrl}" class="view-link">View Details</a>
+            </td>
         </tr>
         </tbody>
     </table>

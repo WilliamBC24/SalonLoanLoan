@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StaffProfileDTO {
-    @NotBlank
     @Size(min = 3, max = 20)
     private String name;
 

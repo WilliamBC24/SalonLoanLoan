@@ -14,7 +14,12 @@ import service.sllbackend.entity.Staff;
 import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.AccountStatus;
+import service.sllbackend.repository.StaffAccountRepo;
+import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.impl.ProfileServiceImpl;
+import service.sllbackend.utils.ValidationUtils;
+import service.sllbackend.web.dto.AdminStaffProfileDTO;
+import service.sllbackend.web.dto.AdminUserProfileDTO;
 import service.sllbackend.web.dto.StaffProfileDTO;
 import service.sllbackend.web.dto.UserProfileDTO;
 
@@ -26,6 +31,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileServiceImpl profileService;
+    private final UserAccountRepo userAccountRepo;
+    private final StaffAccountRepo staffAccountRepo;
+    private final ValidationUtils validationUtils;
 
     @GetMapping("/profiles")
     public String profiles(@RequestParam(value = "username", required = false) String username,
@@ -35,8 +43,10 @@ public class ProfileController {
         List<?> accounts;
         if (Boolean.TRUE.equals(staffOnly)) {
             accounts = profileService.getStaffAccount(username, activeStatus);
+            model.addAttribute("type", "staff");
         } else {
             accounts = profileService.getUserAccount(username, activeStatus);
+            model.addAttribute("type", "user");
         }
         model.addAttribute("accounts", accounts);
         return "staff-profile-list";
@@ -90,6 +100,30 @@ public class ProfileController {
         }
     }
 
+    @GetMapping("/user/edit/{username}")
+    public String editUserAccount(@PathVariable String username, Model model) {
+        UserAccount userAccount = userAccountRepo.findByUsername(username).orElse(null);
+        model.addAttribute("user", userAccount);
+        return "admin-user-edit";
+    }
+
+    @PostMapping("/user/update/{username}")
+    public String updateUserAccount(@PathVariable String username,
+                                    @Valid @ModelAttribute AdminUserProfileDTO adminUserProfileDTO,
+                                    BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            UserAccount userAccount = userAccountRepo.findByUsername(username).orElse(null);
+            model.addAttribute("user", userAccount);
+            return "admin-user-edit";
+        }
+        try {
+            profileService.adminUpdateUserAccount(username, adminUserProfileDTO);
+            return "redirect:/user/edit/" + username + "?updated";
+        } catch (Exception e) {
+            return "redirect:/user/edit/" + username + "?error";
+        }
+    }
+
     @GetMapping("/staff/profile")
     public String staffProfile(Model model, Principal principal) {
         StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
@@ -120,6 +154,30 @@ public class ProfileController {
         } catch (Exception e) {
             model.addAttribute("staffAccount", profileService.getCurrentStaff(principal.getName()));
             return "redirect:/staff/profile/edit";
+        }
+    }
+
+    @GetMapping("/staff/edit/{username}")
+    public String editStaffAccount(@PathVariable String username, Model model) {
+        StaffAccount staffAccount = staffAccountRepo.findByUsername(username).orElse(null);
+        model.addAttribute("staffAccount", staffAccount);
+        return "admin-staff-edit";
+    }
+
+    @PostMapping("/staff/update/{username}")
+    public String updateStaffAccount(@PathVariable String username, @Valid @ModelAttribute AdminStaffProfileDTO adminStaffProfileDTO,
+                                     BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            StaffAccount staffAccount = staffAccountRepo.findByUsername(username).orElse(null);
+            model.addAttribute("staffAccount", staffAccount);
+            return "admin-staff-edit";
+        }
+
+        try {
+            profileService.adminUpdateStaffAccount(username, adminStaffProfileDTO);
+            return "redirect:/staff/edit/" + username + "?updated";
+        } catch (Exception e) {
+            return "redirect:/staff/edit/" + username + "?error";
         }
     }
 }

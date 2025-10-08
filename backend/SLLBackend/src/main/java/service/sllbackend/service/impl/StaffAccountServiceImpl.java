@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import service.sllbackend.config.exceptions.DisabledException;
 import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.StaffCurrentPosition;
+import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.repository.StaffAccountRepo;
 import service.sllbackend.repository.StaffCurrentPositionRepo;
 import service.sllbackend.service.StaffAccountService;
@@ -29,7 +30,7 @@ public class StaffAccountServiceImpl implements StaffAccountService {
     public UserDetails loadUserByUsername(String username) {
         StaffAccount staff = staffAccountRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
 
-        if (Boolean.FALSE.equals(staff.getActiveStatus())) {
+        if (staff.getAccountStatus() == AccountStatus.ACTIVE) {
             throw new DisabledException(staff.getUsername());
         }
 

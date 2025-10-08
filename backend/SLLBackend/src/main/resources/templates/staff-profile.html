@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-md-6">
                     <strong>Active:</strong>
-                    <span th:text="${staffAccount.activeStatus ? 'Yes' : 'No'}"></span>
+                    <span th:text="${staffAccount.accountStatus == T(service.sllbackend.enumerator.AccountStatus).ACTIVE ? 'Yes' : 'No'}"></span>
                 </div>
             </div>
 

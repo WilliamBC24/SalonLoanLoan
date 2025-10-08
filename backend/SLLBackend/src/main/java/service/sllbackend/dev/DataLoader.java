@@ -93,7 +93,7 @@ public class DataLoader implements CommandLineRunner {
 				.staff(staff)
 				.username(username)
 				.password(hashedPassword)
-				.activeStatus(Boolean.TRUE)
+				.accountStatus(AccountStatus.ACTIVE)
 				.build());
 	}
 

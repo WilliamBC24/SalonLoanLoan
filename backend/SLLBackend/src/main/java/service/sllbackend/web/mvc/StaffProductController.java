@@ -3,7 +3,6 @@ package service.sllbackend.web.mvc;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +25,6 @@ public class StaffProductController {
     }
 
     @GetMapping("/list")
-    @Transactional(readOnly = true)
     public String listProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Boolean activeStatus,
@@ -47,7 +45,6 @@ public class StaffProductController {
     }
 
     @PostMapping("/create")
-    @Transactional
     public String createProduct(
             @RequestParam String productName,
             @RequestParam Integer currentPrice,
@@ -73,7 +70,6 @@ public class StaffProductController {
     }
 
     @GetMapping("/edit/{id}")
-    @Transactional(readOnly = true)
     public String showEditForm(@PathVariable Integer id, Model model) {
         Product product = productsService.getProductById(id);
         
@@ -86,7 +82,6 @@ public class StaffProductController {
     }
 
     @PostMapping("/edit/{id}")
-    @Transactional
     public String editProduct(
             @PathVariable Integer id,
             @RequestParam String productName,

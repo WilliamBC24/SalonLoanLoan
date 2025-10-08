@@ -7,13 +7,16 @@ import org.springframework.util.StringUtils;
 import service.sllbackend.entity.Staff;
 import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
+import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.repository.StaffAccountRepo;
 import service.sllbackend.repository.StaffRepo;
 import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.ProfileService;
-import service.sllbackend.utils.ProfileUtils;
+import service.sllbackend.utils.ValidationUtils;
 import service.sllbackend.web.dto.StaffProfileDTO;
 import service.sllbackend.web.dto.UserProfileDTO;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserAccountRepo userAccountRepo;
     private final StaffAccountRepo staffAccountRepo;
     private final StaffRepo staffRepo;
-    private final ProfileUtils profileUtils;
+    private final ValidationUtils validationUtils;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +51,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         boolean changed = false;
 
-        profileUtils.validateUserProfile(userId, userProfileDTO.getUsername(), userProfileDTO.getEmail()
+        validationUtils.validateUserProfile(userId, userProfileDTO.getUsername(), userProfileDTO.getEmail()
                 , userProfileDTO.getPhoneNumber(), userProfileDTO.getBirthDate());
 
         if (StringUtils.hasText(userProfileDTO.getUsername()) &&
@@ -91,9 +94,35 @@ public class ProfileServiceImpl implements ProfileService {
     public void updateStaffProfile(Long staffId, StaffProfileDTO staffProfileDTO) {
         Staff existingStaff = staffRepo.findById(staffId.intValue())
                 .orElseThrow(() -> new IllegalArgumentException("Staff not found"));
-        profileUtils.validateStaffProfile(staffId, staffProfileDTO.getName());
+        validationUtils.validateStaffProfile(staffId, staffProfileDTO.getName());
 
         existingStaff.setName(staffProfileDTO.getName().trim());
         staffRepo.save(existingStaff);
+    }
+
+    @Override
+    public List<StaffAccount> getStaffAccount(String username, AccountStatus activeStatus) {
+        if (username != null && !username.isBlank() && activeStatus != null) {
+            return staffAccountRepo.findByUsernameContainingIgnoreCaseAndAccountStatus(username, activeStatus);
+        } else if (username != null && !username.isBlank()) {
+            return staffAccountRepo.findByUsernameContainingIgnoreCase(username);
+        } else if (activeStatus != null) {
+            return staffAccountRepo.findByAccountStatus(activeStatus);
+        } else {
+            return staffAccountRepo.findAll();
+        }
+    }
+
+    @Override
+    public List<UserAccount> getUserAccount(String username, AccountStatus activeStatus) {
+        if (username != null && !username.isBlank() && activeStatus != null) {
+            return userAccountRepo.findByUsernameContainingIgnoreCaseAndAccountStatus(username, activeStatus);
+        } else if (username != null && !username.isBlank()) {
+            return userAccountRepo.findByUsernameContainingIgnoreCase(username);
+        } else if (activeStatus != null) {
+            return userAccountRepo.findByAccountStatus(activeStatus);
+        } else {
+            return userAccountRepo.findAll();
+        }
     }
 }

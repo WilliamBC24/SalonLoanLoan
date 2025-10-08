@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Accounts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .search-bar {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        .filter-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-item input {
+            margin-right: 5px;
+        }
+        .search-buttons {
+            margin-top: 15px;
+        }
+        .search-buttons button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .search-btn {
+            background: #007bff;
+            color: white;
+        }
+        .search-btn:hover {
+            background: #0056b3;
+        }
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #545b62;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .view-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .view-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Accounts</h1>
+
+    <!-- Search and Filter Bar -->
+    <div class="search-bar">
+        <form method="get" action="/profiles">
+            <div class="filter-group">
+                <label for="search-username">Search by Username:</label>
+                <input type="text" id="search-username" name="username"
+                       th:value="${searchUsername}"
+                       placeholder="Enter username..."
+                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+
+            <div class="filter-group">
+                <label>Account Status:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="radio" id="status-all" name="activeStatus" value=""
+                               th:checked="${selectedActiveStatus == null}">
+                        <label for="status-all">All</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="status-active" name="activeStatus" value="ACTIVE"
+                               th:checked="${selectedActiveStatus != null and selectedActiveStatus == T(com.example.enums.AccountStatus).ACTIVE}">
+                        <label for="status-active">Active Only</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="status-inactive" name="activeStatus" value="DEACTIVATED"
+                               th:checked="${selectedActiveStatus != null and selectedActiveStatus == T(com.example.enums.AccountStatus).DEACTIVATED}">
+                        <label for="status-inactive">Inactive Only</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Account Type:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="staff-only" name="staffOnly"
+                               th:checked="${staffOnly != null and staffOnly}">
+                        <label for="staff-only">Staff Only</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-buttons">
+                <button type="submit" class="search-btn">Search</button>
+                <button type="button" class="reset-btn" onclick="window.location.href='/accounts'">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Accounts Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr th:each="account : ${accounts}">
+            <td th:text="${account.username}">Staff Name</td>
+            <td th:text="${account.accountStatus}">true</td>
+<!--            <td>-->
+<!--                <a th:href="@{}" class="view-link">View Details</a>-->
+<!--            </td>-->
+        </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

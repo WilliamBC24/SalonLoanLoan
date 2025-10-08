@@ -118,7 +118,7 @@
 <div class="register-container">
     <h2>Create Account</h2>
 
-    <form th:action="@{/auth/user/register}" method="post">
+    <form th:action="@{/auth/user/register/create}" method="post">
         <div>
             <label for="username">Username<span class="required-star">*</span>:</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required>
@@ -126,7 +126,9 @@
 
         <div>
             <label for="password">Password<span class="required-star">*</span>:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <input type="password" id="password" name="password"
+                   placeholder="At least 8 characters long, with at least one uppercase character,
+                    one lowercase character and one number" required>
         </div>
 
         <div>
@@ -166,7 +168,7 @@
             Redirecting to login page...
             <script>
                 setTimeout(() => {
-                    window.location.href = /*[[${#urls.expression('/auth/user/login')}]]*/ '/auth/user/login';
+                    window.location.href ='/auth/user/login';
                 }, 3000);
             </script>
         </div>

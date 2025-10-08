@@ -26,7 +26,8 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Active:</label>
                         <input type="text" class="form-control rounded-3"
-                               th:value="${staffAccount.activeStatus ? 'Yes' : 'No'}" readonly>
+                               th:value="${staffAccount.accountStatus == T(service.sllbackend.enumerator.AccountStatus).ACTIVE ? 'Yes' : 'No'}"
+                               readonly>
                     </div>
                 </div>
 

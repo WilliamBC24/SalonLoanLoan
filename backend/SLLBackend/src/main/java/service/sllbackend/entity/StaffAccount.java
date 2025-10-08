@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import service.sllbackend.enumerator.AccountStatus;
 
 @Data
 @Builder
@@ -30,5 +31,5 @@ public class StaffAccount {
 
     @Column(name = "active_status", nullable = false)
     @Builder.Default
-    private Boolean activeStatus = false;
+    private AccountStatus accountStatus = AccountStatus.ACTIVE;
 }

@@ -25,7 +25,7 @@
         phone_number VARCHAR(20) NOT NULL,
         email VARCHAR(100),
         phone_verified BOOLEAN NOT NULL DEFAULT FALSE,
-        account_status account_status_enum DEFAULT 'DEACTIVATED'
+        account_status account_status_enum DEFAULT 'ACTIVE'
     );
 
     CREATE TABLE user_shipping_info(
@@ -73,7 +73,7 @@
         staff_id INT NOT NULL UNIQUE REFERENCES staff(id),
         username VARCHAR(100) NOT NULL UNIQUE,
         password VARCHAR(100) NOT NULL,
-        active_status BOOLEAN NOT NULL DEFAULT FALSE
+        account_status account_status NOT NULL DEFAULT 'ACTIVE'
     );
 
     CREATE TABLE staff_current_position(

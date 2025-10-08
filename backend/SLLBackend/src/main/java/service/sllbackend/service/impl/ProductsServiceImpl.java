@@ -48,6 +48,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> getTenProducts() {
         return productRepo.findAllProducts(PageRequest.of(0, 10));
     }

@@ -53,5 +53,5 @@ public class UserAccount {
     @Column(name = "account_status", columnDefinition = "account_status_enum")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     @Builder.Default
-    private AccountStatus accountStatus = AccountStatus.DEACTIVATED;
+    private AccountStatus accountStatus = AccountStatus.ACTIVE;
 }

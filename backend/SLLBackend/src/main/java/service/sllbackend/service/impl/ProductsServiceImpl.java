@@ -1,5 +1,6 @@
 package service.sllbackend.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -19,12 +20,25 @@ public class ProductsServiceImpl implements ProductsService {
     @Override
     @Transactional(readOnly = true)
     public List<Product> getProducts(String name, Boolean activeStatus) {
-        if ((name != null && !name.trim().isEmpty()) || activeStatus != null) {
-            String pattern = (name != null && !name.trim().isEmpty()) ? "%" + name.trim() + "%" : null;
-            return productRepo.searchProducts(pattern, activeStatus);
+        List<Product> allProducts = productRepo.findAll();
+        List<Product> filteredByName = new ArrayList<>();
+
+        if (name != null && !name.trim().isEmpty()) {
+            String lowerCaseName = name.trim().toLowerCase();
+            for (Product product : allProducts) {
+                if (product.getProductName() != null && product.getProductName().toLowerCase().contains(lowerCaseName)) {
+                    filteredByName.add(product);
+                }
+            }
         } else {
-            return productRepo.findAllProducts(PageRequest.of(0, 10));
+            filteredByName = allProducts;
         }
+
+        if (activeStatus != null) {
+            filteredByName.removeIf(product -> !activeStatus.equals(product.getActiveStatus()));
+        }
+
+        return filteredByName;
     }
 
     @Override

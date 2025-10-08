@@ -30,7 +30,7 @@ public class StaffAccountServiceImpl implements StaffAccountService {
     public UserDetails loadUserByUsername(String username) {
         StaffAccount staff = staffAccountRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
 
-        if (staff.getAccountStatus() == AccountStatus.ACTIVE) {
+        if (staff.getAccountStatus() == AccountStatus.DEACTIVATED) {
             throw new DisabledException(staff.getUsername());
         }
 

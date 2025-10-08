@@ -30,5 +30,5 @@ public class StaffAccount {
 
     @Column(name = "active_status", nullable = false)
     @Builder.Default
-    private Boolean activeStatus = false;
+    private Boolean activeStatus = true;
 }

@@ -28,4 +28,16 @@ public class HomeController {
 
         return "home";
     }
+
+    @GetMapping("index")
+    public String index(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+        }
+
+        model.addAttribute("services", servicesService.getTenServices());
+        model.addAttribute("products", productsService.getTenProducts());
+
+        return "index";
+    }
 }

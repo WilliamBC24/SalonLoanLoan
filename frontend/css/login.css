@@ -1,68 +1,190 @@
-/* ===== Layout tổng ===== */
+/* ==========================
+   GLOBAL SETTINGS
+========================== */
+:root {
+  --border: #e5e7eb;
+  --text: #111;
+  --muted: #6b7280;
+  --bg-light: #f5f5f5;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text);
+}
+
+/* ==========================
+   LOGIN WRAPPER & CARD
+========================== */
 .login-wrapper {
-
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #bbb9b9;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ===== Card container ===== */
 .login-card {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    max-width: 960px;
-    background: #fff;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .1);
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 960px;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* ===== Form bên trái ===== */
+/* ==========================
+   LEFT COLUMN (FORM)
+========================== */
 .form-col {
-    flex: 1 1 50%;
-    padding: 48px 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
+  flex: 1 1 50%;
+  padding: 48px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-box {
-    width: 100%;
-    max-width: 380px;
+  width: 100%;
+  max-width: 380px;
 }
 
-/* ===== Ảnh bên phải ===== */
+.login-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  color: var(--muted);
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+/* ==========================
+   FORM ELEMENTS
+========================== */
+.form-label {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.form-control {
+  height: 48px;
+  border-radius: 0.6rem;
+  border-color: var(--border);
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.15rem rgba(0, 0, 0, 0.08);
+  border-color: #000;
+}
+
+/* ==========================
+   PASSWORD FIELD
+========================== */
+.toggle-pass {
+  border: 1px solid var(--border);
+  border-left: none;
+  color: #666;
+  background: #fff;
+  transition: 0.2s;
+}
+
+.toggle-pass:hover {
+  background: #f1f1f1;
+}
+
+.toggle-pass i {
+  font-size: 1.1rem;
+}
+
+/* ==========================
+   BUTTONS
+========================== */
+.btn-continue {
+  height: 48px;
+  border-radius: 0.7rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.btn-continue:disabled {
+  background: #bfc4c9;
+  border-color: #bfc4c9;
+}
+
+/* ==========================
+   LINKS & TERMS
+========================== */
+.forgot a {
+  font-size: 14px;
+  color: #000;
+  text-decoration: none;
+}
+
+.forgot a:hover {
+  text-decoration: underline;
+}
+
+.terms {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.terms a {
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.terms a:hover {
+  text-decoration: underline;
+}
+
+.copyright {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 24px;
+}
+
+/* ==========================
+   RIGHT COLUMN (IMAGE)
+========================== */
 .image-col {
-    flex: 1 1 50%;
-    position: relative;
-    min-height: 520px;
+  flex: 1 1 50%;
+  position: relative;
+  min-height: 520px;
 }
 
 .side-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
-/* Mobile: chỉ hiện form */
+/* ==========================
+   RESPONSIVE
+========================== */
 @media (max-width: 768px) {
-    .login-card {
-        flex-direction: column;
-        max-width: 500px;
-    }
+  .login-card {
+    flex-direction: column;
+    max-width: 520px;
+  }
 
-    .image-col {
-        display: none;
-    }
+  .image-col {
+    display: none;
+  }
 
-    .form-col {
-        padding: 36px 24px;
-    }
+  .form-col {
+    padding: 36px 24px;
+  }
 }

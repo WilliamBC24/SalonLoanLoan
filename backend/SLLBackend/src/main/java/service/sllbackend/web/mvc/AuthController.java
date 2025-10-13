@@ -22,7 +22,7 @@ public class AuthController {
 
     @GetMapping("/user/login")
     public String userLogin(){
-        return "user-login";
+        return "login";
     }
 
     @GetMapping("/user/landing")

@@ -26,7 +26,7 @@ public class HomeController {
         model.addAttribute("services", servicesService.getTenServices());
         model.addAttribute("products", productsService.getTenProducts());
 
-        return "home";
+        return "index";
     }
 
     @GetMapping("index")

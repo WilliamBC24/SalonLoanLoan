@@ -1,205 +1,572 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Staff - Manage Services</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý dịch vụ | Salon Loan Loan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        * {
+            font-family: 'Poppins', sans-serif;
         }
-        .header {
+        
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar.collapsed {
+            width: 70px;
+        }
+        
+        .sidebar.collapsed .sidebar-header h3 {
+            display: none;
+        }
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+        
+        .sidebar.collapsed .menu-item {
+            justify-content: center;
+            padding: 15px 10px;
+        }
+        
+        .sidebar.collapsed .menu-item i {
+            margin-right: 0;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            color: white;
+        }
+        
+        .menu-item.active {
+            background-color: rgba(255,255,255,0.2);
+            border-left-color: #fff;
+        }
+        
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+        
+        .top-header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
-        .create-btn {
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .create-btn:hover {
-            background: #218838;
-        }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .search-bar {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-        }
-        .filter-group {
-            margin-bottom: 15px;
-        }
-        .filter-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .checkbox-item {
+        
+        .header-left {
             display: flex;
             align-items: center;
         }
-        .checkbox-item input {
-            margin-right: 5px;
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-right: 20px;
         }
-        .search-buttons {
-            margin-top: 15px;
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .search-buttons button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .search-btn {
-            background: #007bff;
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            font-weight: 600;
         }
-        .search-btn:hover {
-            background: #0056b3;
+        
+        .content-area {
+            padding: 30px;
         }
-        .reset-btn {
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .search-filter-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 20px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-outline-secondary {
+            border: 2px solid #6c757d;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 600;
+        }
+        
+        .data-table-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .table {
+            margin: 0;
+        }
+        
+        .table thead th {
+            background: #f8f9fa;
+            border: none;
+            padding: 20px 15px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .table tbody td {
+            border: none;
+            padding: 20px 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+        
+        .btn-edit {
+            background: #17a2b8;
+            color: white;
+            border: none;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+        }
+        
+        .btn-details {
             background: #6c757d;
             color: white;
+            border: none;
         }
-        .reset-btn:hover {
-            background: #545b62;
+        
+        .pagination-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
         }
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
+        
+        .pagination {
+            margin: 0;
         }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-            text-align: left;
+        
+        .page-link {
+            border: none;
+            color: #667eea;
+            padding: 8px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
         }
-        th { 
-            background: #f4f4f4; 
+        
+        .page-link:hover {
+            background-color: #667eea;
+            color: white;
         }
-        tr:hover {
-            background: #f5f5f5;
+        
+        .page-item.active .page-link {
+            background-color: #667eea;
+            border-color: #667eea;
         }
-        .edit-link {
-            color: #007bff;
+        
+        .alert {
+            border: none;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .add-service-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            color: white;
+            font-weight: 600;
             text-decoration: none;
-            margin-right: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
         }
-        .edit-link:hover {
-            text-decoration: underline;
+        
+        .add-service-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Staff - Manage Services</h1>
-        <a href="/staff/service/create" class="create-btn">+ Create New Service</a>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-cut"></i> Hair Salon</h3>
+        </div>
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Quản lý Sản phẩm</span>
+            </a>
+            <a href="#" class="menu-item active">
+                <i class="fas fa-concierge-bell"></i>
+                <span>Quản lý Dịch vụ</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý Khách hàng</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch hẹn</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Báo cáo</span>
+            </a>
+        </div>
     </div>
 
-    <!-- Success/Error Messages -->
-    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="header-left">
+                <button class="btn btn-link" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">Hair Salon</div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">B</div>
+                    <span>B</span>
+                </div>
+                <a href="/staff/service/create" class="add-service-btn">
+                    <i class="fas fa-plus"></i>
+                    Thêm dịch vụ
+                </a>
+            </div>
+        </div>
 
-    <!-- Search and Filter Bar -->
-    <div class="search-bar">
-        <form method="get" action="/staff/service/list">
-            <div class="filter-group">
-                <label for="search-name">Search by Name:</label>
-                <input type="text" id="search-name" name="name" 
-                       th:value="${searchName}" 
-                       placeholder="Enter service name..."
-                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        <!-- Content Area -->
+        <div class="content-area">
+            <h1 class="page-title">Danh sách dịch vụ</h1>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <!-- Search and Filter Card -->
+            <div class="search-filter-card">
+                <form method="get" action="/staff/service/list">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="search-name">Tìm kiếm theo tên dịch vụ</label>
+                            <input type="text" id="search-name" name="name" 
+                                   th:value="${searchName}" 
+                                   placeholder="Nhập tên dịch vụ..."
+                                   class="form-control">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="activeStatus">Trạng thái</label>
+                            <select id="activeStatus" name="activeStatus" class="form-control">
+                                <option value="">Tất cả</option>
+                                <option value="true" th:selected="${selectedActiveStatus == true}">Đang hoạt động</option>
+                                <option value="false" th:selected="${selectedActiveStatus == false}">Ngừng hoạt động</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Tìm kiếm
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='/staff/service/list'">
+                                <i class="fas fa-refresh"></i> Làm mới
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
 
-            <div class="filter-group">
-                <label>Service Type:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-single" name="types" value="SINGLE" 
-                               th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
-                        <label for="type-single">Single</label>
+            <!-- Data Table Card -->
+            <div class="data-table-card">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên dịch vụ</th>
+                                <th>Giá (VND)</th>
+                                <th>Mô tả</th>
+                                <th>Trạng thái</th>
+                                <th>Chức năng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="service : ${services}">
+                                <td th:text="${service.id}">1</td>
+                                <td th:text="${service.serviceName}">Tên dịch vụ</td>
+                                <td th:text="${#numbers.formatDecimal(service.currentPrice, 0, 'COMMA', 0, 'POINT')}">0</td>
+                                <td th:text="${#strings.abbreviate(service.serviceDescription, 50)}">Mô tả</td>
+                                <td>
+                                    <span th:if="${service.activeStatus}" class="status-badge status-active">Đang hoạt động</span>
+                                    <span th:unless="${service.activeStatus}" class="status-badge status-inactive">Ngừng hoạt động</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a th:href="@{/staff/service/edit/{id}(id=${service.id})}" class="btn btn-sm btn-edit">
+                                            <i class="fas fa-edit"></i> Sửa
+                                        </a>
+                                        <button class="btn btn-sm btn-details">
+                                            <i class="fas fa-eye"></i> Chi tiết
+                                        </button>
+                                        <button class="btn btn-sm btn-delete">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination-info">
+                    <div>
+                        <span>Total <strong th:text="${#lists.size(services)}">0</strong> items</span>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-combo" name="types" value="COMBO"
-                               th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
-                        <label for="type-combo">Combo</label>
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div>
+                        <select class="form-select" style="width: auto;">
+                            <option>10 / page</option>
+                            <option>25 / page</option>
+                            <option>50 / page</option>
+                        </select>
                     </div>
                 </div>
             </div>
-
-            <div class="filter-group">
-                <label>Service Category:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item" th:each="category : ${allCategories}">
-                        <input type="checkbox" th:id="'category-' + ${category.id}" 
-                               name="categories" th:value="${category.id}"
-                               th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
-                        <label th:for="'category-' + ${category.id}" th:text="${category.name}">Category</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="search-buttons">
-                <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/staff/service/list'">Reset</button>
-            </div>
-        </form>
+        </div>
     </div>
 
-    <!-- Services Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Duration (min)</th>
-                <th>Active</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="svc : ${services}">
-                <td th:text="${svc.id}">1</td>
-                <td th:text="${svc.serviceName}">Service name</td>
-                <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
-                <td th:text="${svc.serviceType}">SINGLE</td>
-                <td th:text="${svc.servicePrice}">0</td>
-                <td th:text="${svc.durationMinutes}">0</td>
-                <td th:text="${svc.activeStatus}">false</td>
-                <td>
-                    <a th:href="@{/staff/service/edit/{id}(id=${svc.id})}" class="edit-link">Edit</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        }
+    </script>
 </body>
 </html>

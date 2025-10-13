@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import service.sllbackend.service.impl.ProductsServiceImpl;
 import service.sllbackend.service.impl.ServicesServiceImpl;
 
@@ -39,5 +40,15 @@ public class HomeController {
         model.addAttribute("products", productsService.getTenProducts());
 
         return "index";
+    }
+
+    @GetMapping("search")
+    public String globalSearch(@RequestParam(required = false) String q, Model model) {
+        if (q != null && !q.trim().isEmpty()) {
+            // Redirect to services page with search query
+            return "redirect:/services?name=" + q.trim();
+        }
+        // If no search query, redirect to home
+        return "redirect:/";
     }
 }

@@ -1,6 +1,7 @@
 package service.sllbackend.web.mvc;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import service.sllbackend.entity.Product;
 import service.sllbackend.service.ProductsService;
+import service.sllbackend.web.dto.ProductWithImageDto;
 
 @Controller
 @RequestMapping("/staff/products")
@@ -34,7 +36,17 @@ public class StaffProductController {
         
         List<Product> products = productsService.getProducts(name, activeStatus);
         
-        model.addAttribute("products", products);
+        // Create list of products with their images
+        List<ProductWithImageDto> productsWithImages = new ArrayList<>();
+        for (Product product : products) {
+            String imagePath = productsService.getProductImagePath(product.getId());
+            productsWithImages.add(ProductWithImageDto.builder()
+                    .product(product)
+                    .imagePath(imagePath)
+                    .build());
+        }
+        
+        model.addAttribute("products", productsWithImages);
         model.addAttribute("searchName", name);
         model.addAttribute("selectedActiveStatus", activeStatus);
         

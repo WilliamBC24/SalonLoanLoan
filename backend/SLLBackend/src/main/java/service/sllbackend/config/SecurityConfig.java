@@ -53,10 +53,10 @@ public class SecurityConfig {
 	@Order(1)
 	public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/", "/index", "/services", "/services/**", "/products", "/products/**", "/staff/service/**", "/staff/products/**")
+				.securityMatcher("/", "/index", "/search", "/services", "/services/**", "/products", "/products/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/index", "/services", "/services/**", "/products", "/products/**", "/staff/service/**", "/staff/products/**").permitAll()
+						.requestMatchers("/", "/index", "/search", "/services", "/services/**", "/products", "/products/**").permitAll()
 						.anyRequest().denyAll())
 				.build();
 	}
@@ -83,11 +83,12 @@ public class SecurityConfig {
 	@Order(3)
 	public SecurityFilterChain staffSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/auth/staff/**")
+				.securityMatcher("/auth/staff/**", "/staff/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/auth/staff/**").permitAll()
-						.anyRequest().authenticated())
+						.requestMatchers("/staff/**").authenticated()
+						.anyRequest().denyAll())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
 						.usernameParameter("username")
 						.passwordParameter("password")

@@ -5,7 +5,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import service.sllbackend.entity.Product;
+import service.sllbackend.entity.ProductImage;
 import service.sllbackend.repository.ProductRepo;
+import service.sllbackend.repository.ProductImageRepo;
 import service.sllbackend.service.ProductsService;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductsServiceImpl implements ProductsService {
     private final ProductRepo productRepo;
+    private final ProductImageRepo productImageRepo;
 
     @Override
     @Transactional(readOnly = true)
@@ -69,5 +72,13 @@ public class ProductsServiceImpl implements ProductsService {
         existingProduct.setActiveStatus(product.getActiveStatus());
 
         return productRepo.save(existingProduct);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getProductImagePath(Integer productId) {
+        return productImageRepo.findFirstByProductId(productId)
+                .map(ProductImage::getImagePath)
+                .orElse("/img/SVR.png"); // Default image if no image found
     }
 }

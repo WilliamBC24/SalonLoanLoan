@@ -41,7 +41,7 @@
     <div class="container">
         <div class="row g-4 align-items-start">
             <div class="col-lg-6">
-                <img th:src="@{/img/SVR.png}" class="img-fluid rounded-4 shadow" alt="product">
+                <img th:src="@{${imagePath}}" th:alt="${product.productName}" class="img-fluid rounded-4 shadow" alt="product">
             </div>
             <div class="col-lg-6">
                 <h1 class="mb-2" th:text="${product.productName}">Product Name</h1>

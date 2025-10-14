@@ -92,7 +92,7 @@
     <!-- Error Messages -->
     <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-    <form id="createProviderForm" method="post" action="/staff/provider/create">
+    <form id="createProviderForm" method="post" action="/staff/supplier/create">
         <div class="form-group">
             <label for="supplierName" class="required">Provider Name</label>
             <input type="text" id="supplierName" name="supplierName" maxlength="100" required>
@@ -129,7 +129,7 @@
 
         <div class="button-group">
             <button type="submit" class="btn btn-primary">Create Provider</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/provider/list'">Cancel</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/supplier/list'">Cancel</button>
         </div>
     </form>
 

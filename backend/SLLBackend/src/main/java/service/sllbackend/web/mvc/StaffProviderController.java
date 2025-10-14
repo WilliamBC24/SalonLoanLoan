@@ -17,7 +17,7 @@ import service.sllbackend.repository.SupplierCategoryRepo;
 import service.sllbackend.service.SupplierService;
 
 @Controller
-@RequestMapping("/staff/provider")
+@RequestMapping("/staff/supplier")
 public class StaffProviderController {
 
     private final SupplierService supplierService;
@@ -78,10 +78,10 @@ public class StaffProviderController {
             
             supplierService.createSupplier(supplier);
             redirectAttributes.addFlashAttribute("successMessage", "Provider created successfully!");
-            return "redirect:/staff/provider/list";
+            return "redirect:/staff/supplier/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating provider: " + e.getMessage());
-            return "redirect:/staff/provider/create";
+            return "redirect:/staff/supplier/create";
         }
     }
 
@@ -123,10 +123,10 @@ public class StaffProviderController {
             
             supplierService.updateSupplier(id, supplier);
             redirectAttributes.addFlashAttribute("successMessage", "Provider updated successfully!");
-            return "redirect:/staff/provider/list";
+            return "redirect:/staff/supplier/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating provider: " + e.getMessage());
-            return "redirect:/staff/provider/edit/" + id;
+            return "redirect:/staff/supplier/edit/" + id;
         }
     }
 }

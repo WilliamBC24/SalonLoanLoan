@@ -118,7 +118,7 @@
 <body>
     <div class="header">
         <h1>Staff - Manage Providers</h1>
-        <a href="/staff/provider/create" class="create-btn">+ Create New Provider</a>
+        <a href="/staff/supplier/create" class="create-btn">+ Create New Provider</a>
     </div>
 
     <!-- Success/Error Messages -->
@@ -127,7 +127,7 @@
 
     <!-- Search and Filter Bar -->
     <div class="search-bar">
-        <form method="get" action="/staff/provider/list">
+        <form method="get" action="/staff/supplier/list">
             <div class="filter-group">
                 <label for="search-name">Search by Name:</label>
                 <input type="text" id="search-name" name="name" 
@@ -150,7 +150,7 @@
 
             <div class="search-buttons">
                 <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/staff/provider/list'">Reset</button>
+                <button type="button" class="reset-btn" onclick="window.location.href='/staff/supplier/list'">Reset</button>
             </div>
         </form>
     </div>
@@ -177,7 +177,7 @@
                 <td th:text="${supplier.email}">Email</td>
                 <td th:text="${supplier.note}">Note</td>
                 <td>
-                    <a th:href="@{/staff/provider/edit/{id}(id=${supplier.id})}" class="edit-link">Edit</a>
+                    <a th:href="@{/staff/supplier/edit/{id}(id=${supplier.id})}" class="edit-link">Edit</a>
                 </td>
             </tr>
         </tbody>

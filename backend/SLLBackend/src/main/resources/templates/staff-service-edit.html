@@ -1,174 +1,586 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Staff - Edit Service</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa dịch vụ | Salon Loan Loan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
         }
-        h1 {
-            color: #333;
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
-        .form-group {
-            margin-bottom: 20px;
+        
+        .sidebar.collapsed {
+            width: 70px;
         }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .form-group .error {
-            color: #dc3545;
-            font-size: 0.875em;
-            margin-top: 5px;
+        
+        .sidebar.collapsed .sidebar-header h3 {
             display: none;
         }
-        .form-group input.invalid,
-        .form-group select.invalid {
-            border-color: #dc3545;
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
         }
-        .checkbox-group {
+        
+        .sidebar.collapsed .menu-item {
+            justify-content: center;
+            padding: 15px 10px;
+        }
+        
+        .sidebar.collapsed .menu-item i {
+            margin-right: 0;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            color: white;
+        }
+        
+        .menu-item.active {
+            background-color: rgba(255,255,255,0.2);
+            border-left-color: #fff;
+        }
+        
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+        
+        .top-header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left {
             display: flex;
             align-items: center;
         }
-        .checkbox-group input {
-            width: auto;
-            margin-right: 8px;
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-right: 20px;
         }
-        .button-group {
-            margin-top: 30px;
+        
+        .header-right {
             display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-primary {
-            background: #007bff;
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            font-weight: 600;
         }
-        .btn-primary:hover {
-            background: #0056b3;
+        
+        .content-area {
+            padding: 30px;
         }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
         }
-        .btn-secondary:hover {
-            background: #545b62;
+        
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            max-width: 800px;
         }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+        
+        .form-group {
+            margin-bottom: 25px;
         }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        
+        .form-group label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
         }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .form-control.invalid {
+            border-color: #dc3545;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
         .required::after {
             content: " *";
             color: #dc3545;
         }
-        .info-text {
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumb-item a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
             color: #6c757d;
-            font-size: 0.875em;
+        }
+        
+        .service-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .service-info h6 {
+            margin: 0;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .service-info p {
+            margin: 5px 0 0 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .top-header {
+                padding: 10px 15px;
+            }
+            
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            .user-info span {
+                display: none;
+            }
+            
+            .content-area {
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+            
+            .form-card {
+                padding: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-control {
+                padding: 10px 12px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+            }
+            
+            .service-info {
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .top-header {
+                padding: 8px 10px;
+            }
+            
+            .content-area {
+                padding: 10px;
+            }
+            
+            .page-title {
+                font-size: 1.3rem;
+            }
+            
+            .form-card {
+                padding: 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .form-control {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .breadcrumb {
+                font-size: 0.8rem;
+            }
+            
+            .service-info {
+                padding: 10px;
+            }
+            
+            .service-info h6 {
+                font-size: 0.9rem;
+            }
+            
+            .service-info p {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Edit Service</h1>
-    <p class="info-text">Service ID: <span th:text="${service.id}">1</span></p>
-
-    <!-- Error Messages -->
-    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
-
-    <form id="editServiceForm" method="post" th:action="@{/staff/service/edit/{id}(id=${service.id})}">
-        <div class="form-group">
-            <label for="serviceName" class="required">Service Name</label>
-            <input type="text" id="serviceName" name="serviceName" 
-                   th:value="${service.serviceName}" required>
-            <div class="error" id="serviceNameError">Service name is required</div>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-cut"></i> Hair Salon</h3>
         </div>
-
-        <div class="form-group">
-            <label for="serviceCategoryId" class="required">Service Category</label>
-            <select id="serviceCategoryId" name="serviceCategoryId" required>
-                <option value="">-- Select Category --</option>
-                <option th:each="category : ${categories}" 
-                        th:value="${category.id}" 
-                        th:text="${category.name}"
-                        th:selected="${service.serviceCategory.id == category.id}">Category</option>
-            </select>
-            <div class="error" id="serviceCategoryIdError">Service category is required</div>
+        <div class="sidebar-menu">
+            <a href="/staff/landing" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/staff/products/list" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Quản lý Sản phẩm</span>
+            </a>
+            <a href="/staff/service/list" class="menu-item active">
+                <i class="fas fa-concierge-bell"></i>
+                <span>Quản lý Dịch vụ</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý Khách hàng</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch hẹn</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Báo cáo</span>
+            </a>
+            <a href="/staff/profile" class="menu-item">
+                <i class="fas fa-user"></i>
+                <span>Hồ sơ cá nhân</span>
+            </a>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="serviceType" class="required">Service Type</label>
-            <select id="serviceType" name="serviceType" required>
-                <option value="">-- Select Type --</option>
-                <option value="SINGLE" th:selected="${service.serviceType.name() == 'SINGLE'}">Single</option>
-                <option value="COMBO" th:selected="${service.serviceType.name() == 'COMBO'}">Combo</option>
-            </select>
-            <div class="error" id="serviceTypeError">Service type is required</div>
-        </div>
-
-        <div class="form-group">
-            <label for="servicePrice" class="required">Service Price (VND)</label>
-            <input type="number" id="servicePrice" name="servicePrice" min="0" 
-                   th:value="${service.servicePrice}" required>
-            <div class="error" id="servicePriceError">Service price is required and must be a positive number</div>
-        </div>
-
-        <div class="form-group">
-            <label for="durationMinutes" class="required">Duration (minutes)</label>
-            <input type="number" id="durationMinutes" name="durationMinutes" min="1" max="32767" 
-                   th:value="${service.durationMinutes}" required>
-            <div class="error" id="durationMinutesError">Duration is required and must be between 1 and 32767 minutes</div>
-        </div>
-
-        <div class="form-group">
-            <label for="serviceDescription">Service Description</label>
-            <textarea id="serviceDescription" name="serviceDescription" 
-                      th:text="${service.serviceDescription}"></textarea>
-        </div>
-
-        <div class="form-group">
-            <div class="checkbox-group">
-                <input type="checkbox" id="activeStatus" name="activeStatus" value="true"
-                       th:checked="${service.activeStatus}">
-                <label for="activeStatus">Active Status</label>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="header-left">
+                <button class="btn btn-link" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">Hair Salon</div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">B</div>
+                    <span>B</span>
+                </div>
             </div>
         </div>
 
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">Update Service</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/service/list'">Cancel</button>
-        </div>
-    </form>
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/staff/service/list">Danh sách dịch vụ</a></li>
+                    <li class="breadcrumb-item active">Chỉnh sửa dịch vụ</li>
+                </ol>
+            </nav>
 
+            <h1 class="page-title">Chỉnh sửa dịch vụ</h1>
+
+            <!-- Service Info -->
+            <div class="service-info">
+                <h6><i class="fas fa-info-circle"></i> Thông tin dịch vụ</h6>
+                <p>ID: <strong th:text="${service.id}">1</strong> | Tên: <strong th:text="${service.serviceName}">Tên dịch vụ</strong></p>
+            </div>
+
+            <!-- Error Messages -->
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <!-- Form Card -->
+            <div class="form-card">
+                <form id="editServiceForm" method="post" th:action="@{/staff/service/edit/{id}(id=${service.id})}">
+                    <div class="form-group">
+                        <label for="serviceName" class="required">Tên dịch vụ</label>
+                        <input type="text" id="serviceName" name="serviceName" 
+                               class="form-control" 
+                               placeholder="Nhập tên dịch vụ..."
+                               th:value="${service.serviceName}" required>
+                        <div class="error-message" id="serviceNameError">Tên dịch vụ là bắt buộc</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceCategoryId" class="required">Danh mục dịch vụ</label>
+                        <select id="serviceCategoryId" name="serviceCategoryId" 
+                                class="form-control" required>
+                            <option value="">-- Chọn danh mục --</option>
+                            <option th:each="category : ${categories}" 
+                                    th:value="${category.id}" 
+                                    th:text="${category.name}"
+                                    th:selected="${service.serviceCategory.id == category.id}">Danh mục</option>
+                        </select>
+                        <div class="error-message" id="serviceCategoryIdError">Danh mục dịch vụ là bắt buộc</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceType" class="required">Loại dịch vụ</label>
+                        <select id="serviceType" name="serviceType" 
+                                class="form-control" required>
+                            <option value="">-- Chọn loại dịch vụ --</option>
+                            <option value="SINGLE" th:selected="${service.serviceType.name() == 'SINGLE'}">Dịch vụ đơn lẻ</option>
+                            <option value="COMBO" th:selected="${service.serviceType.name() == 'COMBO'}">Combo dịch vụ</option>
+                        </select>
+                        <div class="error-message" id="serviceTypeError">Loại dịch vụ là bắt buộc</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="servicePrice" class="required">Giá dịch vụ (VND)</label>
+                        <input type="number" id="servicePrice" name="servicePrice" 
+                               class="form-control" 
+                               placeholder="Nhập giá dịch vụ..."
+                               th:value="${service.servicePrice}"
+                               min="0" required>
+                        <div class="error-message" id="servicePriceError">Giá dịch vụ phải là số dương</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="durationMinutes" class="required">Thời gian thực hiện (phút)</label>
+                        <input type="number" id="durationMinutes" name="durationMinutes" 
+                               class="form-control" 
+                               placeholder="Nhập thời gian thực hiện..."
+                               th:value="${service.durationMinutes}"
+                               min="1" max="32767" required>
+                        <div class="error-message" id="durationMinutesError">Thời gian phải từ 1 đến 32767 phút</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceDescription">Mô tả dịch vụ</label>
+                        <textarea id="serviceDescription" name="serviceDescription" 
+                                  class="form-control" 
+                                  placeholder="Nhập mô tả chi tiết về dịch vụ..."
+                                  rows="4" th:text="${service.serviceDescription}"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="activeStatus" name="activeStatus" value="true"
+                                   th:checked="${service.activeStatus}">
+                            <label for="activeStatus">Trạng thái hoạt động</label>
+                        </div>
+                        <small class="text-muted">Bỏ chọn nếu dịch vụ chưa sẵn sàng cung cấp</small>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Cập nhật dịch vụ
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/service/list'">
+                            <i class="fas fa-times"></i> Hủy bỏ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        }
+
+        // Form validation
         document.getElementById('editServiceForm').addEventListener('submit', function(event) {
             let isValid = true;
 
@@ -211,7 +623,7 @@
             // Validate service price
             const servicePrice = document.getElementById('servicePrice');
             const servicePriceError = document.getElementById('servicePriceError');
-            if (!servicePrice.value || parseInt(servicePrice.value) < 0) {
+            if (!servicePrice.value || servicePrice.value <= 0) {
                 servicePrice.classList.add('invalid');
                 servicePriceError.style.display = 'block';
                 isValid = false;
@@ -235,44 +647,48 @@
 
             if (!isValid) {
                 event.preventDefault();
-                alert('Please correct the errors in the form before submitting.');
             }
         });
 
-        // Real-time validation on input
+        // Real-time validation
         document.getElementById('serviceName').addEventListener('input', function() {
+            const error = document.getElementById('serviceNameError');
             if (this.value.trim()) {
                 this.classList.remove('invalid');
-                document.getElementById('serviceNameError').style.display = 'none';
+                error.style.display = 'none';
             }
         });
 
         document.getElementById('serviceCategoryId').addEventListener('change', function() {
+            const error = document.getElementById('serviceCategoryIdError');
             if (this.value) {
                 this.classList.remove('invalid');
-                document.getElementById('serviceCategoryIdError').style.display = 'none';
+                error.style.display = 'none';
             }
         });
 
         document.getElementById('serviceType').addEventListener('change', function() {
+            const error = document.getElementById('serviceTypeError');
             if (this.value) {
                 this.classList.remove('invalid');
-                document.getElementById('serviceTypeError').style.display = 'none';
+                error.style.display = 'none';
             }
         });
 
         document.getElementById('servicePrice').addEventListener('input', function() {
-            if (this.value && parseInt(this.value) >= 0) {
+            const error = document.getElementById('servicePriceError');
+            if (this.value && this.value > 0) {
                 this.classList.remove('invalid');
-                document.getElementById('servicePriceError').style.display = 'none';
+                error.style.display = 'none';
             }
         });
 
         document.getElementById('durationMinutes').addEventListener('input', function() {
+            const error = document.getElementById('durationMinutesError');
             const duration = parseInt(this.value);
             if (this.value && duration >= 1 && duration <= 32767) {
                 this.classList.remove('invalid');
-                document.getElementById('durationMinutesError').style.display = 'none';
+                error.style.display = 'none';
             }
         });
     </script>

@@ -1,6 +1,7 @@
 package service.sllbackend.dev;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -16,7 +17,10 @@ import service.sllbackend.entity.UserAccount;
 import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.Product;
+import service.sllbackend.entity.Voucher;
+import service.sllbackend.entity.VoucherStatus;
 import service.sllbackend.enumerator.AccountStatus;
+import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.enumerator.Gender;
 import service.sllbackend.enumerator.ServiceType;
 import service.sllbackend.repository.StaffAccountRepo;
@@ -27,6 +31,8 @@ import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.repository.ServiceRepo;
 import service.sllbackend.repository.ServiceCategoryRepo;
 import service.sllbackend.repository.ProductRepo;
+import service.sllbackend.repository.VoucherRepo;
+import service.sllbackend.repository.VoucherStatusRepo;
 
 @Component
 @RequiredArgsConstructor
@@ -41,6 +47,8 @@ public class DataLoader implements CommandLineRunner {
 	private final ServiceRepo serviceRepo;
 	private final ServiceCategoryRepo serviceCategoryRepo;
 	private final ProductRepo productRepo;
+	private final VoucherRepo voucherRepo;
+	private final VoucherStatusRepo voucherStatusRepo;
 
 	@Override
 	public void run(String... args) {
@@ -49,6 +57,7 @@ public class DataLoader implements CommandLineRunner {
 		registerStaff();
 		registerServices();
 		registerProducts();
+		registerVouchers();
 	}
 
 	public void registerUser() {
@@ -642,5 +651,101 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 30 products");
+	}
+
+	public void registerVouchers() {
+		// Create voucher statuses
+		VoucherStatus activeStatus = voucherStatusRepo.save(VoucherStatus.builder()
+				.name("ACTIVE")
+				.build());
+		
+		VoucherStatus inactiveStatus = voucherStatusRepo.save(VoucherStatus.builder()
+				.name("INACTIVE")
+				.build());
+		
+		VoucherStatus expiredStatus = voucherStatusRepo.save(VoucherStatus.builder()
+				.name("EXPIRED")
+				.build());
+
+		// Create sample vouchers
+		voucherRepo.save(Voucher.builder()
+				.voucherName("New Year 2025")
+				.voucherDescription("Special discount for New Year celebration 2025")
+				.voucherCode("NEWYEAR2025")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(50000)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 1, 31, 23, 59))
+				.maxUsage(100)
+				.usedCount(0)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("Summer Sale")
+				.voucherDescription("20% off for summer season")
+				.voucherCode("SUMMER20")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(20)
+				.effectiveFrom(LocalDateTime.of(2025, 6, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 8, 31, 23, 59))
+				.maxUsage(500)
+				.usedCount(25)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("First Time Customer")
+				.voucherDescription("Welcome discount for first-time customers")
+				.voucherCode("WELCOME10")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(10)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 12, 31, 23, 59))
+				.maxUsage(1000)
+				.usedCount(150)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("VIP Member Exclusive")
+				.voucherDescription("Exclusive discount for VIP members - 100,000 VND off")
+				.voucherCode("VIP100K")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(100000)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 12, 31, 23, 59))
+				.maxUsage(50)
+				.usedCount(12)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("Weekend Special")
+				.voucherDescription("15% discount for weekend appointments")
+				.voucherCode("WEEKEND15")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(15)
+				.effectiveFrom(LocalDateTime.of(2025, 3, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 3, 31, 23, 59))
+				.maxUsage(200)
+				.usedCount(180)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("Black Friday 2024")
+				.voucherDescription("Huge discount for Black Friday - 50% off")
+				.voucherCode("BLACKFRIDAY50")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(50)
+				.effectiveFrom(LocalDateTime.of(2024, 11, 29, 0, 0))
+				.effectiveTo(LocalDateTime.of(2024, 11, 29, 23, 59))
+				.maxUsage(500)
+				.usedCount(500)
+				.voucherStatus(expiredStatus)
+				.build());
+
+		log.info("Successfully loaded 6 vouchers with 3 statuses");
 	}
 }

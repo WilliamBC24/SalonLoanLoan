@@ -19,6 +19,8 @@ import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.Product;
 import service.sllbackend.entity.Voucher;
 import service.sllbackend.entity.VoucherStatus;
+import service.sllbackend.entity.Promotion;
+import service.sllbackend.entity.PromotionStatus;
 import service.sllbackend.entity.Supplier;
 import service.sllbackend.entity.SupplierCategory;
 import service.sllbackend.enumerator.AccountStatus;
@@ -35,6 +37,8 @@ import service.sllbackend.repository.ServiceCategoryRepo;
 import service.sllbackend.repository.ProductRepo;
 import service.sllbackend.repository.VoucherRepo;
 import service.sllbackend.repository.VoucherStatusRepo;
+import service.sllbackend.repository.PromotionRepo;
+import service.sllbackend.repository.PromotionStatusRepo;
 import service.sllbackend.repository.SupplierRepo;
 import service.sllbackend.repository.SupplierCategoryRepo;
 
@@ -53,6 +57,8 @@ public class DataLoader implements CommandLineRunner {
 	private final ProductRepo productRepo;
 	private final VoucherRepo voucherRepo;
 	private final VoucherStatusRepo voucherStatusRepo;
+	private final PromotionRepo promotionRepo;
+	private final PromotionStatusRepo promotionStatusRepo;
 	private final SupplierRepo supplierRepo;
 	private final SupplierCategoryRepo supplierCategoryRepo;
 
@@ -64,6 +70,7 @@ public class DataLoader implements CommandLineRunner {
 		registerServices();
 		registerProducts();
 		registerVouchers();
+		registerPromotions();
 		registerProviders();
 	}
 
@@ -754,6 +761,88 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 6 vouchers with 3 statuses");
+	}
+
+	public void registerPromotions() {
+		// Create promotion statuses
+		PromotionStatus activeStatus = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("ACTIVE")
+				.build());
+		
+		PromotionStatus inactiveStatus = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("INACTIVE")
+				.build());
+		
+		PromotionStatus scheduledStatus = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("SCHEDULED")
+				.build());
+		
+		PromotionStatus expiredStatus = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("EXPIRED")
+				.build());
+
+		// Create sample promotions
+		promotionRepo.save(Promotion.builder()
+				.promotionName("New Year Special 2025")
+				.promotionDescription("Celebrate the new year with our special discount - 100,000 VND off all services!")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(100000)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 1, 31, 23, 59))
+				.promotionStatus(activeStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Spring Refresh")
+				.promotionDescription("Fresh start for spring - 25% off all hair services")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(25)
+				.effectiveFrom(LocalDateTime.of(2025, 3, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 5, 31, 23, 59))
+				.promotionStatus(scheduledStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Student Discount")
+				.promotionDescription("Special discount for students - 15% off all services")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(15)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 12, 31, 23, 59))
+				.promotionStatus(activeStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Weekday Special")
+				.promotionDescription("Visit us Monday to Friday and save 50,000 VND")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(50000)
+				.effectiveFrom(LocalDateTime.of(2025, 2, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 2, 28, 23, 59))
+				.promotionStatus(activeStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Summer Glow Package")
+				.promotionDescription("Get ready for summer - 30% off skin care services")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(30)
+				.effectiveFrom(LocalDateTime.of(2025, 6, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 8, 31, 23, 59))
+				.promotionStatus(scheduledStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Holiday Season 2024")
+				.promotionDescription("End of year celebration - 40% off all services")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(40)
+				.effectiveFrom(LocalDateTime.of(2024, 12, 15, 0, 0))
+				.effectiveTo(LocalDateTime.of(2024, 12, 31, 23, 59))
+				.promotionStatus(expiredStatus)
+				.build());
+
+		log.info("Successfully loaded 6 promotions with 4 statuses");
 	}
 
 	public void registerProviders() {

@@ -110,19 +110,16 @@ public class StaffProviderController {
             RedirectAttributes redirectAttributes) {
         
         try {
-            Supplier supplier = supplierService.getSupplierById(id);
-            if (supplier == null) {
-                throw new RuntimeException("Provider not found");
-            }
-            
             SupplierCategory category = supplierCategoryRepo.findById(supplierCategoryId)
                 .orElseThrow(() -> new RuntimeException("Supplier category not found"));
             
-            supplier.setSupplierName(supplierName);
-            supplier.setSupplierCategory(category);
-            supplier.setPhoneNumber(phoneNumber);
-            supplier.setEmail(email);
-            supplier.setNote(note);
+            Supplier supplier = Supplier.builder()
+                .supplierName(supplierName)
+                .supplierCategory(category)
+                .phoneNumber(phoneNumber)
+                .email(email)
+                .note(note)
+                .build();
             
             supplierService.updateSupplier(id, supplier);
             redirectAttributes.addFlashAttribute("successMessage", "Provider updated successfully!");

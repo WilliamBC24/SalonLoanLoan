@@ -10,14 +10,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import service.sllbackend.entity.Staff;
 import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.repository.StaffAccountRepo;
 import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.impl.ProfileServiceImpl;
-import service.sllbackend.utils.ValidationUtils;
 import service.sllbackend.web.dto.AdminStaffProfileDTO;
 import service.sllbackend.web.dto.AdminUserProfileDTO;
 import service.sllbackend.web.dto.StaffProfileDTO;
@@ -33,7 +31,6 @@ public class ProfileController {
     private final ProfileServiceImpl profileService;
     private final UserAccountRepo userAccountRepo;
     private final StaffAccountRepo staffAccountRepo;
-    private final ValidationUtils validationUtils;
 
     @GetMapping("/profiles")
     public String profiles(@RequestParam(value = "username", required = false) String username,

@@ -85,7 +85,7 @@ public class DataLoader implements CommandLineRunner {
 
 	public void registerStaff() {
 		String name = "admin";
-		String role = "Administrator";
+		String role = "admin";
 		String username = "admin";
 		String rawPassword = "admin";
 		String hashedPassword = passwordEncoder.encode(rawPassword);
@@ -665,11 +665,11 @@ public class DataLoader implements CommandLineRunner {
 		VoucherStatus activeStatus = voucherStatusRepo.save(VoucherStatus.builder()
 				.name("ACTIVE")
 				.build());
-		
+
 		VoucherStatus inactiveStatus = voucherStatusRepo.save(VoucherStatus.builder()
 				.name("INACTIVE")
 				.build());
-		
+
 		VoucherStatus expiredStatus = voucherStatusRepo.save(VoucherStatus.builder()
 				.name("EXPIRED")
 				.build());
@@ -754,6 +754,8 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 6 vouchers with 3 statuses");
+	}
+
 	public void registerProviders() {
 		// Create supplier categories
 		SupplierCategory hairProductsCategory = supplierCategoryRepo.save(SupplierCategory.builder()

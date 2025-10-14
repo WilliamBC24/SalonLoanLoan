@@ -32,7 +32,7 @@ public class ProfileController {
     private final UserAccountRepo userAccountRepo;
     private final StaffAccountRepo staffAccountRepo;
 
-    @GetMapping("/profiles")
+    @GetMapping("/admin/profiles")
     public String profiles(@RequestParam(value = "username", required = false) String username,
                            @RequestParam(value = "activeStatus", required = false) AccountStatus activeStatus,
                            @RequestParam(value = "staffOnly", required = false) Boolean staffOnly,

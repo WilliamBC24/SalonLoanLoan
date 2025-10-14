@@ -15,19 +15,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import service.sllbackend.entity.Voucher;
 import service.sllbackend.entity.VoucherStatus;
 import service.sllbackend.enumerator.DiscountType;
-import service.sllbackend.repository.VoucherRepo;
-import service.sllbackend.repository.VoucherStatusRepo;
+import service.sllbackend.service.VoucherService;
 
 @Controller
 @RequestMapping("/staff/voucher")
 public class StaffVoucherController {
 
-    private final VoucherRepo voucherRepo;
-    private final VoucherStatusRepo voucherStatusRepo;
+    private final VoucherService voucherService;
 
-    public StaffVoucherController(VoucherRepo voucherRepo, VoucherStatusRepo voucherStatusRepo) {
-        this.voucherRepo = voucherRepo;
-        this.voucherStatusRepo = voucherStatusRepo;
+    public StaffVoucherController(VoucherService voucherService) {
+        this.voucherService = voucherService;
     }
 
     @GetMapping("/list")
@@ -39,25 +36,11 @@ public class StaffVoucherController {
             Model model) {
         
         // Get all statuses for filters
-        List<VoucherStatus> allStatuses = voucherStatusRepo.findAll();
+        List<VoucherStatus> allStatuses = voucherService.getAllVoucherStatuses();
         model.addAttribute("allStatuses", allStatuses);
         
-        // Get vouchers based on filters
-        List<Voucher> vouchers;
-        if ((code != null && !code.trim().isEmpty()) || 
-            (name != null && !name.trim().isEmpty()) || 
-            discountType != null || 
-            statusId != null) {
-            
-            String searchCode = (code != null && !code.trim().isEmpty()) ? code.trim() : null;
-            String searchName = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
-            DiscountType discType = (discountType != null && !discountType.isEmpty()) ? 
-                DiscountType.valueOf(discountType) : null;
-            
-            vouchers = voucherRepo.searchVouchers(searchCode, searchName, discType, statusId);
-        } else {
-            vouchers = voucherRepo.findAllWithStatus();
-        }
+        // Get vouchers with filters applied in service layer
+        List<Voucher> vouchers = voucherService.getVouchers(code, name, discountType, statusId);
         
         model.addAttribute("vouchers", vouchers);
         model.addAttribute("searchCode", code);
@@ -70,7 +53,7 @@ public class StaffVoucherController {
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
-        List<VoucherStatus> statuses = voucherStatusRepo.findAll();
+        List<VoucherStatus> statuses = voucherService.getAllVoucherStatuses();
         model.addAttribute("statuses", statuses);
         return "staff-voucher-create";
     }
@@ -89,7 +72,10 @@ public class StaffVoucherController {
             RedirectAttributes redirectAttributes) {
         
         try {
-            VoucherStatus status = voucherStatusRepo.findById(voucherStatusId)
+            List<VoucherStatus> statuses = voucherService.getAllVoucherStatuses();
+            VoucherStatus status = statuses.stream()
+                .filter(s -> s.getId().equals(voucherStatusId))
+                .findFirst()
                 .orElseThrow(() -> new RuntimeException("Voucher status not found"));
             
             Voucher voucher = Voucher.builder()
@@ -105,7 +91,7 @@ public class StaffVoucherController {
                 .voucherStatus(status)
                 .build();
             
-            voucherRepo.save(voucher);
+            voucherService.createVoucher(voucher);
             redirectAttributes.addFlashAttribute("successMessage", "Voucher created successfully!");
             return "redirect:/staff/voucher/list";
         } catch (Exception e) {
@@ -116,10 +102,12 @@ public class StaffVoucherController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Integer id, Model model) {
-        Voucher voucher = voucherRepo.findByIdWithStatus(id)
-            .orElseThrow(() -> new RuntimeException("Voucher not found"));
+        Voucher voucher = voucherService.getVoucherById(id);
+        if (voucher == null) {
+            throw new RuntimeException("Voucher not found");
+        }
         
-        List<VoucherStatus> statuses = voucherStatusRepo.findAll();
+        List<VoucherStatus> statuses = voucherService.getAllVoucherStatuses();
         model.addAttribute("voucher", voucher);
         model.addAttribute("statuses", statuses);
         return "staff-voucher-edit";
@@ -140,23 +128,25 @@ public class StaffVoucherController {
             RedirectAttributes redirectAttributes) {
         
         try {
-            Voucher voucher = voucherRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Voucher not found"));
-            
-            VoucherStatus status = voucherStatusRepo.findById(voucherStatusId)
+            List<VoucherStatus> statuses = voucherService.getAllVoucherStatuses();
+            VoucherStatus status = statuses.stream()
+                .filter(s -> s.getId().equals(voucherStatusId))
+                .findFirst()
                 .orElseThrow(() -> new RuntimeException("Voucher status not found"));
             
-            voucher.setVoucherName(voucherName);
-            voucher.setVoucherDescription(voucherDescription);
-            voucher.setVoucherCode(voucherCode);
-            voucher.setDiscountType(DiscountType.valueOf(discountType));
-            voucher.setDiscountAmount(discountAmount);
-            voucher.setEffectiveFrom(LocalDateTime.parse(effectiveFrom));
-            voucher.setEffectiveTo(LocalDateTime.parse(effectiveTo));
-            voucher.setMaxUsage(maxUsage);
-            voucher.setVoucherStatus(status);
+            Voucher voucher = Voucher.builder()
+                .voucherName(voucherName)
+                .voucherDescription(voucherDescription)
+                .voucherCode(voucherCode)
+                .discountType(DiscountType.valueOf(discountType))
+                .discountAmount(discountAmount)
+                .effectiveFrom(LocalDateTime.parse(effectiveFrom))
+                .effectiveTo(LocalDateTime.parse(effectiveTo))
+                .maxUsage(maxUsage)
+                .voucherStatus(status)
+                .build();
             
-            voucherRepo.save(voucher);
+            voucherService.updateVoucher(id, voucher);
             redirectAttributes.addFlashAttribute("successMessage", "Voucher updated successfully!");
             return "redirect:/staff/voucher/list";
         } catch (Exception e) {

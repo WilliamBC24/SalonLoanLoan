@@ -18,12 +18,18 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     @Transactional(readOnly = true)
     public List<Supplier> getSuppliers(List<Integer> categoryIds, String name) {
-        if (categoryIds != null || (name != null && !name.trim().isEmpty())) {
-            String searchName = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
-            return supplierRepo.searchSuppliers(categoryIds, searchName);
-        } else {
-            return supplierRepo.findAllWithCategory();
+        List<Supplier> allSuppliers = supplierRepo.findAllWithCategory();
+        
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            allSuppliers.removeIf(supplier -> supplier.getSupplierCategory() == null || !categoryIds.contains(supplier.getSupplierCategory().getId()));
         }
+
+        if (name != null && !name.trim().isEmpty()) {
+            String lowerCaseName = name.trim().toLowerCase();
+            allSuppliers.removeIf(supplier -> supplier.getSupplierName() == null || !supplier.getSupplierName().toLowerCase().contains(lowerCaseName));
+        }
+
+        return allSuppliers;
     }
 
     @Override

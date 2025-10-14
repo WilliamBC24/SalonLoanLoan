@@ -73,7 +73,7 @@
         staff_id INT NOT NULL UNIQUE REFERENCES staff(id),
         username VARCHAR(100) NOT NULL UNIQUE,
         password VARCHAR(100) NOT NULL,
-        account_status account_status NOT NULL DEFAULT 'ACTIVE'
+        account_status account_status_enum NOT NULL DEFAULT 'ACTIVE'
     );
 
     CREATE TABLE staff_current_position(

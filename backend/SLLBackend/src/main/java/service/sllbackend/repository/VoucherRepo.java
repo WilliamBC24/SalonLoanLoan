@@ -19,8 +19,8 @@ public interface VoucherRepo extends JpaRepository<Voucher, Integer> {
     Optional<Voucher> findByIdWithStatus(@Param("id") Integer id);
 
     @Query("select v from Voucher v left join fetch v.voucherStatus " +
-           "where (:code is null or :code = '' or lower(v.voucherCode) like lower(concat('%', :code, '%'))) " +
-           "and (:name is null or :name = '' or lower(v.voucherName) like lower(concat('%', :name, '%'))) " +
+           "where (coalesce(nullif(:code, ''), null) is null or lower(v.voucherCode) like lower(concat('%', :code, '%'))) " +
+           "and (coalesce(nullif(:name, ''), null) is null or lower(v.voucherName) like lower(concat('%', :name, '%'))) " +
            "and (:discountType is null or v.discountType = :discountType) " +
            "and (:statusId is null or v.voucherStatus.id = :statusId)")
     List<Voucher> searchVouchers(@Param("code") String code,

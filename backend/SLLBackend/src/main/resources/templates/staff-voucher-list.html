@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Staff - Manage Vouchers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .create-btn {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .create-btn:hover {
+            background: #218838;
+        }
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .search-bar {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        .filter-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-buttons {
+            margin-top: 15px;
+        }
+        .search-buttons button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .search-btn {
+            background: #007bff;
+            color: white;
+        }
+        .search-btn:hover {
+            background: #0056b3;
+        }
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #545b62;
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            text-align: left;
+        }
+        th { 
+            background: #f4f4f4; 
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .edit-link {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        .edit-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Staff - Manage Vouchers</h1>
+        <a href="/staff/voucher/create" class="create-btn">+ Create New Voucher</a>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+    <!-- Search and Filter Bar -->
+    <div class="search-bar">
+        <form method="get" action="/staff/voucher/list">
+            <div class="filter-group">
+                <label for="search-code">Search by Code:</label>
+                <input type="text" id="search-code" name="code" 
+                       th:value="${searchCode}" 
+                       placeholder="Enter voucher code...">
+            </div>
+
+            <div class="filter-group">
+                <label for="search-name">Search by Name:</label>
+                <input type="text" id="search-name" name="name" 
+                       th:value="${searchName}" 
+                       placeholder="Enter voucher name...">
+            </div>
+
+            <div class="filter-group">
+                <label for="discount-type">Discount Type:</label>
+                <select id="discount-type" name="discountType">
+                    <option value="">All Types</option>
+                    <option value="AMOUNT" th:selected="${selectedDiscountType == 'AMOUNT'}">Amount</option>
+                    <option value="PERCENTAGE" th:selected="${selectedDiscountType == 'PERCENTAGE'}">Percentage</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="status">Status:</label>
+                <select id="status" name="statusId">
+                    <option value="">All Statuses</option>
+                    <option th:each="status : ${allStatuses}" 
+                            th:value="${status.id}" 
+                            th:text="${status.name}"
+                            th:selected="${selectedStatusId != null and selectedStatusId == status.id}">
+                        Status
+                    </option>
+                </select>
+            </div>
+
+            <div class="search-buttons">
+                <button type="submit" class="search-btn">Search</button>
+                <button type="button" class="reset-btn" onclick="window.location.href='/staff/voucher/list'">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Vouchers Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Discount Type</th>
+                <th>Discount Amount</th>
+                <th>Effective From</th>
+                <th>Effective To</th>
+                <th>Max Usage</th>
+                <th>Used Count</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="voucher : ${vouchers}">
+                <td th:text="${voucher.id}">1</td>
+                <td th:text="${voucher.voucherCode}">CODE123</td>
+                <td th:text="${voucher.voucherName}">Voucher name</td>
+                <td th:text="${voucher.discountType}">AMOUNT</td>
+                <td th:text="${voucher.discountAmount}">0</td>
+                <td th:text="${#temporals.format(voucher.effectiveFrom, 'yyyy-MM-dd HH:mm')}">2024-01-01 00:00</td>
+                <td th:text="${#temporals.format(voucher.effectiveTo, 'yyyy-MM-dd HH:mm')}">2024-12-31 23:59</td>
+                <td th:text="${voucher.maxUsage}">100</td>
+                <td th:text="${voucher.usedCount}">0</td>
+                <td th:text="${voucher.voucherStatus != null ? voucher.voucherStatus.name : 'N/A'}">Active</td>
+                <td>
+                    <a th:href="@{/staff/voucher/edit/{id}(id=${voucher.id})}" class="edit-link">Edit</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

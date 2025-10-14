@@ -19,6 +19,8 @@ import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.Product;
 import service.sllbackend.entity.Voucher;
 import service.sllbackend.entity.VoucherStatus;
+import service.sllbackend.entity.Supplier;
+import service.sllbackend.entity.SupplierCategory;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.enumerator.Gender;
@@ -33,6 +35,8 @@ import service.sllbackend.repository.ServiceCategoryRepo;
 import service.sllbackend.repository.ProductRepo;
 import service.sllbackend.repository.VoucherRepo;
 import service.sllbackend.repository.VoucherStatusRepo;
+import service.sllbackend.repository.SupplierRepo;
+import service.sllbackend.repository.SupplierCategoryRepo;
 
 @Component
 @RequiredArgsConstructor
@@ -49,6 +53,8 @@ public class DataLoader implements CommandLineRunner {
 	private final ProductRepo productRepo;
 	private final VoucherRepo voucherRepo;
 	private final VoucherStatusRepo voucherStatusRepo;
+	private final SupplierRepo supplierRepo;
+	private final SupplierCategoryRepo supplierCategoryRepo;
 
 	@Override
 	public void run(String... args) {
@@ -58,6 +64,7 @@ public class DataLoader implements CommandLineRunner {
 		registerServices();
 		registerProducts();
 		registerVouchers();
+		registerProviders();
 	}
 
 	public void registerUser() {
@@ -747,5 +754,129 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 6 vouchers with 3 statuses");
+	public void registerProviders() {
+		// Create supplier categories
+		SupplierCategory hairProductsCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Hair Products Supplier")
+				.build());
+		
+		SupplierCategory skinCareCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Skin Care Supplier")
+				.build());
+		
+		SupplierCategory nailProductsCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Nail Products Supplier")
+				.build());
+		
+		SupplierCategory makeupCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Makeup Products Supplier")
+				.build());
+		
+		SupplierCategory equipmentCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Salon Equipment Supplier")
+				.build());
+
+		// Hair Products Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("L'Oréal Professional Vietnam")
+				.supplierCategory(hairProductsCategory)
+				.phoneNumber("0281234567")
+				.email("contact@loreal-vietnam.com")
+				.note("Premium hair care products, exclusive distributor")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Wella Professionals")
+				.supplierCategory(hairProductsCategory)
+				.phoneNumber("0287654321")
+				.email("sales@wella.vn")
+				.note("Professional hair color and care products")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Schwarzkopf Vietnam")
+				.supplierCategory(hairProductsCategory)
+				.phoneNumber("0283456789")
+				.email("info@schwarzkopf.vn")
+				.note("German quality hair products")
+				.build());
+
+		// Skin Care Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Dermalogica Vietnam")
+				.supplierCategory(skinCareCategory)
+				.phoneNumber("0289876543")
+				.email("vietnam@dermalogica.com")
+				.note("Professional skin care and treatments")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("The Ordinary Vietnam")
+				.supplierCategory(skinCareCategory)
+				.phoneNumber("0284567890")
+				.email("contact@theordinary.vn")
+				.note("Affordable clinical skincare solutions")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("La Roche-Posay")
+				.supplierCategory(skinCareCategory)
+				.phoneNumber("0286543210")
+				.email("info@laroche-posay.vn")
+				.note("Dermatological skincare products")
+				.build());
+
+		// Nail Products Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("OPI Vietnam")
+				.supplierCategory(nailProductsCategory)
+				.phoneNumber("0285432109")
+				.email("orders@opi-vietnam.com")
+				.note("Premium nail lacquer and treatments")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("CND Vietnam")
+				.supplierCategory(nailProductsCategory)
+				.phoneNumber("0288765432")
+				.email("sales@cnd.vn")
+				.note("Shellac and professional nail products")
+				.build());
+
+		// Makeup Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("MAC Cosmetics Vietnam")
+				.supplierCategory(makeupCategory)
+				.phoneNumber("0282345678")
+				.email("pro@maccosmetics.vn")
+				.note("Professional makeup products")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Sephora Vietnam")
+				.supplierCategory(makeupCategory)
+				.phoneNumber("0287890123")
+				.email("wholesale@sephora.vn")
+				.note("Wide range of beauty and makeup products")
+				.build());
+
+		// Equipment Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Takara Belmont Vietnam")
+				.supplierCategory(equipmentCategory)
+				.phoneNumber("0283210987")
+				.email("sales@takarabelmont.vn")
+				.note("Salon furniture and equipment")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Beauty Solutions Co.")
+				.supplierCategory(equipmentCategory)
+				.phoneNumber("0289012345")
+				.email("info@beautysolutions.vn")
+				.note("Salon tools and professional equipment")
+				.build());
+
+		log.info("Successfully loaded 12 providers across 5 categories");
 	}
 }

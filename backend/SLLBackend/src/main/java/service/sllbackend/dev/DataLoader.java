@@ -754,6 +754,8 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 6 vouchers with 3 statuses");
+	}
+
 	public void registerProviders() {
 		// Create supplier categories
 		SupplierCategory hairProductsCategory = supplierCategoryRepo.save(SupplierCategory.builder()

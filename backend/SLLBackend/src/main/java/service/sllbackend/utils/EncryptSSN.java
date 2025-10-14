@@ -6,7 +6,6 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -43,15 +42,6 @@ public class EncryptSSN {
         System.arraycopy(encrypted, 0, encryptedWithIv, IV_LENGTH_BYTE, encrypted.length);
 
         return Base64.getEncoder().encodeToString(encryptedWithIv);
-    }
-
-    // Helper method to print bytes as hex
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02X", b));
-        }
-        return sb.toString();
     }
 
     public static String decrypt(String encryptedSsn) throws Exception {

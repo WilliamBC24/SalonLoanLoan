@@ -67,6 +67,11 @@
         position_name TEXT NOT NULL
     );
 
+    INSERT INTO staff_position(position_name) VALUES 
+    ('staff'),
+    ('manager'),
+    ('admin');
+
     --GENERATE WITH TRIGGER
     CREATE TABLE staff_account(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

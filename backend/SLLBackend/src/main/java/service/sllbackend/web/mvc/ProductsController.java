@@ -2,6 +2,7 @@ package service.sllbackend.web.mvc;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.security.Principal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,14 @@ public class ProductsController {
     public String listProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Boolean activeStatus,
-            Model model) {
+            Model model,
+            Principal principal) {
+        
+        // Truyền thông tin user đang đăng nhập
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+        }
+        
         List<Product> products = productsService.getProducts(name, activeStatus);
         
         // Create list of products with their images

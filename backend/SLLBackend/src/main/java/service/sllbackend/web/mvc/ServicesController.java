@@ -1,6 +1,7 @@
 package service.sllbackend.web.mvc;
 
 import java.util.List;
+import java.security.Principal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -29,7 +30,13 @@ public class ServicesController {
             @RequestParam(required = false) List<String> types,
             @RequestParam(required = false) List<Integer> categories,
             @RequestParam(required = false) String name,
-            Model model) {
+            Model model,
+            Principal principal) {
+
+        // Truyền thông tin user đang đăng nhập
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+        }
 
         // Get all categories for filters
         List<ServiceCategory> allCategories = servicesService.getAllCategories();

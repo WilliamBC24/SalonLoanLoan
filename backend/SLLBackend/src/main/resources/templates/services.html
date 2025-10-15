@@ -9,6 +9,104 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
     <link rel="stylesheet" th:href="@{/css/services.css}">
     <style>
+        /* Top header styling */
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .top-icon {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+        }
+        
+        .top-icon:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        /* User info styling */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .user-name {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .logout-btn {
+            color: white;
+            text-decoration: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logout-btn:hover {
+            background-color: rgba(220, 53, 69, 0.8);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* Login section styling */
+        .login-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .login-btn, .staff-btn {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .login-btn:hover {
+            background-color: rgba(162, 107, 219, 0.8);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(162, 107, 219, 0.3);
+        }
+        
+        .staff-btn:hover {
+            background-color: rgba(59, 91, 219, 0.8);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 91, 219, 0.3);
+        }
+        
         /* Responsive improvements for services page */
         @media (max-width: 991.98px) {
             .top-header {
@@ -91,10 +189,33 @@
             <span><i class="fa-solid fa-phone"></i> +84 0973.801.972</span>
         </div>
         <div class="top-right">
-            <a href="#"><i class="fa-regular fa-comment"></i></a>
-            <a th:href="@{/auth/user/login}"><i class="fa-regular fa-user"></i></a>
-            <a href="#"><i class="fa-solid fa-bag-shopping"></i></a>
-            <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+            <a href="#" class="top-icon" title="Chat"><i class="fa-regular fa-comment"></i></a>
+            
+            <!-- Hiển thị thông tin user đang đăng nhập -->
+            <div th:if="${#authentication.authenticated and #authentication.name != 'anonymousUser'}" class="user-info">
+                <span class="user-name">
+                    <i class="fa-regular fa-user"></i>
+                    <span th:text="${#authentication.name}">User</span>
+                </span>
+                <a th:href="@{/auth/logout}" class="logout-btn" title="Đăng xuất">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                </a>
+            </div>
+            
+            <!-- Hiển thị nút đăng nhập khi chưa đăng nhập -->
+            <div th:unless="${#authentication.authenticated and #authentication.name != 'anonymousUser'}" class="login-section">
+                <a th:href="@{/auth/user/login}" class="login-btn" title="Đăng nhập">
+                    <i class="fa-regular fa-user"></i>
+                    <span>Đăng nhập</span>
+                </a>
+                <a th:href="@{/auth/staff/login}" class="staff-btn" title="Đăng nhập Staff">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span>Staff</span>
+                </a>
+            </div>
+            
+            <a href="#" class="top-icon" title="Giỏ hàng"><i class="fa-solid fa-bag-shopping"></i></a>
+            <a href="#" class="top-icon" title="Thanh toán"><i class="fa-solid fa-cart-shopping"></i></a>
         </div>
     </div>
 </header>

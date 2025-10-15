@@ -839,6 +839,20 @@
     END;
     $$ LANGUAGE plpgsql;
 
+    CREATE OR REPLACE FUNCTION record_product_change()
+    RETURNS trigger AS $$
+    BEGIN
+        UPDATE product_change_history
+        SET effective_to = NOW()
+        WHERE product_id = NEW.id AND effective_to IS NULL;
+
+        INSERT INTO product_change_history(product_id, product_name, unit_price, product_description) VALUES
+        (NEW.id, NEW.product_name, NEW.current_price, NEW.product_description);        
+
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
     CREATE TRIGGER normalize_email_and_phone_trigger_account
     BEFORE INSERT OR UPDATE ON user_account
     FOR EACH ROW
@@ -926,3 +940,8 @@
     FOR EACH ROW
     WHEN (NEW.point <> OLD.point)
     EXECUTE FUNCTION assign_loyalty_rank();
+
+    CREATE TRIGGER record_product_change_trigger
+    AFTER UPDATE ON product
+    FOR EACH ROW
+    EXECUTE FUNCTION record_product_change();

@@ -9,34 +9,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import service.sllbackend.entity.Staff;
-import service.sllbackend.entity.StaffAccount;
-import service.sllbackend.entity.StaffCurrentPosition;
-import service.sllbackend.entity.StaffPosition;
-import service.sllbackend.entity.UserAccount;
-import service.sllbackend.entity.Service;
-import service.sllbackend.entity.ServiceCategory;
-import service.sllbackend.entity.Product;
-import service.sllbackend.entity.Voucher;
-import service.sllbackend.entity.VoucherStatus;
-import service.sllbackend.entity.Supplier;
-import service.sllbackend.entity.SupplierCategory;
+import service.sllbackend.entity.*;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.enumerator.Gender;
 import service.sllbackend.enumerator.ServiceType;
-import service.sllbackend.repository.StaffAccountRepo;
-import service.sllbackend.repository.StaffCurrentPositionRepo;
-import service.sllbackend.repository.StaffPositionRepo;
-import service.sllbackend.repository.StaffRepo;
-import service.sllbackend.repository.UserAccountRepo;
-import service.sllbackend.repository.ServiceRepo;
-import service.sllbackend.repository.ServiceCategoryRepo;
-import service.sllbackend.repository.ProductRepo;
-import service.sllbackend.repository.VoucherRepo;
-import service.sllbackend.repository.VoucherStatusRepo;
-import service.sllbackend.repository.SupplierRepo;
-import service.sllbackend.repository.SupplierCategoryRepo;
+import service.sllbackend.repository.*;
 
 @Component
 @RequiredArgsConstructor
@@ -44,7 +22,6 @@ import service.sllbackend.repository.SupplierCategoryRepo;
 public class DataLoader implements CommandLineRunner {
 	private final UserAccountRepo userAccountRepo;
 	private final StaffRepo staffRepo;
-	private final StaffAccountRepo staffAccountRepo;
 	private final StaffPositionRepo staffPositionRepo;
 	private final StaffCurrentPositionRepo staffCurrentPositionRepo;
 	private final PasswordEncoder passwordEncoder;
@@ -55,6 +32,7 @@ public class DataLoader implements CommandLineRunner {
 	private final VoucherStatusRepo voucherStatusRepo;
 	private final SupplierRepo supplierRepo;
 	private final SupplierCategoryRepo supplierCategoryRepo;
+	private final JobPostingRepo jobPostingRepo;
 
 	@Override
 	public void run(String... args) {
@@ -65,6 +43,7 @@ public class DataLoader implements CommandLineRunner {
 		registerProducts();
 		registerVouchers();
 		registerProviders();
+		registerJobPosting();
 	}
 
 	public void registerUser() {
@@ -86,9 +65,6 @@ public class DataLoader implements CommandLineRunner {
 	public void registerStaff() {
 		String name = "admin";
 		String role = "admin";
-		String username = "admin";
-		String rawPassword = "admin";
-		String hashedPassword = passwordEncoder.encode(rawPassword);
 
 		Staff staff = staffRepo.save(Staff.builder()
 				.name(name)
@@ -873,5 +849,15 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 12 providers across 5 categories");
+	}
+
+	public void registerJobPosting() {
+		jobPostingRepo.save(JobPosting.builder()
+				.jobPostingName("abc")
+				.jobPostingDescription("abc")
+				.maxApplication(10)
+				.effectiveFrom(LocalDate.now())
+				.effectiveTo(LocalDate.now())
+				.build());
 	}
 }

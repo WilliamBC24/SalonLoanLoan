@@ -30,6 +30,8 @@ public class DataLoader implements CommandLineRunner {
 	private final ProductRepo productRepo;
 	private final VoucherRepo voucherRepo;
 	private final VoucherStatusRepo voucherStatusRepo;
+	private final PromotionRepo promotionRepo;
+	private final PromotionStatusRepo promotionStatusRepo;
 	private final SupplierRepo supplierRepo;
 	private final SupplierCategoryRepo supplierCategoryRepo;
 	private final JobPostingRepo jobPostingRepo;
@@ -42,6 +44,7 @@ public class DataLoader implements CommandLineRunner {
 		registerServices();
 		registerProducts();
 		registerVouchers();
+		registerPromotions();
 		registerProviders();
 		registerJobPosting();
 	}

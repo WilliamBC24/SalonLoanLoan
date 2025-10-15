@@ -22,12 +22,12 @@ public class Loyalty {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserAccount user;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     @Builder.Default
     private Integer point = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "level_id", nullable = false)
+    @JoinColumn(name = "level_id", nullable = false, columnDefinition = "SMALLINT DEFAULT 1")
     @Builder.Default
     private LoyaltyLevel level = null; // Default to level 1 (Bronze) in application logic
 }

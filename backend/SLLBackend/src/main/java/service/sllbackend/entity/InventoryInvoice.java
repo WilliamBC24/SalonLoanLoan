@@ -32,7 +32,7 @@ public class InventoryInvoice {
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -40,8 +40,7 @@ public class InventoryInvoice {
     private String note;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "invoice_status", nullable = false, columnDefinition = "inventory_invoice_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "invoice_status", nullable = false, columnDefinition = "TEXT DEFAULT 'AWAITING'")
     @Builder.Default
     private InventoryInvoiceStatus invoiceStatus = InventoryInvoiceStatus.AWAITING;
 }

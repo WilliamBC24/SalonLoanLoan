@@ -27,7 +27,7 @@ public class ShiftCashPaymentRecord {
     @Column(nullable = false)
     private Integer amount;
 
-    @Column(name = "recorded_at", nullable = false)
+    @Column(name = "recorded_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime recordedAt = LocalDateTime.now();
 

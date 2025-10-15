@@ -28,7 +28,7 @@ public class StaffPromotionHistory {
     @JoinColumn(name = "position_id", nullable = false)
     private StaffPosition position;
 
-    @Column(name = "effective_from", nullable = false)
+    @Column(name = "effective_from", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime effectiveFrom = LocalDateTime.now();
 

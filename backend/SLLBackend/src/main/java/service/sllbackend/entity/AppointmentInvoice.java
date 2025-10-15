@@ -39,7 +39,7 @@ public class AppointmentInvoice {
     @JoinColumn(name = "responsible_staff_id", nullable = false)
     private Staff responsibleStaff;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -70,7 +70,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/auth/user/login", "/auth/user/register").permitAll()
 						.requestMatchers("/user/profile").hasRole("USER")
-						.requestMatchers("/cart/**", "/profile/**").hasAnyRole("USER", "ADMIN")
+						.requestMatchers("/cart/**").hasAnyRole("USER", "ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
 						.usernameParameter("username")
@@ -102,6 +102,24 @@ public class SecurityConfig {
 
 	@Bean
 	@Order(4)
+	public SecurityFilterChain adminSecurityFilter(HttpSecurity http) throws Exception {
+		return http
+				.securityMatcher("/admin/**")
+				.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/admin/**").hasRole("ADMIN")
+						.anyRequest().authenticated())
+				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
+						.usernameParameter("username")
+						.passwordParameter("password")
+						.failureUrl("/auth/staff/login?error")
+						.defaultSuccessUrl("/auth/staff/landing", true))
+				.authenticationManager(staffProviderManager())
+				.build();
+	}
+
+	@Bean
+	@Order(5)
 	public SecurityFilterChain logoutSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/auth/logout")

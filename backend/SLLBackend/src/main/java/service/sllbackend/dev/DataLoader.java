@@ -103,13 +103,6 @@ public class DataLoader implements CommandLineRunner {
 				.staff(staff)
 				.position(staffPosition)
 				.build());
-
-		staffAccountRepo.save(StaffAccount.builder()
-				.staff(staff)
-				.username(username)
-				.password(hashedPassword)
-				.accountStatus(AccountStatus.ACTIVE)
-				.build());
 	}
 
 	public void registerServices() {

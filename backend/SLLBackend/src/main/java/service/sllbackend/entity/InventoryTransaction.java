@@ -34,11 +34,10 @@ public class InventoryTransaction {
     private Staff staff;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type", nullable = false, columnDefinition = "inventory_transaction_type_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "transaction_type", nullable = false)
     private InventoryTransactionType transactionType;
 
-    @Column(name = "transaction_time", nullable = false)
+    @Column(name = "transaction_time", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime transactionTime = LocalDateTime.now();
 
@@ -46,7 +45,6 @@ public class InventoryTransaction {
     private Integer quantity;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "inventory_transaction_reason_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
     private InventoryTransactionReason reason;
 }

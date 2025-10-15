@@ -41,8 +41,7 @@ public class JobPosting {
     private LocalDate effectiveTo;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "job_posting_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'DEACTIVATED'")
     @Builder.Default
     private JobPostingStatus status = JobPostingStatus.DEACTIVATED;
 }

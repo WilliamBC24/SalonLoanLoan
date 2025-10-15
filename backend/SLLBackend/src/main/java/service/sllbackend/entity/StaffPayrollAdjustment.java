@@ -29,8 +29,7 @@ public class StaffPayrollAdjustment {
     private Staff staff;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "adjustment_type", nullable = false, columnDefinition = "payroll_adjustment_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "adjustment_type", nullable = false)
     private PayrollAdjustment adjustmentType;
 
     @Column(nullable = false)
@@ -39,7 +38,7 @@ public class StaffPayrollAdjustment {
     @Column(columnDefinition = "TEXT")
     private String note;
 
-    @Column(name = "effective_date", nullable = false)
+    @Column(name = "effective_date", nullable = false, columnDefinition = "DATE DEFAULT CURRENT_DATE")
     @Builder.Default
     private LocalDate effectiveDate = LocalDate.now();
 }

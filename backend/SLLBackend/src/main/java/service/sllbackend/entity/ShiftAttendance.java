@@ -37,8 +37,7 @@ public class ShiftAttendance {
     // Note: duration_minutes is a generated column in the database
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "shift_attendance_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'MISSED'")
     @Builder.Default
     private ShiftAttendanceStatus status = ShiftAttendanceStatus.MISSED;
 }

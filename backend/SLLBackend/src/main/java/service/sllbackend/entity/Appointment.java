@@ -24,7 +24,7 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "registered_at", nullable = false)
+    @Column(name = "registered_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime registeredAt = LocalDateTime.now();
 
@@ -38,8 +38,7 @@ public class Appointment {
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "appointment_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'PENDING'")
     @Builder.Default
     private AppointmentStatus status = AppointmentStatus.PENDING;
 }

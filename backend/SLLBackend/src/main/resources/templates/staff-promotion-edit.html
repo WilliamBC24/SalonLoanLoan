@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Create Promotion</title>
+    <title>Edit Promotion</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -71,20 +71,18 @@
     </style>
 </head>
 <body>
-    <h1>Create New Promotion</h1>
+    <h1>Edit Promotion</h1>
     
-    <form id="promotionForm" th:action="@{/staff/promotion/edit/{id}(id=${promotion.id})}" method="post" action="/staff/promotion/create">
+    <form id="promotionForm" method="post" th:action="@{/staff/promotion/edit/{id}(id=${promotion.id})}">
         <div class="form-group">
             <label for="promotionName">Promotion Name: <span style="color: red;">*</span></label>
-            <input type="text" id="promotionName" name="promotionName" 
-                   th:value="${promotion.promotionName}" required />
+            <input type="text" id="promotionName" name="promotionName" th:value="${promotion.promotionName}" required />
             <div id="promotionNameError" class="error-message">Promotion name is required</div>
         </div>
 
         <div class="form-group">
             <label for="promotionDescription">Description:</label>
-            <textarea id="promotionDescription" name="promotionDescription" 
-                      th:text="${promotion.promotionDescription}"></textarea>
+            <textarea id="promotionDescription" name="promotionDescription" th:text="${promotion.promotionDescription}"></textarea>
         </div>
 
         <div class="form-group">
@@ -99,22 +97,19 @@
 
         <div class="form-group">
             <label for="discountAmount">Discount Amount: <span style="color: red;">*</span></label>
-            <input type="number" id="discountAmount" name="discountAmount" 
-                   th:value="${promotion.discountAmount}" min="1" required />
+            <input type="number" id="discountAmount" name="discountAmount" th:value="${promotion.discountAmount}" min="1" required />
             <div id="discountAmountError" class="error-message">Discount amount must be at least 1</div>
         </div>
 
         <div class="form-group">
             <label for="effectiveFrom">Effective From: <span style="color: red;">*</span></label>
-            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" 
-                   th:value="${#temporals.format(promotion.effectiveFrom, 'yyyy-MM-dd' + 'T' + 'HH:mm')}" required />
+            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" th:value="${#temporals.format(promotion.effectiveFrom, 'yyyy-MM-dd' + 'T' + 'HH:mm')}" required />
             <div id="effectiveFromError" class="error-message">Effective from date is required</div>
         </div>
 
         <div class="form-group">
             <label for="effectiveTo">Effective To: <span style="color: red;">*</span></label>
-            <input type="datetime-local" id="effectiveTo" name="effectiveTo" 
-                   th:value="${#temporals.format(promotion.effectiveTo, 'yyyy-MM-dd' + 'T' + 'HH:mm')}" required />
+            <input type="datetime-local" id="effectiveTo" name="effectiveTo" th:value="${#temporals.format(promotion.effectiveTo, 'yyyy-MM-dd' + 'T' + 'HH:mm')}" required />
             <div id="effectiveToError" class="error-message">Effective to date is required and must be after effective from date</div>
         </div>
 
@@ -133,7 +128,7 @@
         </div>
 
         <div class="buttons">
-            <button type="submit" class="submit-btn">Create Promotion</button>
+            <button type="submit" class="submit-btn">Update Promotion</button>
             <button type="button" class="cancel-btn" onclick="window.location.href='/staff/promotion/list'">Cancel</button>
         </div>
     </form>

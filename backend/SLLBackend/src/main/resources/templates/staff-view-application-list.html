@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff View: Job Applications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: auto;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Job Applications</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Job Name</th>
+        <th>Applicant Name</th>
+        <th>Date of Birth</th>
+        <th>Phone Number</th>
+        <th>Application Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="app : ${applications}">
+        <td th:text="${app.jobPosting.jobPostingName}">Job Name</td>
+        <td th:text="${app.applicantName}">Applicant Name</td>
+        <td th:text="${app.applicantDob}">YYYY-MM-DD</td>
+        <td th:text="${app.applicantPhoneNumber}">Phone</td>
+        <td th:text="${app.applicationDate}">YYYY-MM-DD HH:mm</td>
+        <td th:text="${app.status}">Status</td>
+        <td>
+            <!-- Accept Form -->
+            <form th:action="@{/staff/job/accept/{id}(id=${app.id})}" method="post" style="display:inline">
+                <button type="submit">Accept</button>
+            </form>
+
+            <!-- Reject Form -->
+            <form th:action="@{/staff/job/reject/{id}(id=${app.id})}" method="post" style="display:inline">
+                <button type="submit">Reject</button>
+            </form>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(applications)}">
+        <td colspan="6">No applications found.</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

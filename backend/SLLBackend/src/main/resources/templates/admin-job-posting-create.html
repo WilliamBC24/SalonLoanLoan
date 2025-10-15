@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Create Job Posting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        form {
+            max-width: 600px;
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select,
+        input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        button {
+            padding: 10px 18px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .cancel-btn {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+        .cancel-btn:hover {
+            background: #545b62;
+        }
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+<h1>Create Job Posting</h1>
+
+<!-- Success/Error Messages -->
+<div id="successMessage" class="alert alert-success" style="display:none;"></div>
+<div id="errorMessage" class="alert alert-error" style="display:none;"></div>
+
+<form action="/admin/job/create" method="post">
+    <div>
+        <label for="jobPostingName">Job Title:</label>
+        <input type="text" id="jobPostingName" name="jobPostingName" placeholder="Enter job title" required>
+    </div>
+
+    <div>
+        <label for="jobPostingDescription">Description:</label>
+        <textarea id="jobPostingDescription" name="jobPostingDescription" placeholder="Enter job description" required></textarea>
+    </div>
+
+    <div>
+        <label for="maxApplication">Max Applications:</label>
+        <input type="number" id="maxApplication" name="maxApplication" min="1" placeholder="Enter max applicants allowed" required>
+    </div>
+
+    <div>
+        <label for="effectiveFrom">Effective From:</label>
+        <input type="date" id="effectiveFrom" name="effectiveFrom" required>
+    </div>
+
+    <div>
+        <label for="effectiveTo">Effective To (optional):</label>
+        <input type="date" id="effectiveTo" name="effectiveTo">
+    </div>
+
+    <div>
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="ACTIVE">Active</option>
+            <option value="DEACTIVATED" selected>Deactivated</option>
+        </select>
+    </div>
+
+    <div>
+        <button type="submit">Create</button>
+        <button type="button" class="cancel-btn" onclick="window.location.href='/admin/job/list'">Cancel</button>
+    </div>
+</form>
+
+</body>
+</html>

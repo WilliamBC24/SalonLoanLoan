@@ -89,8 +89,8 @@
             <label for="discountType">Discount Type: <span style="color: red;">*</span></label>
             <select id="discountType" name="discountType" required>
                 <option value="">Select discount type</option>
-                <option value="AMOUNT">Amount (VND)</option>
-                <option value="PERCENTAGE">Percentage (%)</option>
+                <option value="AMOUNT" th:selected="${promotion.discountType.toString() == 'AMOUNT'}">Amount (VND)</option>
+                <option value="PERCENTAGE" th:selected="${promotion.discountType.toString() == 'PERCENTAGE'}">Percentage (%)</option>
             </select>
             <div id="discountTypeError" class="error-message">Please select a discount type</div>
         </div>
@@ -103,13 +103,13 @@
 
         <div class="form-group">
             <label for="effectiveFrom">Effective From: <span style="color: red;">*</span></label>
-            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" required />
+            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" th:value="${#temporals.format(promotion.effectiveFrom, 'yyyy-MM-dd' + 'T' + 'HH:mm')}" required />
             <div id="effectiveFromError" class="error-message">Effective from date is required</div>
         </div>
 
         <div class="form-group">
             <label for="effectiveTo">Effective To: <span style="color: red;">*</span></label>
-            <input type="datetime-local" id="effectiveTo" name="effectiveTo" required />
+            <input type="datetime-local" id="effectiveTo" name="effectiveTo" th:value="${#temporals.format(promotion.effectiveTo, 'yyyy-MM-dd' + 'T' + 'HH:mm')}" required />
             <div id="effectiveToError" class="error-message">Effective to date is required and must be after effective from date</div>
         </div>
 
@@ -119,7 +119,8 @@
                 <option value="">Select status</option>
                 <option th:each="status : ${statuses}" 
                         th:value="${status.id}" 
-                        th:text="${status.name}">
+                        th:text="${status.name}"
+                        th:selected="${promotion.promotionStatus.id == status.id}">
                     Status
                 </option>
             </select>

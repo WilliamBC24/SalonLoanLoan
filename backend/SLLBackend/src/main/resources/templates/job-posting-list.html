@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Application List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {background-color: #f9f9f9;}
+    </style>
+</head>
+<body>
+<h1>Active Job Postings</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Effective From</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="job : ${jobPostingList}">
+        <td th:text="${job.jobPostingName}">Job Name</td>
+        <td th:text="${job.jobPostingDescription}">Job Description</td>
+        <td th:text="${job.effectiveFrom}">2025-10-15</td>
+        <td>
+            <a th:href="@{/job/details/{id}(id=${job.id})}">Apply</a>
+        </td>
+    </tr>
+
+    <tr th:if="${#lists.isEmpty(jobPostingList)}">
+        <td colspan="3">No active job postings available.</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

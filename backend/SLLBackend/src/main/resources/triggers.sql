@@ -39,10 +39,60 @@ END;
     $$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION add_loyalty_record()
+RETURNS trigger AS $$
+BEGIN
+INSERT INTO loyalty(user_id)
+VALUES (NEW.id)
+ON CONFLICT (user_id) DO NOTHING;
+
+RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+       CREATE OR REPLACE FUNCTION assign_loyalty_rank()
+    RETURNS trigger AS $$
+    DECLARE
+current_rank INT;
+        new_rank INT;
+BEGIN
+SELECT id
+INTO current_rank
+FROM loyalty_level
+WHERE point_required <= OLD.point
+ORDER BY point_required DESC LIMIT 1;
+
+SELECT id
+INTO new_rank
+FROM loyalty_level
+WHERE point_required <= NEW.point
+ORDER BY point_required DESC LIMIT 1;
+
+IF current_rank IS DISTINCT FROM new_rank THEN
+UPDATE loyalty
+SET level_id = new_rank
+WHERE user_id = NEW.user_id;
+END IF;
+
+RETURN NULL;
+END;
+    $$ LANGUAGE plpgsql;
+
 CREATE TRIGGER create_staff_account_trigger
     AFTER INSERT
     ON staff
     FOR EACH ROW
     EXECUTE FUNCTION create_staff_account();
+
+CREATE TRIGGER add_loyalty_record_trigger
+    AFTER INSERT ON user_account
+    FOR EACH ROW
+    EXECUTE FUNCTION add_loyalty_record();
+
+CREATE TRIGGER assign_loyalty_rank_trigger
+    AFTER UPDATE ON loyalty
+    FOR EACH ROW
+    WHEN (NEW.point <> OLD.point)
+    EXECUTE FUNCTION assign_loyalty_rank();
 
 ^;

@@ -648,7 +648,6 @@
         name_parts TEXT[];
         staff_username TEXT;
     BEGIN
-    RAISE NOTICE 'hehe';
         name_parts := string_to_array(NEW.name, ' ');
 
         staff_username := name_parts[array_length(name_parts, 1)];
@@ -659,7 +658,6 @@
 
         INSERT INTO staff_account(staff_id, username, password) VALUES
         (NEW.id, staff_username, crypt('default123', gen_salt('bf')));
-    RAISE NOTICE 'got it';
         RETURN NULL;
     END;
     $$ LANGUAGE plpgsql;
@@ -813,33 +811,33 @@
     -- END;
     -- $$ LANGUAGE plpgsql;
 
-    -- CREATE OR REPLACE FUNCTION assign_loyalty_rank()
-    -- RETURNS trigger AS $$
-    -- DECLARE
-    --     current_rank INT;
-    --     new_rank INT;
-    -- BEGIN
-    --     SELECT id 
-    --     INTO current_rank
-    --     FROM loyalty_level
-    --     WHERE point_required <= OLD.point
-    --     ORDER BY point_required DESC LIMIT 1;
+    CREATE OR REPLACE FUNCTION assign_loyalty_rank()
+    RETURNS trigger AS $$
+    DECLARE
+        current_rank INT;
+        new_rank INT;
+    BEGIN
+        SELECT id 
+        INTO current_rank
+        FROM loyalty_level
+        WHERE point_required <= OLD.point
+        ORDER BY point_required DESC LIMIT 1;
 
-    --     SELECT id 
-    --     INTO new_rank
-    --     FROM loyalty_level
-    --     WHERE point_required <= NEW.point
-    --     ORDER BY point_required DESC LIMIT 1;
+        SELECT id 
+        INTO new_rank
+        FROM loyalty_level
+        WHERE point_required <= NEW.point
+        ORDER BY point_required DESC LIMIT 1;
 
-    --     IF current_rank IS DISTINCT FROM new_rank THEN
-    --         UPDATE loyalty
-    --         SET level_id = new_rank
-    --         WHERE user_id = NEW.user_id;
-    --     END IF;
+        IF current_rank IS DISTINCT FROM new_rank THEN
+            UPDATE loyalty
+            SET level_id = new_rank
+            WHERE user_id = NEW.user_id;
+        END IF;
 
-    --     RETURN NULL;
-    -- END;
-    -- $$ LANGUAGE plpgsql;
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
 
     CREATE TRIGGER normalize_email_and_phone_trigger_account
     BEFORE INSERT OR UPDATE ON user_account
@@ -923,8 +921,8 @@
     -- FOR EACH ROW
     -- EXECUTE FUNCTION add_loyalty_point();
 
-    -- CREATE TRIGGER assign_loyalty_rank_trigger
-    -- AFTER UPDATE ON loyalty
-    -- FOR EACH ROW
-    -- WHEN (NEW.point <> OLD.point)
-    -- EXECUTE FUNCTION assign_loyalty_rank();
+    CREATE TRIGGER assign_loyalty_rank_trigger
+    AFTER UPDATE ON loyalty
+    FOR EACH ROW
+    WHEN (NEW.point <> OLD.point)
+    EXECUTE FUNCTION assign_loyalty_rank();

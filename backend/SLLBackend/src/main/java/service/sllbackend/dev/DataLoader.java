@@ -10,10 +10,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.*;
-import service.sllbackend.enumerator.AccountStatus;
-import service.sllbackend.enumerator.DiscountType;
-import service.sllbackend.enumerator.Gender;
-import service.sllbackend.enumerator.ServiceType;
+import service.sllbackend.enumerator.*;
 import service.sllbackend.repository.*;
 
 @Component
@@ -35,10 +32,13 @@ public class DataLoader implements CommandLineRunner {
 	private final SupplierRepo supplierRepo;
 	private final SupplierCategoryRepo supplierCategoryRepo;
 	private final JobPostingRepo jobPostingRepo;
+	private final JobPostingApplicationRepo jobPostingApplicationRepo;
+	private final LoyaltyLevelRepo loyaltyLevelRepo;
 
 	@Override
 	public void run(String... args) {
 		log.info("############ \n            Loading initial data\n############");
+		registerLoyaltyLevel();
 		registerUser();
 		registerStaff();
 		registerServices();
@@ -47,6 +47,7 @@ public class DataLoader implements CommandLineRunner {
 		registerPromotions();
 		registerProviders();
 		registerJobPosting();
+		registerJobApplication();
 	}
 
 	public void registerUser() {
@@ -861,6 +862,35 @@ public class DataLoader implements CommandLineRunner {
 				.maxApplication(10)
 				.effectiveFrom(LocalDate.now())
 				.effectiveTo(LocalDate.now())
+				.status(JobPostingStatus.ACTIVE)
 				.build());
+
+		jobPostingRepo.save(JobPosting.builder()
+				.jobPostingName("a1bc")
+				.jobPostingDescription("a1bc")
+				.maxApplication(1)
+				.effectiveFrom(LocalDate.now())
+				.effectiveTo(LocalDate.now())
+				.status(JobPostingStatus.ACTIVE)
+				.build());
+	}
+
+	public void registerJobApplication() {
+		jobPostingApplicationRepo.save(JobPostingApplication.builder()
+				.jobPosting(jobPostingRepo.findById(1L).orElse(null))
+				.applicantName("alice")
+				.applicantDob(LocalDate.now())
+				.applicantPhoneNumber("0999111222")
+				.build());
+	}
+
+	public void registerLoyaltyLevel() {
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Bronze", 0));
+		// Silver
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Silver", 1000));
+		// Gold
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 2000));
+		// Platinum
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 5000));
 	}
 }

@@ -3,7 +3,6 @@ package service.sllbackend.web.mvc;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +30,6 @@ public class StaffServiceController {
     }
 
     @GetMapping("/list")
-    @Transactional(readOnly = true)
     public String listServices(
             @RequestParam(required = false) List<String> types,
             @RequestParam(required = false) List<Integer> categories,
@@ -66,7 +64,6 @@ public class StaffServiceController {
     }
 
     @GetMapping("/create")
-    @Transactional(readOnly = true)
     public String showCreateForm(Model model) {
         List<ServiceCategory> categories = serviceCategoryRepo.findAll();
         model.addAttribute("categories", categories);
@@ -74,7 +71,6 @@ public class StaffServiceController {
     }
 
     @PostMapping("/create")
-    @Transactional
     public String createService(
             @RequestParam String serviceName,
             @RequestParam Integer serviceCategoryId,
@@ -109,7 +105,6 @@ public class StaffServiceController {
     }
 
     @GetMapping("/edit/{id}")
-    @Transactional(readOnly = true)
     public String showEditForm(@PathVariable Integer id, Model model) {
         Service service = serviceRepo.findByIdWithCategory(id)
             .orElseThrow(() -> new RuntimeException("Service not found"));
@@ -121,7 +116,6 @@ public class StaffServiceController {
     }
 
     @PostMapping("/edit/{id}")
-    @Transactional
     public String editService(
             @PathVariable Integer id,
             @RequestParam String serviceName,

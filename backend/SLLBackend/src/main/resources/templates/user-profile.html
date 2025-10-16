@@ -60,6 +60,9 @@
         <a href="/auth/user/landing" class="btn btn-secondary px-4">Back to Home</a>
         <a th:href="@{/user/profile/edit}" class="btn btn-primary px-4">Edit Profile</a>
     </div>
+    <div th:if="${param.updated}" class="alert alert-success mt-3">
+        Profile updated successfully!
+    </div>
 </div>
 </body>
 </html>

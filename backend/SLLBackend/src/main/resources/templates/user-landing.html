@@ -87,7 +87,8 @@
         <a href="/services" class="button">View Services</a>
         <a href="/products" class="button">View Products</a>
         <a href="/user/profile" class="button">View Profile</a>
-        <form th:action="@{/auth/logout}" method="post" style="display:inline;">
+        <a href="/cart" class="button">View Cart</a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
             <button type="submit" class="button logout-btn">Logout</button>
         </form>
     </div>

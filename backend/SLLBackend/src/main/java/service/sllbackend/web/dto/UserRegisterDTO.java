@@ -13,21 +13,28 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileDTO {
-
+public class UserRegisterDTO {
+    @NotBlank
     @Size(min = 3, max = 20)
     private String username;
+
+    @NotBlank
+    @Size(min = 8, max = 50)
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/]{8,50}$"
+    )
+    private String password;
 
     @Email
     private String email;
 
+    @NotBlank
     @Pattern(regexp = "^\\+?[0-9]{7,15}$")
     private String phoneNumber;
 
+    @NotNull
     private Gender gender;
 
     @PastOrPresent
     private LocalDate birthDate;
-
 }
-

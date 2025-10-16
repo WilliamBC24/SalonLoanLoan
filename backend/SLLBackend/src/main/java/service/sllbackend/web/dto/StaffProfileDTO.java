@@ -1,5 +1,6 @@
 package service.sllbackend.web.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StaffProfileDTO {
-
+    @Size(min = 3, max = 20)
     private String name;
 
 }

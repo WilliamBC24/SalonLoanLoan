@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-md-6">
                     <strong>Active:</strong>
-                    <span th:text="${staffAccount.activeStatus ? 'Yes' : 'No'}"></span>
+                    <span th:text="${staffAccount.accountStatus == T(service.sllbackend.enumerator.AccountStatus).ACTIVE ? 'Yes' : 'No'}"></span>
                 </div>
             </div>
 
@@ -63,6 +63,9 @@
     <div class="text-center mt-4">
         <a href="/auth/staff/landing" class="btn btn-secondary px-4">Back to Home</a>
         <a th:href="@{/staff/profile/edit}" class="btn btn-primary px-4">Edit Profile</a>
+    </div>
+    <div th:if="${param.updated}" class="alert alert-success mt-3">
+        Profile updated successfully!
     </div>
 </div>
 </body>

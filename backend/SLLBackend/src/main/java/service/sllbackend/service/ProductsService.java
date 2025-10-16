@@ -1,8 +1,8 @@
 package service.sllbackend.service;
 
-import service.sllbackend.entity.Product;
-
 import java.util.List;
+
+import service.sllbackend.entity.Product;
 
 
 public interface ProductsService {
@@ -15,6 +15,6 @@ public interface ProductsService {
     Product createProduct(Product product);
     
     Product updateProduct(Integer id, Product product);
-    
+
     String getProductImagePath(Integer productId);
 }

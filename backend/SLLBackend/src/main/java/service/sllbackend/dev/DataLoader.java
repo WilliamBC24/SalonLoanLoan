@@ -1,6 +1,7 @@
 package service.sllbackend.dev;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -16,7 +17,12 @@ import service.sllbackend.entity.UserAccount;
 import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.Product;
+import service.sllbackend.entity.Voucher;
+import service.sllbackend.entity.VoucherStatus;
+import service.sllbackend.entity.Supplier;
+import service.sllbackend.entity.SupplierCategory;
 import service.sllbackend.enumerator.AccountStatus;
+import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.enumerator.Gender;
 import service.sllbackend.enumerator.ServiceType;
 import service.sllbackend.repository.StaffAccountRepo;
@@ -29,6 +35,10 @@ import service.sllbackend.repository.ServiceCategoryRepo;
 import service.sllbackend.repository.ProductRepo;
 import service.sllbackend.repository.ProductImageRepo;
 import service.sllbackend.entity.ProductImage;
+import service.sllbackend.repository.VoucherRepo;
+import service.sllbackend.repository.VoucherStatusRepo;
+import service.sllbackend.repository.SupplierRepo;
+import service.sllbackend.repository.SupplierCategoryRepo;
 
 @Component
 @RequiredArgsConstructor
@@ -42,8 +52,12 @@ public class DataLoader implements CommandLineRunner {
 	private final PasswordEncoder passwordEncoder;
 	private final ServiceRepo serviceRepo;
 	private final ServiceCategoryRepo serviceCategoryRepo;
-	private final ProductRepo productRepo;
-	private final ProductImageRepo productImageRepo;
+    private final ProductRepo productRepo;
+    private final ProductImageRepo productImageRepo;
+    private final VoucherRepo voucherRepo;
+    private final VoucherStatusRepo voucherStatusRepo;
+    private final SupplierRepo supplierRepo;
+    private final SupplierCategoryRepo supplierCategoryRepo;
 
 	@Override
 	public void run(String... args) {
@@ -52,6 +66,8 @@ public class DataLoader implements CommandLineRunner {
 		registerStaff();
 		registerServices();
 		registerProducts();
+        registerVouchers();
+        registerProviders();
 	}
 
 	public void registerUser() {
@@ -75,6 +91,7 @@ public class DataLoader implements CommandLineRunner {
 		String role = "Administrator";
 		String username = "admin";
 		String rawPassword = "admin";
+		String hashedPassword = passwordEncoder.encode(rawPassword);
 
 		Staff staff = staffRepo.save(Staff.builder()
 				.name(name)
@@ -90,13 +107,11 @@ public class DataLoader implements CommandLineRunner {
 				.position(staffPosition)
 				.build());
 
-		String hashedPassword = passwordEncoder.encode(rawPassword);
-
 		staffAccountRepo.save(StaffAccount.builder()
 				.staff(staff)
 				.username(username)
 				.password(hashedPassword)
-				.activeStatus(Boolean.TRUE)
+				.accountStatus(AccountStatus.ACTIVE)
 				.build());
 	}
 
@@ -797,5 +812,227 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 30 products");
+	}
+
+	public void registerVouchers() {
+		// Create voucher statuses
+		VoucherStatus activeStatus = voucherStatusRepo.save(VoucherStatus.builder()
+				.name("ACTIVE")
+				.build());
+		
+		VoucherStatus inactiveStatus = voucherStatusRepo.save(VoucherStatus.builder()
+				.name("INACTIVE")
+				.build());
+		
+		VoucherStatus expiredStatus = voucherStatusRepo.save(VoucherStatus.builder()
+				.name("EXPIRED")
+				.build());
+
+		// Create sample vouchers
+		voucherRepo.save(Voucher.builder()
+				.voucherName("New Year 2025")
+				.voucherDescription("Special discount for New Year celebration 2025")
+				.voucherCode("NEWYEAR2025")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(50000)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 1, 31, 23, 59))
+				.maxUsage(100)
+				.usedCount(0)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("Summer Sale")
+				.voucherDescription("20% off for summer season")
+				.voucherCode("SUMMER20")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(20)
+				.effectiveFrom(LocalDateTime.of(2025, 6, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 8, 31, 23, 59))
+				.maxUsage(500)
+				.usedCount(25)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("First Time Customer")
+				.voucherDescription("Welcome discount for first-time customers")
+				.voucherCode("WELCOME10")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(10)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 12, 31, 23, 59))
+				.maxUsage(1000)
+				.usedCount(150)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("VIP Member Exclusive")
+				.voucherDescription("Exclusive discount for VIP members - 100,000 VND off")
+				.voucherCode("VIP100K")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(100000)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 12, 31, 23, 59))
+				.maxUsage(50)
+				.usedCount(12)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("Weekend Special")
+				.voucherDescription("15% discount for weekend appointments")
+				.voucherCode("WEEKEND15")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(15)
+				.effectiveFrom(LocalDateTime.of(2025, 3, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 3, 31, 23, 59))
+				.maxUsage(200)
+				.usedCount(180)
+				.voucherStatus(activeStatus)
+				.build());
+
+		voucherRepo.save(Voucher.builder()
+				.voucherName("Black Friday 2024")
+				.voucherDescription("Huge discount for Black Friday - 50% off")
+				.voucherCode("BLACKFRIDAY50")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(50)
+				.effectiveFrom(LocalDateTime.of(2024, 11, 29, 0, 0))
+				.effectiveTo(LocalDateTime.of(2024, 11, 29, 23, 59))
+				.maxUsage(500)
+				.usedCount(500)
+				.voucherStatus(expiredStatus)
+				.build());
+
+        log.info("Successfully loaded 6 vouchers with 3 statuses");
+    }
+
+    public void registerProviders() {
+		// Create supplier categories
+		SupplierCategory hairProductsCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Hair Products Supplier")
+				.build());
+		
+		SupplierCategory skinCareCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Skin Care Supplier")
+				.build());
+		
+		SupplierCategory nailProductsCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Nail Products Supplier")
+				.build());
+		
+		SupplierCategory makeupCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Makeup Products Supplier")
+				.build());
+		
+		SupplierCategory equipmentCategory = supplierCategoryRepo.save(SupplierCategory.builder()
+				.name("Salon Equipment Supplier")
+				.build());
+
+		// Hair Products Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("L'Oréal Professional Vietnam")
+				.supplierCategory(hairProductsCategory)
+				.phoneNumber("0281234567")
+				.email("contact@loreal-vietnam.com")
+				.note("Premium hair care products, exclusive distributor")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Wella Professionals")
+				.supplierCategory(hairProductsCategory)
+				.phoneNumber("0287654321")
+				.email("sales@wella.vn")
+				.note("Professional hair color and care products")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Schwarzkopf Vietnam")
+				.supplierCategory(hairProductsCategory)
+				.phoneNumber("0283456789")
+				.email("info@schwarzkopf.vn")
+				.note("German quality hair products")
+				.build());
+
+		// Skin Care Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Dermalogica Vietnam")
+				.supplierCategory(skinCareCategory)
+				.phoneNumber("0289876543")
+				.email("vietnam@dermalogica.com")
+				.note("Professional skin care and treatments")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("The Ordinary Vietnam")
+				.supplierCategory(skinCareCategory)
+				.phoneNumber("0284567890")
+				.email("contact@theordinary.vn")
+				.note("Affordable clinical skincare solutions")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("La Roche-Posay")
+				.supplierCategory(skinCareCategory)
+				.phoneNumber("0286543210")
+				.email("info@laroche-posay.vn")
+				.note("Dermatological skincare products")
+				.build());
+
+		// Nail Products Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("OPI Vietnam")
+				.supplierCategory(nailProductsCategory)
+				.phoneNumber("0285432109")
+				.email("orders@opi-vietnam.com")
+				.note("Premium nail lacquer and treatments")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("CND Vietnam")
+				.supplierCategory(nailProductsCategory)
+				.phoneNumber("0288765432")
+				.email("sales@cnd.vn")
+				.note("Shellac and professional nail products")
+				.build());
+
+		// Makeup Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("MAC Cosmetics Vietnam")
+				.supplierCategory(makeupCategory)
+				.phoneNumber("0282345678")
+				.email("pro@maccosmetics.vn")
+				.note("Professional makeup products")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Sephora Vietnam")
+				.supplierCategory(makeupCategory)
+				.phoneNumber("0287890123")
+				.email("wholesale@sephora.vn")
+				.note("Wide range of beauty and makeup products")
+				.build());
+
+		// Equipment Suppliers
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Takara Belmont Vietnam")
+				.supplierCategory(equipmentCategory)
+				.phoneNumber("0283210987")
+				.email("sales@takarabelmont.vn")
+				.note("Salon furniture and equipment")
+				.build());
+
+		supplierRepo.save(Supplier.builder()
+				.supplierName("Beauty Solutions Co.")
+				.supplierCategory(equipmentCategory)
+				.phoneNumber("0289012345")
+				.email("info@beautysolutions.vn")
+				.note("Salon tools and professional equipment")
+				.build());
+
+		log.info("Successfully loaded 12 providers across 5 categories");
 	}
 }

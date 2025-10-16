@@ -1,11 +1,12 @@
 package service.sllbackend.web.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import service.sllbackend.enumerator.Gender;
+import service.sllbackend.enumerator.StaffStatus;
 
 import java.time.LocalDate;
 
@@ -13,21 +14,16 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileDTO {
-
-    @Size(min = 3, max = 20)
-    private String username;
+public class AdminStaffProfileDTO {
+    private String name;
 
     @Email
     private String email;
 
-    @Pattern(regexp = "^\\+?[0-9]{7,15}$")
-    private String phoneNumber;
+    private StaffStatus staffStatus;
 
-    private Gender gender;
+    private String socialSecurityNum;
 
     @PastOrPresent
     private LocalDate birthDate;
-
 }
-

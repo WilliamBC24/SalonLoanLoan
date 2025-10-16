@@ -65,10 +65,11 @@ public class SecurityConfig {
 	@Order(2)
 	public SecurityFilterChain userSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/auth/user/**")
+				.securityMatcher("/auth/user/**", "/cart/**", "/profile/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/user/**").permitAll()
+						.requestMatchers("/auth/user/login", "/auth/user/register").permitAll()
+						.requestMatchers("/cart/**", "/profile/**").authenticated()
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
 						.usernameParameter("username")
@@ -86,9 +87,9 @@ public class SecurityConfig {
 				.securityMatcher("/auth/staff/**", "/staff/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/staff/**").permitAll()
+						.requestMatchers("/auth/staff/login").permitAll()
 						.requestMatchers("/staff/**").authenticated()
-						.anyRequest().denyAll())
+						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
 						.usernameParameter("username")
 						.passwordParameter("password")

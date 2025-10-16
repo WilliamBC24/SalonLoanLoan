@@ -1,17 +1,18 @@
 package service.sllbackend.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Product;
 import service.sllbackend.entity.ProductImage;
 import service.sllbackend.repository.ProductRepo;
 import service.sllbackend.repository.ProductImageRepo;
 import service.sllbackend.service.ProductsService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +51,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> getTenProducts() {
         return productRepo.findAllProducts(PageRequest.of(0, 10));
     }
@@ -79,6 +81,6 @@ public class ProductsServiceImpl implements ProductsService {
     public String getProductImagePath(Integer productId) {
         return productImageRepo.findFirstByProductId(productId)
                 .map(ProductImage::getImagePath)
-                .orElse("/img/SVR.png"); // Default image if no image found
+                .orElse("/img/SVR.png");
     }
 }

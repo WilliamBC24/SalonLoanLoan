@@ -29,8 +29,7 @@ public class StaffCommission {
     private StaffPosition position;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "commission_type", nullable = false, columnDefinition = "commission_type_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "commission_type", nullable = false)
     private CommissionType commissionType;
 
     @Column(nullable = false)

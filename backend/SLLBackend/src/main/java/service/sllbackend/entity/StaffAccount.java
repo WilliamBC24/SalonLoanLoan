@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import service.sllbackend.enumerator.AccountStatus;
 
 @Data
@@ -29,7 +30,8 @@ public class StaffAccount {
     @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(name = "active_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "account_status", nullable = false, columnDefinition = "TEXT DEFAULT 'ACTIVE'")
     @Builder.Default
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 }

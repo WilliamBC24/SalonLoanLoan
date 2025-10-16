@@ -27,7 +27,7 @@ public class Product {
     @Column(name = "product_description", nullable = false, columnDefinition = "TEXT")
     private String productDescription;
 
-    @Column(name = "active_status", nullable = false)
+    @Column(name = "active_status", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     @Builder.Default
     private Boolean activeStatus = false;
 }

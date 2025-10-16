@@ -9,36 +9,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import service.sllbackend.entity.Staff;
-import service.sllbackend.entity.StaffAccount;
-import service.sllbackend.entity.StaffCurrentPosition;
-import service.sllbackend.entity.StaffPosition;
-import service.sllbackend.entity.UserAccount;
-import service.sllbackend.entity.Service;
-import service.sllbackend.entity.ServiceCategory;
-import service.sllbackend.entity.Product;
-import service.sllbackend.entity.Voucher;
-import service.sllbackend.entity.VoucherStatus;
-import service.sllbackend.entity.Supplier;
-import service.sllbackend.entity.SupplierCategory;
+import service.sllbackend.entity.*;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.enumerator.Gender;
 import service.sllbackend.enumerator.ServiceType;
-import service.sllbackend.repository.StaffAccountRepo;
-import service.sllbackend.repository.StaffCurrentPositionRepo;
-import service.sllbackend.repository.StaffPositionRepo;
-import service.sllbackend.repository.StaffRepo;
-import service.sllbackend.repository.UserAccountRepo;
-import service.sllbackend.repository.ServiceRepo;
-import service.sllbackend.repository.ServiceCategoryRepo;
-import service.sllbackend.repository.ProductRepo;
-import service.sllbackend.repository.ProductImageRepo;
-import service.sllbackend.entity.ProductImage;
-import service.sllbackend.repository.VoucherRepo;
-import service.sllbackend.repository.VoucherStatusRepo;
-import service.sllbackend.repository.SupplierRepo;
-import service.sllbackend.repository.SupplierCategoryRepo;
+import service.sllbackend.repository.*;
 
 @Component
 @RequiredArgsConstructor
@@ -46,18 +22,20 @@ import service.sllbackend.repository.SupplierCategoryRepo;
 public class DataLoader implements CommandLineRunner {
 	private final UserAccountRepo userAccountRepo;
 	private final StaffRepo staffRepo;
-	private final StaffAccountRepo staffAccountRepo;
 	private final StaffPositionRepo staffPositionRepo;
 	private final StaffCurrentPositionRepo staffCurrentPositionRepo;
 	private final PasswordEncoder passwordEncoder;
 	private final ServiceRepo serviceRepo;
 	private final ServiceCategoryRepo serviceCategoryRepo;
-    private final ProductRepo productRepo;
-    private final ProductImageRepo productImageRepo;
-    private final VoucherRepo voucherRepo;
-    private final VoucherStatusRepo voucherStatusRepo;
-    private final SupplierRepo supplierRepo;
-    private final SupplierCategoryRepo supplierCategoryRepo;
+	private final ProductRepo productRepo;
+	private final ProductImageRepo productImageRepo;
+	private final VoucherRepo voucherRepo;
+	private final VoucherStatusRepo voucherStatusRepo;
+	private final PromotionRepo promotionRepo;
+	private final PromotionStatusRepo promotionStatusRepo;
+	private final SupplierRepo supplierRepo;
+	private final SupplierCategoryRepo supplierCategoryRepo;
+	private final JobPostingRepo jobPostingRepo;
 
 	@Override
 	public void run(String... args) {
@@ -66,8 +44,10 @@ public class DataLoader implements CommandLineRunner {
 		registerStaff();
 		registerServices();
 		registerProducts();
-        registerVouchers();
-        registerProviders();
+		registerVouchers();
+		registerPromotions();
+		registerProviders();
+		registerJobPosting();
 	}
 
 	public void registerUser() {
@@ -88,10 +68,7 @@ public class DataLoader implements CommandLineRunner {
 
 	public void registerStaff() {
 		String name = "admin";
-		String role = "Administrator";
-		String username = "admin";
-		String rawPassword = "admin";
-		String hashedPassword = passwordEncoder.encode(rawPassword);
+		String role = "admin";
 
 		Staff staff = staffRepo.save(Staff.builder()
 				.name(name)
@@ -105,13 +82,6 @@ public class DataLoader implements CommandLineRunner {
 		staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
 				.staff(staff)
 				.position(staffPosition)
-				.build());
-
-		staffAccountRepo.save(StaffAccount.builder()
-				.staff(staff)
-				.username(username)
-				.password(hashedPassword)
-				.accountStatus(AccountStatus.ACTIVE)
 				.build());
 	}
 
@@ -907,10 +877,25 @@ public class DataLoader implements CommandLineRunner {
 				.voucherStatus(expiredStatus)
 				.build());
 
-        log.info("Successfully loaded 6 vouchers with 3 statuses");
-    }
+		log.info("Successfully loaded 6 vouchers with 3 statuses");
+	}
 
-    public void registerProviders() {
+	// Keep as a stub or extend later; ensures compilation when promotion repos are present
+	public void registerPromotions() {
+		if (promotionStatusRepo == null || promotionRepo == null) {
+			return;
+		}
+		// Example statuses; adjust to your schema if needed
+		PromotionStatus active = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("ACTIVE")
+				.build());
+		PromotionStatus inactive = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("INACTIVE")
+				.build());
+		log.info("Promotion statuses seeded: {}, {}", active.getName(), inactive.getName());
+	}
+
+	public void registerProviders() {
 		// Create supplier categories
 		SupplierCategory hairProductsCategory = supplierCategoryRepo.save(SupplierCategory.builder()
 				.name("Hair Products Supplier")
@@ -1034,5 +1019,15 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 12 providers across 5 categories");
+	}
+
+	public void registerJobPosting() {
+		jobPostingRepo.save(JobPosting.builder()
+				.jobPostingName("abc")
+				.jobPostingDescription("abc")
+				.maxApplication(10)
+				.effectiveFrom(LocalDate.now())
+				.effectiveTo(LocalDate.now())
+				.build());
 	}
 }

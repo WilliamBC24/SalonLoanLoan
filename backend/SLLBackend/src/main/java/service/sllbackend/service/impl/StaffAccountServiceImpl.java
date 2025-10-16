@@ -35,7 +35,8 @@ public class StaffAccountServiceImpl implements StaffAccountService {
         }
 
         List<StaffCurrentPosition> currentPositions = staffCurrentPositionRepo.findAllByStaff(staff.getStaff());
-        Set<SimpleGrantedAuthority> authorities = currentPositions.stream().map(pos -> new SimpleGrantedAuthority("ROLE_" + pos.getPosition().getPositionName().toUpperCase().replace(" ", "_"))).collect(Collectors.toSet());
+        Set<SimpleGrantedAuthority> authorities = currentPositions.stream().map(
+                pos -> new SimpleGrantedAuthority("ROLE_" + pos.getPosition().getPositionName().toUpperCase().replace(" ", "_"))).collect(Collectors.toSet());
 
         return new org.springframework.security.core.userdetails.User(staff.getUsername(), staff.getPassword(), authorities);
     }

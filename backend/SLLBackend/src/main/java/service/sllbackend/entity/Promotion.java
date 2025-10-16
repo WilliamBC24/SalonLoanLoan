@@ -31,15 +31,14 @@ public class Promotion {
     private String promotionDescription;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "discount_type", nullable = false, columnDefinition = "discount_type_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "discount_type", nullable = false, columnDefinition = "TEXT DEFAULT 'AMOUNT'")
     @Builder.Default
     private DiscountType discountType = DiscountType.AMOUNT;
 
     @Column(name = "discount_amount", nullable = false)
     private Integer discountAmount;
 
-    @Column(name = "effective_from", nullable = false)
+    @Column(name = "effective_from", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime effectiveFrom = LocalDateTime.now();
 

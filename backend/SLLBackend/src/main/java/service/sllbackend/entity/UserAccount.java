@@ -32,8 +32,7 @@ public class UserAccount {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "gender_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
     private Gender gender;
 
     @Column(name = "birth_date")
@@ -45,13 +44,12 @@ public class UserAccount {
     @Column(length = 100)
     private String email;
 
-    @Column(name = "phone_verified", nullable = false)
+    @Column(name = "phone_verified", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     @Builder.Default
     private Boolean phoneVerified = false;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "account_status", columnDefinition = "account_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "account_status", columnDefinition = "TEXT DEFAULT 'ACTIVE'")
     @Builder.Default
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 }

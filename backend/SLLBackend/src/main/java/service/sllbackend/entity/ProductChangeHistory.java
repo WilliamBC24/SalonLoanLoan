@@ -33,7 +33,7 @@ public class ProductChangeHistory {
     @Column(name = "product_description", nullable = false, columnDefinition = "TEXT")
     private String productDescription;
 
-    @Column(name = "effective_from", nullable = false)
+    @Column(name = "effective_from", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime effectiveFrom = LocalDateTime.now();
 

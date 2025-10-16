@@ -34,15 +34,14 @@ public class Voucher {
     private String voucherCode;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "discount_type", nullable = false, columnDefinition = "discount_type_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "discount_type", nullable = false, columnDefinition = "TEXT DEFAULT 'AMOUNT'")
     @Builder.Default
     private DiscountType discountType = DiscountType.AMOUNT;
 
     @Column(name = "discount_amount", nullable = false)
     private Integer discountAmount;
 
-    @Column(name = "effective_from", nullable = false)
+    @Column(name = "effective_from", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime effectiveFrom = LocalDateTime.now();
 
@@ -52,7 +51,7 @@ public class Voucher {
     @Column(name = "max_usage", nullable = false)
     private Integer maxUsage;
 
-    @Column(name = "used_count", nullable = false)
+    @Column(name = "used_count", nullable = false, columnDefinition = "INT DEFAULT 0")
     @Builder.Default
     private Integer usedCount = 0;
 

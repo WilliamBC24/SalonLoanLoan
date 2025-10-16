@@ -28,13 +28,12 @@ public class InventoryRequest {
     @JoinColumn(name = "staff_id", nullable = false)
     private Staff staff;
 
-    @Column(name = "request_date", nullable = false)
+    @Column(name = "request_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime requestDate = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "inventory_request_status", nullable = false, columnDefinition = "inventory_request_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "inventory_request_status", nullable = false, columnDefinition = "TEXT DEFAULT 'PENDING'")
     @Builder.Default
     private InventoryRequestStatus inventoryRequestStatus = InventoryRequestStatus.PENDING;
 }

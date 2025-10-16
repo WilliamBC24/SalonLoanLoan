@@ -7,9 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import service.sllbackend.enumerator.JobPostingStatus;
 
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
 import java.time.LocalDate;
 
 @Data
@@ -41,8 +38,7 @@ public class JobPosting {
     private LocalDate effectiveTo;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "job_posting_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'DEACTIVATED'")
     @Builder.Default
     private JobPostingStatus status = JobPostingStatus.DEACTIVATED;
 }

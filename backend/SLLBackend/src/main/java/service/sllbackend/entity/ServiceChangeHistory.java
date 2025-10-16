@@ -40,7 +40,7 @@ public class ServiceChangeHistory {
     @Column(name = "service_description", columnDefinition = "TEXT")
     private String serviceDescription;
 
-    @Column(name = "effective_from", nullable = false)
+    @Column(name = "effective_from", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime effectiveFrom = LocalDateTime.now();
 

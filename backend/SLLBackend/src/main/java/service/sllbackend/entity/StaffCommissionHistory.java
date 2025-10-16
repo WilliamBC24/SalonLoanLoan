@@ -7,9 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import service.sllbackend.enumerator.CommissionType;
 
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
 import java.time.LocalDateTime;
 
 @Data
@@ -29,14 +26,13 @@ public class StaffCommissionHistory {
     private StaffCommission staffCommission;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "commission_type", nullable = false, columnDefinition = "commission_type_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "commission_type", nullable = false)
     private CommissionType commissionType;
 
     @Column(nullable = false)
     private Short commission;
 
-    @Column(name = "effective_from", nullable = false)
+    @Column(name = "effective_from", nullable = false, columnDefinition = "DATE DEFAULT CURRENT_DATE")
     @Builder.Default
     private LocalDateTime effectiveFrom = LocalDateTime.now();
 

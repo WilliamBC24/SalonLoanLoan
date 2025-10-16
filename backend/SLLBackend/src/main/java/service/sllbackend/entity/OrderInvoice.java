@@ -31,7 +31,7 @@ public class OrderInvoice {
     @JoinColumn(name = "payment_type_id", nullable = false)
     private PaymentType paymentType;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 }

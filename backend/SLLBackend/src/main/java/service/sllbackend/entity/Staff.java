@@ -24,7 +24,7 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "date_hired", nullable = false)
+    @Column(name = "date_hired", nullable = false, columnDefinition = "DATE DEFAULT CURRENT_DATE")
     @Builder.Default
     private LocalDate dateHired = LocalDate.now();
 
@@ -44,8 +44,7 @@ public class Staff {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "staff_status", nullable = false, columnDefinition = "staff_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "staff_status", nullable = false, columnDefinition = "TEXT DEFAULT 'ACTIVE'")
     @Builder.Default
     private StaffStatus staffStatus = StaffStatus.ACTIVE;
 }

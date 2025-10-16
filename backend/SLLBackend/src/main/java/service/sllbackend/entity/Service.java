@@ -30,8 +30,7 @@ public class Service {
     private ServiceCategory serviceCategory;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "service_type", nullable = false, columnDefinition = "service_type_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "service_type", nullable = false, columnDefinition = "TEXT DEFAULT 'SINGLE'")
     @Builder.Default
     private ServiceType serviceType = ServiceType.SINGLE;
 
@@ -44,7 +43,7 @@ public class Service {
     @Column(name = "service_description", columnDefinition = "TEXT")
     private String serviceDescription;
 
-    @Column(name = "active_status", nullable = false)
+    @Column(name = "active_status", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     @Builder.Default
     private Boolean activeStatus = false;
 }

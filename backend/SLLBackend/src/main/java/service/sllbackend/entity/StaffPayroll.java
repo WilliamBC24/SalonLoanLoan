@@ -36,11 +36,11 @@ public class StaffPayroll {
     @Column(name = "product_commission", nullable = false)
     private Integer productCommission;
 
-    @Column(name = "payroll_deduction", nullable = false)
+    @Column(name = "payroll_deduction", nullable = false, columnDefinition = "INT DEFAULT 0")
     @Builder.Default
     private Integer payrollDeduction = 0;
 
-    @Column(name = "payroll_bonus", nullable = false)
+    @Column(name = "payroll_bonus", nullable = false, columnDefinition = "INT DEFAULT 0")
     @Builder.Default
     private Integer payrollBonus = 0;
 

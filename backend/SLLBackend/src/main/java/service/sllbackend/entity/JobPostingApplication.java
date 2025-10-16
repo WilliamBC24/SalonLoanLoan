@@ -38,13 +38,12 @@ public class JobPostingApplication {
     @Column(name = "applicant_phone_number", nullable = false, length = 20)
     private String applicantPhoneNumber;
 
-    @Column(name = "application_date", nullable = false)
+    @Column(name = "application_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime applicationDate = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "job_posting_application_status_enum")
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'PENDING'")
     @Builder.Default
     private JobPostingApplicationStatus status = JobPostingApplicationStatus.PENDING;
 }

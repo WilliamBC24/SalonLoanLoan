@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -35,7 +35,7 @@ public class LoyaltyHistory {
     @Column(nullable = false)
     private Integer amount;
 
-    @Column(name = "creditted_date", nullable = false)
+    @Column(name = "creditted_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
-    private LocalDate credittedDate = LocalDate.now();
+    private LocalDateTime credittedDate = LocalDateTime.now();
 }

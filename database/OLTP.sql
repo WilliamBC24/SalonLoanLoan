@@ -609,6 +609,20 @@
         status TEXT NOT NULL DEFAULT 'PENDING'
     );
 
+    CREATE TABLE IF NOT EXISTS product_feedback(
+        id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        user_account_id INT NOT NULL REFERENCES user_account(id),
+        product_id INT NOT NULL REFERENCES product(id),
+        rating SMALLINT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        comment TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS product_feedback_image(
+        id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_feedback_id INT NOT NULL REFERENCES product_feedback(id),
+        image_path TEXT NOT NULL;
+    );
+
     CREATE OR REPLACE FUNCTION normalize_phone_number()
     RETURNS trigger AS $$
     BEGIN

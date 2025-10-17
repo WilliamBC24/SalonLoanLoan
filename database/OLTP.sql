@@ -676,29 +676,29 @@
     END;
     $$ LANGUAGE plpgsql;
 
-    -- CREATE OR REPLACE FUNCTION update_appointment_status_registered()
-    -- RETURNS trigger AS $$
-    -- BEGIN
-    --     NEW.status := 'registered';
+    CREATE OR REPLACE FUNCTION update_appointment_status_registered()
+    RETURNS trigger AS $$
+    BEGIN
+        NEW.status := 'REGISTERED';
 
-    --     RETURN NEW;
-    -- END;
-    -- $$ LANGUAGE plpgsql;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
 
-    -- CREATE OR REPLACE FUNCTION update_appointment_status_rescheduled()
-    -- RETURNS trigger AS $$
-    -- BEGIN
-    --     NEW.status := 'rescheduled';
+    CREATE OR REPLACE FUNCTION update_appointment_status_rescheduled()
+    RETURNS trigger AS $$
+    BEGIN
+        NEW.status := 'RESCHEDULED';
 
-    --     RETURN NEW;
-    -- END;
-    -- $$ LANGUAGE plpgsql;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
 
     -- CREATE OR REPLACE FUNCTION update_appointment_status_started()
     -- RETURNS trigger AS $$
     -- BEGIN
     --     UPDATE appointment
-    --     SET status = 'started'
+    --     SET status = 'STARTED'
     --     WHERE id = NEW.appointment_id;
 
     --     RETURN NULL;
@@ -709,7 +709,7 @@
     -- RETURNS trigger AS $$
     -- BEGIN
     --     UPDATE appointment
-    --     SET status = 'completed'
+    --     SET status = 'COMPLETED'
     --     WHERE id = NEW.appointment_id;
 
     --     RETURN NULL;
@@ -720,7 +720,7 @@
     -- RETURNS trigger AS $$
     -- BEGIN
     --     UPDATE appointment
-    --     SET status = 'cancelled'
+    --     SET status = 'CANCELLED'
     --     WHERE id = NEW.appointment_id;
 
     --     RETURN NULL;
@@ -774,22 +774,22 @@
     END;
     $$ LANGUAGE plpgsql;
 
-    -- CREATE OR REPLACE FUNCTION create_inventory_consignment()
-    -- RETURNS TRIGGER AS $$
-    -- DECLARE
-    --     source_supplier_id INT;
-    -- BEGIN
-    --     SELECT supplier_id
-    --     INTO source_supplier_id
-    --     FROM inventory_invoice
-    --     WHERE id = NEW.inventory_invoice_id;
+    CREATE OR REPLACE FUNCTION create_inventory_consignment()
+    RETURNS TRIGGER AS $$
+    DECLARE
+        source_supplier_id INT;
+    BEGIN
+        SELECT supplier_id
+        INTO source_supplier_id
+        FROM inventory_invoice
+        WHERE id = NEW.inventory_invoice_id;
 
-    --     INSERT INTO inventory_consignment(inventory_invoice_detail_id, product_id, supplier_id, received_quantity)
-    --     VALUES (NEW.id, NEW.product_id, source_supplier_id, NEW.ordered_quantity);
+        INSERT INTO inventory_consignment(inventory_invoice_detail_id, product_id, supplier_id, received_quantity)
+        VALUES (NEW.id, NEW.product_id, source_supplier_id, NEW.ordered_quantity);
 
-    --     RETURN NULL;
-    -- END;
-    -- $$ LANGUAGE plpgsql;
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
 
     CREATE OR REPLACE FUNCTION add_loyalty_record()
     RETURNS trigger AS $$
@@ -887,30 +887,33 @@
     FOR EACH ROW
     EXECUTE FUNCTION create_staff_account();
 
-    -- CREATE TRIGGER update_appointment_status_registered_trigger
-    -- BEFORE UPDATE ON appointment
-    -- FOR EACH ROW
-    -- WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NULL)
-    -- EXECUTE FUNCTION update_appointment_status_registered();
+    CREATE TRIGGER update_appointment_status_registered_trigger
+    BEFORE UPDATE ON appointment
+    FOR EACH ROW
+    WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NULL)
+    EXECUTE FUNCTION update_appointment_status_registered();
 
-    -- CREATE TRIGGER update_appointment_status_rescheduled_trigger
-    -- BEFORE UPDATE ON appointment
-    -- FOR EACH ROW
-    -- WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NOT NULL AND OLD.scheduled_at <> NEW.scheduled_at)
-    -- EXECUTE FUNCTION update_appointment_status_rescheduled();
+    CREATE TRIGGER update_appointment_status_rescheduled_trigger
+    BEFORE UPDATE ON appointment
+    FOR EACH ROW
+    WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NOT NULL AND OLD.scheduled_at <> NEW.scheduled_at)
+    EXECUTE FUNCTION update_appointment_status_rescheduled();
 
+--TODO: actual start should be triggered by status change instead
     -- CREATE TRIGGER update_appointment_status_started_trigger
     -- AFTER UPDATE ON appointment_details
     -- FOR EACH ROW
     -- WHEN (NEW.actual_start IS NOT NULL AND (OLD.actual_start IS NULL OR OLD.actual_start <> NEW.actual_start))
     -- EXECUTE FUNCTION update_appointment_status_started();
 
+--TODO: actual end should be triggered by status change instead
     -- CREATE TRIGGER update_appointment_status_completed_trigger
     -- AFTER UPDATE ON appointment_details
     -- FOR EACH ROW
     -- WHEN (NEW.actual_end IS NOT NULL AND OLD.actual_end IS NULL)
     -- EXECUTE FUNCTION update_appointment_status_completed();
 
+--TODO: maybe this should not be a trigger
     -- CREATE TRIGGER update_appointment_status_cancelled_trigger
     -- AFTER UPDATE ON appointment_details
     -- FOR EACH ROW
@@ -920,13 +923,13 @@
     -- CREATE TRIGGER create_appointment_detail_trigger
     -- AFTER UPDATE ON appointment
     -- FOR EACH ROW
-    -- WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'registered')
+    -- WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'REGISTERED')
     -- EXECUTE FUNCTION create_appointment_detail();
 
     -- CREATE TRIGGER create_appointment_invoice_trigger
     -- AFTER UPDATE ON appointment
     -- FOR EACH ROW
-    -- WHEN (NEW.status = 'completed' AND OLD.status IS DISTINCT FROM NEW.status)
+    -- WHEN (NEW.status = 'COMPLETED' AND OLD.status IS DISTINCT FROM NEW.status)
     -- EXECUTE FUNCTION create_appointment_invoice();
 
     CREATE TRIGGER prevent_taking_expired_product_trigger
@@ -934,10 +937,10 @@
     FOR EACH ROW
     EXECUTE FUNCTION prevent_taking_expired_product();
 
-    -- CREATE TRIGGER create_inventory_consignment_trigger
-    -- AFTER INSERT ON inventory_invoice_detail
-    -- FOR EACH ROW
-    -- EXECUTE FUNCTION create_inventory_consignment();
+    CREATE TRIGGER create_inventory_consignment_trigger
+    AFTER INSERT ON inventory_invoice_detail
+    FOR EACH ROW
+    EXECUTE FUNCTION create_inventory_consignment();
 
     CREATE TRIGGER add_loyalty_record_trigger
     AFTER INSERT ON user_account

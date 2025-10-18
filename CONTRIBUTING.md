@@ -5,7 +5,7 @@ This document outlines the contribution workflow for our capstone project team.
 - **Leader & Main Developer (Son Bui):** System design, backend core, code integration, reviews
 - **Business Analyst & Documentation, Frontend Developer (Khanh Huy):** Requirements, documentation, client-side dev, overall testing
 - **Backend Developer (Dai An):** Backend dev, code integration
-- **Frontend Support & Tester (Thu Lan):** UI/UX, usability testing
+- **Tester (Thu Lan):** UI/UX, usability testing
 - **Frontend Developer (Ha Phuong):** UI/UX , client-side dev 
 
 ## Workflow
@@ -28,7 +28,6 @@ This document outlines the contribution workflow for our capstone project team.
 3. **Pull Requests**
    - Push your branch to GitHub and open a Pull Request (PR).
    - Assign the PR to the leader for review before merging into `main`.
-   - Reference related Issues (e.g., `Closes #12`).
 
 4. **Issues**
    - All tasks, bugs, or enhancements must have an Issue.
@@ -43,7 +42,7 @@ This document outlines the contribution workflow for our capstone project team.
      - Alignment with project structure
 
 6. **Testing**
-   - Members 3 and 4 focus on testing workflows.
+   - Member 4 focus on testing workflows.
    - All developers should test their own code locally before opening a PR.
 
 ## General Guidelines

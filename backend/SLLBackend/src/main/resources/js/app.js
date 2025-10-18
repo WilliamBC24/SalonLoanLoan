@@ -277,6 +277,43 @@ function renderServicesGrid(services) {
   });
 }
 
+function renderProductsGrid(products) {
+  const grid = document.getElementById('productsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  (products || []).forEach(p => {
+    grid.append(el(`<div class="col-lg-4 col-md-6">
+      <div class="product-card">
+        <img src="${p.image ?? '/img/default-product.jpg'}" alt="${p.productName ?? ''}" class="product-image">
+        <div class="product-body">
+          <h5 class="product-title">${p.productName ?? ''}</h5>
+          <p class="product-price">${p.price ? new Intl.NumberFormat('vi-VN').format(p.price) + ' VND' : 'Liên hệ'}</p>
+          <div class="product-rating">
+            <div class="stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+    </div>`));
+  });
+}
+
+function renderTopSearches(searches) {
+  const grid = document.getElementById('topSearchesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  (searches || []).forEach(s => {
+    grid.append(el(`<div class="col-md-3 col-sm-6">
+      <div class="product-card">
+        <img src="${s.image ?? '/img/default-search.jpg'}" alt="${s.name ?? ''}" class="product-image">
+        <div class="product-body">
+          <h5 class="product-title">${s.name ?? ''}</h5>
+        </div>
+      </div>
+    </div>`));
+  });
+}
+
+
 // Mock data for testing when API is not available
 const mockSiteInfo = {
   pageTitle: "Loan Loan Hair Salon",
@@ -392,6 +429,12 @@ const mockSiteInfo = {
       date: "05/01/2024",
       href: "#"
     }
+  ],
+  topSearches: [
+    { name: "Kem tẩy da chết", image: "img/search1.jpg" },
+    { name: "Sáp vuốt tóc", image: "img/search2.jpg" },
+    { name: "Combo sáp vuốt tóc", image: "img/search3.jpg" },
+    { name: "Kem giảm mụn", image: "img/search4.jpg" }
   ]
 };
 
@@ -410,12 +453,100 @@ async function bootstrap() {
   renderServiceMenu(services);
   renderServicesGrid(services); // For services page
 
+  // products
+  const products = await fetchJson(endpoints.products);
+  renderProductsGrid(products); // For products page
+  renderTopSearches(site?.topSearches ?? []); // For products page
+
   // spa (use site data or mock)
   renderSpa(site?.spaCards ?? []);
 
   // staff/blogs
   renderStaff((await fetchJson(endpoints.staff)) ?? site?.staff ?? []);
   renderBlogs((await fetchJson(endpoints.blogs)) ?? site?.blogs ?? []);
+  
+  // Initialize page specific content
+  initProductsPage();
+  initServicesPage();
+  initIndexPage();
+}
+
+// Initialize products page specific content
+function initProductsPage() {
+  // Set page title
+  const pageTitle = document.getElementById('pageTitle');
+  if (pageTitle) {
+    pageTitle.textContent = pageTitle.textContent || 'Sản Phẩm – Loan Loan Hair Salon';
+  }
+  
+  // Set search placeholder
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.placeholder = searchInput.placeholder || 'nhãn hiệu, sản phẩm';
+  }
+  
+  // Set feature bar content
+  const feature1 = document.getElementById('feature1');
+  if (feature1) {
+    feature1.textContent = feature1.textContent || 'Hỗ trợ giao hàng hoà tốc';
+  }
+  
+  const feature2 = document.getElementById('feature2');
+  if (feature2) {
+    feature2.textContent = feature2.textContent || 'Hoàn tiền 100%';
+  }
+  
+  const feature3 = document.getElementById('feature3');
+  if (feature3) {
+    feature3.textContent = feature3.textContent || 'Đổi trả hàng đơn giản thuận tiện';
+  }
+  
+  // Set section titles
+  const topSearchesTitle = document.getElementById('topSearchesTitle');
+  if (topSearchesTitle) {
+    topSearchesTitle.textContent = topSearchesTitle.textContent || 'Top Tìm Kiếm';
+  }
+  
+  const productsTitle = document.getElementById('productsTitle');
+  if (productsTitle) {
+    productsTitle.textContent = productsTitle.textContent || 'Gợi ý hôm nay - Lựa chọn được mọi người ưa chuộng';
+  }
+}
+
+// Initialize services page specific content
+function initServicesPage() {
+  // Set page title
+  const pageTitle = document.getElementById('pageTitle');
+  if (pageTitle) {
+    pageTitle.textContent = pageTitle.textContent || 'Dịch Vụ – Loan Loan Hair Salon';
+  }
+  
+  // Set search placeholder
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.placeholder = searchInput.placeholder || 'Dịch vụ, combo';
+  }
+  
+  // Set services title
+  const servicesTitle = document.getElementById('servicesTitle');
+  if (servicesTitle) {
+    servicesTitle.textContent = servicesTitle.textContent || 'Gói Dịch Vụ';
+  }
+}
+
+// Initialize index page specific content
+function initIndexPage() {
+  // Set page title
+  const pageTitle = document.getElementById('pageTitle');
+  if (pageTitle) {
+    pageTitle.textContent = pageTitle.textContent || 'Loan Loan Hair Salon';
+  }
+  
+  // Set search placeholder
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.placeholder = searchInput.placeholder || 'Dịch vụ, combo';
+  }
 }
 
 bootstrap();

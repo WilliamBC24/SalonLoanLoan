@@ -36,7 +36,7 @@
                 <button type="button" id="loginButton" class="btn btn-dark w-100 btn-continue disabled" disabled></button>
 
                 <div class="text-center mt-3">
-                    <p class="mb-0">Chưa có tài khoản? <a id="registerLink" href="#"></a></p>
+                    <p class="mb-0"><span id="registerText"></span> <a id="registerLink" href="#"></a></p>
                 </div>
 
                 <div class="form-check mt-3">
@@ -100,6 +100,7 @@
         const passwordInput = document.getElementById('password');
         const forgotPasswordLink = document.getElementById('forgotPasswordLink');
         const loginButton = document.getElementById('loginButton');
+        const registerText = document.getElementById('registerText');
         const registerLink = document.getElementById('registerLink');
         const termsLabel = document.getElementById('termsLabel');
         const termsLink = document.getElementById('termsLink');
@@ -133,6 +134,9 @@
         }
         if (loginButton) {
             loginButton.textContent = 'Tiếp tục';
+        }
+        if (registerText) {
+            registerText.textContent = 'Chưa có tài khoản?';
         }
         if (registerLink) {
             registerLink.textContent = 'Register here';

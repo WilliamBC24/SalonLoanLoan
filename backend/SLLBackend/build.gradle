@@ -46,3 +46,13 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+test {
+    useJUnitPlatform()
+    forkEvery = 1
+    jvmArgs = [
+            "-javaagent:${configurations.testRuntimeClasspath.find { it.name.startsWith('mockito-core') }}",
+            "-Xshare:off"
+    ]
+}
+
+

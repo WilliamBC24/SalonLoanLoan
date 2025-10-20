@@ -26,7 +26,7 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Active:</label>
                         <input type="text" class="form-control rounded-3"
-                               th:value="${staffAccount.accountStatus == T(service.sllbackend.enumerator.AccountStatus).ACTIVE ? 'Yes' : 'No'}"
+                               th:value="${staffAccount.active ? 'Yes' : 'No'}"
                                readonly>
                     </div>
                 </div>
@@ -38,12 +38,12 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Name:</label>
                         <input type="text" name="name" class="form-control rounded-3"
-                               th:value="${staffAccount.staff.name}">
+                               th:value="${staffAccount.name}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Email:</label>
                         <input type="email" name="email" class="form-control rounded-3"
-                               th:value="${staffAccount.staff.email}" readonly>
+                               th:value="${staffAccount.email}" readonly>
                     </div>
                 </div>
 
@@ -51,12 +51,12 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Date Hired:</label>
                         <input type="text" class="form-control rounded-3"
-                               th:value="${#temporals.format(staffAccount.staff.dateHired, 'dd MMM yyyy')}" readonly>
+                               th:value="${#temporals.format(staffAccount.dateHired, 'dd MMM yyyy')}" readonly>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">SSN:</label>
                         <input type="text" class="form-control rounded-3"
-                               th:value="${staffAccount.staff.socialSecurityNum ?: '—'}" readonly>
+                               th:value="${staffAccount.socialSecurityNum ?: '—'}" readonly>
                     </div>
                 </div>
 
@@ -64,7 +64,7 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Status:</label>
                         <input type="text" class="form-control rounded-3"
-                               th:value="${staffAccount.staff.staffStatus}" readonly>
+                               th:value="${staffAccount.staffStatus}" readonly>
                     </div>
                 </div>
 

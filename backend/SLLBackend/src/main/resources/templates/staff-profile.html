@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-md-6">
                     <strong>Active:</strong>
-                    <span th:text="${staffAccount.accountStatus == T(service.sllbackend.enumerator.AccountStatus).ACTIVE ? 'Yes' : 'No'}"></span>
+                    <span th:text="${staffAccount.active ? 'Yes' : 'No'}"></span>
                 </div>
             </div>
 
@@ -32,29 +32,29 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <strong>Name:</strong>
-                    <span th:text="${staffAccount.staff.name}"></span>
+                    <span th:text="${staffAccount.name}"></span>
                 </div>
                 <div class="col-md-6">
                     <strong>Email:</strong>
-                    <span th:text="${staffAccount.staff.email ?: '—'}"></span>
+                    <span th:text="${staffAccount.email ?: '—'}"></span>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-md-6">
                     <strong>Date Hired:</strong>
-                    <span th:text="${#temporals.format(staffAccount.staff.dateHired, 'dd MMM yyyy')}"></span>
+                    <span th:text="${#temporals.format(staffAccount.dateHired, 'dd MMM yyyy')}"></span>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-md-6">
                     <strong>SSN:</strong>
-                    <span th:text="${staffAccount.staff.socialSecurityNum ?: '—'}"></span>
+                    <span th:text="${staffAccount.socialSecurityNum ?: '—'}"></span>
                 </div>
                 <div class="col-md-6">
                     <strong>Status:</strong>
-                    <span th:text="${staffAccount.staff.staffStatus}"></span>
+                    <span th:text="${staffAccount.staffStatus}"></span>
                 </div>
             </div>
         </div>

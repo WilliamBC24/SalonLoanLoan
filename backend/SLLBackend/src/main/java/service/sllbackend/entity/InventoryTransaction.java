@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import service.sllbackend.enumerator.InventoryTransactionType;
 import service.sllbackend.enumerator.InventoryTransactionReason;
 
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
 import java.time.LocalDateTime;
 
 @Data

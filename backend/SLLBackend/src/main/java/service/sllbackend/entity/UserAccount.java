@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.enumerator.Gender;
 
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.LocalDate;
 

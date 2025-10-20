@@ -36,7 +36,7 @@ public class ProductFeedback {
     private String comment;
 
     @OneToMany(mappedBy = "productFeedback", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProductFeedbackImage> images = new ArrayList<>();
 }
-
 

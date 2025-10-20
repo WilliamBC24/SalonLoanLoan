@@ -50,6 +50,48 @@ public class DataLoader implements CommandLineRunner {
 		registerJobApplication();
 	}
 
+	public void registerPromotions() {
+		PromotionStatus activeStatus = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("ACTIVE")
+				.build());
+
+		PromotionStatus inactiveStatus = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("INACTIVE")
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Holiday Discount")
+				.promotionDescription("20% off on all services during the holiday season")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(20)
+				.effectiveFrom(LocalDateTime.of(2024, 12, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2024, 12, 31, 23, 59))
+				.promotionStatus(activeStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("New Year Special")
+				.promotionDescription("Flat 100,000 VND off on all services")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(100000)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 1, 15, 23, 59))
+				.promotionStatus(activeStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Summer Sale")
+				.promotionDescription("15% off on selected services")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(15)
+				.effectiveFrom(LocalDateTime.of(2024, 6, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2024, 6, 30, 23, 59))
+				.promotionStatus(inactiveStatus)
+				.build());
+
+		log.info("Successfully loaded 3 promotions with 2 statuses");
+	}
+
 	public void registerUser() {
 		String username = "alice";
 		String rawPassword = "alice";
@@ -64,6 +106,8 @@ public class DataLoader implements CommandLineRunner {
 				.email("alice@wonderland.com")
 				.accountStatus(AccountStatus.ACTIVE)
 				.build());
+
+		log.info("User registered: " + username + " with password: " + rawPassword);
 	}
 
 	public void registerStaff() {
@@ -83,6 +127,8 @@ public class DataLoader implements CommandLineRunner {
 				.staff(staff)
 				.position(staffPosition)
 				.build());
+
+		log.info("Staff registered: " + name + " with role: " + role);
 	}
 
 	public void registerServices() {
@@ -671,7 +717,7 @@ public class DataLoader implements CommandLineRunner {
 				.effectiveTo(LocalDateTime.of(2025, 8, 31, 23, 59))
 				.maxUsage(500)
 				.usedCount(25)
-				.voucherStatus(activeStatus)
+				.voucherStatus(inactiveStatus)
 				.build());
 
 		voucherRepo.save(Voucher.builder()

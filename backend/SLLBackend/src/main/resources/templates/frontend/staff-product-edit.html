@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="pageTitleTag"></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/staff-product-edit.css">
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <h4 id="siteName"></h4>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-item">
+          <div class="nav-link">
+            <i class="fas fa-list"></i>
+            <span id="navMenuListText"></span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-submenu" id="navSubmenuList">
+            <!-- Submenu items will be dynamically loaded here -->
+          </div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-link">
+            <i class="fas fa-plus"></i>
+            <span id="navMenuCreateText"></span>
+          </div>
+        </div>
+        <div class="nav-item active">
+          <div class="nav-link">
+            <i class="fas fa-edit"></i>
+            <span id="navMenuEditText"></span>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <button class="btn btn-secondary" id="backButton">
+            <i class="fas fa-arrow-left"></i>
+            <span id="backButtonText"></span>
+          </button>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <i class="fas fa-user"></i>
+            <span id="userName"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <h1 class="page-title" id="pageTitle"></h1>
+
+        <!-- Edit Product Form -->
+        <div class="form-container">
+          <form id="productForm" class="product-form">
+            <div class="form-group">
+              <label for="productName" id="productNameLabel"></label>
+              <input type="text" id="productName" name="productName" required>
+              <div class="error-message" id="productNameError"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="currentPrice" id="currentPriceLabel"></label>
+              <input type="number" id="currentPrice" name="currentPrice" min="0" step="1000" required>
+              <div class="error-message" id="currentPriceError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="productDescription" id="productDescriptionLabel"></label>
+              <textarea id="productDescription" name="productDescription" rows="4" required></textarea>
+              <div class="error-message" id="productDescriptionError"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="activeStatus" name="activeStatus">
+                <span id="activeStatusLabel"></span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" id="cancelButton">
+                <span id="cancelButtonText"></span>
+              </button>
+              <button type="submit" class="btn btn-primary" id="updateButton">
+                <span id="updateButtonText"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalTitle"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <p id="successMessage"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="successOkButton"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorModalTitle"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <p id="errorMessage"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="errorOkButton"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p id="loadingText"></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -53,6 +53,22 @@
                     <span th:text="${user.accountStatus}"></span>
                 </div>
             </div>
+            <hr class="my-4">
+            <h5 class="text-secondary mb-3">Loyalty Information</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Loyalty Level:</strong>
+                    <span th:text="${user.loyalty.level.name ?: '—'}"></span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Loyalty Points:</strong>
+                    <span th:text="${user.loyalty.point ?: 0}"></span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Loyalty Points Til Next Level:</strong>
+                    <span th:text="${user.loyalty.level.pointRequired - user.loyalty.point ?: 0}"></span>
+                </div>
+            </div>
         </div>
     </div>
 

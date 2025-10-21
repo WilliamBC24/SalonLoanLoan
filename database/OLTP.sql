@@ -26,7 +26,7 @@
         phone_number VARCHAR(20) NOT NULL,
         email VARCHAR(100),
         phone_verified BOOLEAN NOT NULL DEFAULT FALSE,
-        account_status TEXT DEFAULT 'ACTIVE'
+        account_status TEXT NOT NULL DEFAULT 'ACTIVE'
     );
 
     CREATE TABLE IF NOT EXISTS user_shipping_info(

@@ -21,7 +21,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     @Override
     @Transactional
     public void saveApplication(Long jobId, JobApplicationDTO jobApplicationDTO) {
-        JobPosting job = jobPostingRepo.findById(jobId).orElse(null);
+        JobPosting job = jobPostingRepo.findById(jobId)
+                .orElseThrow(() -> new IllegalArgumentException("Job posting not found"));
         jobPostingApplicationRepo.save(JobPostingApplication.builder()
                 .jobPosting(job)
                 .applicantName(jobApplicationDTO.getApplicantName())
@@ -38,7 +39,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     @Override
     @Transactional
     public void acceptApplication(Long applicationId) {
-        JobPostingApplication jobPostingApplication = jobPostingApplicationRepo.findById(applicationId).orElse(null);
+        JobPostingApplication jobPostingApplication = jobPostingApplicationRepo.findById(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
         jobPostingApplication.setStatus(JobPostingApplicationStatus.ACCEPTED);
         jobPostingApplicationRepo.save(jobPostingApplication);
     }
@@ -46,7 +48,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     @Override
     @Transactional
     public void rejectApplication(Long applicationId) {
-        JobPostingApplication jobPostingApplication = jobPostingApplicationRepo.findById(applicationId).orElse(null);
+        JobPostingApplication jobPostingApplication = jobPostingApplicationRepo.findById(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
         jobPostingApplication.setStatus(JobPostingApplicationStatus.REJECTED);
         jobPostingApplicationRepo.save(jobPostingApplication);
     }

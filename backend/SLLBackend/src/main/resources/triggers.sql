@@ -51,24 +51,19 @@ END;
 $$ LANGUAGE plpgsql;
 
        CREATE OR REPLACE FUNCTION assign_loyalty_rank()
-    RETURNS trigger AS $$
-    DECLARE
-current_rank INT;
-        new_rank INT;
+RETURNS TRIGGER AS $$
+DECLARE
+new_rank INT;
 BEGIN
-SELECT id
-INTO current_rank
-FROM loyalty_level
-WHERE point_required <= OLD.point
-ORDER BY point_required DESC LIMIT 1;
 
 SELECT id
 INTO new_rank
 FROM loyalty_level
-WHERE point_required <= NEW.point
-ORDER BY point_required DESC LIMIT 1;
+WHERE point_required >= NEW.point
+ORDER BY point_required ASC
+    LIMIT 1;
 
-IF current_rank IS DISTINCT FROM new_rank THEN
+IF new_rank IS DISTINCT FROM NEW.level_id THEN
 UPDATE loyalty
 SET level_id = new_rank
 WHERE user_id = NEW.user_id;
@@ -76,7 +71,8 @@ END IF;
 
 RETURN NULL;
 END;
-    $$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
+
 
            CREATE OR REPLACE FUNCTION record_product_change()
     RETURNS trigger AS $$
@@ -150,7 +146,7 @@ CREATE TRIGGER add_loyalty_record_trigger
     EXECUTE FUNCTION add_loyalty_record();
 
 CREATE TRIGGER assign_loyalty_rank_trigger
-    AFTER UPDATE ON loyalty
+    AFTER UPDATE OF point ON loyalty
     FOR EACH ROW
     WHEN (NEW.point <> OLD.point)
     EXECUTE FUNCTION assign_loyalty_rank();

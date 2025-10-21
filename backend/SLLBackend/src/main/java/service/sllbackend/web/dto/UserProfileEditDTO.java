@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileViewDTO {
+public class UserProfileEditDTO {
     private String username;
     private String email;
     private String phoneNumber;
@@ -20,5 +20,4 @@ public class UserProfileViewDTO {
     private Gender gender;
     private LocalDate birthDate;
     private String accountStatus;
-    private LoyaltyDTO loyalty;
 }

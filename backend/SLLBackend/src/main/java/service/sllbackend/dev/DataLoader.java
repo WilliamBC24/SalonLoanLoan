@@ -931,12 +931,12 @@ public class DataLoader implements CommandLineRunner {
 	}
 
 	public void registerLoyaltyLevel() {
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Bronze", 0));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Bronze", 1000));
 		// Silver
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Silver", 1000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Silver", 2000));
 		// Gold
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 2000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 5000));
 		// Platinum
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 5000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 10000));
 	}
 }

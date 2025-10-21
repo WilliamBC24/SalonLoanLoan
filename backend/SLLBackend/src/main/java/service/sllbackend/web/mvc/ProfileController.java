@@ -10,14 +10,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import service.sllbackend.entity.Loyalty;
 import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
+import service.sllbackend.service.impl.LoyaltyServiceImpl;
 import service.sllbackend.service.impl.ProfileServiceImpl;
 import service.sllbackend.utils.ProfileMapper;
-import service.sllbackend.web.dto.StaffProfileDTO;
-import service.sllbackend.web.dto.StaffProfileViewDTO;
-import service.sllbackend.web.dto.UserProfileDTO;
-import service.sllbackend.web.dto.UserProfileViewDTO;
+import service.sllbackend.web.dto.*;
 
 import java.security.Principal;
 
@@ -26,12 +25,14 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileServiceImpl profileService;
+    private final LoyaltyServiceImpl loyaltyService;
     private final ProfileMapper profileMapper;
 
     @GetMapping("/user/profile")
     public String userProfile(Model model, Principal principal) {
         UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-        UserProfileViewDTO userProfileViewDTO = profileMapper.toUserProfileViewDTO(userAccount);
+        Loyalty loyalty = loyaltyService.findLoyaltyByUser(userAccount);
+        UserProfileViewDTO userProfileViewDTO = profileMapper.toUserProfileViewDTO(userAccount, loyalty);
         model.addAttribute("user", userProfileViewDTO);
         return "user-profile";
     }
@@ -39,8 +40,8 @@ public class ProfileController {
     @GetMapping("/user/profile/edit")
     public String editProfile(Model model, Principal principal) {
         UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-        UserProfileViewDTO userProfileViewDTO = profileMapper.toUserProfileViewDTO(userAccount);
-        model.addAttribute("user", userProfileViewDTO);
+        UserProfileEditDTO userProfileEditDTO = profileMapper.toUserProfileEditDTO(userAccount);
+        model.addAttribute("user", userProfileEditDTO);
         return "user-profile-edit";
     }
 
@@ -49,8 +50,8 @@ public class ProfileController {
                                     BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
             UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-            UserProfileViewDTO userProfileViewDTO = profileMapper.toUserProfileViewDTO(userAccount);
-            model.addAttribute("user", userProfileViewDTO);
+            UserProfileEditDTO userProfileEditDTO = profileMapper.toUserProfileEditDTO(userAccount);
+            model.addAttribute("user", userProfileEditDTO);
             return "user-profile-edit";
         }
         try {
@@ -58,7 +59,8 @@ public class ProfileController {
             profileService.updateUserProfile(Long.valueOf(userId), userProfileDTO);
 
             UserAccount updatedUser = profileService.getCurrentUser(userId.longValue());
-            UserProfileViewDTO updatedUserProfileViewDTO = profileMapper.toUserProfileViewDTO(updatedUser);
+            Loyalty loyalty = loyaltyService.findLoyaltyByUser(updatedUser);
+            UserProfileViewDTO updatedUserProfileViewDTO = profileMapper.toUserProfileViewDTO(updatedUser, loyalty);
             Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
             UserDetails newPrincipal = new org.springframework.security.core.userdetails.User(
                     updatedUser.getUsername(),
@@ -77,9 +79,29 @@ public class ProfileController {
             return "redirect:/user/profile?updated";
         } catch (Exception e) {
             UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-            UserProfileViewDTO userProfileViewDTO = profileMapper.toUserProfileViewDTO(userAccount);
-            model.addAttribute("user", userProfileViewDTO);
+            UserProfileEditDTO userProfileEditDTO = profileMapper.toUserProfileEditDTO(userAccount);
+            model.addAttribute("user", userProfileEditDTO);
             return "redirect:/user/profile/edit";
+        }
+    }
+
+    @GetMapping("/user/password")
+    public String userPassword() {
+        return "user-change-password";
+    }
+
+    @PostMapping("/user/password/change")
+    public String userPasswordChange(@Valid @ModelAttribute PasswordChangeDTO passwordChangeDTO,
+                                     BindingResult bindingResult, Principal principal) {
+        if (bindingResult.hasErrors()) {
+            return "user-change-password";
+        }
+        try {
+            long userId = profileService.getCurrentUser(principal.getName()).getId();
+            profileService.userPasswordChange(userId, passwordChangeDTO);
+            return "redirect:/user/profile";
+        } catch (Exception e) {
+            return "user-change-password";
         }
     }
 
@@ -100,7 +122,8 @@ public class ProfileController {
     }
 
     @PostMapping("/staff/profile/update")
-    public String updateStaffProfile(Model model, @Valid @ModelAttribute StaffProfileDTO staffProfileDTO, BindingResult bindingResult, Principal principal) {
+    public String updateStaffProfile(Model model, @Valid @ModelAttribute StaffProfileDTO staffProfileDTO,
+                                     BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
             StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
             StaffProfileViewDTO staffProfileViewDTO = profileMapper.toStaffProfileViewDTO(staffAccount);
@@ -119,6 +142,26 @@ public class ProfileController {
             StaffProfileViewDTO staffProfileViewDTO = profileMapper.toStaffProfileViewDTO(staffAccount);
             model.addAttribute("staffAccount", staffProfileViewDTO);
             return "redirect:/staff/profile/edit";
+        }
+    }
+
+    @GetMapping("/staff/password")
+    public String staffPassword() {
+        return "staff-change-password";
+    }
+
+    @PostMapping("/staff/password/change")
+    public String staffPasswordChange(@Valid @ModelAttribute PasswordChangeDTO passwordChangeDTO,
+                                      BindingResult bindingResult, Principal principal) {
+        if (bindingResult.hasErrors()) {
+            return "staff-change-password";
+        }
+        try {
+            String username = profileService.getCurrentStaff(principal.getName()).getUsername();
+            profileService.staffPasswordChange(username, passwordChangeDTO);
+            return "redirect:/staff/profile";
+        } catch (Exception e) {
+            return "staff-change-password";
         }
     }
 }

@@ -304,7 +304,7 @@
         appointment_id INT NOT NULL REFERENCES appointment(id),
         service_id INT NOT NULL REFERENCES service(id),
         price_at_booking INT NOT NULL CHECK (price_at_booking > 0),
-        responsible_staff_id INT NOT NULL REFERENCES staff(id)
+        responsible_staff_id INT REFERENCES staff(id)
     );
 
     CREATE TABLE IF NOT EXISTS reminder_reason(
@@ -694,38 +694,23 @@
     END;
     $$ LANGUAGE plpgsql;
 
-    -- CREATE OR REPLACE FUNCTION update_appointment_status_started()
-    -- RETURNS trigger AS $$
-    -- BEGIN
-    --     UPDATE appointment
-    --     SET status = 'STARTED'
-    --     WHERE id = NEW.appointment_id;
+    CREATE OR REPLACE FUNCTION create_appointment_detail()
+    RETURNS trigger AS $$
+    DECLARE
+        time_displacement INT;
+    BEGIN
+        SELECT SUM(s.duration_minutes)
+        INTO time_displacement
+        FROM requested_service rs
+        JOIN service s ON s.id = rs.service_id
+        WHERE rs.appointment_id = NEW.id;
 
-    --     RETURN NULL;
-    -- END;
-    -- $$ LANGUAGE plpgsql;
+        INSERT INTO appointment_details(appointment_id, scheduled_start, scheduled_end)
+        VALUES (NEW.id, NEW.scheduled_at, NEW.scheduled_at + COALESCE(time_displacement, 0) * INTERVAL '1 minute');
 
-    -- CREATE OR REPLACE FUNCTION update_appointment_status_completed()
-    -- RETURNS trigger AS $$
-    -- BEGIN
-    --     UPDATE appointment
-    --     SET status = 'COMPLETED'
-    --     WHERE id = NEW.appointment_id;
-
-    --     RETURN NULL;
-    -- END;
-    -- $$ LANGUAGE plpgsql;
-
-    -- CREATE OR REPLACE FUNCTION update_appointment_status_cancelled()
-    -- RETURNS trigger AS $$
-    -- BEGIN
-    --     UPDATE appointment
-    --     SET status = 'CANCELLED'
-    --     WHERE id = NEW.appointment_id;
-
-    --     RETURN NULL;
-    -- END;
-    -- $$ LANGUAGE plpgsql;
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
 
     -- CREATE OR REPLACE FUNCTION create_appointment_invoice()
     -- RETURNS trigger AS $$
@@ -802,28 +787,28 @@
     END;
     $$ LANGUAGE plpgsql;
 
-    -- CREATE OR REPLACE FUNCTION add_loyalty_point()
-    -- RETURNS trigger AS $$
-    -- DECLARE 
-    --     serviced_user_id INT;
-    -- BEGIN
-    --     SELECT user_id
-    --     INTO serviced_user_id
-    --     FROM appointment_details
-    --     WHERE appointment_id = NEW.appointment_id
-    --     LIMIT 1;
+    CREATE OR REPLACE FUNCTION credit_loyalty_point()
+    RETURNS trigger AS $$
+    DECLARE 
+        serviced_user_id INT;
+    BEGIN
+        SELECT user_id
+        INTO serviced_user_id
+        FROM appointment_details
+        WHERE appointment_id = NEW.appointment_id
+        LIMIT 1;
 
-    --     IF serviced_user_id IS NULL THEN
-    --         RETURN NULL;
-    --     ELSE 
-    --         UPDATE loyalty
-    --         SET point = point + ROUND(NEW.total_price / 100)::int
-    --         WHERE user_id = serviced_user_id;
-    --     END IF;
+        IF serviced_user_id IS NULL THEN
+            RETURN NULL;
+        END IF;
 
-    --     RETURN NULL;
-    -- END;
-    -- $$ LANGUAGE plpgsql;
+        UPDATE loyalty
+        SET point = point + ROUND(NEW.total_price / 100)::int
+        WHERE user_id = serviced_user_id;
+
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
 
     CREATE OR REPLACE FUNCTION assign_loyalty_rank()
     RETURNS trigger AS $$
@@ -867,6 +852,107 @@
     END;
     $$ LANGUAGE plpgsql;
 
+    CREATE OR REPLACE FUNCTION update_appointment_actual_start()
+    RETURNS trigger AS $$
+    BEGIN
+        UPDATE appointment_details
+        SET actual_start = NOW()
+        WHERE appointment_id = NEW.id;
+
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION update_appointment_actual_end()
+    RETURNS trigger AS $$
+    BEGIN
+        UPDATE appointment_details
+        SET actual_end = NOW()
+        WHERE appointment_id = NEW.id;
+
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION update_service_combo_details()
+    RETURNS trigger AS $$
+    DECLARE
+        total_duration INT;
+        total_price INT;
+    BEGIN
+        SELECT 
+            SUM(s.duration_minutes),
+            SUM(s.service_price)
+        INTO total_duration, total_price
+        FROM service s
+        JOIN service_combo sc ON s.id = sc.service_id
+        WHERE sc.combo_id = NEW.id;
+
+        UPDATE service
+        SET duration_minutes = COALESCE(total_duration, 0),
+            service_price = COALESCE(total_price, 0)
+        WHERE id = NEW.id;
+
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION propagate_service_details_to_combo()
+    RETURNS trigger AS $$
+    DECLARE
+        combo INT[];
+        total_duration INT;
+        total_price INT;
+    BEGIN
+        SELECT ARRAY_AGG(combo_id)
+        INTO combo
+        FROM service_combo
+        WHERE service_id = NEW.id;
+
+        SELECT 
+            SUM(s.duration_minutes),
+            SUM(s.service_price)
+        INTO total_duration, total_price
+        FROM service s
+        JOIN service_combo sc ON s.id = sc.service_id
+        WHERE sc.combo_id = ANY(combo);
+
+        IF combo IS NOT NULL THEN
+            UPDATE service
+            SET duration_minutes = COALESCE(total_duration, 0),
+                service_price = COALESCE(total_price, 0)
+            WHERE id = ANY(combo);
+        END IF;
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION refresh_service_combo_details()
+    RETURNS trigger AS $$
+    DECLARE
+        combo_id INT;
+        total_duration INT;
+        total_price INT;
+    BEGIN
+        combo_id := COALESCE(NEW.combo_id, OLD.combo_id);
+
+        SELECT 
+            SUM(s.duration_minutes),
+            SUM(s.service_price)
+        INTO total_duration, total_price
+        FROM service s
+        JOIN service_combo sc ON s.id = sc.service_id
+        WHERE sc.combo_id = combo_id;
+
+        UPDATE service
+        SET duration_minutes = COALESCE(total_duration, 0),
+            service_price = COALESCE(total_price, 0)
+        WHERE id = combo_id;
+
+        RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
     CREATE TRIGGER normalize_email_and_phone_trigger_account
     BEFORE INSERT OR UPDATE ON user_account
     FOR EACH ROW
@@ -899,32 +985,23 @@
     WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NOT NULL AND OLD.scheduled_at <> NEW.scheduled_at)
     EXECUTE FUNCTION update_appointment_status_rescheduled();
 
---TODO: actual start should be triggered by status change instead
-    -- CREATE TRIGGER update_appointment_status_started_trigger
-    -- AFTER UPDATE ON appointment_details
-    -- FOR EACH ROW
-    -- WHEN (NEW.actual_start IS NOT NULL AND (OLD.actual_start IS NULL OR OLD.actual_start <> NEW.actual_start))
-    -- EXECUTE FUNCTION update_appointment_status_started();
+    CREATE TRIGGER update_appointment_actual_start_trigger
+    AFTER UPDATE OF status ON appointment
+    FOR EACH ROW
+    WHEN (NEW.status = 'STARTED')
+    EXECUTE FUNCTION update_appointment_actual_start();
 
---TODO: actual end should be triggered by status change instead
-    -- CREATE TRIGGER update_appointment_status_completed_trigger
-    -- AFTER UPDATE ON appointment_details
-    -- FOR EACH ROW
-    -- WHEN (NEW.actual_end IS NOT NULL AND OLD.actual_end IS NULL)
-    -- EXECUTE FUNCTION update_appointment_status_completed();
+    CREATE TRIGGER update_appointment_actual_end_trigger
+    AFTER UPDATE OF status ON appointment
+    FOR EACH ROW
+    WHEN (NEW.status = 'COMPLETED')
+    EXECUTE FUNCTION update_appointment_actual_end();
 
---TODO: maybe this should not be a trigger
-    -- CREATE TRIGGER update_appointment_status_cancelled_trigger
-    -- AFTER UPDATE ON appointment_details
-    -- FOR EACH ROW
-    -- WHEN (NEW.actual_end IS NOT NULL AND NEW.actual_start IS NULL)
-    -- EXECUTE FUNCTION update_appointment_status_cancelled();
-
-    -- CREATE TRIGGER create_appointment_detail_trigger
-    -- AFTER UPDATE ON appointment
-    -- FOR EACH ROW
-    -- WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'REGISTERED')
-    -- EXECUTE FUNCTION create_appointment_detail();
+    CREATE TRIGGER create_appointment_detail_trigger
+    AFTER UPDATE ON appointment
+    FOR EACH ROW
+    WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'REGISTERED')
+    EXECUTE FUNCTION create_appointment_detail();
 
     -- CREATE TRIGGER create_appointment_invoice_trigger
     -- AFTER UPDATE ON appointment
@@ -946,14 +1023,9 @@
     AFTER INSERT ON user_account
     FOR EACH ROW
     EXECUTE FUNCTION add_loyalty_record();
-
-    -- CREATE TRIGGER add_loyalty_point_trigger
-    -- AFTER INSERT OR UPDATE ON appointment_invoice
-    -- FOR EACH ROW
-    -- EXECUTE FUNCTION add_loyalty_point();
-
+    
     CREATE TRIGGER assign_loyalty_rank_trigger
-    AFTER UPDATE ON loyalty
+    AFTER UPDATE OF point ON loyalty
     FOR EACH ROW
     WHEN (NEW.point <> OLD.point)
     EXECUTE FUNCTION assign_loyalty_rank();
@@ -962,3 +1034,24 @@
     AFTER UPDATE ON product
     FOR EACH ROW
     EXECUTE FUNCTION record_product_change();
+
+    CREATE TRIGGER credit_loyalty_point_trigger
+    AFTER INSERT ON appointment_invoice
+    FOR EACH ROW
+    EXECUTE FUNCTION credit_loyalty_point();
+
+    CREATE TRIGGER update_service_combo_details_trigger
+    AFTER INSERT ON service
+    FOR EACH ROW
+    WHEN (NEW.service_type = 'COMBO')
+    EXECUTE FUNCTION update_service_combo_details();
+
+    CREATE TRIGGER propagate_service_details_to_combo_trigger
+    AFTER UPDATE OF service_price, duration_minutes ON service
+    FOR EACH ROW
+    EXECUTE FUNCTION propagate_service_details_to_combo();
+
+    CREATE TRIGGER refresh_service_combo_details_trigger
+    AFTER INSERT OR DELETE OR UPDATE ON service_combo
+    FOR EACH ROW
+    EXECUTE FUNCTION refresh_service_combo_details(); 

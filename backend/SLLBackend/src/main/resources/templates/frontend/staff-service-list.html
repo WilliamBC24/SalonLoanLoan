@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="pageTitleTag"></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/staff-service-list.css">
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <h4 id="siteName"></h4>
+        </div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="#" class="menu-item" id="dashboardLink">
+          <i class="fas fa-tachometer-alt"></i>
+          <span id="dashboardText"></span>
+        </a>
+        <a href="#" class="menu-item" id="productsLink">
+          <i class="fas fa-box"></i>
+          <span id="productsText"></span>
+        </a>
+        <a href="#" class="menu-item active" id="servicesLink">
+          <i class="fas fa-concierge-bell"></i>
+          <span id="servicesText"></span>
+        </a>
+        <a href="#" class="menu-item" id="staffLink">
+          <i class="fas fa-users"></i>
+          <span id="staffText"></span>
+        </a>
+        <a href="#" class="menu-item" id="customersLink">
+          <i class="fas fa-user-friends"></i>
+          <span id="customersText"></span>
+        </a>
+        <a href="#" class="menu-item" id="bookingsLink">
+          <i class="fas fa-calendar-alt"></i>
+          <span id="bookingsText"></span>
+        </a>
+        <a href="#" class="menu-item" id="reportsLink">
+          <i class="fas fa-chart-bar"></i>
+          <span id="reportsText"></span>
+        </a>
+        <a href="#" class="menu-item" id="settingsLink">
+          <i class="fas fa-cog"></i>
+          <span id="settingsText"></span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <h1 class="page-title" id="pageTitle"></h1>
+
+      <!-- Search and Filter Section -->
+      <div class="search-section">
+        <div class="search-row">
+          <div class="search-group">
+            <label for="searchName" id="searchLabel"></label>
+            <input type="text" id="searchName" placeholder="">
+          </div>
+          <div class="search-group">
+            <label id="typeLabel"></label>
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="serviceType" value="SINGLE">
+                <span id="singleTypeOption"></span>
+              </label>
+              <label>
+                <input type="radio" name="serviceType" value="COMBO">
+                <span id="comboTypeOption"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="search-row">
+          <div class="search-group category-group">
+            <label id="categoryLabel"></label>
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" name="serviceCategory" value="Hair Care">
+                <span id="hairCareOption"></span>
+              </label>
+              <label>
+                <input type="checkbox" name="serviceCategory" value="Nails">
+                <span id="nailsOption"></span>
+              </label>
+              <label>
+                <input type="checkbox" name="serviceCategory" value="Skin Care">
+                <span id="skinCareOption"></span>
+              </label>
+              <label>
+                <input type="checkbox" name="serviceCategory" value="Massage & Spa">
+                <span id="massageSpaOption"></span>
+              </label>
+              <label>
+                <input type="checkbox" name="serviceCategory" value="Makeup">
+                <span id="makeupOption"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="btn-search" id="searchButton"></button>
+          <button class="btn-reset" id="resetButton"></button>
+        </div>
+      </div>
+
+      <!-- Service List Table -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th id="idHeader"></th>
+              <th id="nameHeader"></th>
+              <th id="categoryHeader"></th>
+              <th id="typeHeader"></th>
+              <th id="priceHeader"></th>
+              <th id="durationHeader"></th>
+              <th id="activeHeader"></th>
+              <th id="actionsHeader"></th>
+            </tr>
+          </thead>
+          <tbody id="serviceTableBody">
+            <!-- Dynamic content will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container">
+        <div class="pagination" id="pagination">
+          <!-- Dynamic pagination will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalTitle"></h5>
+        <button type="button" class="close" onclick="closeModal('successModal')">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <p id="successMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="closeModal('successModal')" id="successOkButton"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="errorModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalTitle"></h5>
+        <button type="button" class="close" onclick="closeModal('errorModal')">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="error-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <p id="errorMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('errorModal')" id="errorOkButton"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

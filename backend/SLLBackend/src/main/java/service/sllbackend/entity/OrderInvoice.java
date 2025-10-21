@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import service.sllbackend.enumerator.OrderStatus;
 
 import java.time.LocalDateTime;
 
@@ -30,6 +31,11 @@ public class OrderInvoice {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_type_id", nullable = false)
     private PaymentType paymentType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_status", nullable = false, columnDefinition = "TEXT")
+    @Builder.Default
+    private OrderStatus orderStatus = OrderStatus.PENDING;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default

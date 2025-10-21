@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="pageTitle">Giỏ hàng</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/cart.css">
+</head>
+
+<body>
+  <!-- ========== HEADER ========== -->
+  <header class="cart-header">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg">
+        <div class="navbar-brand">
+          <h1 class="logo-text">
+            <i class="fas fa-cut"></i>
+            <span id="siteName">Loading...</span>
+          </h1>
+        </div>
+        <div class="navbar-nav ms-auto">
+          <a href="/products" class="nav-link back-link">
+            <i class="fas fa-arrow-left"></i>
+            <span>Quay lại sản phẩm</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="cart-main">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="/products">Sản phẩm</a></li>
+          <li class="breadcrumb-item active">Giỏ hàng</li>
+        </ol>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="header-content">
+          <h1 class="page-title">
+            <i class="fas fa-shopping-cart"></i>
+            Giỏ hàng của bạn
+          </h1>
+          <p class="page-subtitle">Bạn có <span class="item-count" id="cartItemCount">0</span> sản phẩm trong giỏ hàng</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline-primary">
+            <i class="fas fa-heart"></i>
+            Danh sách yêu thích
+          </button>
+        </div>
+      </div>
+
+      <!-- Cart Content -->
+      <div class="cart-content">
+        <div class="row">
+          <!-- Cart Items -->
+          <div class="col-lg-8">
+            <div class="cart-items">
+              <div class="cart-items-header">
+                <h3>Sản phẩm đã chọn</h3>
+                <button class="btn btn-link text-danger" onclick="clearCart()">
+                  <i class="fas fa-trash"></i>
+                  Xóa tất cả
+                </button>
+              </div>
+
+              <!-- Product Items -->
+              <div class="product-list" id="productList">
+                <!-- Products will be dynamically loaded here -->
+              </div>
+              
+              <!-- Empty Cart Message -->
+              <div class="empty-cart">
+                <div class="text-center py-5">
+                  <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                  <h4 class="text-muted">Giỏ hàng trống</h4>
+                  <p class="text-muted">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+                  <a href="/products" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i>
+                    Tiếp tục mua sắm
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Summary -->
+          <div class="col-lg-4">
+            <div class="order-summary">
+              <div class="summary-header">
+                <h3>
+                  <i class="fas fa-receipt"></i>
+                  Tóm tắt đơn hàng
+                </h3>
+              </div>
+
+              <div class="summary-content">
+                <div class="summary-row">
+                  <span>Tạm tính (<span id="summaryItemCount">0</span> sản phẩm):</span>
+                  <span id="cartSubtotal">0 ₫</span>
+                </div>
+                <div class="summary-row">
+                  <span>Phí vận chuyển:</span>
+                  <span class="text-success" id="shippingFee">Miễn phí</span>
+                </div>
+                <div class="summary-row d-none" id="discountRow">
+                  <span>Giảm giá:</span>
+                  <span class="text-danger" id="discountAmount">-0 ₫</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total-row">
+                  <span>Tổng cộng:</span>
+                  <span class="total-price" id="cartTotal">0 ₫</span>
+                </div>
+              </div>
+
+              <div class="summary-actions">
+                <button class="btn btn-primary btn-checkout" id="checkoutBtn" style="display: none;">
+                  <i class="fas fa-credit-card"></i>
+                  Thanh toán ngay
+                </button>
+                <button class="btn btn-outline-secondary btn-continue" onclick="window.location.href='/products'">
+                  <i class="fas fa-shopping-bag"></i>
+                  Tiếp tục mua sắm
+                </button>
+              </div>
+
+              <div class="summary-benefits">
+                <h5>Lợi ích khi mua hàng:</h5>
+                <ul>
+                  <li>
+                    <i class="fas fa-shield-alt text-primary"></i>
+                    Bảo hành chính hãng
+                  </li>
+                  <li>
+                    <i class="fas fa-truck text-success"></i>
+                    Giao hàng miễn phí
+                  </li>
+                  <li>
+                    <i class="fas fa-undo text-info"></i>
+                    Đổi trả trong 7 ngày
+                  </li>
+                  <li>
+                    <i class="fas fa-headset text-warning"></i>
+                    Hỗ trợ 24/7
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="cart-footer">
+    <div class="container">
+      <div class="footer-content">
+        <p id="copyrightText">&copy; <span id="currentYear">2024</span> <span id="footerSiteName">Loading...</span>. Tất cả quyền được bảo lưu.</p>
+        <div class="footer-links">
+          <a href="#">Chính sách bảo mật</a>
+          <a href="#">Điều khoản sử dụng</a>
+          <a href="#">Liên hệ</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Cart data structure
+    let cartData = {
+      items: [],
+      subtotal: 0,
+      shippingFee: 0,
+      discountAmount: 0,
+      total: 0
+    };
+
+    // Format price with Vietnamese format
+    function formatPrice(price) {
+      return new Intl.NumberFormat('vi-VN').format(price) + ' ₫';
+    }
+
+    // Generate star rating HTML
+    function generateStars(rating) {
+      let stars = '';
+      for (let i = 1; i <= 5; i++) {
+        stars += `<i class="${i <= rating ? 'fas' : 'far'} fa-star"></i>`;
+      }
+      return stars;
+    }
+
+    // Generate product item HTML
+    function generateProductItem(item) {
+      return `
+        <div class="product-item" data-item-id="${item.id}">
+          <div class="product-image">
+            <img src="${item.product.imageUrl || ''}" 
+                 alt="${item.product.name}" class="img-fluid">
+            ${item.product.badge ? `
+            <div class="product-badge">
+              <span class="badge ${item.product.badge === 'NEW' ? 'bg-success' : item.product.badge === 'BESTSELLER' ? 'bg-warning' : 'bg-info'}">
+                ${item.product.badge === 'NEW' ? 'Mới' : item.product.badge === 'BESTSELLER' ? 'Bán chạy' : 'Khuyến mãi'}
+              </span>
+            </div>` : ''}
+          </div>
+          
+          <div class="product-details">
+            <h4 class="product-name">${item.product.name}</h4>
+            <p class="product-description">${item.product.description || ''}</p>
+            <div class="product-meta">
+              <span class="product-category">
+                <i class="fas fa-tag"></i>
+                <span>${item.product.category?.name || ''}</span>
+              </span>
+              ${item.product.averageRating ? `
+              <div class="product-rating">
+                <div class="stars">
+                  ${generateStars(item.product.averageRating)}
+                </div>
+                <span class="rating-text">(${item.product.averageRating})</span>
+              </div>` : ''}
+            </div>
+          </div>
+
+          <div class="product-pricing">
+            <div class="price-info">
+              <span class="current-price">${formatPrice(item.product.price)}</span>
+              ${item.product.originalPrice && item.product.originalPrice > item.product.price ? 
+                `<span class="original-price">${formatPrice(item.product.originalPrice)}</span>` : ''}
+            </div>
+            <div class="quantity-control">
+              <label class="quantity-label">Số lượng:</label>
+              <div class="quantity-input-group">
+                <button type="button" class="qty-btn qty-decrease" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <input type="number" value="${item.quantity}" min="1" max="10" class="qty-input" 
+                       onchange="updateQuantity(${item.id}, this.value)">
+                <button type="button" class="qty-btn qty-increase" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="item-total">
+              <span class="total-label">Thành tiền:</span>
+              <span class="total-amount">${formatPrice(item.quantity * item.product.price)}</span>
+            </div>
+          </div>
+
+          <div class="product-actions">
+            <button class="action-btn wishlist-btn" title="Thêm vào yêu thích" onclick="addToWishlist(${item.product.id})">
+              <i class="far fa-heart"></i>
+            </button>
+            <button class="action-btn delete-btn" title="Xóa sản phẩm" onclick="removeFromCart(${item.id})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Update cart display
+    function updateCartDisplay() {
+      const productList = document.getElementById('productList');
+      const cartItemCount = document.getElementById('cartItemCount');
+      const summaryItemCount = document.getElementById('summaryItemCount');
+      const cartSubtotal = document.getElementById('cartSubtotal');
+      const shippingFee = document.getElementById('shippingFee');
+      const discountRow = document.getElementById('discountRow');
+      const discountAmount = document.getElementById('discountAmount');
+      const cartTotal = document.getElementById('cartTotal');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      const emptyCart = document.querySelector('.empty-cart');
+      const clearAllBtn = document.querySelector('.btn-link.text-danger');
+
+      if (cartData.items.length === 0) {
+        productList.innerHTML = '';
+        emptyCart.style.display = 'block';
+        checkoutBtn.style.display = 'none';
+        clearAllBtn.style.display = 'none';
+      } else {
+        productList.innerHTML = cartData.items.map(generateProductItem).join('');
+        emptyCart.style.display = 'none';
+        checkoutBtn.style.display = 'block';
+        clearAllBtn.style.display = 'block';
+      }
+
+      cartItemCount.textContent = cartData.items.length;
+      summaryItemCount.textContent = cartData.items.length;
+      cartSubtotal.textContent = formatPrice(cartData.subtotal);
+      
+      if (cartData.shippingFee === 0) {
+        shippingFee.textContent = cartData.shippingText || 'Miễn phí';
+        shippingFee.className = 'text-success';
+      } else {
+        shippingFee.textContent = formatPrice(cartData.shippingFee);
+        shippingFee.className = '';
+      }
+
+      if (cartData.discountAmount > 0) {
+        discountRow.classList.remove('d-none');
+        discountAmount.textContent = '-' + formatPrice(cartData.discountAmount);
+      } else {
+        discountRow.classList.add('d-none');
+      }
+
+      cartTotal.textContent = formatPrice(cartData.total);
+    }
+
+    // Load cart data (replace with your API call)
+    function loadCartData() {
+      // Example data - replace with actual API call
+      cartData = {
+        items: [],
+        subtotal: 0,
+        shippingFee: 0,
+        shippingText: 'Miễn phí',
+        discountAmount: 0,
+        total: 0
+      };
+      
+      // Uncomment and modify this to load from your API:
+      /*
+      fetch('/api/cart')
+        .then(response => response.json())
+        .then(data => {
+          cartData = data;
+          updateCartDisplay();
+        })
+        .catch(error => {
+          console.error('Error loading cart:', error);
+        });
+      */
+      
+      updateCartDisplay();
+    }
+
+    // Cart functionality
+    function updateQuantity(cartItemId, newQuantity) {
+      if (newQuantity < 1) {
+        newQuantity = 1;
+      }
+      
+      // Update local data
+      const item = cartData.items.find(i => i.id === cartItemId);
+      if (item) {
+        item.quantity = newQuantity;
+        // Recalculate totals
+        cartData.subtotal = cartData.items.reduce((sum, item) => sum + (item.quantity * item.product.price), 0);
+        cartData.total = cartData.subtotal + cartData.shippingFee - cartData.discountAmount;
+        updateCartDisplay();
+      }
+      
+      // Send to server (uncomment when you have API)
+      /*
+      fetch('/cart/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cartItemId: cartItemId,
+          quantity: newQuantity
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          loadCartData();
+        } else {
+          alert('Có lỗi xảy ra khi cập nhật số lượng');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi cập nhật số lượng');
+      });
+      */
+    }
+
+    function removeFromCart(cartItemId) {
+      if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+        // Update local data
+        cartData.items = cartData.items.filter(item => item.id !== cartItemId);
+        cartData.subtotal = cartData.items.reduce((sum, item) => sum + (item.quantity * item.product.price), 0);
+        cartData.total = cartData.subtotal + cartData.shippingFee - cartData.discountAmount;
+        updateCartDisplay();
+        
+        // Send to server (uncomment when you have API)
+        /*
+        fetch('/cart/remove', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            cartItemId: cartItemId
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            loadCartData();
+          } else {
+            alert('Có lỗi xảy ra khi xóa sản phẩm');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Có lỗi xảy ra khi xóa sản phẩm');
+        });
+        */
+      }
+    }
+
+    function clearCart() {
+      if (confirm('Bạn có chắc chắn muốn xóa tất cả sản phẩm trong giỏ hàng?')) {
+        // Update local data
+        cartData.items = [];
+        cartData.subtotal = 0;
+        cartData.total = 0;
+        updateCartDisplay();
+        
+        // Send to server (uncomment when you have API)
+        /*
+        fetch('/cart/clear', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            loadCartData();
+          } else {
+            alert('Có lỗi xảy ra khi xóa giỏ hàng');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Có lỗi xảy ra khi xóa giỏ hàng');
+        });
+        */
+      }
+    }
+
+    function addToWishlist(productId) {
+      // Send to server (uncomment when you have API)
+      /*
+      fetch('/wishlist/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: productId
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Đã thêm vào danh sách yêu thích');
+        } else {
+          alert('Có lỗi xảy ra khi thêm vào yêu thích');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi thêm vào yêu thích');
+      });
+      */
+      alert('Đã thêm vào danh sách yêu thích');
+    }
+
+    function proceedToCheckout() {
+      window.location.href = '/checkout';
+    }
+
+    // Load site configuration
+    function loadSiteConfig() {
+      // Load from API (uncomment and modify for your API):
+      /*
+      fetch('/api/site-config')
+        .then(response => response.json())
+        .then(config => {
+          document.getElementById('siteName').textContent = config.siteName || 'Hair Salon';
+          document.getElementById('pageTitle').textContent = config.cartPageTitle || 'Giỏ hàng';
+          document.getElementById('footerSiteName').textContent = config.siteName || 'Hair Salon';
+          document.getElementById('currentYear').textContent = new Date().getFullYear();
+        })
+        .catch(error => {
+          console.error('Error loading site config:', error);
+          setDefaultSiteConfig();
+        });
+      */
+      
+      // For now, use default values
+      setDefaultSiteConfig();
+    }
+    
+    function setDefaultSiteConfig() {
+      document.getElementById('siteName').textContent = 'Hair Salon';
+      document.getElementById('pageTitle').textContent = 'Giỏ hàng - Hair Salon';
+      document.getElementById('footerSiteName').textContent = 'Hair Salon';
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      loadSiteConfig();
+      loadCartData();
+    });
+  </script>
+
+</body>
+
+</html>

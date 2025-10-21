@@ -19,7 +19,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderInvoiceRepo orderInvoiceRepo;
     private final OrderInvoiceDetailsRepo orderInvoiceDetailsRepo;
     private final CustomerInfoRepo customerInfoRepo;
-    private final PaymentTypeRepo paymentTypeRepo;
     private final CartRepo cartRepo;
     private final UserAccountRepo userAccountRepo;
     private final ProductRepo productRepo;
@@ -52,15 +51,16 @@ public class OrderServiceImpl implements OrderService {
                         .shippingAddress(shippingAddress)
                         .build()));
         
-        // Get payment type
-        PaymentType paymentType = paymentTypeRepo.findByName(paymentTypeName)
-                .orElseThrow(() -> new RuntimeException("Payment type not found: " + paymentTypeName));
+        // Validate payment method (simple text validation)
+        if (!paymentTypeName.equals("BANK_TRANSFER") && !paymentTypeName.equals("COD")) {
+            throw new RuntimeException("Invalid payment method. Must be BANK_TRANSFER or COD");
+        }
         
         // Create order invoice
         OrderInvoice orderInvoice = OrderInvoice.builder()
                 .customerInfo(customerInfo)
                 .totalPrice(totalPrice)
-                .paymentType(paymentType)
+                .paymentMethod(paymentTypeName)
                 .orderStatus(OrderStatus.PENDING)
                 .build();
         orderInvoice = orderInvoiceRepo.save(orderInvoice);

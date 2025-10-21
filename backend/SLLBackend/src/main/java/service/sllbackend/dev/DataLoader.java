@@ -34,12 +34,10 @@ public class DataLoader implements CommandLineRunner {
 	private final JobPostingRepo jobPostingRepo;
 	private final JobPostingApplicationRepo jobPostingApplicationRepo;
 	private final LoyaltyLevelRepo loyaltyLevelRepo;
-	private final PaymentTypeRepo paymentTypeRepo;
 
 	@Override
 	public void run(String... args) {
 		log.info("############ \n            Loading initial data\n############");
-		registerPaymentTypes();
 		registerLoyaltyLevel();
 		registerUser();
 		registerStaff();
@@ -940,19 +938,5 @@ public class DataLoader implements CommandLineRunner {
 		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 5000));
 		// Platinum
 		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 10000));
-	}
-
-	public void registerPaymentTypes() {
-		// Bank Transfer
-		paymentTypeRepo.save(PaymentType.builder()
-				.name("BANK_TRANSFER")
-				.build());
-		
-		// Cash on Delivery
-		paymentTypeRepo.save(PaymentType.builder()
-				.name("COD")
-				.build());
-		
-		log.info("Successfully loaded 2 payment types");
 	}
 }

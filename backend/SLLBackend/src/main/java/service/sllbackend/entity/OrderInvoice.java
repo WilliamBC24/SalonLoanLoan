@@ -28,9 +28,8 @@ public class OrderInvoice {
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_type_id", nullable = false)
-    private PaymentType paymentType;
+    @Column(name = "payment_method", nullable = false, columnDefinition = "TEXT")
+    private String paymentMethod;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false, columnDefinition = "TEXT")

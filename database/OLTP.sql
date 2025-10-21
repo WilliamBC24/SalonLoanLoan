@@ -463,6 +463,7 @@
         customer_info_id INT NOT NULL REFERENCES customer_info(id),
         total_price INT NOT NULL CHECK (total_price > 0),
         payment_type_id INT NOT NULL REFERENCES payment_type(id),
+        order_status TEXT NOT NULL DEFAULT 'PENDING',
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 

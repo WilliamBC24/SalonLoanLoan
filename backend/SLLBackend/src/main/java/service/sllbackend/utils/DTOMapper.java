@@ -2,13 +2,8 @@ package service.sllbackend.utils;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import service.sllbackend.entity.Loyalty;
-import service.sllbackend.entity.StaffAccount;
-import service.sllbackend.entity.UserAccount;
-import service.sllbackend.web.dto.LoyaltyListViewDTO;
-import service.sllbackend.web.dto.StaffProfileViewDTO;
-import service.sllbackend.web.dto.UserProfileEditDTO;
-import service.sllbackend.web.dto.UserProfileViewDTO;
+import service.sllbackend.entity.*;
+import service.sllbackend.web.dto.*;
 
 import java.util.List;
 
@@ -31,4 +26,10 @@ public interface DTOMapper {
     @Mapping(target = "username", source = "loyalty.user.username")
     LoyaltyListViewDTO toLoyaltyListViewDTO(Loyalty loyalty);
     List<LoyaltyListViewDTO> toLoyaltyListViewDTOList(List<Loyalty> loyaltyList);
+
+    @Mapping(target = "username", source = "username")
+    SimpleUserDTO toSimpleUserDTO(UserAccount userAccount);
+
+    @Mapping(target = "user.username", source = "userAccount.username")
+    AppointmentDetailsViewDTO toAppointmentDetailsViewDTO(AppointmentDetails appointment, UserAccount userAccount);
 }

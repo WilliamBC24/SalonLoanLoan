@@ -34,6 +34,7 @@ public class DataLoader implements CommandLineRunner {
 	private final JobPostingRepo jobPostingRepo;
 	private final JobPostingApplicationRepo jobPostingApplicationRepo;
 	private final LoyaltyLevelRepo loyaltyLevelRepo;
+	private final AppointmentRepo appointmentRepo;
 
 	@Override
 	public void run(String... args) {
@@ -48,6 +49,7 @@ public class DataLoader implements CommandLineRunner {
 		registerProviders();
 		registerJobPosting();
 		registerJobApplication();
+		registerAppointments();
 	}
 
 	public void registerPromotions() {
@@ -938,5 +940,31 @@ public class DataLoader implements CommandLineRunner {
 		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 5000));
 		// Platinum
 		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 10000));
+	}
+
+	public void registerAppointments() {
+		appointmentRepo.save(Appointment.builder()
+				.name("Alice")
+				.phoneNumber("0999111222")
+				.registeredAt(LocalDateTime.now().minusDays(3))
+				.scheduledAt(LocalDateTime.now().plusDays(2))
+				.status(AppointmentStatus.REGISTERED)
+				.build());
+
+		appointmentRepo.save(Appointment.builder()
+				.name("Bob")
+				.phoneNumber("0888222333")
+				.registeredAt(LocalDateTime.now().minusDays(5))
+				.scheduledAt(LocalDateTime.now().plusDays(1))
+				.status(AppointmentStatus.PENDING)
+				.build());
+
+		appointmentRepo.save(Appointment.builder()
+				.name("Charlie")
+				.phoneNumber("0777333444")
+				.registeredAt(LocalDateTime.now().minusDays(1))
+				.scheduledAt(null) // not scheduled yet
+				.status(AppointmentStatus.PENDING)
+				.build());
 	}
 }

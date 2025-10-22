@@ -58,6 +58,7 @@ public class OrderServiceImpl implements OrderService {
         
         // Create order invoice
         OrderInvoice orderInvoice = OrderInvoice.builder()
+                .userAccount(userAccount)
                 .customerInfo(customerInfo)
                 .totalPrice(totalPrice)
                 .paymentMethod(paymentTypeName)
@@ -88,9 +89,7 @@ public class OrderServiceImpl implements OrderService {
         UserAccount userAccount = userAccountRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        // Get user's phone number to find their orders
-        String phoneNumber = userAccount.getPhoneNumber();
-        return orderInvoiceRepo.findByCustomerInfo_PhoneNumberOrderByCreatedAtDesc(phoneNumber);
+        return orderInvoiceRepo.findByUserAccountOrderByCreatedAtDesc(userAccount);
     }
 
     @Override
@@ -116,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
         UserAccount userAccount = userAccountRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        if (!order.getCustomerInfo().getPhoneNumber().equals(userAccount.getPhoneNumber())) {
+        if (!order.getUserAccount().getId().equals(userAccount.getId())) {
             throw new RuntimeException("Unauthorized to cancel this order");
         }
         

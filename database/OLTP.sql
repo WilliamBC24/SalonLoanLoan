@@ -460,6 +460,7 @@
 
     CREATE TABLE IF NOT EXISTS order_invoice(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        user_account_id INT NOT NULL REFERENCES user_account(id),
         customer_info_id INT NOT NULL REFERENCES customer_info(id),
         total_price INT NOT NULL CHECK (total_price > 0),
         payment_method TEXT NOT NULL,

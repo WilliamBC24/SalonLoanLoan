@@ -22,6 +22,10 @@ public class OrderInvoice {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id", nullable = false)
+    private UserAccount userAccount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_info_id", nullable = false)
     private CustomerInfo customerInfo;
 

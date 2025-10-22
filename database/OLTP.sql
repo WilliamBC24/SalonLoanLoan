@@ -621,7 +621,7 @@
     CREATE TABLE IF NOT EXISTS product_feedback_image(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         product_feedback_id INT NOT NULL REFERENCES product_feedback(id),
-        image_path TEXT NOT NULL;
+        image_path TEXT NOT NULL
     );
 
     CREATE OR REPLACE FUNCTION normalize_phone_number()

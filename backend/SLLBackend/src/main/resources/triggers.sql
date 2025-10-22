@@ -343,12 +343,6 @@ CREATE TRIGGER create_appointment_detail_trigger
     WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'REGISTERED')
     EXECUTE FUNCTION create_appointment_detail();
 
-CREATE TRIGGER create_appointment_detail_trigger
-    AFTER UPDATE ON appointment
-    FOR EACH ROW
-    WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'REGISTERED')
-    EXECUTE FUNCTION create_appointment_detail();
-
 CREATE TRIGGER update_service_combo_details_trigger
     AFTER INSERT ON service
     FOR EACH ROW

@@ -338,9 +338,9 @@ CREATE TRIGGER credit_loyalty_point_trigger
     EXECUTE FUNCTION credit_loyalty_point();
 
 CREATE TRIGGER create_appointment_detail_trigger
-    AFTER UPDATE ON appointment
+    AFTER INSERT ON appointment
     FOR EACH ROW
-    WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'REGISTERED')
+    WHEN (NEW.scheduled_at IS NOT NULL)
     EXECUTE FUNCTION create_appointment_detail();
 
 CREATE TRIGGER update_service_combo_details_trigger

@@ -998,10 +998,12 @@
     EXECUTE FUNCTION update_appointment_actual_end();
 
     CREATE TRIGGER create_appointment_detail_trigger
-    AFTER UPDATE ON appointment
+    AFTER INSERT ON appointment
     FOR EACH ROW
     WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'REGISTERED')
     EXECUTE FUNCTION create_appointment_detail();
+
+    --TODO: propagate details on date update
 
     -- CREATE TRIGGER create_appointment_invoice_trigger
     -- AFTER UPDATE ON appointment

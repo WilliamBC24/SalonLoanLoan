@@ -76,6 +76,7 @@ public class OrderController {
             return "redirect:/auth/user/login";
         }
         
+        System.out.println(principal.getName());
         List<OrderInvoice> orders = orderService.getOrderHistory(principal.getName());
         model.addAttribute("orders", orders);
         
@@ -102,7 +103,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/cancel")
+    @GetMapping("/cancel")
     @Transactional
     public String cancelOrder(@RequestParam Integer orderId, Principal principal) {
         if (principal == null) {

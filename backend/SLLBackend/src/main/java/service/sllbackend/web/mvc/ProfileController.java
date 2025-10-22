@@ -15,7 +15,7 @@ import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
 import service.sllbackend.service.impl.LoyaltyServiceImpl;
 import service.sllbackend.service.impl.ProfileServiceImpl;
-import service.sllbackend.utils.ProfileMapper;
+import service.sllbackend.utils.DTOMapper;
 import service.sllbackend.web.dto.*;
 
 import java.security.Principal;
@@ -26,13 +26,13 @@ import java.security.Principal;
 public class ProfileController {
     private final ProfileServiceImpl profileService;
     private final LoyaltyServiceImpl loyaltyService;
-    private final ProfileMapper profileMapper;
+    private final DTOMapper DTOMapper;
 
     @GetMapping("/user/profile")
     public String userProfile(Model model, Principal principal) {
         UserAccount userAccount = profileService.getCurrentUser(principal.getName());
         Loyalty loyalty = loyaltyService.findLoyaltyByUser(userAccount);
-        UserProfileViewDTO userProfileViewDTO = profileMapper.toUserProfileViewDTO(userAccount, loyalty);
+        UserProfileViewDTO userProfileViewDTO = DTOMapper.toUserProfileViewDTO(userAccount, loyalty);
         model.addAttribute("user", userProfileViewDTO);
         return "user-profile";
     }
@@ -40,7 +40,7 @@ public class ProfileController {
     @GetMapping("/user/profile/edit")
     public String editProfile(Model model, Principal principal) {
         UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-        UserProfileEditDTO userProfileEditDTO = profileMapper.toUserProfileEditDTO(userAccount);
+        UserProfileEditDTO userProfileEditDTO = DTOMapper.toUserProfileEditDTO(userAccount);
         model.addAttribute("user", userProfileEditDTO);
         return "user-profile-edit";
     }
@@ -50,7 +50,7 @@ public class ProfileController {
                                     BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
             UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-            UserProfileEditDTO userProfileEditDTO = profileMapper.toUserProfileEditDTO(userAccount);
+            UserProfileEditDTO userProfileEditDTO = DTOMapper.toUserProfileEditDTO(userAccount);
             model.addAttribute("user", userProfileEditDTO);
             return "user-profile-edit";
         }
@@ -60,7 +60,7 @@ public class ProfileController {
 
             UserAccount updatedUser = profileService.getCurrentUser(userId.longValue());
             Loyalty loyalty = loyaltyService.findLoyaltyByUser(updatedUser);
-            UserProfileViewDTO updatedUserProfileViewDTO = profileMapper.toUserProfileViewDTO(updatedUser, loyalty);
+            UserProfileViewDTO updatedUserProfileViewDTO = DTOMapper.toUserProfileViewDTO(updatedUser, loyalty);
             Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
             UserDetails newPrincipal = new org.springframework.security.core.userdetails.User(
                     updatedUser.getUsername(),
@@ -79,7 +79,7 @@ public class ProfileController {
             return "redirect:/user/profile?updated";
         } catch (Exception e) {
             UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-            UserProfileEditDTO userProfileEditDTO = profileMapper.toUserProfileEditDTO(userAccount);
+            UserProfileEditDTO userProfileEditDTO = DTOMapper.toUserProfileEditDTO(userAccount);
             model.addAttribute("user", userProfileEditDTO);
             return "redirect:/user/profile/edit";
         }
@@ -108,7 +108,7 @@ public class ProfileController {
     @GetMapping("/staff/profile")
     public String staffProfile(Model model, Principal principal) {
         StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
-        StaffProfileViewDTO staffProfileViewDTO = profileMapper.toStaffProfileViewDTO(staffAccount);
+        StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
         model.addAttribute("staffAccount", staffProfileViewDTO);
         return "staff-profile";
     }
@@ -116,7 +116,7 @@ public class ProfileController {
     @GetMapping("/staff/profile/edit")
     public String editStaffProfile(Model model, Principal principal) {
         StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
-        StaffProfileViewDTO staffProfileViewDTO = profileMapper.toStaffProfileViewDTO(staffAccount);
+        StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
         model.addAttribute("staffAccount", staffProfileViewDTO);
         return "staff-profile-edit";
     }
@@ -126,7 +126,7 @@ public class ProfileController {
                                      BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
             StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
-            StaffProfileViewDTO staffProfileViewDTO = profileMapper.toStaffProfileViewDTO(staffAccount);
+            StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
             model.addAttribute("staffAccount", staffProfileViewDTO);
             return "staff-profile";
         }
@@ -134,12 +134,12 @@ public class ProfileController {
             Integer staffId = profileService.getCurrentStaff(principal.getName()).getId();
             profileService.updateStaffProfile(Long.valueOf(staffId), staffProfileDTO);
             StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
-            StaffProfileViewDTO staffProfileViewDTO = profileMapper.toStaffProfileViewDTO(staffAccount);
+            StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
             model.addAttribute("staffAccount", staffProfileViewDTO);
             return "redirect:/staff/profile?updated";
         } catch (Exception e) {
             StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
-            StaffProfileViewDTO staffProfileViewDTO = profileMapper.toStaffProfileViewDTO(staffAccount);
+            StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
             model.addAttribute("staffAccount", staffProfileViewDTO);
             return "redirect:/staff/profile/edit";
         }

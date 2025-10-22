@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Staff - Loyalty Accounts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-bar {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        .filter-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .search-buttons {
+            margin-top: 15px;
+        }
+        .search-buttons button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .search-btn {
+            background: #007bff;
+            color: white;
+        }
+        .search-btn:hover {
+            background: #0056b3;
+        }
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #545b62;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Staff - Loyalty Accounts</h1>
+</div>
+
+<!-- Search Bar -->
+<div class="search-bar">
+    <form method="get" action="/staff/loyalty/list">
+        <div class="filter-group">
+            <label for="search-username">Search by Username:</label>
+            <input type="text" id="search-username" name="username"
+                   th:value="${username}"
+                   placeholder="Enter username..."
+                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+
+        <div class="search-buttons">
+            <button type="submit" class="search-btn">Search</button>
+            <button type="button" class="reset-btn" onclick="window.location.href='/staff/loyalty/list'">Reset</button>
+        </div>
+    </form>
+</div>
+
+<!-- Loyalty Table -->
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Username</th>
+        <th>Points</th>
+        <th>Level</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="loyalty, iterStat : ${loyaltyList}">
+        <td th:text="${iterStat.count}">1</td>
+        <td th:text="${loyalty.username}">username</td>
+        <td th:text="${loyalty.point}">0</td>
+        <td th:text="${loyalty.level.name}">Bronze</td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(loyaltyList)}">
+        <td colspan="4" style="text-align:center;">No records found.</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

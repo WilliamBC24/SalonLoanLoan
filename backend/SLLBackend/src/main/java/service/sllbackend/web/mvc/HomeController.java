@@ -26,6 +26,9 @@ public class HomeController {
         model.addAttribute("services", servicesService.getTenServices());
         model.addAttribute("products", productsService.getTenProducts());
 
+        model.addAttribute("lat", 21.018502);
+        model.addAttribute("lng", 105.811386);
+
         return "home";
     }
 }

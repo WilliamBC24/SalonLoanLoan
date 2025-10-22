@@ -460,9 +460,11 @@
 
     CREATE TABLE IF NOT EXISTS order_invoice(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        user_account_id INT NOT NULL REFERENCES user_account(id),
         customer_info_id INT NOT NULL REFERENCES customer_info(id),
         total_price INT NOT NULL CHECK (total_price > 0),
-        payment_type_id INT NOT NULL REFERENCES payment_type(id),
+        payment_method TEXT NOT NULL,
+        order_status TEXT NOT NULL DEFAULT 'PENDING',
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -620,7 +622,7 @@
     CREATE TABLE IF NOT EXISTS product_feedback_image(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         product_feedback_id INT NOT NULL REFERENCES product_feedback(id),
-        image_path TEXT NOT NULL;
+        image_path TEXT NOT NULL
     );
 
     CREATE OR REPLACE FUNCTION normalize_phone_number()

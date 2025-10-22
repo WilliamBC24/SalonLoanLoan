@@ -161,4 +161,10 @@ public class OrderServiceImpl implements OrderService {
         
         return summary;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderInvoice> getAllOrders() {
+        return orderInvoiceRepo.findAll();
+    }
 }

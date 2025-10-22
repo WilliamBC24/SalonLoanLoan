@@ -117,43 +117,6 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/edit")
-    @Transactional(readOnly = true)
-    public String editOrderPage(@RequestParam Integer orderId, Model model, Principal principal) {
-        if (principal == null) {
-            return "redirect:/auth/user/login";
-        }
-        
-        try {
-            OrderInvoice order = orderService.getOrderDetails(orderId);
-            model.addAttribute("order", order);
-            model.addAttribute("orderStatuses", OrderStatus.values());
-            
-            return "order-edit";
-        } catch (Exception e) {
-            return "redirect:/order/history?error=" + e.getMessage();
-        }
-    }
-
-    @PostMapping("/edit")
-    @Transactional
-    public String updateOrderStatus(
-            @RequestParam Integer orderId,
-            @RequestParam String orderStatus,
-            Principal principal) {
-        if (principal == null) {
-            return "redirect:/auth/user/login";
-        }
-        
-        try {
-            OrderStatus newStatus = OrderStatus.valueOf(orderStatus);
-            orderService.updateOrderStatus(orderId, newStatus);
-            return "redirect:/order/details?orderId=" + orderId + "&success=Order status updated successfully";
-        } catch (Exception e) {
-            return "redirect:/order/edit?orderId=" + orderId + "&error=" + e.getMessage();
-        }
-    }
-
     // API endpoint for AJAX requests
     @PostMapping("/api/cancel")
     @ResponseBody

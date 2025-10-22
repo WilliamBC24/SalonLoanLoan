@@ -62,4 +62,10 @@ public interface OrderService {
      * @return Map with cart summary info (total, itemCount)
      */
     Map<String, Object> getCartSummary(String username);
+    
+    /**
+     * Get all orders (for staff/admin)
+     * @return List of all order invoices
+     */
+    List<OrderInvoice> getAllOrders();
 }

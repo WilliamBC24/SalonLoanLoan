@@ -21,19 +21,26 @@ OR REPLACE FUNCTION create_staff_account()
     RETURNS trigger AS $$
     DECLARE
 name_parts TEXT[];
-        staff_username
-TEXT;
+    staff_username TEXT;
+    base_username TEXT;
+    suffix INT := 1;
 BEGIN
     name_parts := string_to_array(NEW.name, ' ');
+    base_username := name_parts[array_length(name_parts,1)];
+FOR i IN 1..array_length(name_parts,1)-1 LOOP
+        base_username := base_username || left(name_parts[i],1);
+END LOOP;
 
-    staff_username := name_parts[array_length(name_parts, 1)];
+    staff_username := base_username;
 
-for i in 1..array_length(name_parts, 1) - 1 LOOP
-            staff_username := staff_username || left(name_parts[i], 1);
+    WHILE EXISTS (SELECT 1 FROM staff_account WHERE username = staff_username) LOOP
+        suffix := suffix + 1;
+        staff_username := base_username || suffix;
 END LOOP;
 
 INSERT INTO staff_account(staff_id, username, password)
-VALUES (NEW.id, staff_username, crypt('default123', gen_salt('bf',10)));
+VALUES (NEW.id, staff_username, crypt('default123', gen_salt('bf')));
+
 RETURN NULL;
 END;
     $$

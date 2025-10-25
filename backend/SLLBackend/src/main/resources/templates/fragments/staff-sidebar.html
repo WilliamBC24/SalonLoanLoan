@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Staff Sidebar Fragment -->
+<div th:fragment="staff-sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <h4 th:text="#{app.name}">Salon Loan Loan</h4>
+        </div>
+        <button class="menu-toggle d-md-none">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <!-- Manage Products -->
+        <div class="nav-item">
+            <a href="#" class="nav-link" data-toggle="submenu" data-target="products-submenu">
+                <i class="fas fa-box"></i>
+                <span th:text="#{staff.products.title}">Manage Products</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="nav-submenu" id="products-submenu">
+                <a th:href="@{/staff/products/list}" class="nav-submenu-item">
+                    <span th:text="#{staff.products.list}">Product List</span>
+                </a>
+                <a th:href="@{/staff/products/create}" class="nav-submenu-item">
+                    <span th:text="#{staff.products.create}">Add Product</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Manage Services -->
+        <div class="nav-item">
+            <a href="#" class="nav-link" data-toggle="submenu" data-target="services-submenu">
+                <i class="fas fa-concierge-bell"></i>
+                <span th:text="#{staff.services.title}">Manage Services</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="nav-submenu" id="services-submenu">
+                <a th:href="@{/staff/service/list}" class="nav-submenu-item">
+                    <span th:text="#{staff.services.list}">Service List</span>
+                </a>
+                <a th:href="@{/staff/service/create}" class="nav-submenu-item">
+                    <span th:text="#{staff.services.create}">Add Service</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Manage Promotions -->
+        <div class="nav-item">
+            <a href="#" class="nav-link" data-toggle="submenu" data-target="promotions-submenu">
+                <i class="fas fa-percentage"></i>
+                <span th:text="#{staff.promotions.title}">Manage Promotions</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="nav-submenu" id="promotions-submenu">
+                <a th:href="@{/staff/promotion/list}" class="nav-submenu-item">
+                    <span th:text="#{staff.promotions.list}">Promotion List</span>
+                </a>
+                <a th:href="@{/staff/promotion/create}" class="nav-submenu-item">
+                    <span th:text="#{staff.promotions.create}">Add Promotion</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Manage Providers -->
+        <div class="nav-item">
+            <a href="#" class="nav-link" data-toggle="submenu" data-target="providers-submenu">
+                <i class="fas fa-truck"></i>
+                <span th:text="#{staff.providers.title}">Manage Providers</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="nav-submenu" id="providers-submenu">
+                <a th:href="@{/staff/providers/list}" class="nav-submenu-item">
+                    <span th:text="#{staff.providers.list}">Provider List</span>
+                </a>
+                <a th:href="@{/staff/providers/create}" class="nav-submenu-item">
+                    <span th:text="#{staff.providers.create}">Add Provider</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="nav-item">
+            <a th:href="@{/staff/profile}" class="nav-link">
+                <i class="fas fa-user"></i>
+                <span th:text="#{staff.profile.title}">Profile</span>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!-- Staff Header Fragment -->
+<div th:fragment="staff-header" class="header">
+    <div class="header-left">
+        <button class="menu-toggle d-md-none">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a th:href="@{/auth/staff/landing}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{btn.back}">Back</span>
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span th:text="#{staff.welcome}">Welcome, Staff</span>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+                <span th:text="${session.staff?.staffName ?: 'Staff'}">Staff</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/staff/profile}">
+                    <i class="fas fa-user me-2"></i>
+                    <span th:text="#{staff.profile.title}">Profile</span>
+                </a></li>
+                <li><a class="dropdown-item" th:href="@{/staff/profile/edit}">
+                    <i class="fas fa-edit me-2"></i>
+                    <span th:text="#{staff.profile.edit.title}">Edit Profile</span>
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" th:href="@{/auth/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    <span th:text="#{btn.logout}">Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Staff Header with Add Service Button -->
+<div th:fragment="staff-header-with-add-service" class="header">
+    <div class="header-left">
+        <button class="menu-toggle d-md-none">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a th:href="@{/auth/staff/landing}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{btn.back}">Back</span>
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span th:text="#{staff.welcome}">Welcome, Staff</span>
+        </div>
+        <a th:href="@{/staff/service/create}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span th:text="#{staff.services.create}">Add Service</span>
+        </a>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+                <span th:text="${session.staff?.staffName ?: 'Staff'}">Staff</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/staff/profile}">
+                    <i class="fas fa-user me-2"></i>
+                    <span th:text="#{staff.profile.title}">Profile</span>
+                </a></li>
+                <li><a class="dropdown-item" th:href="@{/staff/profile/edit}">
+                    <i class="fas fa-edit me-2"></i>
+                    <span th:text="#{staff.profile.edit.title}">Edit Profile</span>
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" th:href="@{/auth/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    <span th:text="#{btn.logout}">Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Staff Header with Add Product Button -->
+<div th:fragment="staff-header-with-add-product" class="header">
+    <div class="header-left">
+        <button class="menu-toggle d-md-none">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a th:href="@{/auth/staff/landing}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{btn.back}">Back</span>
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span th:text="#{staff.welcome}">Welcome, Staff</span>
+        </div>
+        <a th:href="@{/staff/products/create}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span th:text="#{staff.products.create}">Add Product</span>
+        </a>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+                <span th:text="${session.staff?.staffName ?: 'Staff'}">Staff</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/staff/profile}">
+                    <i class="fas fa-user me-2"></i>
+                    <span th:text="#{staff.profile.title}">Profile</span>
+                </a></li>
+                <li><a class="dropdown-item" th:href="@{/staff/profile/edit}">
+                    <i class="fas fa-edit me-2"></i>
+                    <span th:text="#{staff.profile.edit.title}">Edit Profile</span>
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" th:href="@{/auth/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    <span th:text="#{btn.logout}">Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Staff Header with Add Promotion Button -->
+<div th:fragment="staff-header-with-add-promotion" class="header">
+    <div class="header-left">
+        <button class="menu-toggle d-md-none">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a th:href="@{/auth/staff/landing}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{btn.back}">Back</span>
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span th:text="#{staff.welcome}">Welcome, Staff</span>
+        </div>
+        <a th:href="@{/staff/promotion/create}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span th:text="#{staff.promotions.create.button}">Create New Promotion</span>
+        </a>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+                <span th:text="${session.staff?.staffName ?: 'Staff'}">Staff</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/staff/profile}">
+                    <i class="fas fa-user me-2"></i>
+                    <span th:text="#{staff.profile.title}">Profile</span>
+                </a></li>
+                <li><a class="dropdown-item" th:href="@{/staff/profile/edit}">
+                    <i class="fas fa-edit me-2"></i>
+                    <span th:text="#{staff.profile.edit.title}">Edit Profile</span>
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" th:href="@{/auth/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    <span th:text="#{btn.logout}">Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Staff JavaScript Fragment -->
+<div th:fragment="staff-scripts">
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('show');
+        });
+
+        // Submenu toggle
+        document.querySelectorAll('.nav-link[data-toggle="submenu"]').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                const submenu = document.getElementById(targetId);
+                const chevron = this.querySelector('.fa-chevron-down');
+                
+                if (submenu) {
+                    submenu.classList.toggle('show');
+                    
+                    if (chevron) {
+                        chevron.style.transform = submenu.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+                    }
+                }
+            });
+        });
+
+        // Auto-expand active submenu and set active states
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            
+            // Set active states for navigation links
+            document.querySelectorAll('.nav-submenu-item').forEach(function(link) {
+                if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
+                    link.classList.add('active');
+                    
+                    // Auto-expand parent submenu
+                    const submenu = link.closest('.nav-submenu');
+                    const navLink = submenu.previousElementSibling;
+                    const chevron = navLink.querySelector('.fa-chevron-down');
+                    
+                    if (submenu) {
+                        submenu.classList.add('show');
+                    }
+                    
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(180deg)';
+                    }
+                }
+            });
+            
+            // Set active state for main nav links
+            document.querySelectorAll('.nav-link').forEach(function(link) {
+                if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</div>
+
+</body>
+</html>

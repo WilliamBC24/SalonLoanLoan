@@ -1,45 +1,219 @@
-/* ===== Layout tổng ===== */
-.login-wrapper {
+/* ============= Base Layout ============= */
+:root {
+    --radius-card: 20px;
+    --radius-field: 10px;
+    --bg-gradient-start: #fff5fa;
+    --bg-gradient-mid: #f5f2ff;
+    --bg-gradient-end: #f6f6f8;
+    --text-main: #1a1a1a;
+    --text-muted: #6f6f6f;
+    --border-input: #d5d5d5;
+    --focus-ring: rgba(196, 138, 216, 0.28); 
+    --accent-dark: #1f2124; 
+}
 
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-main);
+    background-color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    margin: 0;
+}
+
+/* full-screen wrapper background */
+.login-wrapper {
     min-height: 100vh;
+    width: 100%;
+    background: radial-gradient(circle at 20% 20%,
+        var(--bg-gradient-start) 0%,
+        var(--bg-gradient-mid) 45%,
+        var(--bg-gradient-end) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #bbb9b9;
+    padding: 2rem 1rem;
 }
 
-/* ===== Card container ===== */
+/* ============= Card ============= */
 .login-card {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-    max-width: 960px;
-    background: #fff;
-    border-radius: 20px;
+    max-width: 1000px;
+    background: #ffffff;
+    border-radius: var(--radius-card);
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .1);
+
+    
+    box-shadow:
+        0 40px 120px rgba(17, 16, 62, 0.12),
+        0 4px 16px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
-/* ===== Form bên trái ===== */
+/* ============= Left/Form Column ============= */
 .form-col {
     flex: 1 1 50%;
-    padding: 48px 36px;
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
+    padding: 3rem 2.5rem;
 }
 
 .form-box {
     width: 100%;
-    max-width: 380px;
+    max-width: 360px;
 }
 
-/* ===== Ảnh bên phải ===== */
+/* Headings / tagline */
+.login-title {
+    font-size: 1.9rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-main);
+    margin: 0 0 .5rem 0;
+}
+
+.login-subtitle {
+    font-size: .95rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.login-form {
+    margin-top: 2rem;
+}
+
+/* Labels */
+.form-label {
+    font-size: .85rem;
+    font-weight: 500;
+    color: #2d2d2d;
+    margin-bottom: .4rem;
+}
+
+/* Inputs */
+.form-control {
+    border-radius: var(--radius-field);
+    border: 1px solid var(--border-input);
+    padding: .7rem .9rem;
+    font-size: .95rem;
+    line-height: 1.3;
+    background-color: #fff;
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+    transition: all .18s ease;
+}
+
+.form-control:focus {
+    border-color: #c48ad8;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: none;
+}
+
+/* Forgot password link (if enabled) */
+.link-forgot {
+    font-size: .8rem;
+    color: #6c3a8a;
+    text-decoration: none;
+    font-weight: 500;
+}
+.link-forgot:hover {
+    text-decoration: underline;
+}
+
+/* Login button */
+.btn-login {
+    background-color: var(--accent-dark);
+    border: 1px solid var(--accent-dark);
+    border-radius: var(--radius-field);
+    padding: .8rem 1rem;
+    font-size: .95rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #fff;
+    transition: all .18s ease;
+    margin-top: .5rem;
+}
+
+.btn-login:hover,
+.btn-login:focus {
+    background-color: #000;
+    border-color: #000;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: none;
+}
+
+/* Status messages (error / logout) */
+.status-wrapper {
+    margin-top: 1rem;
+    min-height: 1.2rem; 
+}
+
+.status-text {
+    font-size: .85rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.error-text {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.success-text {
+    color: #198754;
+    font-weight: 500;
+}
+
+/* Register link row */
+.auth-alt {
+    font-size: .9rem;
+    color: var(--text-main);
+    line-height: 1.4;
+}
+
+.link-register {
+    font-weight: 500;
+    text-decoration: none;
+    color: #4a3ac4;
+    margin-left: .25rem;
+    border-bottom: 1px solid rgba(74,58,196,0);
+    transition: border-color .15s ease;
+}
+.link-register:hover {
+    border-bottom: 1px solid rgba(74,58,196,0.4);
+}
+
+/* Footer note */
+.footer-note .brand-small {
+    font-size: .8rem;
+    font-weight: 500;
+    color: #2d2d2d;
+    line-height: 1.4;
+}
+
+.footer-note .copyright {
+    font-size: .75rem;
+    color: #8a8a8a;
+    line-height: 1.4;
+    margin-top: .25rem;
+}
+
+/* ============= Right/Image Column ============= */
 .image-col {
     flex: 1 1 50%;
     position: relative;
-    min-height: 520px;
+    min-height: 480px;
+    background-color: #000;
+    /* riêng nửa phải nên feel như 1 hero ảnh */
 }
 
 .side-image {
@@ -48,21 +222,71 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center 30%;
+    display: block;
+    filter: brightness(0.92);
 }
 
-/* Mobile: chỉ hiện form */
+
+.image-overlay-gradient {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%,
+        rgba(255,255,255,0.45) 0%,
+        rgba(0,0,0,0) 60%);
+    pointer-events: none;
+}
+
+
+.image-badge {
+    position: absolute;
+    left: 1.5rem;
+    bottom: 1.5rem;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    border-radius: 12px;
+    padding: .75rem 1rem;
+    color: #fff;
+    line-height: 1.3;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.15);
+    max-width: 80%;
+}
+
+.badge-title {
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+}
+
+.badge-sub {
+    font-size: .7rem;
+    font-weight: 400;
+    opacity: .8;
+}
+
+/* ============= Responsive ============= */
 @media (max-width: 768px) {
     .login-card {
         flex-direction: column;
-        max-width: 500px;
+        max-width: 420px;
+        border-radius: 16px;
+    }
+
+    .form-col {
+        order: 1;
+        padding: 2rem 1.5rem 2.5rem;
     }
 
     .image-col {
         display: none;
     }
 
-    .form-col {
-        padding: 36px 24px;
+    .login-title {
+        font-size: 1.6rem;
+    }
+
+    .login-subtitle {
+        font-size: .9rem;
     }
 }

@@ -65,12 +65,13 @@ public class SecurityConfig {
 	@Order(2)
 	public SecurityFilterChain userSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/auth/user/**", "/cart/**", "/user/**")
+				.securityMatcher("/auth/user/**", "/cart/**", "/user/**", "/order/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/auth/user/login", "/auth/user/register/**").permitAll()
 						.requestMatchers("/user/profile").hasRole("USER")
 						.requestMatchers("/cart/**").hasAnyRole("USER", "ADMIN")
+						.requestMatchers("/order/**").hasAnyRole("USER", "ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
 						.usernameParameter("username")

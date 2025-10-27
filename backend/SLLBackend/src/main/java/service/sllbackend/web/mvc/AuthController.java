@@ -16,7 +16,6 @@ import service.sllbackend.web.dto.UserRegisterDTO;
 @Controller
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Slf4j
 public class AuthController {
     private final RegisterServiceImpl registerService;
 

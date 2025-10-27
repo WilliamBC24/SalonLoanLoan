@@ -21,7 +21,6 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerInfoRepo customerInfoRepo;
     private final CartRepo cartRepo;
     private final UserAccountRepo userAccountRepo;
-    private final ProductRepo productRepo;
 
     @Override
     @Transactional

@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 

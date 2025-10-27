@@ -11,7 +11,6 @@ import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.AppointmentStatus;
 import service.sllbackend.service.impl.AppointmentDetailsServiceImpl;
 import service.sllbackend.service.impl.AppointmentServiceImpl;
-import service.sllbackend.service.impl.UserAccountServiceImpl;
 import service.sllbackend.utils.DTOMapper;
 import service.sllbackend.web.dto.AppointmentDetailsEditDTO;
 import service.sllbackend.web.dto.AppointmentDetailsViewDTO;
@@ -24,7 +23,6 @@ import java.util.List;
 public class StaffRegistrationManagementController {
     private final AppointmentServiceImpl appointmentService;
     private final AppointmentDetailsServiceImpl appointmentDetailsService;
-    private final UserAccountServiceImpl userAccountService;
     private final DTOMapper dtoMapper;
 
     @GetMapping("/list")

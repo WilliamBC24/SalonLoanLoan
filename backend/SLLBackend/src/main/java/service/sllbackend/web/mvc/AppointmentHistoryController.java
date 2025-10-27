@@ -19,7 +19,7 @@ import java.util.List;
 public class AppointmentHistoryController {
     private final AppointmentService appointmentService;
 
-    @GetMapping("/user/appointments")
+    @GetMapping("")
     public String userAppointmentHistory(
             @RequestParam(required = false) List<AppointmentStatus> statuses,
             Model model,

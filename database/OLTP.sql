@@ -272,6 +272,10 @@
         active_status BOOLEAN NOT NULL DEFAULT FALSE
     );
 
+    CREATE UNIQUE INDEX unique_active_service_name
+        ON service(service_name)
+        WHERE active_status = TRUE;
+
     CREATE TABLE IF NOT EXISTS service_change_history(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         service_id INT NOT NULL REFERENCES service(id),
@@ -387,6 +391,10 @@
         product_description TEXT NOT NULL,
         active_status BOOLEAN NOT NULL DEFAULT FALSE
     );
+
+    CREATE UNIQUE INDEX unique_active_product_name
+        ON product(product_name)
+        WHERE active_status = TRUE;
 
     CREATE TABLE IF NOT EXISTS product_change_history(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -851,14 +859,39 @@
     CREATE OR REPLACE FUNCTION record_product_change()
     RETURNS trigger AS $$
     BEGIN
+        IF (OLD.product_name IS DISTINCT FROM NEW.product_name
+            OR OLD.current_price IS DISTINCT FROM NEW.current_price
+            OR OLD.product_description IS DISTINCT FROM NEW.product_description
+        ) THEN
         UPDATE product_change_history
         SET effective_to = NOW()
-        WHERE product_id = NEW.id AND effective_to IS NULL;
+        WHERE product_id = OLD.id AND effective_to IS NULL;
 
         INSERT INTO product_change_history(product_id, product_name, unit_price, product_description) VALUES
-        (NEW.id, NEW.product_name, NEW.current_price, NEW.product_description);        
+        (OLD.id, OLD.product_name, OLD.current_price, OLD.product_description);        
+        END IF; 
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
 
-        RETURN NULL;
+    CREATE OR REPLACE FUNCTION record_service_change()
+    RETURNS trigger AS $$
+    BEGIN
+        IF (OLD.service_name IS DISTINCT FROM NEW.service_name
+            OR OLD.service_category_id IS DISTINCT FROM NEW.service_category_id
+            OR OLD.service_price IS DISTINCT FROM NEW.service_price
+            OR OLD.duration_minutes IS DISTINCT FROM NEW.duration_minutes
+            OR OLD.service_description IS DISTINCT FROM NEW.service_description
+            OR OLD.active_status IS DISTINCT FROM NEW.active_status
+        ) THEN
+        UPDATE service_change_history
+        SET effective_to = NOW()
+        WHERE service_id = OLD.id AND effective_to IS NULL;
+
+        INSERT INTO service_change_history(service_id, service_name, service_category_id, service_price, duration_minutes, service_description) VALUES
+        (OLD.id, OLD.service_name, OLD.service_category_id, OLD.service_price, OLD.duration_minutes, OLD.service_description);        
+        END IF;
+        RETURN NEW;
     END;
     $$ LANGUAGE plpgsql;
 
@@ -1043,9 +1076,14 @@
     EXECUTE FUNCTION assign_loyalty_rank();
 
     CREATE TRIGGER record_product_change_trigger
-    AFTER UPDATE ON product
+    BEFORE UPDATE ON product
     FOR EACH ROW
     EXECUTE FUNCTION record_product_change();
+
+    CREATE TRIGGER record_service_change_trigger
+    BEFORE UPDATE ON service
+    FOR EACH ROW
+    EXECUTE FUNCTION record_service_change();
 
     CREATE TRIGGER credit_loyalty_point_trigger
     AFTER INSERT ON appointment_invoice

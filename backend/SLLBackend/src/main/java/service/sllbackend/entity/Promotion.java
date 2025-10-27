@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 import service.sllbackend.enumerator.DiscountType;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "promotion")
+@Check(constraints = """ 
+        (
+                (discount_type = 'PERCENTAGE' AND discount_amount > 0 AND discount_amount <= 100)
+        OR (discount_type = 'AMOUNT' AND discount_amount > 0)
+    )
+""")
 public class Promotion {
 
     @Id

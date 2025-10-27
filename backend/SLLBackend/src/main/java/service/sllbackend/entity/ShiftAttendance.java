@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import service.sllbackend.enumerator.ShiftAttendanceStatus;
 
 
@@ -16,6 +19,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "shift_attendance")
+@Check(constraints = """
+            (check_in IS NULL AND check_out IS NULL) OR
+            (check_in IS NOT NULL AND check_out IS NULL) OR
+            (check_in IS NOT NULL AND check_out > check_in)
+        """)
 public class ShiftAttendance {
 
     @Id
@@ -32,7 +40,20 @@ public class ShiftAttendance {
     @Column(name = "check_out")
     private LocalDateTime checkOut;
 
-    // Note: duration_minutes is a generated column in the database
+    //TODO: delete this in production
+    @Generated(GenerationTime.ALWAYS)
+    @Column(
+            name = "duration_minutes",
+            insertable = false,
+            updatable = false,
+            columnDefinition = "INT GENERATED ALWAYS AS (" +
+                    "CASE WHEN check_in IS NOT NULL AND check_out IS NOT NULL " +
+                    "THEN ROUND(EXTRACT(EPOCH FROM (check_out - check_in)) / 60)::int " +
+                    "ELSE NULL END" +
+                    ") STORED"
+    )
+    private Integer durationMinutes;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'MISSED'")

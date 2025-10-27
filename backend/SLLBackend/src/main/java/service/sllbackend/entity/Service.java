@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 import service.sllbackend.enumerator.ServiceType;
 
 
@@ -14,6 +15,7 @@ import service.sllbackend.enumerator.ServiceType;
 @AllArgsConstructor
 @Entity
 @Table(name = "service")
+@Check(constraints = "service_price > 0 AND duration_minutes > 0")
 public class Service {
 
     @Id

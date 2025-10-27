@@ -709,7 +709,7 @@
     DECLARE
         time_displacement INT;
     BEGIN
-        SELECT SUM(s.duration_minutes)
+        SELECT COALESCE(SUM(s.duration_minutes), 0)
         INTO time_displacement
         FROM requested_service rs
         JOIN service s ON s.id = rs.service_id

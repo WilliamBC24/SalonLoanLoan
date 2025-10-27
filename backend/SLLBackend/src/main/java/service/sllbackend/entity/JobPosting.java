@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @Table(name = "job_posting")
-@Check(constraints = "effective_to IS NULL OR effective_to >= effective_from")
+@Check(constraints = "max_application > 0 AND effective_to IS NULL OR effective_to >= effective_from")
 public class JobPosting {
 
     @Id

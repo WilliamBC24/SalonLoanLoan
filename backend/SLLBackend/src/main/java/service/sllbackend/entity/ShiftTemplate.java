@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Table(name = "shift_template", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"shift_start", "shift_end"})
 })
+@Check(constraints = "shift_end > shift_start")
 public class ShiftTemplate {
 
     @Id

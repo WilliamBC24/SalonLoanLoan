@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 @Data
 @Builder
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "service_combo", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"combo_id", "service_id"})
 })
+@Check(constraints = "combo_id <> service_id")
 public class ServiceCombo {
 
     @Id

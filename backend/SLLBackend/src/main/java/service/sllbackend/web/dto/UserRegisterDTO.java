@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserRegisterDTO {
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Pattern(regexp = "^[A-Za-z0-9._]{3,20}$")
     private String username;
 
     @NotBlank

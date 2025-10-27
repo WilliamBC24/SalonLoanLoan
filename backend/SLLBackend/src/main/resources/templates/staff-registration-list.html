@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Staff Registrations</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .search-bar { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
+        .filter-group { margin-bottom: 15px; }
+        .filter-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; }
+        .checkbox-item { display: flex; align-items: center; }
+        .checkbox-item input { margin-right: 5px; }
+        .search-buttons { margin-top: 15px; }
+        .search-buttons button { padding: 8px 16px; margin-right: 10px; cursor: pointer; border: none; border-radius: 4px; }
+        .search-btn { background: #007bff; color: white; }
+        .search-btn:hover { background: #0056b3; }
+        .reset-btn { background: #6c757d; color: white; }
+        .reset-btn:hover { background: #545b62; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f4f4f4; }
+        tr:hover { background: #f5f5f5; }
+        .view-link { color: #007bff; text-decoration: none; }
+        .view-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<h1>Staff Registrations</h1>
+
+<div class="search-bar">
+    <form method="get" action="/staff/registration/list">
+        <!-- Name search -->
+        <div class="filter-group">
+            <label for="search-name">Search by Name:</label>
+            <input type="text" id="search-name" name="name"
+                   th:value="${searchName}"
+                   placeholder="Enter name..."
+                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+
+        <!-- Appointment status checkboxes -->
+        <div class="filter-group">
+            <label>Registration Status:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item" th:each="status : ${allStatuses}">
+                    <input type="checkbox" th:id="${status.name()}" name="statuses"
+                           th:value="${status.name()}"
+                           th:checked="${selectedStatuses != null and selectedStatuses.contains(status.name())}">
+                    <label th:for="${status.name()}" th:text="${status.name()}">STATUS</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="search-buttons">
+            <button type="submit" class="search-btn">Search</button>
+            <button type="button" class="reset-btn" onclick="window.location.href='/staff/registrations'">Reset</button>
+        </div>
+    </form>
+</div>
+
+<!-- Registrations table -->
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Registered At</th>
+        <th>Scheduled At</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="appointment : ${registrations}">
+        <td th:text="${appointment.name}">Name</td>
+        <td th:text="${appointment.status}">PENDING</td>
+        <td th:text="${#temporals.format(appointment.registeredAt, 'yyyy-MM-dd HH:mm')}">2025-10-22 07:00</td>
+        <td th:text="${appointment.scheduledAt != null ? #temporals.format(appointment.scheduledAt, 'yyyy-MM-dd HH:mm') : '-'}">-</td>
+        <td>
+            <a th:href="@{/staff/registration/view/{id}(id=${appointment.id})}" class="view-link">View Details</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

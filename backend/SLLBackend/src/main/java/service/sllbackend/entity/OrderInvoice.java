@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import service.sllbackend.enumerator.OrderStatus;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "order_invoice")
+@Check(constraints = "total_price > 0")
 public class OrderInvoice {
 
     @Id

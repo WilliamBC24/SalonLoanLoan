@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import java.time.LocalDate;
 
@@ -14,6 +18,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @Table(name = "staff_payroll")
+@Check(constraints =
+        "appointment_commission >= 0 " +
+                "AND product_commission >= 0 " +
+                "AND payroll_deduction >= 0 " +
+                "AND payroll_bonus >= 0"
+)
+
 public class StaffPayroll {
 
     @Id
@@ -44,5 +55,16 @@ public class StaffPayroll {
     @Builder.Default
     private Integer payrollBonus = 0;
 
-    // Note: total_payment is a generated column in the database
+    //TODO: delete this in production
+    @Generated(GenerationTime.ALWAYS)
+    @Column(
+            name = "total_payment",
+            insertable = false,
+            updatable = false,
+            columnDefinition =
+                    "INT GENERATED ALWAYS AS " +
+                            "(appointment_commission + product_commission + payroll_bonus - payroll_deduction) STORED"
+    )
+    private Integer totalPayment;
+
 }

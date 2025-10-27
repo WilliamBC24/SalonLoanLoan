@@ -36,4 +36,8 @@ public class UserAccountServiceImpl implements UserAccountService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(), user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
+
+    public UserAccount findByUsername(String username) {
+        return userAccountRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+    }
 }

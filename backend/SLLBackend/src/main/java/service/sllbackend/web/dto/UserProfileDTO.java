@@ -15,19 +15,18 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserProfileDTO {
 
-    @Size(min = 3, max = 20)
+    @Pattern(regexp = "^([A-Za-z0-9._]{3,20})?$")
     private String username;
 
     @Email
     private String email;
 
-    @Pattern(regexp = "^\\+?[0-9]{7,15}$")
+    @Pattern(regexp = "^(\\+?[0-9]{7,15})?$")
     private String phoneNumber;
 
     private Gender gender;
 
     @PastOrPresent
     private LocalDate birthDate;
-
 }
 

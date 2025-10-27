@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Salon Loan Loan | Home</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -51,6 +53,23 @@
 </section>
 
 <hr>
+<div id="map" style="height: 400px;"></div>
+
+<script th:inline="javascript">
+    var lat = [[${lat}]];
+    var lng = [[${lng}]];
+
+    var map = L.map('map').setView([lat, lng], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup('Here is the address!')
+        .openPopup();
+</script>
+
 
 <footer>
     <p>&copy; 2025 Salon Loan Loan. All rights reserved.</p>

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 import service.sllbackend.enumerator.CommissionType;
 
 
@@ -16,6 +17,7 @@ import service.sllbackend.enumerator.CommissionType;
 @Table(name = "staff_commission", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"position_id", "commission_type"})
 })
+@Check(constraints = "commission >= 0 AND commission <= 100")
 public class StaffCommission {
 
     @Id

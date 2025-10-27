@@ -68,7 +68,7 @@ public class SecurityConfig {
 				.securityMatcher("/auth/user/**", "/cart/**", "/user/**", "/order/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/user/login", "/auth/user/register").permitAll()
+						.requestMatchers("/auth/user/login", "/auth/user/register/**").permitAll()
 						.requestMatchers("/user/profile").hasRole("USER")
 						.requestMatchers("/cart/**").hasAnyRole("USER", "ADMIN")
 						.requestMatchers("/order/**").hasAnyRole("USER", "ADMIN")

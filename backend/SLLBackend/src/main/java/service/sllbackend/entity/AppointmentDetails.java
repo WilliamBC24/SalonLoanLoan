@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "appointment_details")
+@Check(constraints = """
+        scheduled_end >= scheduled_start AND
+        (
+                (actual_start IS NULL AND actual_end IS NULL) OR
+        (actual_start IS NULL AND actual_end IS NOT NULL) OR
+        (actual_start IS NOT NULL AND actual_end IS NULL) OR
+        (actual_start IS NOT NULL AND actual_end > actual_start)
+        )
+""")
+
 public class AppointmentDetails {
 
     @Id

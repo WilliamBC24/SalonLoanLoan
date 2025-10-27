@@ -39,6 +39,16 @@
             margin-top: 5px;
             display: none;
         }
+        .form-group .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            font-size: 0.875em;
+            display: none;
+            margin-top: 5px;
+            padding: 8px;
+            border-radius: 4px;
+        }
         .form-group input.invalid,
         .form-group select.invalid {
             border-color: #dc3545;
@@ -108,8 +118,10 @@
         <div class="form-group">
             <label for="serviceName" class="required">Service Name</label>
             <input type="text" id="serviceName" name="serviceName" 
-                   th:value="${service.serviceName}" required>
+                   th:value="${service.serviceName}"
+                   data-original-name="${service.serviceName}" required>
             <div class="error" id="serviceNameError">Service name is required</div>
+            <div class="warning" id="serviceNameWarning">A service with this name already exists</div>
         </div>
 
         <div class="form-group">
@@ -169,8 +181,64 @@
     </form>
 
     <script>
+        let serviceNameCheckTimeout;
+        let isDuplicateName = false;
+        const originalServiceName = document.getElementById('serviceName').getAttribute('data-original-name');
+
+        // Check for duplicate service name
+        function checkDuplicateServiceName(serviceName) {
+            if (!serviceName || !serviceName.trim()) {
+                document.getElementById('serviceNameWarning').style.display = 'none';
+                isDuplicateName = false;
+                return;
+            }
+
+            // Don't check if name hasn't changed
+            if (serviceName.trim().toLowerCase() === originalServiceName.toLowerCase()) {
+                document.getElementById('serviceNameWarning').style.display = 'none';
+                isDuplicateName = false;
+                return;
+            }
+
+            fetch('/services?name=' + encodeURIComponent(serviceName.trim()))
+                .then(response => response.text())
+                .then(html => {
+                    // Parse the response to check if any services exist with exact name match (case-insensitive)
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const serviceElements = doc.querySelectorAll('[data-service-name]');
+                    
+                    let hasExactMatch = false;
+                    serviceElements.forEach(elem => {
+                        const existingName = elem.getAttribute('data-service-name');
+                        if (existingName && existingName.toLowerCase() === serviceName.trim().toLowerCase()) {
+                            hasExactMatch = true;
+                        }
+                    });
+
+                    const warningElement = document.getElementById('serviceNameWarning');
+                    if (hasExactMatch) {
+                        warningElement.style.display = 'block';
+                        isDuplicateName = true;
+                    } else {
+                        warningElement.style.display = 'none';
+                        isDuplicateName = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking duplicate name:', error);
+                });
+        }
+
         document.getElementById('editServiceForm').addEventListener('submit', function(event) {
             let isValid = true;
+
+            // Check for duplicate name
+            if (isDuplicateName) {
+                alert('A service with this name already exists. Please choose a different name.');
+                event.preventDefault();
+                return;
+            }
 
             // Validate service name
             const serviceName = document.getElementById('serviceName');
@@ -244,6 +312,15 @@
             if (this.value.trim()) {
                 this.classList.remove('invalid');
                 document.getElementById('serviceNameError').style.display = 'none';
+
+                // Check for duplicate name with debounce
+                clearTimeout(serviceNameCheckTimeout);
+                serviceNameCheckTimeout = setTimeout(() => {
+                    checkDuplicateServiceName(this.value);
+                }, 500);
+            } else {
+                document.getElementById('serviceNameWarning').style.display = 'none';
+                isDuplicateName = false;
             }
         });
 

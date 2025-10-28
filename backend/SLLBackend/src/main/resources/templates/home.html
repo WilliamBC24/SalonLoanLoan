@@ -17,6 +17,9 @@
         <a th:href="@{/services}">Services</a> |
         <a th:href="@{/auth/user/login}">User Login</a> |
         <a th:href="@{/auth/staff/login}">Staff Login</a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="button logout-btn">Logout</button>
+        </form>
     </nav>
 </header>
 

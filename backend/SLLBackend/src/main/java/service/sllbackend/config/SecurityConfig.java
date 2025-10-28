@@ -68,7 +68,7 @@ public class SecurityConfig {
 				.securityMatcher("/auth/user/**", "/cart/**", "/user/**", "/order/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/user/login", "/auth/user/register/**").permitAll()
+						.requestMatchers("/auth/user/login", "/auth/user/register/**").anonymous()
 						.requestMatchers("/user/profile").hasRole("USER")
 						.requestMatchers("/cart/**").hasAnyRole("USER", "ADMIN")
 						.requestMatchers("/order/**").hasAnyRole("USER", "ADMIN")
@@ -89,7 +89,7 @@ public class SecurityConfig {
 				.securityMatcher("/auth/staff/**", "/staff/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/staff/login").permitAll()
+						.requestMatchers("/auth/staff/login").anonymous()
 						.requestMatchers("/staff/**").hasAnyRole("STAFF", "MANAGER", "ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")

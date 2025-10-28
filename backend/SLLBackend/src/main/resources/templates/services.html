@@ -147,7 +147,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="svc : ${services}">
+            <tr th:each="svc : ${services}" th:data-service-name="${svc.serviceName}">
                 <td th:text="${svc.id}">1</td>
                 <td th:text="${svc.serviceName}">Service name</td>
                 <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>

@@ -21,6 +21,7 @@ public class DataLoader implements CommandLineRunner {
 	private final StaffRepo staffRepo;
 	private final StaffPositionRepo staffPositionRepo;
 	private final StaffCurrentPositionRepo staffCurrentPositionRepo;
+	private final StaffAccountRepo staffAccountRepo;
 	private final PasswordEncoder passwordEncoder;
 	private final ServiceRepo serviceRepo;
 	private final ServiceCategoryRepo serviceCategoryRepo;
@@ -83,6 +84,18 @@ public class DataLoader implements CommandLineRunner {
 				.staff(staff)
 				.position(staffPosition)
 				.build());
+
+		// Ensure staff account 'admin' with password 'admin'
+		staffAccountRepo.findByUsername("admin").ifPresentOrElse(acc -> {
+			acc.setPassword(passwordEncoder.encode("admin"));
+			staffAccountRepo.save(acc);
+		}, () -> {
+			staffAccountRepo.save(StaffAccount.builder()
+					.staff(staff)
+					.username("admin")
+					.password(passwordEncoder.encode("admin"))
+					.build());
+		});
 	}
 
 	public void registerServices() {
@@ -727,6 +740,43 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 6 vouchers with 3 statuses");
+	}
+
+	public void registerPromotions() {
+		PromotionStatus active = promotionStatusRepo.save(PromotionStatus.builder().name("ACTIVE").build());
+		PromotionStatus inactive = promotionStatusRepo.save(PromotionStatus.builder().name("INACTIVE").build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Grand Opening")
+				.promotionDescription("Giảm 100k cho hóa đơn từ 500k")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(100000)
+				.effectiveFrom(LocalDateTime.now())
+				.effectiveTo(LocalDateTime.now().plusMonths(1))
+				.promotionStatus(active)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Summer Promo")
+				.promotionDescription("Giảm 20% cho dịch vụ chăm sóc tóc")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(20)
+				.effectiveFrom(LocalDateTime.now())
+				.effectiveTo(LocalDateTime.now().plusMonths(2))
+				.promotionStatus(active)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Old Promo")
+				.promotionDescription("Hết hiệu lực")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(50000)
+				.effectiveFrom(LocalDateTime.now().minusMonths(2))
+				.effectiveTo(LocalDateTime.now().minusMonths(1))
+				.promotionStatus(inactive)
+				.build());
+
+		log.info("Successfully loaded promotions with statuses");
 	}
 
 	public void registerProviders() {

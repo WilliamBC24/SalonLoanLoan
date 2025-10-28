@@ -16,6 +16,7 @@ body {
   display: flex;
   min-height: 100vh;
 }
+/* BEGIN merged section from conflict */
 
 /* Sidebar */
 .sidebar {
@@ -164,7 +165,9 @@ body {
   font-size: 18px;
 }
 
-.btn-primary {
+/* Primary button styles */
+.btn-primary,
+.content .btn-primary {
   background-color: #007bff;
   border: none;
   padding: 8px 16px;
@@ -177,9 +180,11 @@ body {
   gap: 5px;
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.content .btn-primary:hover {
   background-color: #0056b3;
 }
+/* END merged section */
 
 /* Content */
 .content {
@@ -203,15 +208,26 @@ body {
 }
 
 .search-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   margin-bottom: 15px;
 }
 
-.search-group {
-  display: flex;
-  flex-direction: column;
+.search-group { display: flex; flex-direction: column; min-width: 240px; }
+
+/* Make category checkboxes display horizontally with wrapping */
+.category-group .checkbox-group { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 10px 24px; 
+}
+
+.category-group .checkbox-item { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px; 
+  min-width: 160px; 
 }
 
 .search-group label {
@@ -262,35 +278,6 @@ body {
   gap: 10px;
   margin-top: 15px;
 }
-
-.btn-search {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.btn-search:hover {
-  background-color: #0056b3;
-}
-
-.btn-reset {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.btn-reset:hover {
-  background-color: #545b62;
-}
-
 /* Table */
 .table-container {
   background: white;
@@ -472,39 +459,29 @@ body {
 }
 
 @media (max-width: 768px) {
-  .sidebar {
-    width: 200px;
-  }
-  
   .content {
     padding: 20px;
   }
-  
   .search-row {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
   .radio-group {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
   .data-table {
     font-size: 12px;
   }
-  
   .data-table th,
   .data-table td {
     padding: 8px 10px;
   }
-  
   .action-buttons {
     flex-direction: column;
     gap: 4px;
   }
-  
   .btn-edit,
   .btn-delete {
     font-size: 11px;
@@ -513,30 +490,15 @@ body {
 }
 
 @media (max-width: 576px) {
-  .sidebar {
-    width: 100%;
-    position: fixed;
-    z-index: 1000;
-    transform: translateX(-100%);
-    transition: transform 0.3s;
-  }
-  
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  
   .main-content {
     margin-left: 0;
   }
-  
   .content {
     padding: 15px;
   }
-  
   .table-container {
     overflow-x: auto;
   }
-  
   .data-table {
     min-width: 600px;
   }

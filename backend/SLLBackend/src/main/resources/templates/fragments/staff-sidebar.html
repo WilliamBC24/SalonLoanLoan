@@ -8,9 +8,14 @@
         <div class="logo">
             <h4 th:text="#{app.name}">Salon Loan Loan</h4>
         </div>
-        <button class="menu-toggle d-md-none">
-            <i class="fas fa-bars"></i>
-        </button>
+        <div class="header-actions">
+            <button id="sidebarCollapseBtn" class="collapse-toggle" type="button" aria-label="Collapse sidebar">
+                <i class="fas fa-angles-left"></i>
+            </button>
+            <button class="menu-toggle d-md-none" type="button" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
     
     <nav class="sidebar-nav">
@@ -73,11 +78,42 @@
                 <i class="fas fa-chevron-down"></i>
             </a>
             <div class="nav-submenu" id="providers-submenu">
-                <a th:href="@{/staff/providers/list}" class="nav-submenu-item">
+                <a th:href="@{/staff/supplier/list}" class="nav-submenu-item">
                     <span th:text="#{staff.providers.list}">Provider List</span>
                 </a>
-                <a th:href="@{/staff/providers/create}" class="nav-submenu-item">
+                <a th:href="@{/staff/supplier/create}" class="nav-submenu-item">
                     <span th:text="#{staff.providers.create}">Add Provider</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Manage Vouchers -->
+        <div class="nav-item">
+            <a href="#" class="nav-link" data-toggle="submenu" data-target="vouchers-submenu">
+                <i class="fas fa-ticket-alt"></i>
+                <span th:text="#{staff.vouchers.title}">Manage Vouchers</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="nav-submenu" id="vouchers-submenu">
+                <a th:href="@{/staff/voucher/list}" class="nav-submenu-item">
+                    <span th:text="#{staff.vouchers.list}">Voucher List</span>
+                </a>
+                <a th:href="@{/staff/voucher/create}" class="nav-submenu-item">
+                    <span th:text="#{staff.vouchers.create}">Add Voucher</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Manage Jobs -->
+        <div class="nav-item">
+            <a href="#" class="nav-link" data-toggle="submenu" data-target="jobs-submenu">
+                <i class="fas fa-briefcase"></i>
+                <span th:text="#{staff.jobs.title}">Manage Jobs</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="nav-submenu" id="jobs-submenu">
+                <a th:href="@{/staff/job/list}" class="nav-submenu-item">
+                    <span th:text="#{staff.jobs.applications}">Job Applications</span>
                 </a>
             </div>
         </div>
@@ -93,7 +129,7 @@
 </div>
 
 <!-- Staff Header Fragment -->
-<div th:fragment="staff-header" class="header">
+<div th:fragment="staff-header" class="header staff-layout-header">
     <div class="header-left">
         <button class="menu-toggle d-md-none">
             <i class="fas fa-bars"></i>
@@ -132,7 +168,7 @@
 </div>
 
 <!-- Staff Header with Add Service Button -->
-<div th:fragment="staff-header-with-add-service" class="header">
+<div th:fragment="staff-header-with-add-service" class="header staff-layout-header">
     <div class="header-left">
         <button class="menu-toggle d-md-none">
             <i class="fas fa-bars"></i>
@@ -175,7 +211,7 @@
 </div>
 
 <!-- Staff Header with Add Product Button -->
-<div th:fragment="staff-header-with-add-product" class="header">
+<div th:fragment="staff-header-with-add-product" class="header staff-layout-header">
     <div class="header-left">
         <button class="menu-toggle d-md-none">
             <i class="fas fa-bars"></i>
@@ -218,7 +254,7 @@
 </div>
 
 <!-- Staff Header with Add Promotion Button -->
-<div th:fragment="staff-header-with-add-promotion" class="header">
+<div th:fragment="staff-header-with-add-promotion" class="header staff-layout-header">
     <div class="header-left">
         <button class="menu-toggle d-md-none">
             <i class="fas fa-bars"></i>
@@ -260,6 +296,92 @@
     </div>
 </div>
 
+<!-- Staff Header with Add Provider Button -->
+<div th:fragment="staff-header-with-add-provider" class="header staff-layout-header">
+    <div class="header-left">
+        <button class="menu-toggle d-md-none">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a th:href="@{/auth/staff/landing}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{btn.back}">Back</span>
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span th:text="#{staff.welcome}">Welcome, Staff</span>
+        </div>
+        <a th:href="@{/staff/supplier/create}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span th:text="#{staff.providers.create.button}">Create New Provider</span>
+        </a>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+                <span th:text="${session.staff?.staffName ?: 'Staff'}">Staff</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/staff/profile}">
+                    <i class="fas fa-user me-2"></i>
+                    <span th:text="#{staff.profile.title}">Profile</span>
+                </a></li>
+                <li><a class="dropdown-item" th:href="@{/staff/profile/edit}">
+                    <i class="fas fa-edit me-2"></i>
+                    <span th:text="#{staff.profile.edit.title}">Edit Profile</span>
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" th:href="@{/auth/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    <span th:text="#{btn.logout}">Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Staff Header with Add Voucher Button -->
+<div th:fragment="staff-header-with-add-voucher" class="header staff-layout-header">
+    <div class="header-left">
+        <button class="menu-toggle d-md-none">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a th:href="@{/auth/staff/landing}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{btn.back}">Back</span>
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span th:text="#{staff.welcome}">Welcome, Staff</span>
+        </div>
+        <a th:href="@{/staff/voucher/create}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span th:text="#{staff.vouchers.create.button}">Create New Voucher</span>
+        </a>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+                <span th:text="${session.staff?.staffName ?: 'Staff'}">Staff</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/staff/profile}">
+                    <i class="fas fa-user me-2"></i>
+                    <span th:text="#{staff.profile.title}">Profile</span>
+                </a></li>
+                <li><a class="dropdown-item" th:href="@{/staff/profile/edit}">
+                    <i class="fas fa-edit me-2"></i>
+                    <span th:text="#{staff.profile.edit.title}">Edit Profile</span>
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" th:href="@{/auth/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    <span th:text="#{btn.logout}">Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <!-- Staff JavaScript Fragment -->
 <div th:fragment="staff-scripts">
     <script>
@@ -267,6 +389,23 @@
         document.querySelector('.menu-toggle').addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('show');
         });
+
+        // Sidebar collapse toggle (desktop)
+        const collapseBtn = document.getElementById('sidebarCollapseBtn');
+        if (collapseBtn) {
+            collapseBtn.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                const main = document.querySelector('.main-content');
+                sidebar.classList.toggle('collapsed');
+                main.classList.toggle('collapsed');
+                // flip icon
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-angles-left');
+                    icon.classList.toggle('fa-angles-right');
+                }
+            });
+        }
 
         // Submenu toggle
         document.querySelectorAll('.nav-link[data-toggle="submenu"]').forEach(function(link) {
@@ -315,6 +454,19 @@
                 if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
                     link.classList.add('active');
                 }
+            });
+
+            // When collapsed, clicking icons should navigate even if link is a submenu toggler
+            const sidebar = document.querySelector('.sidebar');
+            document.querySelectorAll('.nav-item > .nav-link').forEach(function(navLink) {
+                navLink.addEventListener('click', function(e) {
+                    if (sidebar.classList.contains('collapsed')) {
+                        const href = this.getAttribute('href');
+                        if (href && href !== '#') {
+                            window.location.href = href;
+                        }
+                    }
+                });
             });
         });
     </script>

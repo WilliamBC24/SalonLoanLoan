@@ -1042,7 +1042,7 @@
     EXECUTE FUNCTION update_appointment_actual_end();
 
     CREATE TRIGGER create_appointment_detail_trigger
-    AFTER INSERT ON appointment
+    AFTER INSERT OR UPDATE OF scheduled_at ON appointment
     FOR EACH ROW
     WHEN (NEW.scheduled_at IS NOT NULL AND NEW.status = 'REGISTERED')
     EXECUTE FUNCTION create_appointment_detail();

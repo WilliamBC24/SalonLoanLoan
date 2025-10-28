@@ -57,9 +57,12 @@
 
     <div class="form-group">
         <label for="userSearch">Assigned User</label>
-        <input type="hidden" name="username" th:value="${appointmentDetails.user}" id="username"/>
-        <input type="text" id="userSearch" th:placeholder="${appointmentDetails.user}" />
-        <div id="userResults" style="border: 1px solid #ddd; padding: 5px; margin-top: 5px;"></div>
+        <input type="hidden" name="username" id="username"
+               th:disabled="${disableDetails}" />
+
+        <input type="text" id="userSearch" th:placeholder="${appointmentDetails.user != null ? appointmentDetails.user.username : ''}"
+               th:readonly="${disableDetails}" />
+        <div id="userResults" style="border: 1px solid #ddd; padding: 5px; margin-top: 5px;" ></div>
     </div>
 
     <div class="form-group">
@@ -75,13 +78,15 @@
     <div class="form-group">
         <label for="actualStart">Actual Start</label>
         <input type="datetime-local" name="actualStart" id="actualStart"
-               th:value="${#temporals.format(appointmentDetails.actualStart, 'yyyy-MM-dd''T''HH:mm')}"/>
+               th:value="${#temporals.format(appointmentDetails.actualStart, 'yyyy-MM-dd''T''HH:mm')}"
+               th:readonly="${disableDetails}" />
     </div>
 
     <div class="form-group">
         <label for="actualEnd">Actual End</label>
         <input type="datetime-local" name="actualEnd" id="actualEnd"
-               th:value="${#temporals.format(appointmentDetails.actualEnd, 'yyyy-MM-dd''T''HH:mm')}"/>
+               th:value="${#temporals.format(appointmentDetails.actualEnd, 'yyyy-MM-dd''T''HH:mm')}"
+               th:readonly="${disableDetails}" />
     </div>
 
     <div class="form-buttons">
@@ -91,39 +96,58 @@
 
 </form>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // Simple fetch-based user search
-    const userSearchInput = document.getElementById('userSearch');
-    const userResults = document.getElementById('userResults');
-    const userIdInput = document.getElementById('username');
+    $(document).ready(function () {
+        let debounceTimer;
 
-    let timeout = null;
-    userSearchInput.addEventListener('input', () => {
-        clearTimeout(timeout);
-        const query = userSearchInput.value.trim();
-        if (query.length < 2) {
-            userResults.innerHTML = '';
-            return;
-        }
-        timeout = setTimeout(() => {
-            fetch(`/staff/users/search?query=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(users => {
-                    userResults.innerHTML = '';
-                    users.forEach(user => {
-                        const div = document.createElement('div');
-                        div.textContent = `${user.username} (${user.fullName})`;
-                        div.style.cursor = 'pointer';
-                        div.style.padding = '2px 5px';
-                        div.addEventListener('click', () => {
-                            userSearchInput.value = `${user.username} (${user.fullName})`;
-                            userIdInput.value = user.username;
-                            userResults.innerHTML = '';
+        $('#userSearch').on('input', function () {
+            const query = $(this).val();
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (query.length < 2) {
+                    $('#userResults').empty();
+                    return;
+                }
+
+                $.ajax({
+                    url: '/staff/registration/user-search',
+                    type: 'GET',
+                    data: { phone: query },
+                    success: function (data) {
+                        $('#userResults').empty();
+                        data.forEach(user => {
+                            $('#userResults').append(
+                                `<div class="user-option"
+                                  data-username="${user.username}"
+                                  data-phonenumber="${user.phoneNumber}">
+                                ${user.username} (${user.phoneNumber})
+                             </div>`
+                            );
                         });
-                        userResults.appendChild(div);
-                    });
+                    }
                 });
-        }, 300); // debounce
+            }, 350);
+        });
+
+        // ✅ When selecting a user from results
+        $(document).on('click', '.user-option', function () {
+            const phoneNumber = $(this).data('phonenumber');
+            const username = $(this).data('username');
+
+            $('#userSearch').val(username); // visible field → phone
+            $('#username').val(username); // hidden → username binding for form submission
+
+            $('#userResults').empty(); // ✅ collapse results
+        });
+
+        // ✅ Close suggestion box on blur
+        $('#userSearch').on('blur', function () {
+            setTimeout(() => {
+                $('#userResults').empty();
+            }, 200);
+        });
     });
 </script>
 

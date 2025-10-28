@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppointmentDetailsEditDTO {
-    @Pattern(regexp = "^\\+?[0-9]{7,15}$")
+    @Pattern(regexp = "^(\\+?[0-9]{7,15})?$")
     private String phoneNumber;
 
     @FutureOrPresent

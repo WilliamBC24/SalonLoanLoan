@@ -15,8 +15,7 @@ public class AppointmentDetailsServiceImpl implements AppointmentDetailsService 
     @Override
     @Transactional(readOnly = true)
     public AppointmentDetails findByAppointmentId(long appointmentId) {
-        return appointmentDetailsRepo.findByAppointmentId(appointmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        return appointmentDetailsRepo.findByAppointmentId(appointmentId).orElse(new AppointmentDetails());
     }
 
     @Override

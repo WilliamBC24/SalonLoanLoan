@@ -32,4 +32,12 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, Long> {
     List<UserAccount> findByUsernameContainingIgnoreCase(String username);
 
     List<UserAccount> findByAccountStatus(AccountStatus activeStatus);
+
+    @Query("""
+    select u from UserAccount u
+    where (u.phoneNumber = :phoneNumber)
+    order by u.phoneNumber asc
+    limit 3
+""")
+    List<UserAccount> findTop3ByPhoneNumber(String phoneNumber);
 }

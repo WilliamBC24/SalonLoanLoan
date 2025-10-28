@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SimpleUserDTO {
     private String username;
+    private String phoneNumber;
 }

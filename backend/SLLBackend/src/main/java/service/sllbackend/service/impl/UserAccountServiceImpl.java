@@ -37,6 +37,11 @@ public class UserAccountServiceImpl implements UserAccountService {
                 user.getUsername(), user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
 
+    @Override
+    public List<UserAccount> getSomeByPhoneNumber(String phoneNumber) {
+        return userAccountRepo.findTop3ByPhoneNumber(phoneNumber);
+    }
+
     public UserAccount findByUsername(String username) {
         return userAccountRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }

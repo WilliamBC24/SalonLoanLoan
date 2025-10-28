@@ -38,6 +38,16 @@
             display: none;
             margin-top: 5px;
         }
+        .form-group .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            font-size: 0.875em;
+            display: none;
+            margin-top: 5px;
+            padding: 8px;
+            border-radius: 4px;
+        }
         .form-group input.invalid,
         .form-group textarea.invalid {
             border-color: #dc3545;
@@ -103,6 +113,7 @@
             <label for="productName" class="required">Product Name</label>
             <input type="text" id="productName" name="productName" required>
             <div class="error" id="productNameError">Product name is required</div>
+            <div class="warning" id="productNameWarning">A product with this name already exists</div>
         </div>
 
         <div class="form-group">
@@ -131,8 +142,56 @@
     </form>
 
     <script>
+        let productNameCheckTimeout;
+        let isDuplicateName = false;
+
+        // Check for duplicate product name
+        function checkDuplicateProductName(productName) {
+            if (!productName || !productName.trim()) {
+                document.getElementById('productNameWarning').style.display = 'none';
+                isDuplicateName = false;
+                return;
+            }
+
+            fetch('/products?name=' + encodeURIComponent(productName.trim()))
+                .then(response => response.text())
+                .then(html => {
+                    // Parse the response to check if any products exist with exact name match (case-insensitive)
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const productElements = doc.querySelectorAll('[data-product-name]');
+                    
+                    let hasExactMatch = false;
+                    productElements.forEach(elem => {
+                        const existingName = elem.getAttribute('data-product-name');
+                        if (existingName && existingName.toLowerCase() === productName.trim().toLowerCase()) {
+                            hasExactMatch = true;
+                        }
+                    });
+
+                    const warningElement = document.getElementById('productNameWarning');
+                    if (hasExactMatch) {
+                        warningElement.style.display = 'block';
+                        isDuplicateName = true;
+                    } else {
+                        warningElement.style.display = 'none';
+                        isDuplicateName = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking duplicate name:', error);
+                });
+        }
+
         document.getElementById('createProductForm').addEventListener('submit', function(event) {
             let isValid = true;
+
+            // Check for duplicate name
+            if (isDuplicateName) {
+                alert('A product with this name already exists. Please choose a different name.');
+                event.preventDefault();
+                return;
+            }
 
             // Validate product name
             const productName = document.getElementById('productName');
@@ -181,6 +240,15 @@
             if (this.value.trim()) {
                 this.classList.remove('invalid');
                 error.style.display = 'none';
+
+                // Check for duplicate name with debounce
+                clearTimeout(productNameCheckTimeout);
+                productNameCheckTimeout = setTimeout(() => {
+                    checkDuplicateProductName(this.value);
+                }, 500);
+            } else {
+                document.getElementById('productNameWarning').style.display = 'none';
+                isDuplicateName = false;
             }
         });
 

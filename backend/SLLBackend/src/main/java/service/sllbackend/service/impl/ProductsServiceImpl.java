@@ -57,6 +57,9 @@ public class ProductsServiceImpl implements ProductsService {
     @Override
     @Transactional
     public Product createProduct(Product product) {
+        if (productRepo.existsByProductNameIgnoreCase(product.getProductName())) {
+            throw new IllegalArgumentException("A product with the name '" + product.getProductName() + "' already exists");
+        }
         return productRepo.save(product);
     }
 
@@ -65,6 +68,10 @@ public class ProductsServiceImpl implements ProductsService {
     public Product updateProduct(Integer id, Product product) {
         Product existingProduct = productRepo.findProductById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        if (productRepo.existsByProductNameIgnoreCaseAndIdNot(product.getProductName(), id)) {
+            throw new IllegalArgumentException("A product with the name '" + product.getProductName() + "' already exists");
+        }
 
         existingProduct.setProductName(product.getProductName());
         existingProduct.setCurrentPrice(product.getCurrentPrice());

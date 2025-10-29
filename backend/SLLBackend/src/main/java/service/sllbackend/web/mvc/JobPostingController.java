@@ -25,7 +25,7 @@ public class JobPostingController {
     public String jobPostingList(@RequestParam(value = "title", required = false) String title,
                                  @RequestParam(value = "status", required = false) String status,
                                  Model model){
-        List<JobPosting> jobPostingResults = jobPostingService.findJobPosting(title, status);
+        List<JobPosting> jobPostingResults = jobPostingService.findJobPosting(title == null ? title : title.trim(), status);
         model.addAttribute("jobs", jobPostingResults);
         return "admin-job-posting-list";
     }

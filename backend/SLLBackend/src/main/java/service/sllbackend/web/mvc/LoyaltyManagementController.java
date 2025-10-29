@@ -20,7 +20,7 @@ public class LoyaltyManagementController {
     @GetMapping("/list")
     public String listLoyalty(@RequestParam(value = "username", required = false) String username, Model model){
         List<LoyaltyListViewDTO> loyaltyList;
-        loyaltyList = loyaltyService.findByUsernameToDTO(username);
+        loyaltyList = loyaltyService.findByUsernameToDTO(username == null ? username : username.trim());
         model.addAttribute("loyaltyList", loyaltyList);
         return "staff-loyalty-list";
     }

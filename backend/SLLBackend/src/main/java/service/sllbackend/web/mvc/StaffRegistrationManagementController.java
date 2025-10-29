@@ -38,7 +38,7 @@ public class StaffRegistrationManagementController {
             @RequestParam(required = false) List<AppointmentStatus> statuses,
             Model model) {
 
-        List<Appointment> registrations = appointmentService.getByNameAndStatus(name, statuses);
+        List<Appointment> registrations = appointmentService.getByNameAndStatus(name == null ? name : name.trim(), statuses);
 
         model.addAttribute("registrations", registrations);
         model.addAttribute("allStatuses", AppointmentStatus.values());

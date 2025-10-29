@@ -10,6 +10,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserAccountRepo extends JpaRepository<UserAccount, Long> {
+    @Query(value = """
+    SELECT * FROM user_account 
+    WHERE similarity(username, :username) > 0.3 
+    ORDER BY similarity(username, :username) DESC
+    LIMIT 1
+""", nativeQuery = true)
     Optional<UserAccount> findByUsername(String username);
     Optional<UserAccount> findByEmail(String email);
     Optional<UserAccount> findByPhoneNumber(String phoneNumber);

@@ -25,7 +25,7 @@ public class AccountManagementController {
     private final UserAccountRepo userAccountRepo;
     private final StaffAccountRepo staffAccountRepo;
 
-    @GetMapping("/")
+    @GetMapping("")
     public String profiles(@RequestParam(value = "username", required = false) String username,
                            @RequestParam(value = "activeStatus", required = false) AccountStatus activeStatus,
                            @RequestParam(value = "staffOnly", required = false) Boolean staffOnly,
@@ -39,7 +39,7 @@ public class AccountManagementController {
             model.addAttribute("type", "user");
         }
         model.addAttribute("accounts", accounts);
-        return "staff-profile-list";
+        return "admin-profile-list";
     }
 
     @GetMapping("/user/edit/{username}")
@@ -62,9 +62,9 @@ public class AccountManagementController {
         }
         try {
             profileService.adminUpdateUserAccount(username, adminUserProfileDTO);
-            return "redirect:/user/edit/" + username + "?updated";
+            return "redirect:/admin/profiles/user/edit/" + username + "?updated";
         } catch (Exception e) {
-            return "redirect:/user/edit/" + username + "?error";
+            return "redirect:/admin/profiles/user/edit/" + username + "?error";
         }
     }
 
@@ -88,9 +88,9 @@ public class AccountManagementController {
 
         try {
             profileService.adminUpdateStaffAccount(username, adminStaffProfileDTO);
-            return "redirect:/staff/edit/" + username + "?updated";
+            return "redirect:/admin/profiles/staff/edit/" + username + "?updated";
         } catch (Exception e) {
-            return "redirect:/staff/edit/" + username + "?error";
+            return "redirect:/admin/profiles/staff/edit/" + username + "?error";
         }
     }
 }

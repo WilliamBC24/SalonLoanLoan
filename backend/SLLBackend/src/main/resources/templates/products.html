@@ -138,7 +138,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="product : ${products}">
+            <tr th:each="product : ${products}" th:data-product-name="${product.productName}">
                 <td th:text="${product.id}">1</td>
                 <td th:text="${product.productName}">Product name</td>
                 <td th:text="${product.currentPrice}">0</td>

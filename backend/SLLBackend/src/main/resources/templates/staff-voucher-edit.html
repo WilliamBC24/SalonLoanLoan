@@ -134,14 +134,14 @@
         <div class="form-group">
             <label for="effectiveFrom" class="required">Effective From</label>
             <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" 
-                   th:value="${#temporals.format(voucher.effectiveFrom, 'yyyy-MM-dd' + 'T' + 'HH:mm')}" required>
+                th:value="${voucher.effectiveFrom != null ? #temporals.format(voucher.effectiveFrom, 'yyyy-MM-dd''T''HH:mm') : ''}" required>
             <div class="error" id="effectiveFromError">Effective from date is required.</div>
         </div>
 
         <div class="form-group">
             <label for="effectiveTo" class="required">Effective To</label>
             <input type="datetime-local" id="effectiveTo" name="effectiveTo" 
-                   th:value="${#temporals.format(voucher.effectiveTo, 'yyyy-MM-dd' + 'T' + 'HH:mm')}" required>
+                th:value="${voucher.effectiveTo != null ? #temporals.format(voucher.effectiveTo, 'yyyy-MM-dd''T''HH:mm') : ''}" required>
             <div class="error" id="effectiveToError">Effective to date is required and must be after effective from date.</div>
         </div>
 

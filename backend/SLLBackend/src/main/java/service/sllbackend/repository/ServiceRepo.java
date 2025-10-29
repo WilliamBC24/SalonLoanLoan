@@ -30,4 +30,10 @@ public interface ServiceRepo extends JpaRepository<Service, Integer> {
 			@Param("categoryIds") List<Integer> categoryIds,
 			@Param("name") String name);
 
+	@Query("SELECT COUNT(s) > 0 FROM Service s WHERE LOWER(s.serviceName) = LOWER(:serviceName)")
+	boolean existsByServiceNameIgnoreCase(@Param("serviceName") String serviceName);
+
+	@Query("SELECT COUNT(s) > 0 FROM Service s WHERE LOWER(s.serviceName) = LOWER(:serviceName) AND s.id <> :id")
+	boolean existsByServiceNameIgnoreCaseAndIdNot(@Param("serviceName") String serviceName, @Param("id") Integer id);
+
 }

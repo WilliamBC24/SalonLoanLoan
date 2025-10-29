@@ -82,6 +82,12 @@ public class StaffServiceController {
             RedirectAttributes redirectAttributes) {
         
         try {
+            // Check for duplicate service name
+            if (serviceRepo.existsByServiceNameIgnoreCase(serviceName)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "A service with the name '" + serviceName + "' already exists");
+                return "redirect:/staff/service/create";
+            }
+
             ServiceCategory category = serviceCategoryRepo.findById(serviceCategoryId)
                 .orElseThrow(() -> new RuntimeException("Service category not found"));
             
@@ -128,6 +134,12 @@ public class StaffServiceController {
             RedirectAttributes redirectAttributes) {
         
         try {
+            // Check for duplicate service name (excluding current service)
+            if (serviceRepo.existsByServiceNameIgnoreCaseAndIdNot(serviceName, id)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "A service with the name '" + serviceName + "' already exists");
+                return "redirect:/staff/service/edit/" + id;
+            }
+
             Service service = serviceRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Service not found"));
             

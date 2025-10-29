@@ -13,29 +13,29 @@
 ### HomeController (`/`)
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| GET | `/` | Trang chủ - hiển thị 10 dịch vụ và 10 sản phẩm đầu tiên |
+| GET | `/` | Trang chủ - hiển thị 10 dịch vụ và 10 sản phẩm đầu tiên |         done
 
 ### AuthController (`/auth/`)
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| GET | `/auth/staff/login` | Trang đăng nhập cho nhân viên |
-| GET | `/auth/staff/landing` | Trang landing cho nhân viên |
+| GET | `/auth/staff/login` | Trang đăng nhập cho nhân viên |                   done
+| GET | `/auth/staff/landing` | Trang landing cho nhân viên |                   done
 | GET | `/auth/user/login` | Trang đăng nhập cho người dùng |                   done
-| GET | `/auth/user/landing` | Trang landing cho người dùng |
+| GET | `/auth/user/landing` | Trang landing cho người dùng |                   done
 | GET | `/auth/user/register` | Trang đăng ký người dùng |                      done
 | POST | `/auth/user/register/create` | Xử lý đăng ký tài khoản người dùng |    
 
 ### ServicesController (`/`)
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| GET | `/services` | Danh sách tất cả dịch vụ (có filter theo types, categories, name) |
-| GET | `/services/{id}` | Chi tiết dịch vụ theo ID |
+| GET | `/services` | Danh sách tất cả dịch vụ (có filter theo types, categories, name) |     done      
+| GET | `/services/{id}` | Chi tiết dịch vụ theo ID |                                         done
 
 ### ProductsController (`/`)
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| GET | `/products` | Danh sách tất cả sản phẩm (có filter theo name, activeStatus) |
-| GET | `/products/{id}` | Chi tiết sản phẩm theo ID |
+| GET | `/products` | Danh sách tất cả sản phẩm (có filter theo name, activeStatus) |           done
+| GET | `/products/{id}` | Chi tiết sản phẩm theo ID |                                          done
 
 ### JobApplicationController (`/job`)
 | Method | Endpoint | Mô tả |
@@ -58,9 +58,8 @@
 ### CartController (`/cart`)
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| GET | `/cart` | Xem giỏ hàng |
-| POST | `/cart/add` | Thêm sản phẩm vào giỏ hàng (params: productId, amount) |             
-| POST | `/cart/remove` | Xóa sản phẩm khỏi giỏ hàng (params: productId) |
+| GET | `/cart` | Xem giỏ hàng |                                                              done
+| POST | `/cart/add` | Thêm sản phẩm vào giỏ hàng (params: productId, amount) |               
 | POST | `/cart/adjust` | Điều chỉnh số lượng sản phẩm (params: productId, amount) |
 | POST | `/cart/api/update-quantity` | API cập nhật số lượng sản phẩm (trả về JSON) |
 

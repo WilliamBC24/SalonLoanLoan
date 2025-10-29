@@ -27,7 +27,8 @@ body {
 
 /* Top Header */
 .top-header {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    /* Match global header style */
+    background: #000000;
     padding: 8px 0;
     font-size: 14px;
 }
@@ -331,7 +332,8 @@ body {
 
 /* Footer */
 .site-footer {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    /* Match global footer style */
+    background: #151515;
     margin-top: 60px;
 }
 

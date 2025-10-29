@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.enumerator.ServiceType;
@@ -19,15 +19,11 @@ import service.sllbackend.repository.ServiceRepo;
 
 @Controller
 @RequestMapping("/staff/service")
+@RequiredArgsConstructor
 public class StaffServiceController {
 
     private final ServiceRepo serviceRepo;
     private final ServiceCategoryRepo serviceCategoryRepo;
-
-    public StaffServiceController(ServiceRepo serviceRepo, ServiceCategoryRepo serviceCategoryRepo) {
-        this.serviceRepo = serviceRepo;
-        this.serviceCategoryRepo = serviceCategoryRepo;
-    }
 
     @GetMapping("/list")
     public String listServices(
@@ -39,21 +35,14 @@ public class StaffServiceController {
         // Get all categories for filters
         List<ServiceCategory> allCategories = serviceCategoryRepo.findAll();
         model.addAttribute("allCategories", allCategories);
-        
-        // Get services based on filters
-        List<Service> services;
-        if (types != null || categories != null || (name != null && !name.trim().isEmpty())) {
-            List<ServiceType> serviceTypes = null;
-            if (types != null && !types.isEmpty()) {
-                serviceTypes = types.stream()
-                    .map(ServiceType::valueOf)
-                    .toList();
-            }
-            String searchName = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
-            services = serviceRepo.searchServices(serviceTypes, categories, searchName);
-        } else {
-            services = serviceRepo.findAllWithCategory();
-        }
+
+        List<Service> services = serviceRepo.findAll();
+        services = services.stream().filter(service -> {
+            boolean matchesType = (types == null || types.isEmpty()) || types.contains(service.getServiceType().name());
+            boolean matchesCategory = (categories == null || categories.isEmpty()) || categories.contains(service.getServiceCategory().getId());
+            boolean matchesName = (name == null || name.trim().isEmpty()) || service.getServiceName().toLowerCase().contains(name.trim().toLowerCase());
+            return matchesType && matchesCategory && matchesName;
+        }).toList();
         
         model.addAttribute("services", services);
         model.addAttribute("selectedTypes", types);

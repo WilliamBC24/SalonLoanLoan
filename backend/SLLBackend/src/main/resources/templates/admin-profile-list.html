@@ -88,7 +88,7 @@
 
     <!-- Search and Filter Bar -->
     <div class="search-bar">
-        <form method="get" action="/profiles">
+        <form method="get" action="/admin/profiles">
             <div class="filter-group">
                 <label for="search-username">Search by Username:</label>
                 <input type="text" id="search-username" name="username"
@@ -131,7 +131,7 @@
 
             <div class="search-buttons">
                 <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/accounts'">Reset</button>
+                <button type="button" class="reset-btn" onclick="window.location.href='/admin/profiles'">Reset</button>
             </div>
         </form>
     </div>
@@ -147,8 +147,8 @@
         </thead>
         <tbody>
         <tr th:each="account : ${accounts}"
-            th:with="editUrl=${type == 'staff'} ? @{/staff/edit/{username}(username=${account.username})}
-                                  : @{/user/edit/{username}(username=${account.username})}">
+            th:with="editUrl=${type == 'staff'} ? @{/admin/profiles/staff/edit/{username}(username=${account.username})}
+                                  : @{/admin/profiles/user/edit/{username}(username=${account.username})}">
             <td th:text="${account.username}">Username</td>
             <td th:text="${account.accountStatus}">ACTIVE</td>
             <td>

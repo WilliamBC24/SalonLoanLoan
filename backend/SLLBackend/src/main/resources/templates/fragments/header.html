@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+
+<body>
+
+
+    <!-- ========== TOP HEADER ========== -->
+    <header class="top-header bg-black text-white" th:fragment="top-header">
+        <div class="container">
+            <div class="top-left">
+                <span id="siteEmail"><i class="fa-solid fa-envelope"></i> <span
+                        th:text="#{header.email}">info@salonloanloan.com</span></span>
+                <span id="sitePhone"><i class="fa-solid fa-phone"></i> <span th:text="#{header.phone}">+84 123 456 789</span></span>
+            </div>
+            <div class="top-right">
+                <a href="/contact" th:title="#{footer.contact}"><i class="fa-regular fa-comment"></i></a>
+                <span sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/user/login}" th:title="#{home.nav.user.login}"><i class="fa-regular fa-user"></i></a>
+                </span>
+                <!-- Authenticated user dropdown is intentionally hidden on the top header -->
+                <a href="/cart" th:title="#{cart.page.title}"><i class="fa-solid fa-cart-shopping"></i></a>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm sticky-top" th:fragment="navbar">
+        <div class="container">
+            <div class="navbar-brand d-flex align-items-center">
+                <img th:src="@{/img/logo.jpg}" class="logo-img" th:alt="#{app.name}">
+            </div>
+
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul id="mainMenu" class="navbar-nav gap-lg-5 align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" th:text="#{nav.home}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services" th:text="#{nav.services}">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products" th:text="#{nav.products}">Products</a>
+                    </li>
+                </ul>
+                <div class="navbar-actions d-flex align-items-center gap-2" sec:authorize="!isAuthenticated()">
+                    <a class="btn btn-sm btn-outline-dark rounded-pill px-3" th:href="@{/auth/user/login}" th:text="#{home.nav.user.login}">User Login</a>
+                    <a class="btn btn-sm btn-dark rounded-pill px-3" th:href="@{/auth/staff/login}" th:text="#{home.nav.staff.login}">Staff Login</a>
+                </div>
+                <div class="navbar-actions d-flex align-items-center gap-2" sec:authorize="isAuthenticated()">
+                    <div class="dropdown">
+                        <a class="btn btn-sm btn-outline-dark dropdown-toggle rounded-pill px-3" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-regular fa-user"></i>
+                            <span sec:authentication="name">User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <!-- User Profile Link -->
+                            <li sec:authorize="hasRole('USER')">
+                                <a class="dropdown-item text-dark" th:href="@{/user/profile}" th:text="#{profile.title}">Profile</a>
+                            </li>
+                            <!-- Staff Profile Link -->
+                            <li sec:authorize="hasAnyRole('STAFF', 'MANAGER', 'ADMIN')">
+                                <a class="dropdown-item text-dark" th:href="@{/staff/profile}" th:text="#{profile.title}">Profile</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}" th:text="#{btn.logout}">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+</body>
+
+
+</html>

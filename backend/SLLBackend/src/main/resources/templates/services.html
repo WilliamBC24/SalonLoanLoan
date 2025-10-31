@@ -1,166 +1,229 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
-    <meta charset="UTF-8" />
-    <title>Services</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .search-bar {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-        }
-        .filter-group {
-            margin-bottom: 15px;
-        }
-        .filter-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-        }
-        .checkbox-item input {
-            margin-right: 5px;
-        }
-        .search-buttons {
-            margin-top: 15px;
-        }
-        .search-buttons button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
-        }
-        .search-btn {
-            background: #007bff;
-            color: white;
-        }
-        .search-btn:hover {
-            background: #0056b3;
-        }
-        .reset-btn {
-            background: #6c757d;
-            color: white;
-        }
-        .reset-btn:hover {
-            background: #545b62;
-        }
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-        }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-            text-align: left;
-        }
-        th { 
-            background: #f4f4f4; 
-        }
-        tr:hover {
-            background: #f5f5f5;
-        }
-        .view-link {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .view-link:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{nav.services} + ' | ' + #{app.name}">Services | Salon Loan Loan</title>
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/services.css}">
 </head>
 <body>
-    <h1>All Services</h1>
+    <div th:replace="fragments/header :: top-header"></div>
+    <div th:replace="fragments/header :: navbar"></div>
 
-    <!-- Search and Filter Bar -->
-    <div class="search-bar">
-        <form method="get" action="/services">
-            <div class="filter-group">
-                <label for="search-name">Search by Name:</label>
-                <input type="text" id="search-name" name="name" 
-                       th:value="${searchName}" 
-                       placeholder="Enter service name..."
-                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            </div>
 
-            <div class="filter-group">
-                <label>Service Type:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-single" name="types" value="SINGLE" 
-                               th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
-                        <label for="type-single">Single</label>
+    <!-- Hero Banner -->
+    <section class="hero-area py-3 py-lg-4">
+        <div class="container-fluid px-0">
+            <div class="hero-card shadow-sm">
+                <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+                    <div id="heroSlides" class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img th:src="@{/img/banner.jpg}" th:alt="#{nav.services}" class="hero-img">
+                            <div class="hero-overlay"></div>
+                            <div class="hero-caption text-start">
+                                <h2 class="anim-1" th:text="#{services.hero.slide1.title}">Professional Services</h2>
+                                <p class="anim-2" th:text="#{services.hero.slide1.subtitle}">Expert stylists, premium care</p>
+                                <a th:href="@{/services}" class="btn btn-light rounded-pill px-4 fw-semibold anim-3" th:text="#{services.hero.slide1.cta}">Explore</a>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img th:src="@{/img/banner1.jpg}" th:alt="#{nav.services}" class="hero-img">
+                            <div class="hero-overlay"></div>
+                            <div class="hero-caption text-center">
+                                <h2 class="anim-1" th:text="#{services.hero.slide2.title}">Top Quality</h2>
+                                <p class="anim-2" th:text="#{services.hero.slide2.subtitle}">Best service for your beauty</p>
+                                <a th:href="@{/services}" class="btn btn-light rounded-pill px-4 fw-semibold anim-3" th:text="#{services.hero.slide2.cta}">Book Now</a>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img th:src="@{/img/salonnn.jpg}" th:alt="#{nav.services}" class="hero-img">
+                            <div class="hero-overlay"></div>
+                            <div class="hero-caption text-end">
+                                <h2 class="anim-1" th:text="#{services.hero.slide3.title}">Experience</h2>
+                                <p class="anim-2" th:text="#{services.hero.slide3.subtitle}">Relax and rejuvenate</p>
+                                <a th:href="@{/services}" class="btn btn-light rounded-pill px-4 fw-semibold anim-3" th:text="#{services.hero.slide3.cta}">Discover</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-combo" name="types" value="COMBO"
-                               th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
-                        <label for="type-combo">Combo</label>
+                    <div id="heroDots" class="carousel-indicators hero-dots">
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <main class="services-page-main py-5">
+        <div class="container-xl">
+            <div class="search-filter-card mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <form method="get" action="/services" id="serviceSearchForm">
+                            <div class="row g-3 mb-3">
+                                <div class="col-12">
+                                    <label for="search-name" class="form-label fw-semibold" th:text="#{services.search.name}">Search by Name</label>
+                                    <input type="text" class="form-control rounded-pill"
+                                           id="search-name" name="name"
+                                           th:value="${searchName}"
+                                           th:placeholder="#{services.search.placeholder}">
+                                </div>
+                            </div>
+
+
+                            <div class="filter-group mb-3">
+                                <label class="form-label fw-semibold" th:text="#{services.filter.type}">Service Type</label>
+                                <div class="d-flex flex-wrap gap-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="type-single" name="types" value="SINGLE"
+                                               th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
+                                        <label class="form-check-label" for="type-single" th:text="#{services.type.single}">Single</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="type-combo" name="types" value="COMBO"
+                                               th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
+                                        <label class="form-check-label" for="type-combo" th:text="#{services.type.combo}">Combo</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="filter-group mb-3">
+                                <label class="form-label fw-semibold" th:text="#{services.filter.category}">Service Category</label>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check" th:each="category : ${allCategories}">
+                                        <input class="form-check-input" type="checkbox" th:id="'category-' + ${category.id}"
+                                               name="categories" th:value="${category.id}"
+                                               th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
+                                        <label class="form-check-label" th:for="'category-' + ${category.id}" th:text="${category.name}">Category</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                    <i class="fa-solid fa-magnifying-glass me-2"></i>
+                                    <span th:text="#{btn.search}">Search</span>
+                                </button>
+                                <a th:href="@{/services}" class="btn btn-outline-secondary rounded-pill px-4">
+                                    <i class="fa-solid fa-rotate me-2"></i>
+                                    <span th:text="#{btn.reset}">Reset</span>
+                                </a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
 
-            <div class="filter-group">
-                <label>Service Category:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item" th:each="category : ${allCategories}">
-                        <input type="checkbox" th:id="'category-' + ${category.id}" 
-                               name="categories" th:value="${category.id}"
-                               th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
-                        <label th:for="'category-' + ${category.id}" th:text="${category.name}">Category</label>
+
+            <div class="services-grid-wrapper">
+                <div class="row g-4" th:if="${!#lists.isEmpty(services)}">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3" th:each="svc : ${services}">
+                        <div class="service-card h-100 shadow-sm">
+                            <div class="service-image-wrapper">
+                                <img th:src="'https://picsum.photos/400/400?random=' + ${svc.id}"
+                                     th:alt="${svc.serviceName}" class="service-image">
+                                <div class="service-status">
+                                    <span th:if="${svc.activeStatus}" class="badge bg-success" th:text="#{label.active}">Active</span>
+                                    <span th:unless="${svc.activeStatus}" class="badge bg-secondary" th:text="#{label.inactive}">Inactive</span>
+                                </div>
+                                <div class="service-type-badge">
+                                    <span class="badge bg-info" th:text="${svc.serviceType}">SINGLE</span>
+                                </div>
+                            </div>
+                            <div class="service-card-body">
+                                <h5 class="service-title mb-1" th:text="${svc.serviceName}">Service Name</h5>
+                                <p class="service-category text-muted mb-2 small" th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</p>
+                                <div class="service-details mb-2">
+                                    <small class="text-muted">
+                                        <i class="fa-solid fa-clock me-1"></i>
+                                        <span th:text="${svc.durationMinutes} + ' ' + #{services.table.duration}">0 min</span>
+                                    </small>
+                                </div>
+                                <div class="service-rating small mb-3 text-warning">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="service-meta d-flex align-items-center justify-content-between">
+                                    <div class="service-price m-0">
+                                        <span class="price-value" th:text="${#numbers.formatDecimal(svc.servicePrice, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                        <span class="currency-unit" th:text="#{currency.unit}">VND</span>
+                                    </div>
+                                    <a th:href="@{/services/{id}(id=${svc.id})}" class="btn btn-sm btn-dark rounded-pill px-3">
+                                        <i class="fa-solid fa-eye me-1"></i>
+                                        <span th:text="#{btn.view.details}">View Details</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div th:if="${#lists.isEmpty(services)}" class="empty-state text-center py-5">
+                    <i class="fa-solid fa-cut fa-3x text-muted mb-3"></i>
+                    <p class="text-muted" th:text="#{services.no.results}">No services found.</p>
+                </div>
             </div>
+        </div>
+    </main>
 
-            <div class="search-buttons">
-                <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/services'">Reset</button>
-            </div>
-        </form>
-    </div>
 
-    <!-- Services Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Duration (min)</th>
-                <th>Active</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="svc : ${services}">
-                <td th:text="${svc.id}">1</td>
-                <td th:text="${svc.serviceName}">Service name</td>
-                <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
-                <td th:text="${svc.serviceType}">SINGLE</td>
-                <td th:text="${svc.servicePrice}">0</td>
-                <td th:text="${svc.durationMinutes}">0</td>
-                <td th:text="${svc.activeStatus}">false</td>
-                <td>
-                    <a th:href="@{/services/{id}(id=${svc.id})}" class="view-link">View Details</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div th:replace="fragments/footer :: footer"></div>
 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   
+    <script>
+    // ===== HERO CAROUSEL ENHANCEMENTS =====
+    document.addEventListener('DOMContentLoaded', function() {
+        initHeroCarousel();
+    });
+
+
+    function initHeroCarousel() {
+        const carousel = document.getElementById('heroCarousel');
+        if (carousel) {
+            // Set interval to 5 seconds
+            carousel.setAttribute('data-bs-interval', '5000');
+           
+            // Add pause on hover
+            carousel.addEventListener('mouseenter', () => {
+                carousel.setAttribute('data-bs-interval', 'false');
+            });
+           
+            carousel.addEventListener('mouseleave', () => {
+                carousel.setAttribute('data-bs-interval', '5000');
+            });
+           
+            // Add keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    const prevBtn = carousel.querySelector('.carousel-control-prev');
+                    if (prevBtn) prevBtn.click();
+                } else if (e.key === 'ArrowRight') {
+                    const nextBtn = carousel.querySelector('.carousel-control-next');
+                    if (nextBtn) nextBtn.click();
+                }
+            });
+        }
+    }
+    </script>
 </body>
 </html>

@@ -1,60 +1,825 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" th:lang="${#locale}">
 <head>
     <meta charset="UTF-8">
-    <title>Salon Loan Loan | Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{home.page.title}">Salon Loan Loan | Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <style></style>
+   
+   
 </head>
 <body>
 
-<header>
-    <h1>Welcome to Salon Loan Loan</h1>
-    <nav>
-        <a th:href="@{/}">Home</a> |
-        <a th:href="@{/products}">Products</a> |
-        <a th:href="@{/services}">Services</a> |
-        <a th:href="@{/auth/user/login}">User Login</a> |
-        <a th:href="@{/auth/staff/login}">Staff Login</a>
-    </nav>
-</header>
 
-<hr>
+<div th:replace="fragments/header :: top-header"></div>
+<div th:replace="fragments/header :: navbar"></div>
 
-<section>
-    <h2>Our Services</h2>
-    <div th:if="${#lists.isEmpty(services)}">
-        <p>No services available at the moment.</p>
+
+<!-- Hero (boxed) -->
+<section class="hero-area py-3 py-lg-4">
+    <div class="container">
+        <div class="hero-card shadow-sm">
+            <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+                <div id="heroSlides" class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img th:src="@{/img/banner.jpg}" th:alt="#{home.hero.title}" class="hero-img">
+                        <div class="hero-overlay"></div>
+                        <div class="hero-caption text-start">
+                            <h2 class="anim-1" th:text="#{home.hero.slide1.title}">Welcome to Loan Loan Hair Salon</h2>
+                            <p class="anim-2" th:text="#{home.hero.slide1.subtitle}">Where natural beauty meets your personal style</p>
+                            <a th:href="@{/services}" class="btn btn-light rounded-pill px-4 fw-semibold anim-3" th:text="#{home.hero.slide1.cta}">Discover Now</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img th:src="@{/img/banner1.jpg}" th:alt="#{home.hero.title}" class="hero-img">
+                        <div class="hero-overlay"></div>
+                        <div class="hero-caption text-center">
+                            <h2 class="anim-1" th:text="#{home.hero.slide2.title}">Professional Services</h2>
+                            <p class="anim-2" th:text="#{home.hero.slide2.subtitle}">Experienced stylists, premium products</p>
+                            <a th:href="@{/services}" class="btn btn-light rounded-pill px-4 fw-semibold anim-3" th:text="#{home.hero.slide2.cta}">Book Now</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img th:src="@{/img/salonnn.jpg}" th:alt="#{home.hero.title}" class="hero-img">
+                        <div class="hero-overlay"></div>
+                        <div class="hero-caption text-end">
+                            <h2 class="anim-1" th:text="#{home.hero.slide3.title}">Luxury Hair & Spa</h2>
+                            <p class="anim-2" th:text="#{home.hero.slide3.subtitle}">Relax. Refresh. Reveal your best look.</p>
+                            <a th:href="@{/products}" class="btn btn-light rounded-pill px-4 fw-semibold anim-3" th:text="#{home.hero.slide3.cta}">Shop Now</a>
+                        </div>
+                    </div>
+                </div>
+                <div id="heroDots" class="carousel-indicators hero-dots">
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
     </div>
-    <div th:each="service : ${services}">
-        <div class="service-card">
-            <h3 th:text="${service.serviceName}">Service Name</h3>
-            <p th:text="${service.serviceDescription}">Description</p>
-            <p><strong>Price:</strong> ₫<span th:text="${service.servicePrice}">0</span></p>
+   
+</section>
+
+
+<!-- Booking CTA -->
+<section class="booking py-5 mt-4">
+    <div class="container">
+        <div class="booking-card mx-auto text-center">
+            <h4 class="text-dark fw-bold mb-1" th:text="#{home.booking.title}">Đặt lịch để giữ chỗ</h4>
+            <p class="text-muted mb-3" th:text="#{home.booking.subtitle}">Chào mừng đến với Hair Salon</p>
+            <div class="d-flex flex-column gap-3 align-items-center">
+                <input type="text" class="form-control booking-input" th:placeholder="#{home.booking.input.placeholder}">
+                <a th:href="@{/services}" class="btn btn-dark px-4" th:text="#{home.booking.button}">Đặt lịch</a>
+            </div>
+        </div>
+    </div>
+   
+</section>
+
+
+<!-- Our Services (keep) -->
+<section class="services-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title text-center" th:text="#{home.our.services}">Our Services</h2>
+        </div>
+        <div th:if="${#lists.isEmpty(services)}">
+            <p class="text-muted text-center" th:text="#{home.no.services}">No services available at the moment.</p>
+        </div>
+        <div class="our-services-slider-wrapper position-relative" th:if="${!#lists.isEmpty(services)}">
+          <button type="button" class="slider-arrow left" onclick="scrollServiceSlider(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="our-services-slider d-flex flex-nowrap overflow-auto" id="ourServicesSlider">
+            <div class="service-card-mini" th:each="service : ${services}">
+              <div class="service-image-wrapper">
+                <img th:src="'https://picsum.photos/300/180?random=' + ${service.id}" alt="Service Image" class="service-img"/>
+              </div>
+              <div class="service-info-mini text-center mt-2 px-2">
+                <div class="service-title-mini text-truncate" th:text="${service.serviceName}">Service Name</div>
+                <div class="service-desc-mini text-muted text-truncate-2" th:text="${service.serviceDescription}">Description</div>
+                <div class="service-price-mini mt-1">
+                  <span class="price-value" th:text="${#numbers.formatDecimal(service.servicePrice, 0, 'COMMA', 0, 'POINT')}">0</span>
+                  <span class="currency-unit" th:text="#{currency.unit}">VND</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="slider-arrow right" onclick="scrollServiceSlider(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
     </div>
 </section>
 
-<hr>
 
-<section>
-    <h2>Our Products</h2>
-    <div th:if="${#lists.isEmpty(products)}">
-        <p>No products available at the moment.</p>
-    </div>
-    <div th:each="product : ${products}">
-        <div class="product-card">
-            <h3 th:text="${product.productName}">Product Name</h3>
-            <p th:text="${product.productDescription}">Description</p>
-            <p><strong>Price:</strong> ₫<span th:text="${product.currentPrice}">0</span></p>
+<!-- Our Products -->
+<section class="products-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title text-center" th:text="#{home.our.products}">Our Products</h2>
+        </div>
+        <div th:if="${#lists.isEmpty(products)}">
+            <p class="text-muted text-center" th:text="#{home.no.products}">No products available at the moment.</p>
+        </div>
+        <div class="our-products-slider-wrapper position-relative" th:if="${!#lists.isEmpty(products)}">
+          <button type="button" class="slider-arrow left" onclick="scrollProductSlider(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="our-products-slider d-flex flex-nowrap overflow-auto" id="ourProductsSlider">
+            <div class="product-card-mini" th:each="product : ${products}">
+              <div class="product-image-wrapper">
+                <img th:src="'https://picsum.photos/300/180?random=' + ${product.id}" alt="Product Image" class="product-img"/>
+              </div>
+              <div class="product-info-mini text-center mt-2 px-2">
+                <div class="product-title-mini text-truncate" th:text="${product.productName}">Product Name</div>
+                <div class="product-desc-mini text-muted text-truncate-2" th:text="${product.productDescription}">Description</div>
+                <div class="product-price-mini mt-1">
+                  <span class="price-value" th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')}">0</span>
+                  <span class="currency-unit" th:text="#{currency.unit}">VND</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="slider-arrow right" onclick="scrollProductSlider(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
     </div>
 </section>
 
-<hr>
 
-<footer>
-    <p>&copy; 2025 Salon Loan Loan. All rights reserved.</p>
-</footer>
+<!-- Spa center (new) -->
+<section class="spa-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title text-center" th:text="#{home.spa.title}">Trung tâm làm đẹp và spa tóc</h2>
+            <p class="section-intro text-center" th:text="#{home.spa.desc}">Không gian chuyên nghiệp, thiết bị hiện đại và liệu trình thư giãn giúp bạn tái tạo năng lượng.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="spa-card" onclick="showSpaDetail('massage')">
+                    <img th:src="@{/img/suckhoe.jpg}" class="img-fluid spa-image" th:alt="#{home.spa.caption1}">
+                    <div class="spa-overlay">
+                        <div class="spa-content">
+                            <h4 th:text="#{home.spa.caption1}">Sức khỏe tự nhiên</h4>
+                            <p th:text="#{home.spa.detail1}">Massage trị liệu giúp thư giãn cơ thể và tinh thần</p>
+                            <button class="btn btn-light btn-sm" th:text="#{home.spa.learn.more}">Tìm hiểu thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="spa-card" onclick="showSpaDetail('care')">
+                    <img th:src="@{/img/chamsoc.jpg}" class="img-fluid spa-image" th:alt="#{home.spa.caption2}">
+                    <div class="spa-overlay">
+                        <div class="spa-content">
+                            <h4 th:text="#{home.spa.caption2}">Thư giãn tinh thần</h4>
+                            <p th:text="#{home.spa.detail2}">Liệu trình chăm sóc da mặt chuyên nghiệp</p>
+                            <button class="btn btn-light btn-sm" th:text="#{home.spa.learn.more}">Tìm hiểu thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="spa-card" onclick="showSpaDetail('aesthetic')">
+                    <img th:src="@{/img/thammi.jpg}" class="img-fluid spa-image" th:alt="#{home.spa.caption3}">
+                    <div class="spa-overlay">
+                        <div class="spa-content">
+                            <h4 th:text="#{home.spa.caption3}">Cân bằng thể chất</h4>
+                            <p th:text="#{home.spa.detail3}">Các dịch vụ thẩm mỹ hiện đại và an toàn</p>
+                            <button class="btn btn-light btn-sm" th:text="#{home.spa.learn.more}">Tìm hiểu thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-</body>
-</html>
+
+
+
+
+
+<!-- Experienced Team (new) -->
+<section class="team-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title text-center" th:text="#{home.team.title}">Chuyên gia giàu kinh nghiệm tại Loan Loan Hair Spa</h2>
+            <p class="section-intro text-center" th:text="#{home.team.desc}">Đội ngũ được đào tạo bài bản, luôn cập nhật xu hướng mới và tận tâm với từng khách hàng.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="team-card" onclick="showTeamMember('staff1')">
+                    <div class="team-image-wrapper">
+                        <img th:src="@{/img/nhanvien1.jpg}" class="img-fluid team-image" th:alt="#{home.team.staff1}">
+                        <div class="team-overlay">
+                            <div class="team-info">
+                                <h4 th:text="#{home.team.staff1}">Chuyên gia 1</h4>
+                                <p th:text="#{home.team.staff1.role}">Stylist chuyên nghiệp</p>
+                                <div class="team-social">
+                                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-card" onclick="showTeamMember('staff2')">
+                    <div class="team-image-wrapper">
+                        <img th:src="@{/img/nhanvien.jpg}" class="img-fluid team-image" th:alt="#{home.team.staff2}">
+                        <div class="team-overlay">
+                            <div class="team-info">
+                                <h4 th:text="#{home.team.staff2}">Chuyên gia 2</h4>
+                                <p th:text="#{home.team.staff2.role}">Chuyên gia chăm sóc da</p>
+                                <div class="team-social">
+                                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-card" onclick="showTeamMember('staff3')">
+                    <div class="team-image-wrapper">
+                        <img th:src="@{/img/nhanvien3.jpg}" class="img-fluid team-image" th:alt="#{home.team.staff3}">
+                        <div class="team-overlay">
+                            <div class="team-info">
+                                <h4 th:text="#{home.team.staff3}">Chuyên gia 3</h4>
+                                <p th:text="#{home.team.staff3.role}">Chuyên gia thẩm mỹ</p>
+                                <div class="team-social">
+                                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+<div th:replace="fragments/footer :: footer"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- <script th:src="@{/js/app.js}"></script> -->
+
+
+<script>
+// ===== FRONTEND ACTIONS =====
+function showSpaDetail(type) {
+    console.log('Showing spa detail for:', type);
+   
+    // Create modal for spa details
+    const spaDetails = {
+        'massage': {
+            title: 'Massage Trị Liệu',
+            description: 'Liệu trình massage chuyên nghiệp giúp thư giãn cơ thể và tinh thần',
+            features: ['Giảm căng thẳng', 'Cải thiện tuần hoàn máu', 'Tăng cường sức khỏe'],
+            price: '500,000 VND',
+            duration: '60 phút'
+        },
+        'care': {
+            title: 'Chăm Sóc Da Mặt',
+            description: 'Liệu trình chăm sóc da mặt chuyên nghiệp với công nghệ hiện đại',
+            features: ['Làm sạch sâu', 'Dưỡng ẩm', 'Chống lão hóa'],
+            price: '800,000 VND',
+            duration: '90 phút'
+        },
+        'aesthetic': {
+            title: 'Dịch Vụ Thẩm Mỹ',
+            description: 'Các dịch vụ thẩm mỹ hiện đại và an toàn',
+            features: ['Laser trị liệu', 'Điều trị nám', 'Trẻ hóa da'],
+            price: '1,200,000 VND',
+            duration: '120 phút'
+        }
+    };
+   
+    const detail = spaDetails[type];
+    if (detail) {
+        showModal('spa-modal', detail);
+    }
+}
+
+
+function showServiceDetail(serviceId) {
+    console.log('Showing service detail for:', serviceId);
+   
+    // Add loading animation
+    showLoading();
+   
+    // Simulate API call
+    setTimeout(() => {
+        hideLoading();
+        window.location.href = '/services/' + serviceId;
+    }, 1000);
+}
+
+
+function showTeamMember(staffId) {
+    console.log('Showing team member:', staffId);
+   
+    const teamDetails = {
+        'staff1': {
+            name: 'Nguyễn Thị Lan',
+            role: 'Stylist Chuyên Nghiệp',
+            experience: '8 năm kinh nghiệm',
+            specialties: ['Tạo kiểu tóc', 'Nhuộm tóc', 'Uốn tóc'],
+            rating: 4.9,
+            reviews: 156
+        },
+        'staff2': {
+            name: 'Trần Minh Hương',
+            role: 'Chuyên Gia Chăm Sóc Da',
+            experience: '6 năm kinh nghiệm',
+            specialties: ['Chăm sóc da mặt', 'Trị mụn', 'Chống lão hóa'],
+            rating: 4.8,
+            reviews: 98
+        },
+        'staff3': {
+            name: 'Lê Thị Mai',
+            role: 'Chuyên Gia Thẩm Mỹ',
+            experience: '10 năm kinh nghiệm',
+            specialties: ['Laser trị liệu', 'Điều trị nám', 'Trẻ hóa da'],
+            rating: 4.9,
+            reviews: 203
+        }
+    };
+   
+    const member = teamDetails[staffId];
+    if (member) {
+        showModal('team-modal', member);
+    }
+}
+
+
+function showProductDetail(productId) {
+    console.log('Showing product detail for:', productId);
+   
+    // Add loading animation
+    showLoading();
+   
+    // Simulate API call
+    setTimeout(() => {
+        hideLoading();
+        window.location.href = '/products/' + productId;
+    }, 800);
+}
+
+
+// ===== MODAL SYSTEM =====
+function showModal(type, data) {
+    const modalHtml = generateModalHtml(type, data);
+    const modalElement = document.createElement('div');
+    modalElement.innerHTML = modalHtml;
+    modalElement.className = 'custom-modal-overlay';
+    document.body.appendChild(modalElement);
+   
+    // Add animation
+    setTimeout(() => {
+        modalElement.classList.add('show');
+    }, 10);
+   
+    // Close modal functionality
+    modalElement.addEventListener('click', function(e) {
+        if (e.target === modalElement || e.target.classList.contains('modal-close')) {
+            closeModal(modalElement);
+        }
+    });
+}
+
+
+function generateModalHtml(type, data) {
+    if (type === 'spa-modal') {
+        return `
+            <div class="custom-modal">
+                <div class="modal-header">
+                    <h3>${data.title}</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-description">${data.description}</p>
+                    <div class="modal-features">
+                        <h4>Tính năng:</h4>
+                        <ul>
+                            ${data.features.map(feature => `<li>${feature}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="modal-info">
+                        <div class="info-item">
+                            <strong>Giá:</strong> ${data.price}
+                        </div>
+                        <div class="info-item">
+                            <strong>Thời gian:</strong> ${data.duration}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="bookService('${data.title}')">Đặt lịch ngay</button>
+                    <button class="btn btn-secondary modal-close">Đóng</button>
+                </div>
+            </div>
+        `;
+    } else if (type === 'team-modal') {
+        return `
+            <div class="custom-modal">
+                <div class="modal-header">
+                    <h3>${data.name}</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="team-info">
+                        <div class="info-item">
+                            <strong>Vị trí:</strong> ${data.role}
+                        </div>
+                        <div class="info-item">
+                            <strong>Kinh nghiệm:</strong> ${data.experience}
+                        </div>
+                        <div class="info-item">
+                            <strong>Đánh giá:</strong> ⭐ ${data.rating}/5 (${data.reviews} đánh giá)
+                        </div>
+                    </div>
+                    <div class="modal-features">
+                        <h4>Chuyên môn:</h4>
+                        <ul>
+                            ${data.specialties.map(specialty => `<li>${specialty}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="bookWithExpert('${data.name}')">Đặt lịch với chuyên gia</button>
+                    <button class="btn btn-secondary modal-close">Đóng</button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+
+function closeModal(modalElement) {
+    modalElement.classList.remove('show');
+    setTimeout(() => {
+        document.body.removeChild(modalElement);
+    }, 300);
+}
+
+
+// ===== BOOKING FUNCTIONS =====
+function bookService(serviceName) {
+    showNotification(`Đang chuyển đến trang đặt lịch cho: ${serviceName}`, 'info');
+    setTimeout(() => {
+        window.location.href = '/services';
+    }, 1500);
+}
+
+
+function bookWithExpert(expertName) {
+    showNotification(`Đang chuyển đến trang đặt lịch với: ${expertName}`, 'info');
+    setTimeout(() => {
+        window.location.href = '/services';
+    }, 1500);
+}
+
+
+// ===== LOADING SYSTEM =====
+function showLoading() {
+    const loading = document.createElement('div');
+    loading.id = 'loading-overlay';
+    loading.innerHTML = `
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Đang tải...</p>
+        </div>
+    `;
+    document.body.appendChild(loading);
+}
+
+
+function hideLoading() {
+    const loading = document.getElementById('loading-overlay');
+    if (loading) {
+        loading.remove();
+    }
+}
+
+
+// ===== NOTIFICATION SYSTEM =====
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <span class="notification-message">${message}</span>
+            <button class="notification-close">&times;</button>
+        </div>
+    `;
+   
+    document.body.appendChild(notification);
+   
+    // Show animation
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+   
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+        hideNotification(notification);
+    }, 3000);
+   
+    // Close button functionality
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+        hideNotification(notification);
+    });
+}
+
+
+function hideNotification(notification) {
+    notification.classList.remove('show');
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 300);
+}
+
+
+// ===== SCROLL ANIMATIONS =====
+function initScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+               
+                // Add stagger effect for multiple elements
+                if (entry.target.parentNode) {
+                    const siblings = Array.from(entry.target.parentNode.children);
+                    const index = siblings.indexOf(entry.target);
+                    entry.target.style.animationDelay = `${index * 0.1}s`;
+                }
+            }
+        });
+    }, observerOptions);
+
+
+    // Observe all cards and sections
+    document.querySelectorAll('.spa-card, .service-card, .team-card, .product-card').forEach(card => {
+        observer.observe(card);
+    });
+}
+
+
+// ===== HERO CAROUSEL ENHANCEMENTS =====
+function initHeroCarousel() {
+    const carousel = document.getElementById('heroCarousel');
+    if (carousel) {
+        // Set initial interval to 5 seconds (balanced speed)
+        carousel.setAttribute('data-bs-interval', '5000');
+       
+        // Add pause on hover
+        carousel.addEventListener('mouseenter', () => {
+            carousel.setAttribute('data-bs-interval', 'false');
+        });
+       
+        carousel.addEventListener('mouseleave', () => {
+            carousel.setAttribute('data-bs-interval', '5000');
+        });
+       
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                const prevBtn = carousel.querySelector('.carousel-control-prev');
+                if (prevBtn) prevBtn.click();
+            } else if (e.key === 'ArrowRight') {
+                const nextBtn = carousel.querySelector('.carousel-control-next');
+                if (nextBtn) nextBtn.click();
+            }
+        });
+       
+        // Add progress indicator
+        const progressBar = document.createElement('div');
+        progressBar.className = 'carousel-progress';
+        progressBar.innerHTML = '<div class="progress-fill"></div>';
+        carousel.appendChild(progressBar);
+       
+        // Update progress bar
+        let progressInterval;
+        function startProgress() {
+            const progressFill = progressBar.querySelector('.progress-fill');
+            progressFill.style.transition = 'width 5s linear';
+            progressFill.style.width = '100%';
+        }
+       
+        function resetProgress() {
+            const progressFill = progressBar.querySelector('.progress-fill');
+            progressFill.style.transition = 'none';
+            progressFill.style.width = '0%';
+            setTimeout(() => {
+                startProgress();
+            }, 50);
+        }
+       
+        // Start initial progress
+        startProgress();
+       
+        // Reset progress on slide change
+        carousel.addEventListener('slide.bs.carousel', () => {
+            resetProgress();
+        });
+       
+        // Pause progress on hover
+        carousel.addEventListener('mouseenter', () => {
+            const progressFill = progressBar.querySelector('.progress-fill');
+            progressFill.style.transition = 'none';
+        });
+       
+        carousel.addEventListener('mouseleave', () => {
+            resetProgress();
+        });
+    }
+}
+
+
+// ===== BOOKING FORM ENHANCEMENTS =====
+function initBookingForm() {
+    const bookingInput = document.querySelector('.booking-input');
+    const bookingBtn = document.querySelector('.booking .btn');
+   
+    if (bookingInput && bookingBtn) {
+        // Add input validation
+        bookingInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length > 0) {
+                bookingBtn.classList.remove('disabled');
+                bookingBtn.style.opacity = '1';
+            } else {
+                bookingBtn.classList.add('disabled');
+                bookingBtn.style.opacity = '0.6';
+            }
+        });
+       
+        // Add form submission
+        bookingBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const inputValue = bookingInput.value.trim();
+           
+            if (inputValue.length === 0) {
+                showNotification('Vui lòng nhập thông tin đặt lịch', 'warning');
+                bookingInput.focus();
+                return;
+            }
+           
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showNotification('Đang chuyển đến trang đặt lịch...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/services';
+                }, 1000);
+            }, 1500);
+        });
+    }
+}
+
+
+// ===== SMOOTH SCROLLING =====
+function initSmoothScrolling() {
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    anchorLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+}
+
+
+// ===== PERFORMANCE OPTIMIZATION =====
+function initLazyLoading() {
+    const images = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+   
+    images.forEach(img => imageObserver.observe(img));
+}
+
+
+function scrollServiceSlider(direction) {
+  const slider = document.getElementById('ourServicesSlider');
+  const card = slider.querySelector('.service-card-mini');
+  if (slider && card) {
+    slider.scrollLeft += (card.offsetWidth + 20) * direction;
+  }
+}
+
+
+function scrollProductSlider(direction) {
+  const slider = document.getElementById('ourProductsSlider');
+  const card = slider.querySelector('.product-card-mini');
+  if (slider && card) {
+    slider.scrollLeft += (card.offsetWidth + 20) * direction;
+  }
+}
+
+
+// ===== INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing Salon Loan Loan website...');
+   
+    // Initialize all features
+    initScrollAnimations();
+    initHeroCarousel();
+    initBookingForm();
+    initSmoothScrolling();
+    initLazyLoading();
+   
+    // Add page load animation
+    document.body.classList.add('loaded');
+   
+    console.log('Website initialized successfully!');
+});
+
+
+// ===== UTILITY FUNCTIONS =====
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// ===== ERROR HANDLING =====
+// Removed global error handler to prevent notification spam
+// window.addEventListener('error', function(e) {
+//     console.error('JavaScript Error:', e.error);
+//     showNotification('Đã xảy ra lỗi. Vui lòng tải lại trang.', 'error');
+// });
+
+// ===== RESIZE HANDLER =====
+window.addEventListener('resize', debounce(function() {
+    // Handle responsive adjustments
+    const isMobile = window.innerWidth < 768;
+    document.body.classList.toggle('mobile', isMobile);
+}, 250));
+</script>

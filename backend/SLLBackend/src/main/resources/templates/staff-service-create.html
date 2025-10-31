@@ -1,165 +1,162 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Create Service</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{staff.services.create.title} + ' | ' + #{app.name}">Create Service | Salon Loan Loan</title>
+   
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Your CSS -->
+    <link rel="stylesheet" th:href="@{/css/staff-service-create.css}">
+    <!-- Staff Sidebar CSS -->
+    <link rel="stylesheet" th:href="@{/css/staff-sidebar.css}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
-        }
-        h1 {
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .form-group .error {
-            color: #dc3545;
-            font-size: 0.875em;
-            margin-top: 5px;
-            display: none;
-        }
-        .form-group input.invalid,
-        .form-group select.invalid {
-            border-color: #dc3545;
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-        }
-        .checkbox-group input {
-            width: auto;
-            margin-right: 8px;
-        }
-        .button-group {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-primary {
-            background: #007bff;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #0056b3;
-        }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background: #545b62;
-        }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .required::after {
+        .form-label.required::after {
             content: " *";
             color: #dc3545;
         }
     </style>
 </head>
 <body>
-    <h1>Create New Service</h1>
+    <div class="d-flex">
+        <!-- Sidebar Fragment -->
+        <div th:replace="fragments/staff-sidebar :: staff-sidebar"></div>
 
-    <!-- Error Messages -->
-    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-    <form id="createServiceForm" method="post" action="/staff/service/create">
-        <div class="form-group">
-            <label for="serviceName" class="required">Service Name</label>
-            <input type="text" id="serviceName" name="serviceName" required>
-            <div class="error" id="serviceNameError">Service name is required</div>
-        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header Fragment with Add Service Button -->
+            <div th:replace="fragments/staff-sidebar :: staff-header-with-add-service"></div>
 
-        <div class="form-group">
-            <label for="serviceCategoryId" class="required">Service Category</label>
-            <select id="serviceCategoryId" name="serviceCategoryId" required>
-                <option value="">-- Select Category --</option>
-                <option th:each="category : ${categories}" 
-                        th:value="${category.id}" 
-                        th:text="${category.name}">Category</option>
-            </select>
-            <div class="error" id="serviceCategoryIdError">Service category is required</div>
-        </div>
 
-        <div class="form-group">
-            <label for="serviceType" class="required">Service Type</label>
-            <select id="serviceType" name="serviceType" required>
-                <option value="">-- Select Type --</option>
-                <option value="SINGLE">Single</option>
-                <option value="COMBO">Combo</option>
-            </select>
-            <div class="error" id="serviceTypeError">Service type is required</div>
-        </div>
+            <!-- Content -->
+            <div class="content">
+                <h1 class="page-title" th:text="#{staff.services.create.title}">Create New Service</h1>
 
-        <div class="form-group">
-            <label for="servicePrice" class="required">Service Price (VND)</label>
-            <input type="number" id="servicePrice" name="servicePrice" min="0" required>
-            <div class="error" id="servicePriceError">Service price is required and must be a positive number</div>
-        </div>
 
-        <div class="form-group">
-            <label for="durationMinutes" class="required">Duration (minutes)</label>
-            <input type="number" id="durationMinutes" name="durationMinutes" min="1" max="32767" required>
-            <div class="error" id="durationMinutesError">Duration is required and must be between 1 and 32767 minutes</div>
-        </div>
+                <!-- Error Messages -->
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa-solid fa-exclamation-circle me-2"></i>
+                    <span th:text="${errorMessage}">Error message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
 
-        <div class="form-group">
-            <label for="serviceDescription">Service Description</label>
-            <textarea id="serviceDescription" name="serviceDescription"></textarea>
-        </div>
 
-        <div class="form-group">
-            <div class="checkbox-group">
-                <input type="checkbox" id="activeStatus" name="activeStatus" value="true">
-                <label for="activeStatus">Active Status</label>
+                <!-- Create Service Form -->
+                <div class="form-container">
+                    <form id="createServiceForm" method="post" th:action="@{/staff/service/create}" class="service-form">
+                        <div class="form-group">
+                            <label for="serviceName" class="form-label required">
+                                <i class="fas fa-tag me-1"></i>
+                                <span th:text="#{staff.services.form.name}">Service Name</span>
+                            </label>
+                            <input type="text" id="serviceName" name="serviceName"
+                                   th:placeholder="#{staff.services.form.name.placeholder}" required>
+                            <div class="error-message" id="serviceNameError" th:text="#{staff.services.form.name.error}">Service name is required</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="serviceCategoryId" class="form-label required">
+                                <i class="fas fa-list me-1"></i>
+                                <span th:text="#{staff.services.form.category}">Service Category</span>
+                            </label>
+                            <select id="serviceCategoryId" name="serviceCategoryId" required>
+                                <option value="" th:text="#{staff.services.form.category.select}">-- Select Category --</option>
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}">Category</option>
+                            </select>
+                            <div class="error-message" id="serviceCategoryIdError" th:text="#{staff.services.form.category.error}">Service category is required</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="serviceType" class="form-label required">
+                                <i class="fas fa-cog me-1"></i>
+                                <span th:text="#{staff.services.form.type}">Service Type</span>
+                            </label>
+                            <select id="serviceType" name="serviceType" required>
+                                <option value="" th:text="#{staff.services.form.type.select}">-- Select Type --</option>
+                                <option value="SINGLE" th:text="#{staff.services.form.type.single}">Single</option>
+                                <option value="COMBO" th:text="#{staff.services.form.type.combo}">Combo</option>
+                            </select>
+                            <div class="error-message" id="serviceTypeError" th:text="#{staff.services.form.type.error}">Service type is required</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="servicePrice" class="form-label required">
+                                <i class="fas fa-dollar-sign me-1"></i>
+                                <span th:text="#{staff.services.form.price}">Service Price (VND)</span>
+                            </label>
+                            <input type="number" id="servicePrice" name="servicePrice" min="0" step="1000"
+                                   th:placeholder="#{staff.services.form.price.placeholder}" required>
+                            <div class="error-message" id="servicePriceError" th:text="#{staff.services.form.price.error}">Service price is required and must be a positive number</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="durationMinutes" class="form-label required">
+                                <i class="fas fa-clock me-1"></i>
+                                <span th:text="#{staff.services.form.duration}">Duration (minutes)</span>
+                            </label>
+                            <input type="number" id="durationMinutes" name="durationMinutes" min="1" max="480"
+                                   th:placeholder="#{staff.services.form.duration.placeholder}" required>
+                            <div class="error-message" id="durationMinutesError" th:text="#{staff.services.form.duration.error}">Duration is required and must be between 1 and 480 minutes</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="serviceDescription" class="form-label">
+                                <i class="fas fa-align-left me-1"></i>
+                                <span th:text="#{staff.services.form.description}">Service Description</span>
+                            </label>
+                            <textarea id="serviceDescription" name="serviceDescription" rows="4"
+                                      th:placeholder="#{staff.services.form.description.placeholder}"></textarea>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="activeStatus" name="activeStatus" value="true">
+                                <span th:text="#{staff.services.form.status}">Active Status</span>
+                            </label>
+                        </div>
+
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" th:onclick="'window.location.href=\'' + @{/staff/service/list} + '\''">
+                                <i class="fas fa-times me-2"></i>
+                                <span th:text="#{btn.cancel}">Cancel</span>
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>
+                                <span th:text="#{btn.create}">Create Service</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">Create Service</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/service/list'">Cancel</button>
-        </div>
-    </form>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   
+    <!-- Staff Scripts Fragment -->
+    <div th:replace="fragments/staff-sidebar :: staff-scripts"></div>
+   
     <script>
         document.getElementById('createServiceForm').addEventListener('submit', function(event) {
             let isValid = true;
+
 
             // Validate service name
             const serviceName = document.getElementById('serviceName');
@@ -173,6 +170,7 @@
                 serviceNameError.style.display = 'none';
             }
 
+
             // Validate service category
             const serviceCategoryId = document.getElementById('serviceCategoryId');
             const serviceCategoryIdError = document.getElementById('serviceCategoryIdError');
@@ -184,6 +182,7 @@
                 serviceCategoryId.classList.remove('invalid');
                 serviceCategoryIdError.style.display = 'none';
             }
+
 
             // Validate service type
             const serviceType = document.getElementById('serviceType');
@@ -197,6 +196,7 @@
                 serviceTypeError.style.display = 'none';
             }
 
+
             // Validate service price
             const servicePrice = document.getElementById('servicePrice');
             const servicePriceError = document.getElementById('servicePriceError');
@@ -208,6 +208,7 @@
                 servicePrice.classList.remove('invalid');
                 servicePriceError.style.display = 'none';
             }
+
 
             // Validate duration minutes
             const durationMinutes = document.getElementById('durationMinutes');
@@ -222,11 +223,13 @@
                 durationMinutesError.style.display = 'none';
             }
 
+
             if (!isValid) {
                 event.preventDefault();
                 alert('Please correct the errors in the form before submitting.');
             }
         });
+
 
         // Real-time validation on input
         document.getElementById('serviceName').addEventListener('input', function() {
@@ -236,12 +239,14 @@
             }
         });
 
+
         document.getElementById('serviceCategoryId').addEventListener('change', function() {
             if (this.value) {
                 this.classList.remove('invalid');
                 document.getElementById('serviceCategoryIdError').style.display = 'none';
             }
         });
+
 
         document.getElementById('serviceType').addEventListener('change', function() {
             if (this.value) {
@@ -250,12 +255,14 @@
             }
         });
 
+
         document.getElementById('servicePrice').addEventListener('input', function() {
             if (this.value && parseInt(this.value) >= 0) {
                 this.classList.remove('invalid');
                 document.getElementById('servicePriceError').style.display = 'none';
             }
         });
+
 
         document.getElementById('durationMinutes').addEventListener('input', function() {
             const duration = parseInt(this.value);

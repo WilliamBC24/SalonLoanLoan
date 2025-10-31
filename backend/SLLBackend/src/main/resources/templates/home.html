@@ -18,7 +18,7 @@
 
 <!-- Hero (boxed) -->
 <section class="hero-area py-3 py-lg-4">
-    <div class="container-fluid px-0">
+    <div class="container">
         <div class="hero-card shadow-sm">
             <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
                 <div id="heroSlides" class="carousel-inner">
@@ -84,6 +84,76 @@
     
 </section>
 
+<!-- Our Services (keep) -->
+<section class="services-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title text-center" th:text="#{home.our.services}">Our Services</h2>
+        </div>
+        <div th:if="${#lists.isEmpty(services)}">
+            <p class="text-muted text-center" th:text="#{home.no.services}">No services available at the moment.</p>
+        </div>
+        <div class="our-services-slider-wrapper position-relative" th:if="${!#lists.isEmpty(services)}">
+          <button type="button" class="slider-arrow left" onclick="scrollServiceSlider(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="our-services-slider d-flex flex-nowrap overflow-auto" id="ourServicesSlider">
+            <div class="service-card-mini" th:each="service : ${services}">
+              <div class="service-image-wrapper">
+                <img th:src="'https://picsum.photos/300/180?random=' + ${service.id}" alt="Service Image" class="service-img"/>
+              </div>
+              <div class="service-info-mini text-center mt-2 px-2">
+                <div class="service-title-mini text-truncate" th:text="${service.serviceName}">Service Name</div>
+                <div class="service-desc-mini text-muted text-truncate-2" th:text="${service.serviceDescription}">Description</div>
+                <div class="service-price-mini mt-1">
+                  <span class="price-value" th:text="${#numbers.formatDecimal(service.servicePrice, 0, 'COMMA', 0, 'POINT')}">0</span>
+                  <span class="currency-unit" th:text="#{currency.unit}">VND</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="slider-arrow right" onclick="scrollServiceSlider(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+    </div>
+</section>
+
+<!-- Our Products -->
+<section class="products-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title text-center" th:text="#{home.our.products}">Our Products</h2>
+        </div>
+        <div th:if="${#lists.isEmpty(products)}">
+            <p class="text-muted text-center" th:text="#{home.no.products}">No products available at the moment.</p>
+        </div>
+        <div class="our-products-slider-wrapper position-relative" th:if="${!#lists.isEmpty(products)}">
+          <button type="button" class="slider-arrow left" onclick="scrollProductSlider(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="our-products-slider d-flex flex-nowrap overflow-auto" id="ourProductsSlider">
+            <div class="product-card-mini" th:each="product : ${products}">
+              <div class="product-image-wrapper">
+                <img th:src="'https://picsum.photos/300/180?random=' + ${product.id}" alt="Product Image" class="product-img"/>
+              </div>
+              <div class="product-info-mini text-center mt-2 px-2">
+                <div class="product-title-mini text-truncate" th:text="${product.productName}">Product Name</div>
+                <div class="product-desc-mini text-muted text-truncate-2" th:text="${product.productDescription}">Description</div>
+                <div class="product-price-mini mt-1">
+                  <span class="price-value" th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')}">0</span>
+                  <span class="currency-unit" th:text="#{currency.unit}">VND</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="slider-arrow right" onclick="scrollProductSlider(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+    </div>
+</section>
+
 <!-- Spa center (new) -->
 <section class="spa-section py-5 bg-light">
     <div class="container">
@@ -132,34 +202,7 @@
     </div>
 </section>
 
-<!-- Our Services (keep) -->
-<section class="services-section py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title text-center" th:text="#{home.our.services}">Our Services</h2>
-        </div>
-        <div th:if="${#lists.isEmpty(services)}">
-            <p class="text-muted text-center" th:text="#{home.no.services}">No services available at the moment.</p>
-        </div>
-        <div class="row g-4" th:if="${!#lists.isEmpty(services)}">
-            <div class="col-md-4" th:each="service : ${services}">
-                <div class="service-card h-100 shadow-sm" onclick="showServiceDetail('${service.id}')">
-                    <div class="card-body">
-                        <div class="service-icon mb-3">
-                            <i class="fas fa-cut fa-2x text-primary"></i>
-                        </div>
-                        <h3 class="h5 mb-3" th:text="${service.serviceName}">Service Name</h3>
-                        <p class="small text-muted mb-3" th:text="${service.serviceDescription}">Description</p>
-                        <div class="service-price">
-                            <span class="price-tag" th:text="${service.servicePrice} + ' ' + #{currency.unit}">0 VND</span>
-                        </div>
-                        <!-- <button class="btn btn-outline-primary btn-sm mt-2" th:text="#{home.book.now}">Đặt lịch</button> -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 <!-- Experienced Team (new) -->
 <section class="team-section py-5 bg-light">
@@ -224,34 +267,7 @@
     </div>
 </section>
 
-<!-- Our Products -->
-<section class="products-section py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title text-center" th:text="#{home.our.products}">Our Products</h2>
-        </div>
-        <div th:if="${#lists.isEmpty(products)}">
-            <p class="text-muted text-center" th:text="#{home.no.products}">No products available at the moment.</p>
-        </div>
-        <div class="row g-4" th:if="${!#lists.isEmpty(products)}">
-            <div class="col-md-4" th:each="product : ${products}">
-                <div class="product-card h-100 shadow-sm" onclick="showProductDetail('${product.id}')">
-                    <div class="card-body">
-                        <div class="product-icon mb-3">
-                            <i class="fas fa-shopping-bag fa-2x text-success"></i>
-                        </div>
-                        <h3 class="h5 mb-3" th:text="${product.productName}">Product Name</h3>
-                        <p class="small text-muted mb-3" th:text="${product.productDescription}">Description</p>
-                        <div class="product-price">
-                            <span class="price-tag" th:text="${product.currentPrice} + ' ' + #{currency.unit}">0 VND</span>
-                        </div>
-                        <!-- <button class="btn btn-outline-success btn-sm mt-2" th:text="#{home.add.to.cart}">Thêm vào giỏ</button> -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 <div th:replace="fragments/footer :: footer"></div>
 
@@ -694,6 +710,22 @@ function initLazyLoading() {
     });
     
     images.forEach(img => imageObserver.observe(img));
+}
+
+function scrollServiceSlider(direction) {
+  const slider = document.getElementById('ourServicesSlider');
+  const card = slider.querySelector('.service-card-mini');
+  if (slider && card) {
+    slider.scrollLeft += (card.offsetWidth + 20) * direction;
+  }
+}
+
+function scrollProductSlider(direction) {
+  const slider = document.getElementById('ourProductsSlider');
+  const card = slider.querySelector('.product-card-mini');
+  if (slider && card) {
+    slider.scrollLeft += (card.offsetWidth + 20) * direction;
+  }
 }
 
 // ===== INITIALIZATION =====

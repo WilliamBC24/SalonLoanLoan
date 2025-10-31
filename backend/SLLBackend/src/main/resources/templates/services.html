@@ -67,7 +67,7 @@
     </section>
 
     <main class="services-page-main py-5">
-        <div class="container-fluid">
+        <div class="container-xl">
             <div class="search-filter-card mb-4">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
@@ -127,7 +127,7 @@
 
             <div class="services-grid-wrapper">
                 <div class="row g-4" th:if="${!#lists.isEmpty(services)}">
-                    <div class="col-md-6 col-lg-4" th:each="svc : ${services}">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3" th:each="svc : ${services}">
                         <div class="service-card h-100 shadow-sm">
                             <div class="service-image-wrapper">
                                 <img th:src="'https://picsum.photos/400/400?random=' + ${svc.id}" 

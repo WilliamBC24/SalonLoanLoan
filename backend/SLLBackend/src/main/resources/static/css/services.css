@@ -28,13 +28,23 @@
 
 .filter-group .form-check {
     padding: 0;
-    margin: 0 0.5rem 0 0;
+    margin: 0 1.25rem 0.75rem 0;
+}
+
+/* Space between checkbox and its label */
+.filter-group .form-check-input {
+    margin-right: 0.5rem;
 }
 
 .filter-group .form-check-label {
     font-family: var(--font-primary);
     font-size: 14px;
     cursor: pointer;
+}
+
+/* Add inner breathing room so filters don't touch the card edges */
+.filter-group {
+    padding: 0.25rem 0.75rem;
 }
 
 /* Services Grid */
@@ -59,7 +69,7 @@
 .service-image-wrapper {
     position: relative;
     width: 100%;
-    height: 250px;
+    height: 200px;
     overflow: hidden;
     background: #f8f9fa;
 }
@@ -88,7 +98,7 @@
 }
 
 .service-card-body {
-    padding: 1.25rem 1.25rem 1.5rem;
+    padding: 1rem 1rem 1.25rem;
 }
 
 .service-title {
@@ -141,6 +151,14 @@
     
     .services-grid-wrapper {
         padding: 0 1rem;
+    }
+
+    .filter-group .form-check {
+        margin: 0 1rem 0.5rem 0;
+    }
+
+    .filter-group {
+        padding: 0.25rem 0.5rem;
     }
     
     .service-image-wrapper {

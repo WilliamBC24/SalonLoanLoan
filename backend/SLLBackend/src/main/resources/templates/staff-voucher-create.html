@@ -1,168 +1,136 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Create Voucher</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
-        }
-        h1 {
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .form-group .error {
-            color: #dc3545;
-            font-size: 0.875em;
-            margin-top: 5px;
-            display: none;
-        }
-        .form-group input.invalid,
-        .form-group select.invalid,
-        .form-group textarea.invalid {
-            border-color: #dc3545;
-        }
-        .button-group {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-primary {
-            background: #007bff;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #0056b3;
-        }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background: #545b62;
-        }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .required::after {
-            content: " *";
-            color: #dc3545;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{staff.vouchers.create.page.title} + ' | ' + #{app.name}">Staff - Create Voucher | Salon Loan Loan</title>
+   
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Your CSS -->
+    <link rel="stylesheet" th:href="@{/css/staff-voucher-create.css}">
+    <!-- Staff Sidebar CSS -->
+    <link rel="stylesheet" th:href="@{/css/staff-sidebar.css}">
 </head>
 <body>
-    <h1>Create New Voucher</h1>
+    <div class="d-flex">
+        <!-- Sidebar Fragment -->
+        <div th:replace="fragments/staff-sidebar :: staff-sidebar"></div>
 
-    <!-- Error Messages -->
-    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-    <form id="voucherForm" method="post" action="/staff/voucher/create">
-        <div class="form-group">
-            <label for="voucherName" class="required">Voucher Name</label>
-            <input type="text" id="voucherName" name="voucherName" required>
-            <div class="error" id="voucherNameError">Voucher name is required.</div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header Fragment -->
+            <div th:replace="fragments/staff-sidebar :: staff-header"></div>
+
+
+            <!-- Content -->
+            <div class="content">
+                <h1 class="page-title" th:text="#{staff.vouchers.create.title}">Create New Voucher</h1>
+
+
+                <!-- Error Messages -->
+                <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+
+                <div class="form-container">
+                    <form id="voucherForm" method="post" th:action="@{/staff/voucher/create}">
+                        <div class="form-group">
+                            <label for="voucherName" class="required" th:text="#{staff.vouchers.form.name}">Voucher Name</label>
+                            <input type="text" id="voucherName" name="voucherName" required>
+                            <div class="error" id="voucherNameError" th:text="#{staff.vouchers.form.name.error.required}">Voucher name is required.</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="voucherDescription" class="required" th:text="#{staff.vouchers.form.description}">Voucher Description</label>
+                            <textarea id="voucherDescription" name="voucherDescription" required></textarea>
+                            <div class="error" id="voucherDescriptionError" th:text="#{staff.vouchers.form.description.error.required}">Voucher description is required.</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="voucherCode" class="required" th:text="#{staff.vouchers.form.code}">Voucher Code</label>
+                            <input type="text" id="voucherCode" name="voucherCode" required>
+                            <div class="error" id="voucherCodeError" th:text="#{staff.vouchers.form.code.error.required}">Voucher code is required.</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="discountType" class="required" th:text="#{staff.vouchers.form.discount.type}">Discount Type</label>
+                            <select id="discountType" name="discountType" required>
+                                <option value="" th:text="#{staff.vouchers.form.discount.type.select}">Select Discount Type</option>
+                                <option value="AMOUNT" th:text="#{staff.vouchers.filter.discount.type.amount}">Amount</option>
+                                <option value="PERCENTAGE" th:text="#{staff.vouchers.filter.discount.type.percentage}">Percentage</option>
+                            </select>
+                            <div class="error" id="discountTypeError" th:text="#{staff.vouchers.form.discount.type.error.required}">Please select a discount type.</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="discountAmount" class="required" th:text="#{staff.vouchers.form.discount.amount}">Discount Amount</label>
+                            <input type="number" id="discountAmount" name="discountAmount" min="1" required>
+                            <div class="error" id="discountAmountError" th:text="#{staff.vouchers.form.discount.amount.error.required}">Discount amount must be greater than 0.</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="effectiveFrom" class="required" th:text="#{staff.vouchers.form.effective.from}">Effective From</label>
+                            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" required>
+                            <div class="error" id="effectiveFromError" th:text="#{staff.vouchers.form.effective.from.error.required}">Effective from date is required.</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="effectiveTo" class="required" th:text="#{staff.vouchers.form.effective.to}">Effective To</label>
+                            <input type="datetime-local" id="effectiveTo" name="effectiveTo" required>
+                            <div class="error" id="effectiveToError" th:text="#{staff.vouchers.form.effective.to.error.required}">Effective to date is required and must be after effective from date.</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="maxUsage" class="required" th:text="#{staff.vouchers.form.max.usage}">Max Usage</label>
+                            <input type="number" id="maxUsage" name="maxUsage" min="1" required>
+                            <div class="error" id="maxUsageError" th:text="#{staff.vouchers.form.max.usage.error.required}">Max usage must be greater than 0.</div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="voucherStatusId" class="required" th:text="#{staff.vouchers.form.status}">Voucher Status</label>
+                            <select id="voucherStatusId" name="voucherStatusId" required>
+                                <option value="" th:text="#{staff.vouchers.form.status.select}">Select Status</option>
+                                <option th:each="status : ${statuses ?: {}}" th:value="${status.id}" th:text="${status.name}">Status</option>
+                            </select>
+                            <div class="error" id="voucherStatusIdError" th:text="#{staff.vouchers.form.status.error.required}">Please select a voucher status.</div>
+                        </div>
+
+
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary" th:text="#{btn.create}">Create Voucher</button>
+                            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/voucher/list'" th:text="#{btn.cancel}">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="voucherDescription" class="required">Voucher Description</label>
-            <textarea id="voucherDescription" name="voucherDescription" required></textarea>
-            <div class="error" id="voucherDescriptionError">Voucher description is required.</div>
-        </div>
 
-        <div class="form-group">
-            <label for="voucherCode" class="required">Voucher Code</label>
-            <input type="text" id="voucherCode" name="voucherCode" required>
-            <div class="error" id="voucherCodeError">Voucher code is required.</div>
-        </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   
+    <!-- Staff Scripts Fragment -->
+    <div th:replace="fragments/staff-sidebar :: staff-scripts"></div>
 
-        <div class="form-group">
-            <label for="discountType" class="required">Discount Type</label>
-            <select id="discountType" name="discountType" required>
-                <option value="">Select Discount Type</option>
-                <option value="AMOUNT">Amount</option>
-                <option value="PERCENTAGE">Percentage</option>
-            </select>
-            <div class="error" id="discountTypeError">Please select a discount type.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="discountAmount" class="required">Discount Amount</label>
-            <input type="number" id="discountAmount" name="discountAmount" min="1" required>
-            <div class="error" id="discountAmountError">Discount amount must be greater than 0.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="effectiveFrom" class="required">Effective From</label>
-            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" required>
-            <div class="error" id="effectiveFromError">Effective from date is required.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="effectiveTo" class="required">Effective To</label>
-            <input type="datetime-local" id="effectiveTo" name="effectiveTo" required>
-            <div class="error" id="effectiveToError">Effective to date is required and must be after effective from date.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="maxUsage" class="required">Max Usage</label>
-            <input type="number" id="maxUsage" name="maxUsage" min="1" required>
-            <div class="error" id="maxUsageError">Max usage must be greater than 0.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="voucherStatusId" class="required">Voucher Status</label>
-            <select id="voucherStatusId" name="voucherStatusId" required>
-                <option value="">Select Status</option>
-                <option th:each="status : ${statuses}" th:value="${status.id}" th:text="${status.name}">Status</option>
-            </select>
-            <div class="error" id="voucherStatusIdError">Please select a voucher status.</div>
-        </div>
-
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">Create Voucher</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/voucher/list'">Cancel</button>
-        </div>
-    </form>
 
     <script>
         document.getElementById('voucherForm').addEventListener('submit', function(event) {
             let isValid = true;
+
 
             // Validate voucher name
             const voucherName = document.getElementById('voucherName');
@@ -176,6 +144,7 @@
                 voucherNameError.style.display = 'none';
             }
 
+
             // Validate voucher description
             const voucherDescription = document.getElementById('voucherDescription');
             const voucherDescriptionError = document.getElementById('voucherDescriptionError');
@@ -187,6 +156,7 @@
                 voucherDescription.classList.remove('invalid');
                 voucherDescriptionError.style.display = 'none';
             }
+
 
             // Validate voucher code
             const voucherCode = document.getElementById('voucherCode');
@@ -200,6 +170,7 @@
                 voucherCodeError.style.display = 'none';
             }
 
+
             // Validate discount type
             const discountType = document.getElementById('discountType');
             const discountTypeError = document.getElementById('discountTypeError');
@@ -211,6 +182,7 @@
                 discountType.classList.remove('invalid');
                 discountTypeError.style.display = 'none';
             }
+
 
             // Validate discount amount
             const discountAmount = document.getElementById('discountAmount');
@@ -224,6 +196,7 @@
                 discountAmountError.style.display = 'none';
             }
 
+
             // Validate effective from
             const effectiveFrom = document.getElementById('effectiveFrom');
             const effectiveFromError = document.getElementById('effectiveFromError');
@@ -235,6 +208,7 @@
                 effectiveFrom.classList.remove('invalid');
                 effectiveFromError.style.display = 'none';
             }
+
 
             // Validate effective to
             const effectiveTo = document.getElementById('effectiveTo');
@@ -252,6 +226,7 @@
                 effectiveToError.style.display = 'none';
             }
 
+
             // Validate max usage
             const maxUsage = document.getElementById('maxUsage');
             const maxUsageError = document.getElementById('maxUsageError');
@@ -263,6 +238,7 @@
                 maxUsage.classList.remove('invalid');
                 maxUsageError.style.display = 'none';
             }
+
 
             // Validate voucher status
             const voucherStatusId = document.getElementById('voucherStatusId');
@@ -276,11 +252,13 @@
                 voucherStatusIdError.style.display = 'none';
             }
 
+
             if (!isValid) {
                 event.preventDefault();
-                alert('Please correct the errors in the form before submitting.');
+                alert(/*[[#{form.validation.error}]]*/ 'Please correct the errors in the form before submitting.');
             }
         });
+
 
         // Real-time validation on input
         document.getElementById('voucherName').addEventListener('input', function() {
@@ -290,12 +268,14 @@
             }
         });
 
+
         document.getElementById('voucherDescription').addEventListener('input', function() {
             if (this.value.trim()) {
                 this.classList.remove('invalid');
                 document.getElementById('voucherDescriptionError').style.display = 'none';
             }
         });
+
 
         document.getElementById('voucherCode').addEventListener('input', function() {
             if (this.value.trim()) {
@@ -304,12 +284,14 @@
             }
         });
 
+
         document.getElementById('discountType').addEventListener('change', function() {
             if (this.value) {
                 this.classList.remove('invalid');
                 document.getElementById('discountTypeError').style.display = 'none';
             }
         });
+
 
         document.getElementById('discountAmount').addEventListener('input', function() {
             if (this.value && parseInt(this.value) >= 1) {
@@ -318,12 +300,14 @@
             }
         });
 
+
         document.getElementById('effectiveFrom').addEventListener('change', function() {
             if (this.value) {
                 this.classList.remove('invalid');
                 document.getElementById('effectiveFromError').style.display = 'none';
             }
         });
+
 
         document.getElementById('effectiveTo').addEventListener('change', function() {
             const effectiveFrom = document.getElementById('effectiveFrom').value;
@@ -333,12 +317,14 @@
             }
         });
 
+
         document.getElementById('maxUsage').addEventListener('input', function() {
             if (this.value && parseInt(this.value) >= 1) {
                 this.classList.remove('invalid');
                 document.getElementById('maxUsageError').style.display = 'none';
             }
         });
+
 
         document.getElementById('voucherStatusId').addEventListener('change', function() {
             if (this.value) {

@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 @Data
 @Builder
@@ -12,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "order_invoice_details")
+@Check(constraints = "quantity > 0 AND price_at_sale > 0")
 public class OrderInvoiceDetails {
 
     @Id
@@ -32,5 +36,15 @@ public class OrderInvoiceDetails {
     @Column(name = "price_at_sale", nullable = false)
     private Integer priceAtSale;
 
-    // Note: subtotal is a generated column in the database
+    //TODO: delete this in production
+    @Generated(GenerationTime.ALWAYS)
+    @Column(
+            name = "subtotal",
+            insertable = false,
+            updatable = false,
+            columnDefinition =
+                    "INT GENERATED ALWAYS AS " +
+                            "(price_at_sale * quantity) STORED"
+    )
+    private Integer subtotal;
 }

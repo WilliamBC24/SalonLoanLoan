@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 @Data
 @Builder
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "satisfaction_rating")
+@Check(constraints = "rating >= 1 AND rating <= 5")
 public class SatisfactionRating {
 
     @Id

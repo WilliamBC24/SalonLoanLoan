@@ -1,5 +1,6 @@
 package service.sllbackend.web.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,4 +35,9 @@ public class JobPostingDTO {
 
     @NotNull
     private JobPostingStatus status;
+
+    @AssertTrue(message = "effectiveTo must be later than or equal to effectiveFrom")
+    public boolean isEffectiveRangeValid() {
+        return effectiveTo == null || !effectiveTo.isBefore(effectiveFrom);
+    }
 }

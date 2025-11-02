@@ -44,7 +44,8 @@ public class AccountManagementController {
 
     @GetMapping("/user/edit/{username}")
     public String editUserAccount(@PathVariable String username, Model model) {
-        UserAccount userAccount = userAccountRepo.findByUsername(username).orElse(null);
+        UserAccount userAccount = userAccountRepo.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found"));
         model.addAttribute("user", userAccount);
         return "admin-user-edit";
     }
@@ -54,7 +55,8 @@ public class AccountManagementController {
                                     @Valid @ModelAttribute AdminUserProfileDTO adminUserProfileDTO,
                                     BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            UserAccount userAccount = userAccountRepo.findByUsername(username).orElse(null);
+            UserAccount userAccount = userAccountRepo.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User account not found"));
             model.addAttribute("user", userAccount);
             return "admin-user-edit";
         }
@@ -68,7 +70,8 @@ public class AccountManagementController {
 
     @GetMapping("/staff/edit/{username}")
     public String editStaffAccount(@PathVariable String username, Model model) {
-        StaffAccount staffAccount = staffAccountRepo.findByUsername(username).orElse(null);
+        StaffAccount staffAccount = staffAccountRepo.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
         model.addAttribute("staffAccount", staffAccount);
         return "admin-staff-edit";
     }
@@ -77,7 +80,8 @@ public class AccountManagementController {
     public String updateStaffAccount(@PathVariable String username, @Valid @ModelAttribute AdminStaffProfileDTO adminStaffProfileDTO,
                                      BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            StaffAccount staffAccount = staffAccountRepo.findByUsername(username).orElse(null);
+            StaffAccount staffAccount = staffAccountRepo.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
             model.addAttribute("staffAccount", staffAccount);
             return "admin-staff-edit";
         }

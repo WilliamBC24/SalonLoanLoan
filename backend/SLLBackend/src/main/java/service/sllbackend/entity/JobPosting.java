@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 import service.sllbackend.enumerator.JobPostingStatus;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @Table(name = "job_posting")
+@Check(constraints = "max_application > 0 AND effective_to IS NULL OR effective_to >= effective_from")
 public class JobPosting {
 
     @Id

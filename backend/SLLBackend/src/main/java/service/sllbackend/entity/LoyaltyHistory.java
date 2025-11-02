@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "loyalty_history")
+@Check(constraints = """
+     (appointment_invoice_id IS NOT NULL AND order_id IS NULL) OR
+            (appointment_invoice_id IS NULL AND order_id IS NOT NULL)
+    """)
 public class LoyaltyHistory {
 
     @Id

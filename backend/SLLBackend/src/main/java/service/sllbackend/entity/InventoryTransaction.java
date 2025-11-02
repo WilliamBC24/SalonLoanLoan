@@ -5,11 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 import service.sllbackend.enumerator.InventoryTransactionType;
 import service.sllbackend.enumerator.InventoryTransactionReason;
-
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "inventory_transaction")
+@Check(constraints = "quantity > 0")
 public class InventoryTransaction {
 
     @Id

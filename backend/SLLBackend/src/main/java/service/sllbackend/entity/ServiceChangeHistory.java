@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "service_change_history")
+@Check(constraints = "service_price > 0 AND duration_minutes > 0 AND effective_to IS NULL OR effective_to > effective_from")
 public class ServiceChangeHistory {
 
     @Id

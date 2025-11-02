@@ -30,8 +30,8 @@ public class JobApplicationController {
 
     @GetMapping("/details/{id}")
     public String details(@PathVariable Long id, Model model){
-        JobPosting job = jobPostingRepo.findById(id).orElse(null);
-        System.out.println(job);
+        JobPosting job = jobPostingRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Job posting not found"));
         model.addAttribute("job", job);
         return "job-posting-details";
     }
@@ -39,7 +39,8 @@ public class JobApplicationController {
     @PostMapping("/apply/{id}")
     public String apply(@PathVariable Long id, Model model, @Valid @ModelAttribute JobApplicationDTO jobApplicationDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            JobPosting job = jobPostingRepo.findById(id).orElse(null);
+            JobPosting job = jobPostingRepo.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Job posting not found"));
             model.addAttribute("job", job);
             return "job-posting-details";
         }

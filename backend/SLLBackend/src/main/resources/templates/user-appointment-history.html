@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>User Appointment History</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .search-bar { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
+        .filter-group { margin-bottom: 15px; }
+        .filter-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; }
+        .checkbox-item { display: flex; align-items: center; }
+        .checkbox-item input { margin-right: 5px; }
+        .search-buttons { margin-top: 15px; }
+        .search-buttons button { padding: 8px 16px; margin-right: 10px; cursor: pointer; border: none; border-radius: 4px; }
+        .search-btn { background: #007bff; color: white; }
+        .search-btn:hover { background: #0056b3; }
+        .reset-btn { background: #6c757d; color: white; }
+        .reset-btn:hover { background: #545b62; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f4f4f4; }
+        tr:hover { background: #f5f5f5; }
+        .view-link { color: #007bff; text-decoration: none; }
+        .view-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<h1>User Appointment History</h1>
+
+<!-- Search & Filter -->
+<div class="search-bar">
+    <form method="get" action="/user/appointment-history">
+
+        <div class="filter-group">
+            <label>Appointment Status:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="statusAll" name="statuses" value="" th:checked="${selectedStatuses == null}">
+                    <label for="statusAll">All</label>
+                </div>
+                <div class="checkbox-item" th:each="status : ${allStatuses}">
+                    <input type="checkbox" th:id="${status}" name="statuses" th:value="${status}" th:checked="${selectedStatuses != null and selectedStatuses.contains(status)}"/>
+                    <label th:for="${status}" th:text="${status}">STATUS</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-buttons">
+            <button type="submit" class="search-btn">Search</button>
+            <button type="button" class="reset-btn" onclick="window.location.href='/user/appointments'">Reset</button>
+        </div>
+    </form>
+</div>
+
+<!-- Appointments Table -->
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Phone Number</th>
+        <th>Registered At</th>
+        <th>Scheduled At</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="appt : ${appointments}">
+        <td th:text="${appt.name}">Name</td>
+        <td th:text="${appt.phoneNumber}">Phone</td>
+        <td th:text="${#temporals.format(appt.registeredAt, 'yyyy-MM-dd HH:mm')}">Registered</td>
+        <td th:text="${#temporals.format(appt.scheduledAt, 'yyyy-MM-dd HH:mm')}">Scheduled</td>
+        <td th:text="${appt.status}">Status</td>
+        <td>
+            <a th:href="@{/user/appointment-history/view/{id}(id=${appt.id})}" class="view-link">View</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

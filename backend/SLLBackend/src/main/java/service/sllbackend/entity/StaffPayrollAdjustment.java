@@ -5,10 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 import service.sllbackend.enumerator.PayrollAdjustment;
 
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.LocalDate;
 
@@ -18,6 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @Table(name = "staff_payroll_adjustment")
+@Check(constraints = "amount > 0")
 public class StaffPayrollAdjustment {
 
     @Id

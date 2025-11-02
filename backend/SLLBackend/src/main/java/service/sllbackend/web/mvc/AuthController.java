@@ -13,7 +13,7 @@ import service.sllbackend.service.impl.RegisterServiceImpl;
 import service.sllbackend.web.dto.UserRegisterDTO;
 
 @Controller
-@RequestMapping("/auth/")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final RegisterServiceImpl registerService;
@@ -47,8 +47,8 @@ public class AuthController {
     public String userAccountCreation(RedirectAttributes redirectAttributes,
                                       @Valid @ModelAttribute UserRegisterDTO registerDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error");
-            return "user-register";
+            redirectAttributes.addFlashAttribute("error", "Register error, check your inputs");
+            return "redirect:/auth/user/register";
         }
 
         try {

@@ -5,10 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 import service.sllbackend.enumerator.ServiceType;
 
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Data
 @Builder
@@ -16,6 +15,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 @AllArgsConstructor
 @Entity
 @Table(name = "service")
+@Check(constraints = "service_price > 0 AND duration_minutes > 0")
 public class Service {
 
     @Id

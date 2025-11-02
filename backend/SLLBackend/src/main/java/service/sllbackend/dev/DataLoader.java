@@ -35,6 +35,7 @@ public class DataLoader implements CommandLineRunner {
 	private final JobPostingRepo jobPostingRepo;
 	private final JobPostingApplicationRepo jobPostingApplicationRepo;
 	private final LoyaltyLevelRepo loyaltyLevelRepo;
+	private final AppointmentRepo appointmentRepo;
 
 	@Override
 	public void run(String... args) {
@@ -49,6 +50,49 @@ public class DataLoader implements CommandLineRunner {
 		registerProviders();
 		registerJobPosting();
 		registerJobApplication();
+		registerAppointments();
+	}
+
+	public void registerPromotions() {
+		PromotionStatus activeStatus = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("ACTIVE")
+				.build());
+
+		PromotionStatus inactiveStatus = promotionStatusRepo.save(PromotionStatus.builder()
+				.name("INACTIVE")
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Holiday Discount")
+				.promotionDescription("20% off on all services during the holiday season")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(20)
+				.effectiveFrom(LocalDateTime.of(2024, 12, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2024, 12, 31, 23, 59))
+				.promotionStatus(activeStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("New Year Special")
+				.promotionDescription("Flat 100,000 VND off on all services")
+				.discountType(DiscountType.AMOUNT)
+				.discountAmount(100000)
+				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2025, 1, 15, 23, 59))
+				.promotionStatus(activeStatus)
+				.build());
+
+		promotionRepo.save(Promotion.builder()
+				.promotionName("Summer Sale")
+				.promotionDescription("15% off on selected services")
+				.discountType(DiscountType.PERCENTAGE)
+				.discountAmount(15)
+				.effectiveFrom(LocalDateTime.of(2024, 6, 1, 0, 0))
+				.effectiveTo(LocalDateTime.of(2024, 6, 30, 23, 59))
+				.promotionStatus(inactiveStatus)
+				.build());
+
+		log.info("Successfully loaded 3 promotions with 2 statuses");
 	}
 
 	public void registerUser() {
@@ -65,6 +109,8 @@ public class DataLoader implements CommandLineRunner {
 				.email("alice@wonderland.com")
 				.accountStatus(AccountStatus.ACTIVE)
 				.build());
+
+		log.info("User registered: " + username + " with password: " + rawPassword);
 	}
 
 	public void registerStaff() {
@@ -96,6 +142,8 @@ public class DataLoader implements CommandLineRunner {
 					.password(passwordEncoder.encode("admin"))
 					.build());
 		});
+
+		log.info("Staff registered: " + name + " with role: " + role);
 	}
 
 	public void registerServices() {
@@ -684,7 +732,7 @@ public class DataLoader implements CommandLineRunner {
 				.effectiveTo(LocalDateTime.of(2025, 8, 31, 23, 59))
 				.maxUsage(500)
 				.usedCount(25)
-				.voucherStatus(activeStatus)
+				.voucherStatus(inactiveStatus)
 				.build());
 
 		voucherRepo.save(Voucher.builder()
@@ -935,12 +983,38 @@ public class DataLoader implements CommandLineRunner {
 	}
 
 	public void registerLoyaltyLevel() {
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Bronze", 0));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Bronze", 1000));
 		// Silver
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Silver", 1000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Silver", 2000));
 		// Gold
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 2000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 5000));
 		// Platinum
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 5000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 10000));
+	}
+
+	public void registerAppointments() {
+		appointmentRepo.save(Appointment.builder()
+				.name("Alice")
+				.phoneNumber("0999111222")
+				.registeredAt(LocalDateTime.now().minusDays(3))
+				.scheduledAt(LocalDateTime.now().plusDays(2))
+				.status(AppointmentStatus.REGISTERED)
+				.build());
+
+		appointmentRepo.save(Appointment.builder()
+				.name("Bob")
+				.phoneNumber("0888222333")
+				.registeredAt(LocalDateTime.now().minusDays(5))
+				.scheduledAt(LocalDateTime.now().plusDays(1))
+				.status(AppointmentStatus.PENDING)
+				.build());
+
+		appointmentRepo.save(Appointment.builder()
+				.name("Charlie")
+				.phoneNumber("0777333444")
+				.registeredAt(LocalDateTime.now().minusDays(1))
+				.scheduledAt(null) // not scheduled yet
+				.status(AppointmentStatus.PENDING)
+				.build());
 	}
 }

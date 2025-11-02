@@ -44,7 +44,8 @@ public class ProductsServiceImpl implements ProductsService {
     @Override
     @Transactional(readOnly = true)
     public Product getProductById(Integer id) {
-        return productRepo.findProductById(id).orElse(null);
+        return productRepo.findProductById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
     }
 
     @Override

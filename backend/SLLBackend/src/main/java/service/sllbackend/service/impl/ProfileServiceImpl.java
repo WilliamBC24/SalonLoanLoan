@@ -1,6 +1,7 @@
 package service.sllbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -14,10 +15,7 @@ import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.ProfileService;
 import service.sllbackend.utils.EncryptSSN;
 import service.sllbackend.utils.ValidationUtils;
-import service.sllbackend.web.dto.AdminStaffProfileDTO;
-import service.sllbackend.web.dto.AdminUserProfileDTO;
-import service.sllbackend.web.dto.StaffProfileDTO;
-import service.sllbackend.web.dto.UserProfileDTO;
+import service.sllbackend.web.dto.*;
 
 import java.util.List;
 
@@ -28,22 +26,26 @@ public class ProfileServiceImpl implements ProfileService {
     private final StaffAccountRepo staffAccountRepo;
     private final StaffRepo staffRepo;
     private final ValidationUtils validationUtils;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
     public UserAccount getCurrentUser(String username) {
-        return userAccountRepo.findByUsername(username).orElse(null);
+        return userAccountRepo.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found"));
     }
     @Override
     @Transactional(readOnly = true)
     public UserAccount getCurrentUser(Long userId) {
-        return userAccountRepo.findById(userId).orElse(null);
+        return userAccountRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found"));
     }
 
     @Override
     @Transactional(readOnly = true)
     public StaffAccount getCurrentStaff(String username) {
-        return staffAccountRepo.findByUsername(username).orElse(null);
+        return staffAccountRepo.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
     }
 
     @Override
@@ -136,6 +138,37 @@ public class ProfileServiceImpl implements ProfileService {
 
         existingStaff.setName(staffProfileDTO.getName().trim());
         staffRepo.save(existingStaff);
+    }
+
+    @Override
+    public void userPasswordChange(Long userId, PasswordChangeDTO passwordChangeDTO) {
+        UserAccount currentUser = userAccountRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found"));
+        String currentPassword = currentUser.getPassword();
+        passwordFilter(passwordChangeDTO, currentPassword);
+
+        currentUser.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
+        userAccountRepo.save(currentUser);
+    }
+
+    @Override
+    public void staffPasswordChange(String username, PasswordChangeDTO passwordChangeDTO) {
+        StaffAccount currentStaff = staffAccountRepo.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
+        String currentPassword = currentStaff.getPassword();
+        passwordFilter(passwordChangeDTO, currentPassword);
+
+        currentStaff.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
+        staffAccountRepo.save(currentStaff);
+    }
+
+    private void passwordFilter(PasswordChangeDTO passwordChangeDTO, String password) {
+        if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), password)) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+        if (passwordEncoder.matches(passwordChangeDTO.getNewPassword(), password)) {
+            throw new IllegalArgumentException("New password is the same as old password");
+        }
     }
 
     @Override

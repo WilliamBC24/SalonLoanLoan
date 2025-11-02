@@ -50,7 +50,8 @@ public class JobPostingController {
 
     @GetMapping("/view/{id}")
     public String jobPostingView(@PathVariable Long id, Model model){
-        JobPosting jobPosting = jobPostingRepo.findById(id).orElse(null);
+        JobPosting jobPosting = jobPostingRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Job posting not found"));
         model.addAttribute("jobPosting", jobPosting);
         return "admin-job-posting-edit";
     }
@@ -58,7 +59,8 @@ public class JobPostingController {
     @PostMapping("/edit/{id}")
     public String jobPostingEdit(@PathVariable Long id, @Valid @ModelAttribute JobPostingEditDTO jobPostingEditDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()){
-            JobPosting jobPosting = jobPostingRepo.findByJobPostingName((jobPostingEditDTO.getJobPostingName())).orElse(null);
+            JobPosting jobPosting = jobPostingRepo.findByJobPostingName((jobPostingEditDTO.getJobPostingName()))
+                    .orElseThrow(() -> new IllegalArgumentException("Job posting not found"));
             model.addAttribute("jobPosting", jobPosting);
             return "admin-job-posting-edit";
         }

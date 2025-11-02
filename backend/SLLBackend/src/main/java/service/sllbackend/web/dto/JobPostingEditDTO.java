@@ -1,5 +1,6 @@
 package service.sllbackend.web.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,4 +27,9 @@ public class JobPostingEditDTO {
     private LocalDate effectiveTo;
 
     private JobPostingStatus status;
+
+    @AssertTrue(message = "effectiveTo must be later than or equal to effectiveFrom")
+    public boolean isEffectiveRangeValid() {
+        return effectiveTo == null || !effectiveTo.isBefore(effectiveFrom);
+    }
 }

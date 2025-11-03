@@ -42,55 +42,54 @@ public class AccountManagementController {
         return "admin-profile-list";
     }
 
-    @GetMapping("/user/edit/{username}")
-    public String editUserAccount(@PathVariable String username, Model model) {
-        UserAccount userAccount = userAccountRepo.findByUsername(username)
+    @GetMapping("/user/edit/{id}")
+    public String editUserAccount(@PathVariable String id, Model model) {
+        UserAccount userAccount = userAccountRepo.findById(Long.valueOf(id))
                 .orElseThrow(() -> new IllegalArgumentException("User account not found"));
         model.addAttribute("user", userAccount);
         return "admin-user-edit";
     }
 
-    @PostMapping("/user/update/{username}")
-    public String updateUserAccount(@PathVariable String username,
+    @PostMapping("/user/update/{id}")
+    public String updateUserAccount(@PathVariable String id,
                                     @Valid @ModelAttribute AdminUserProfileDTO adminUserProfileDTO,
                                     BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            UserAccount userAccount = userAccountRepo.findByUsername(username)
+            UserAccount userAccount = userAccountRepo.findById(Long.valueOf(id))
                     .orElseThrow(() -> new IllegalArgumentException("User account not found"));
             model.addAttribute("user", userAccount);
             return "admin-user-edit";
         }
         try {
-            profileService.adminUpdateUserAccount(username, adminUserProfileDTO);
-            return "redirect:/admin/profiles/user/edit/" + username + "?updated";
+            profileService.adminUpdateUserAccount(Long.valueOf(id), adminUserProfileDTO);
+            return "redirect:/admin/profiles/user/edit/" + id + "?updated";
         } catch (Exception e) {
-            return "redirect:/admin/profiles/user/edit/" + username + "?error";
+            return "redirect:/admin/profiles/user/edit/" + id + "?error";
         }
     }
 
-    @GetMapping("/staff/edit/{username}")
-    public String editStaffAccount(@PathVariable String username, Model model) {
-        StaffAccount staffAccount = staffAccountRepo.findByUsername(username)
+    @GetMapping("/staff/edit/{id}")
+    public String editStaffAccount(@PathVariable String id, Model model) {
+        StaffAccount staffAccount = staffAccountRepo.findById(Long.valueOf(id))
                 .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
         model.addAttribute("staffAccount", staffAccount);
         return "admin-staff-edit";
     }
 
-    @PostMapping("/staff/update/{username}")
-    public String updateStaffAccount(@PathVariable String username, @Valid @ModelAttribute AdminStaffProfileDTO adminStaffProfileDTO,
+    @PostMapping("/staff/update/{id}")
+    public String updateStaffAccount(@PathVariable String id, @Valid @ModelAttribute AdminStaffProfileDTO adminStaffProfileDTO,
                                      BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            StaffAccount staffAccount = staffAccountRepo.findByUsername(username)
+            StaffAccount staffAccount = staffAccountRepo.findById(Long.valueOf(id))
                     .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
             model.addAttribute("staffAccount", staffAccount);
             return "admin-staff-edit";
         }
-
         try {
-            profileService.adminUpdateStaffAccount(username, adminStaffProfileDTO);
-            return "redirect:/admin/profiles/staff/edit/" + username + "?updated";
+            profileService.adminUpdateStaffAccount(Long.valueOf(id), adminStaffProfileDTO);
+            return "redirect:/admin/profiles/staff/edit/" + id + "?updated";
         } catch (Exception e) {
-            return "redirect:/admin/profiles/staff/edit/" + username + "?error";
+            return "redirect:/admin/profiles/staff/edit/" + id + "?error";
         }
     }
 }

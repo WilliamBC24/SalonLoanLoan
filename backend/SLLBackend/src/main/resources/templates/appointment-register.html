@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appointment Booking</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #f3f4f6;
+            --available: #dcfce7;
+            --unavailable: #e5e7eb;
+            --text-dark: #111827;
+            --text-light: #6b7280;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            width: 400px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        /* Calendar Styles */
+        .calendar {
+            user-select: none;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .calendar-header h2 {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: 50px; /* keeps consistent row height */
+            gap: 6px;
+            min-height: calc(6 * 50px + 5 * 6px); /* ensures consistent total height for 6 rows */
+        }
+
+        .day {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .day.available {
+            background-color: var(--available);
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .day.available:hover {
+            background-color: #bbf7d0;
+            transform: scale(1.05);
+        }
+
+        .day.unavailable {
+            background-color: var(--unavailable);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .day.today {
+            border: 2px solid var(--primary);
+        }
+
+        .day.selected {
+            background-color: var(--primary);
+            color: white !important;
+        }
+
+        /* Time slot section */
+        .times {
+            margin-top: 20px;
+        }
+
+        .times h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .time-slot {
+            background: var(--secondary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .time-slot:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .time-slot.selected {
+            background: var(--primary);
+            color: white;
+        }
+
+        .book-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            font-size: 1rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .book-btn:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Book an Appointment</h1>
+
+    <div class="calendar">
+        <div class="calendar-header">
+            <button class="nav-btn" id="prev-month">◀</button>
+            <h2 id="month-year"></h2>
+            <button class="nav-btn" id="next-month">▶</button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+
+    <div class="times" id="time-section" style="display:none;">
+        <h3>Available Times</h3>
+        <div class="time-slots" id="time-slots"></div>
+        <button class="book-btn" id="book-btn">Book Appointment</button>
+    </div>
+</div>
+
+<script>
+    const calendarGrid = document.getElementById('calendar-grid');
+    const monthYear = document.getElementById('month-year');
+    const timeSection = document.getElementById('time-section');
+    const timeSlotsDiv = document.getElementById('time-slots');
+    const bookBtn = document.getElementById('book-btn');
+
+    let current = new Date();
+    let selectedDate = null;
+    let selectedTime = null;
+
+    // Mock API for demo
+    function mockAvailableDates(year, month) {
+        let available = [];
+        for (let d = 1; d <= 31; d++) {
+            if (Math.random() > 0.3) available.push(`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+        }
+        return available;
+    }
+    function mockAvailableTimes() {
+        return ["09:00 AM", "10:00 AM", "01:00 PM", "03:30 PM", "05:00 PM"];
+    }
+
+    function renderCalendar(date) {
+        calendarGrid.innerHTML = '';
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        monthYear.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDay = firstDay.getDay();
+        const daysInMonth = lastDay.getDate();
+
+        const availableDates = mockAvailableDates(year, month);
+        const availableSet = new Set(availableDates);
+
+        // Always render 6 rows * 7 columns = 42 cells
+        for (let i = 0; i < 42; i++) {
+            const dayEl = document.createElement('div');
+            dayEl.classList.add('day');
+
+            const dateNum = i - startDay + 1;
+            if (i >= startDay && dateNum <= daysInMonth) {
+                dayEl.textContent = dateNum;
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(dateNum).padStart(2,'0')}`;
+                const isAvailable = availableSet.has(dateStr);
+
+                if (isAvailable) {
+                    dayEl.classList.add('available');
+                    dayEl.onclick = () => selectDay(dayEl, dateStr);
+                } else {
+                    dayEl.classList.add('unavailable');
+                }
+
+                if (dateStr === new Date().toISOString().split('T')[0]) {
+                    dayEl.classList.add('today');
+                }
+            } else {
+                // Empty filler cell
+                dayEl.style.visibility = 'hidden';
+            }
+            calendarGrid.appendChild(dayEl);
+        }
+    }
+
+    function selectDay(dayEl, dateStr) {
+        document.querySelectorAll('.day.selected').forEach(d => d.classList.remove('selected'));
+        dayEl.classList.add('selected');
+        selectedDate = dateStr;
+        renderTimeSlots(dateStr);
+    }
+
+    function renderTimeSlots(dateStr) {
+        timeSlotsDiv.innerHTML = '';
+        timeSection.style.display = 'block';
+        const times = mockAvailableTimes(dateStr);
+        times.forEach(t => {
+            const slot = document.createElement('div');
+            slot.classList.add('time-slot');
+            slot.textContent = t;
+            slot.onclick = () => selectTime(slot, t);
+            timeSlotsDiv.appendChild(slot);
+        });
+    }
+
+    function selectTime(slot, time) {
+        document.querySelectorAll('.time-slot.selected').forEach(s => s.classList.remove('selected'));
+        slot.classList.add('selected');
+        selectedTime = time;
+    }
+
+    bookBtn.addEventListener('click', () => {
+        if (!selectedDate || !selectedTime) {
+            alert('Please select a date and time first.');
+            return;
+        }
+        alert(`Appointment booked for ${selectedDate} at ${selectedTime}!`);
+    });
+
+    document.getElementById('prev-month').onclick = () => {
+        current.setMonth(current.getMonth() - 1);
+        renderCalendar(current);
+    };
+    document.getElementById('next-month').onclick = () => {
+        current.setMonth(current.getMonth() + 1);
+        renderCalendar(current);
+    };
+
+    renderCalendar(current);
+</script>
+</body>
+</html>

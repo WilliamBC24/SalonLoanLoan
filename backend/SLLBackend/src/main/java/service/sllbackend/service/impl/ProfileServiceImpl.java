@@ -96,8 +96,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public void adminUpdateUserAccount(String username, AdminUserProfileDTO adminUserProfileDTO) {
-        UserAccount existingUser = userAccountRepo.findByUsername(username)
+    public void adminUpdateUserAccount(Long id, AdminUserProfileDTO adminUserProfileDTO) {
+        UserAccount existingUser = userAccountRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         boolean changed = false;
@@ -173,19 +173,19 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public void adminUpdateStaffAccount(String username, AdminStaffProfileDTO adminStaffProfileDTO) throws Exception {
-        StaffAccount existingStaffAccount = staffAccountRepo.findByUsername(username)
+    public void adminUpdateStaffAccount(Long id, AdminStaffProfileDTO adminStaffProfileDTO) throws Exception {
+        StaffAccount existingStaffAccount = staffAccountRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
         Staff staff = existingStaffAccount.getStaff();
         boolean changed = false;
 
         validationUtils.validateStaffProfileAdmin(Long.valueOf(existingStaffAccount.getId()), adminStaffProfileDTO.getName(),
                 adminStaffProfileDTO.getEmail(), adminStaffProfileDTO.getSocialSecurityNum());
-        if (adminStaffProfileDTO.getName() != null && !adminStaffProfileDTO.getName().equals(staff.getName())) {
+        if (StringUtils.hasText(adminStaffProfileDTO.getName()) && !adminStaffProfileDTO.getName().equals(staff.getName())) {
             staff.setName(adminStaffProfileDTO.getName().trim());
             changed = true;
         }
-        if (adminStaffProfileDTO.getEmail() != null && !adminStaffProfileDTO.getEmail().equals(staff.getEmail())) {
+        if (StringUtils.hasText(adminStaffProfileDTO.getEmail()) && !adminStaffProfileDTO.getEmail().equals(staff.getEmail())) {
             staff.setEmail(adminStaffProfileDTO.getEmail().trim());
             changed = true;
         }
@@ -194,7 +194,7 @@ public class ProfileServiceImpl implements ProfileService {
             staff.setStaffStatus(adminStaffProfileDTO.getStaffStatus());
             changed = true;
         }
-        if (adminStaffProfileDTO.getSocialSecurityNum() != null &&
+        if (StringUtils.hasText(adminStaffProfileDTO.getSocialSecurityNum()) &&
                 !adminStaffProfileDTO.getSocialSecurityNum().equals(staff.getSocialSecurityNum())) {
             String encryptedSSN = EncryptSSN.encrypt(adminStaffProfileDTO.getSocialSecurityNum().trim());
             staff.setSocialSecurityNum(encryptedSSN);

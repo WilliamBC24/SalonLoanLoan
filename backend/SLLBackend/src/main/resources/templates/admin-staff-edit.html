@@ -13,7 +13,7 @@
         </div>
 
         <div class="card-body p-4">
-            <form th:action="@{/admin/profiles/staff/update/{name}(name=${staffAccount.staff.name})}" method="post">
+            <form th:action="@{/admin/profiles/staff/update/{id}(id=${staffAccount.id})}" method="post">
 
                 <!-- Account Info -->
                 <h5 class="text-secondary mb-3">Account Info</h5>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Email:</label>
-                        <input type="email" class="form-control rounded-3" th:value="${staffAccount.staff.email}">
+                        <input type="email" name="email" class="form-control rounded-3" th:value="${staffAccount.staff.email}">
                     </div>
                 </div>
 
@@ -73,7 +73,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Birth Date:</label>
-                        <input type="text" class="form-control rounded-3"
+                        <input type="text" name="birthDate" class="form-control rounded-3"
                                th:value="${#temporals.format(staffAccount.staff.birthDate, 'yyyy-MM-dd')}">
                     </div>
                     <div class="col-md-6">
@@ -85,7 +85,7 @@
 
                 <!-- Actions -->
                 <div class="text-center mt-4 d-flex justify-content-center gap-3">
-                    <a href="/profiles" class="btn btn-secondary px-4">Cancel</a>
+                    <a href="/admin/profiles" class="btn btn-secondary px-4">Cancel</a>
                     <button type="submit" class="btn btn-success px-4">Save Changes</button>
                 </div>
 

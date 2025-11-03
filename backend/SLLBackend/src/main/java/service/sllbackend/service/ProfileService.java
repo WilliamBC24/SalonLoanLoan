@@ -17,6 +17,6 @@ public interface ProfileService {
     void staffPasswordChange(String username, PasswordChangeDTO passwordChangeDTO);
     List<StaffAccount> getStaffAccount(String username, AccountStatus activeStatus);
     List<UserAccount> getUserAccount(String username, AccountStatus activeStatus);
-    void adminUpdateUserAccount(String username, AdminUserProfileDTO adminUserProfileDTO);
-    void adminUpdateStaffAccount(String username, AdminStaffProfileDTO adminStaffProfileDTO) throws Exception;
+    void adminUpdateUserAccount(Long id, AdminUserProfileDTO adminUserProfileDTO);
+    void adminUpdateStaffAccount(Long id, AdminStaffProfileDTO adminStaffProfileDTO) throws Exception;
 }

@@ -90,7 +90,7 @@ public class SecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/auth/staff/login").anonymous()
-						.requestMatchers("/staff/**").hasAnyRole("STAFF", "MANAGER", "ADMIN")
+						.requestMatchers("/staff/**", "/auth/staff/**").hasAnyRole("STAFF", "MANAGER", "ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
 						.usernameParameter("username")

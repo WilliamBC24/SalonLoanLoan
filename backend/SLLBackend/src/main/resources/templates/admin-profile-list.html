@@ -147,8 +147,8 @@
         </thead>
         <tbody>
         <tr th:each="account : ${accounts}"
-            th:with="editUrl=${type == 'staff'} ? @{/admin/profiles/staff/edit/{username}(username=${account.username})}
-                                  : @{/admin/profiles/user/edit/{username}(username=${account.username})}">
+            th:with="editUrl=${type == 'staff'} ? @{/admin/profiles/staff/edit/{id}(id=${account.id})}
+                                  : @{/admin/profiles/user/edit/{id}(id=${account.id})}">
             <td th:text="${account.username}">Username</td>
             <td th:text="${account.accountStatus}">ACTIVE</td>
             <td>

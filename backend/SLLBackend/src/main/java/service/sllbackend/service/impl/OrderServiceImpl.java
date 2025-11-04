@@ -21,6 +21,7 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerInfoRepo customerInfoRepo;
     private final CartRepo cartRepo;
     private final UserAccountRepo userAccountRepo;
+    private final VietQrServiceImpl vietQrService;
 
     @Override
     @Transactional
@@ -64,6 +65,13 @@ public class OrderServiceImpl implements OrderService {
                 .orderStatus(OrderStatus.PENDING)
                 .build();
         orderInvoice = orderInvoiceRepo.save(orderInvoice);
+        
+        // Generate QR code URL if payment method is bank transfer
+        if ("BANK_TRANSFER".equals(paymentTypeName)) {
+            String qrUrl = vietQrService.generateQrUrl(orderInvoice.getId(), username, totalPrice);
+            orderInvoice.setPaymentQrUrl(qrUrl);
+            orderInvoice = orderInvoiceRepo.save(orderInvoice);
+        }
         
         // Create order details
         for (Cart cartItem : cartItems) {

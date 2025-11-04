@@ -355,13 +355,13 @@
         </div>
         
         <!-- Login prompt if user is not logged in -->
-        <div th:if="${!canRate and @org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal() == 'anonymousUser'}" 
+        <div th:if="${!canRate and !isLoggedIn}" 
              class="login-prompt">
             <a href="/auth/user/login" class="login-link">Log in</a> to rate this product after purchasing it.
         </div>
         
         <!-- Message if logged in but cannot rate -->
-        <div th:if="${!canRate and @org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal() != 'anonymousUser'}" 
+        <div th:if="${!canRate and isLoggedIn}" 
              class="alert alert-info">
             You can rate this product after purchasing and receiving it.
         </div>

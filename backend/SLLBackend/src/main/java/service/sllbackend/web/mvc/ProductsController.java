@@ -61,6 +61,9 @@ public class ProductsController {
         }
         
         // Check if user is logged in and can rate
+        boolean isLoggedIn = principal != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        
         if (principal != null) {
             boolean canRate = productFeedbackService.canUserRateProduct(principal.getName(), id);
             model.addAttribute("canRate", canRate);

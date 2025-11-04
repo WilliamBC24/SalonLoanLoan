@@ -141,9 +141,11 @@
         }
         .star-rating {
             display: flex;
+            flex-direction: row-reverse;
             gap: 5px;
             font-size: 32px;
             margin: 15px 0;
+            justify-content: flex-end;
         }
         .star-rating input {
             display: none;
@@ -153,9 +155,9 @@
             color: #ddd;
             transition: color 0.2s;
         }
+        .star-rating input:checked ~ label,
         .star-rating label:hover,
-        .star-rating label:hover ~ label,
-        .star-rating input:checked ~ label {
+        .star-rating label:hover ~ label {
             color: #ff9800;
         }
         .comment-input {

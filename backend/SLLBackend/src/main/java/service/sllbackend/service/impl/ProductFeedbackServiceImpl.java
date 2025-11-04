@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import service.sllbackend.entity.*;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.repository.OrderInvoiceDetailsRepo;
-import service.sllbackend.repository.OrderInvoiceRepo;
 import service.sllbackend.repository.ProductFeedbackRepo;
 import service.sllbackend.repository.ProductRepo;
 import service.sllbackend.repository.UserAccountRepo;
@@ -21,7 +20,6 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
     private final ProductFeedbackRepo productFeedbackRepo;
     private final UserAccountRepo userAccountRepo;
     private final ProductRepo productRepo;
-    private final OrderInvoiceRepo orderInvoiceRepo;
     private final OrderInvoiceDetailsRepo orderInvoiceDetailsRepo;
 
     @Override
@@ -41,22 +39,9 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
             return false;
         }
         
-        // Get all delivered orders for this user
-        List<OrderInvoice> orders = orderInvoiceRepo.findByUserAccountOrderByCreatedAtDesc(userAccount);
-        
-        // Check if any delivered order contains this product
-        for (OrderInvoice order : orders) {
-            if (order.getOrderStatus() == OrderStatus.DELIVERED) {
-                List<OrderInvoiceDetails> orderDetails = orderInvoiceDetailsRepo.findByOrderInvoice(order);
-                for (OrderInvoiceDetails detail : orderDetails) {
-                    if (detail.getProduct().getId().equals(productId)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        return false;
+        // Check if user has any delivered order containing this product (optimized single query)
+        return orderInvoiceDetailsRepo.existsByUserAccountAndProductIdAndOrderStatus(
+                userAccount, productId, OrderStatus.DELIVERED);
     }
 
     @Override

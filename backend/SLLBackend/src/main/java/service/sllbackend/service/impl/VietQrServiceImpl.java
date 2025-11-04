@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import service.sllbackend.service.VietQrService;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -28,13 +27,7 @@ public class VietQrServiceImpl implements VietQrService {
         String description = String.format("Thanh Toan Don Hang %s %d", username, orderId);
         
         // URL encode the description
-        String encodedDescription;
-        try {
-            encodedDescription = URLEncoder.encode(description, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            // Fallback to simple encoding
-            encodedDescription = description.replace(" ", "%20");
-        }
+        String encodedDescription = URLEncoder.encode(description, StandardCharsets.UTF_8);
         
         // Generate VietQR URL
         // Format: https://img.vietqr.io/image/<BANK_ID>-<ACCOUNT_NO>-<TEMPLATE>.png?amount=<AMOUNT>&addInfo=<DESCRIPTION>

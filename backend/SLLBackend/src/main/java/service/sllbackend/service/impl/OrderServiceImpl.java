@@ -7,6 +7,7 @@ import service.sllbackend.entity.*;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.repository.*;
 import service.sllbackend.service.OrderService;
+import service.sllbackend.service.VietQrService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerInfoRepo customerInfoRepo;
     private final CartRepo cartRepo;
     private final UserAccountRepo userAccountRepo;
-    private final VietQrServiceImpl vietQrService;
+    private final VietQrService vietQrService;
 
     @Override
     @Transactional

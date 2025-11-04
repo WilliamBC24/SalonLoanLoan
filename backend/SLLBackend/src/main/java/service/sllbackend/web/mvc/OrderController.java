@@ -8,7 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.entity.OrderInvoiceDetails;
+import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.service.impl.OrderServiceImpl;
+import service.sllbackend.service.impl.VietQrServiceImpl;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class OrderController {
     
     private final OrderServiceImpl orderService;
+    private final VietQrServiceImpl vietQrService;
 
     @GetMapping("/checkout")
     @Transactional(readOnly = true)
@@ -95,6 +98,17 @@ public class OrderController {
             
             model.addAttribute("order", order);
             model.addAttribute("orderItems", orderItems);
+            
+            // Generate QR code URL on-the-fly for bank transfer orders
+            if ("BANK_TRANSFER".equals(order.getPaymentMethod()) && 
+                order.getOrderStatus() == OrderStatus.PENDING) {
+                String qrUrl = vietQrService.generateQrUrl(
+                    order.getId(), 
+                    order.getUserAccount().getUsername(), 
+                    order.getTotalPrice()
+                );
+                model.addAttribute("paymentQrUrl", qrUrl);
+            }
             
             return "order-details";
         } catch (Exception e) {

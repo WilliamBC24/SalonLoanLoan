@@ -13,8 +13,8 @@ import service.sllbackend.enumerator.ServiceType;
 
 public interface ServiceRepo extends JpaRepository<Service, Integer> {
 
-	@Query("select s from Service s")
-	List<Service> findAllServices(Pageable pageable);
+	@Query("select s from Service s WHERE (:query IS NULL OR LOWER(s.serviceName) LIKE LOWER(CONCAT('%', :query, '%')))")
+	List<Service> findAllServices(@Param("query") String query, Pageable pageable);
 
 	@Query("select s from Service s left join fetch s.serviceCategory")
 	List<Service> findAllWithCategory();

@@ -1,300 +1,268 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Appointment Booking</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Registration</title>
     <style>
-        :root {
-            --primary: #3b82f6;
-            --secondary: #f3f4f6;
-            --available: #dcfce7;
-            --unavailable: #e5e7eb;
-            --text-dark: #111827;
-            --text-light: #6b7280;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f9fafb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background: #fff;
-            width: 400px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 24px;
-        }
-
-        h1 {
-            text-align: center;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-        }
-
-        /* Calendar Styles */
-        .calendar {
-            user-select: none;
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .calendar-header h2 {
-            font-size: 1.2rem;
-            color: var(--text-dark);
-        }
-
-        .nav-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 1.4rem;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .nav-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-auto-rows: 50px; /* keeps consistent row height */
-            gap: 6px;
-            min-height: calc(6 * 50px + 5 * 6px); /* ensures consistent total height for 6 rows */
-        }
-
-        .day {
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s, transform 0.1s;
-        }
-
-        .day.available {
-            background-color: var(--available);
-            color: var(--text-dark);
-            cursor: pointer;
-        }
-
-        .day.available:hover {
-            background-color: #bbf7d0;
-            transform: scale(1.05);
-        }
-
-        .day.unavailable {
-            background-color: var(--unavailable);
-            color: var(--text-light);
-            cursor: not-allowed;
-        }
-
-        .day.today {
-            border: 2px solid var(--primary);
-        }
-
-        .day.selected {
-            background-color: var(--primary);
-            color: white !important;
-        }
-
-        /* Time slot section */
-        .times {
-            margin-top: 20px;
-        }
-
-        .times h3 {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            color: var(--text-dark);
-        }
-
-        .time-slots {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .time-slot {
-            background: var(--secondary);
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .time-slot:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .time-slot.selected {
-            background: var(--primary);
-            color: white;
-        }
-
-        .book-btn {
-            width: 100%;
-            margin-top: 20px;
-            padding: 12px;
-            font-size: 1rem;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .book-btn:hover {
-            background-color: #2563eb;
-        }
+        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        label { display: block; margin: 10px 0 5px; font-weight: bold; }
+        input[type="text"], input[type="time"], input[type="date"], select { width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; }
+        .service-list { max-height: 150px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; }
+        .service-item { padding: 5px; cursor: pointer; border-bottom: 1px solid #eee; }
+        .service-item:hover { background: #f0f0f0; }
+        .selected-services { margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 5px; }
+        .summary { margin-top: 20px; padding: 10px; background: #e0f7fa; border-radius: 5px; }
+        .blocked { background: #ffcccc; cursor: not-allowed; }
+        button { padding: 10px 20px; background: #3b82f6; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #2563eb; }
     </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 </head>
 <body>
 <div class="container">
     <h1>Book an Appointment</h1>
 
-    <div class="calendar">
-        <div class="calendar-header">
-            <button class="nav-btn" id="prev-month">◀</button>
-            <h2 id="month-year"></h2>
-            <button class="nav-btn" id="next-month">▶</button>
-        </div>
-        <div class="calendar-grid" id="calendar-grid"></div>
+    <label for="service-search">Search Services:</label>
+    <input type="text" id="service-search" placeholder="Type to search services...">
+
+    <div class="service-list" id="service-list">
+        <!-- Services will be populated here dynamically -->
     </div>
 
-    <div class="times" id="time-section" style="display:none;">
-        <h3>Available Times</h3>
-        <div class="time-slots" id="time-slots"></div>
-        <button class="book-btn" id="book-btn">Book Appointment</button>
+    <div class="selected-services" id="selected-services">
+        <strong>Selected Services:</strong>
+        <ul id="selected-services-list"></ul>
     </div>
+
+    <label for="appointment-date">Select Date:</label>
+    <input type="date" id="appointment-date">
+
+    <label for="appointment-time">Select Time:</label>
+    <input type="time" id="appointment-time">
+
+    <div class="summary">
+        <p>Total Duration: <span id="total-duration">0</span> minutes</p>
+        <p>Total Price: $<span id="total-price">0</span></p>
+        <p>End Time: <span id="end-time">--:--</span></p>
+    </div>
+
+    <button id="book-appointment">Book Appointment</button>
+
 </div>
 
 <script>
-    const calendarGrid = document.getElementById('calendar-grid');
-    const monthYear = document.getElementById('month-year');
-    const timeSection = document.getElementById('time-section');
-    const timeSlotsDiv = document.getElementById('time-slots');
-    const bookBtn = document.getElementById('book-btn');
 
-    let current = new Date();
-    let selectedDate = null;
-    let selectedTime = null;
+    $(document).ready(function() {
+//         let blockedDates = []; // fetched from backend
+//
+// // Example: fetch blocked dates on page load
+//         $.ajax({
+//             url: '/appointments/blocked-dates',
+//             method: 'GET',
+//             success: function(data) {
+//                 blockedDates = data; // array of strings YYYY-MM-DD
+//             }
+//         });
+//
+//         $("#appointment-date").on("input", function() {
+//             const selected = $(this).val();
+//             if (blockedDates.includes(selected)) {
+//                 alert("Selected date is unavailable. Please choose another date.");
+//                 $(this).val("");
+//             }
+//         });
+//         let blockedSlots = {}; // { "2025-11-05": [{start: "15:00", end: "19:00"}], ... }
+//
+//         $("#appointment-date").on("change", function() {
+//             const date = $(this).val();
+//             if (!date) return;
+//
+//             // Fetch blocked slots for this date
+//             $.ajax({
+//                 url: `/appointments/blocked-slots/${date}`,
+//                 method: "GET",
+//                 success: function(slots) {
+//                     blockedSlots[date] = slots; // array of {start, end}
+//                 }
+//             });
+//         });
+//
+//         $("#appointment-time").on("change", function() {
+//             const date = $("#appointment-date").val();
+//             const time = $(this).val();
+//             if (!date || !time) return;
+//
+//             const dayBlocked = blockedSlots[date] || [];
+//             for (const slot of dayBlocked) {
+//                 if (time >= slot.start && time < slot.end) {
+//                     alert("Selected time is unavailable. Please choose another time.");
+//                     $(this).val("");
+//                     return;
+//                 }
+//             }
+//         });
+//
+//
+        let debounceTimer;
+        // here
+        $("#service-search").on("input", function() {
+            const query = $(this).val().trim();
 
-    // Mock API for demo
-    function mockAvailableDates(year, month) {
-        let available = [];
-        for (let d = 1; d <= 31; d++) {
-            if (Math.random() > 0.3) available.push(`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
-        }
-        return available;
-    }
-    function mockAvailableTimes() {
-        return ["09:00 AM", "10:00 AM", "01:00 PM", "03:30 PM", "05:00 PM"];
-    }
-
-    function renderCalendar(date) {
-        calendarGrid.innerHTML = '';
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        monthYear.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const startDay = firstDay.getDay();
-        const daysInMonth = lastDay.getDate();
-
-        const availableDates = mockAvailableDates(year, month);
-        const availableSet = new Set(availableDates);
-
-        // Always render 6 rows * 7 columns = 42 cells
-        for (let i = 0; i < 42; i++) {
-            const dayEl = document.createElement('div');
-            dayEl.classList.add('day');
-
-            const dateNum = i - startDay + 1;
-            if (i >= startDay && dateNum <= daysInMonth) {
-                dayEl.textContent = dateNum;
-                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(dateNum).padStart(2,'0')}`;
-                const isAvailable = availableSet.has(dateStr);
-
-                if (isAvailable) {
-                    dayEl.classList.add('available');
-                    dayEl.onclick = () => selectDay(dayEl, dateStr);
-                } else {
-                    dayEl.classList.add('unavailable');
-                }
-
-                if (dateStr === new Date().toISOString().split('T')[0]) {
-                    dayEl.classList.add('today');
-                }
-            } else {
-                // Empty filler cell
-                dayEl.style.visibility = 'hidden';
+            // Only search if 2+ characters
+            if (query.length < 2) {
+                $("#service-list").empty();
+                return;
             }
-            calendarGrid.appendChild(dayEl);
-        }
-    }
 
-    function selectDay(dayEl, dateStr) {
-        document.querySelectorAll('.day.selected').forEach(d => d.classList.remove('selected'));
-        dayEl.classList.add('selected');
-        selectedDate = dateStr;
-        renderTimeSlots(dateStr);
-    }
-
-    function renderTimeSlots(dateStr) {
-        timeSlotsDiv.innerHTML = '';
-        timeSection.style.display = 'block';
-        const times = mockAvailableTimes(dateStr);
-        times.forEach(t => {
-            const slot = document.createElement('div');
-            slot.classList.add('time-slot');
-            slot.textContent = t;
-            slot.onclick = () => selectTime(slot, t);
-            timeSlotsDiv.appendChild(slot);
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                $.ajax({
+                    url: `/services/search`,
+                    method: "GET",
+                    data: { query: query },
+                    success: function(data) {
+                        // Assume data is an array of services: [{id, name, price, duration}, ...]
+                        renderServices(data);
+                    },
+                    error: function(err) {
+                        console.error("Error fetching services", err);
+                    }
+                });
+            }, 300); // 300ms debounce
         });
-    }
+        // to here
 
-    function selectTime(slot, time) {
-        document.querySelectorAll('.time-slot.selected').forEach(s => s.classList.remove('selected'));
-        slot.classList.add('selected');
-        selectedTime = time;
-    }
 
-    bookBtn.addEventListener('click', () => {
-        if (!selectedDate || !selectedTime) {
-            alert('Please select a date and time first.');
-            return;
+        // Sample blocked slots from backend (date + time ranges)
+        // const blockedSlots = {
+        //     "2025-11-05": [{ start: "15:00", end: "19:00" }]
+        // };
+
+        let selectedServices = [];
+
+        function renderServices(list) {
+            $("#service-list").empty();
+            list.forEach(s => {
+                $("#service-list").append(`<div class="service-item" data-name="${s.serviceName}" data-price="${s.servicePrice}" data-duration="${s.durationMinutes}">
+                ${s.serviceName} - $${s.servicePrice} - ${s.durationMinutes} min
+            </div>`);
+            });
         }
-        alert(`Appointment booked for ${selectedDate} at ${selectedTime}!`);
+
+        // renderServices(services);
+
+        // $("#service-search").on("input", function() {
+        //     const query = $(this).val().toLowerCase();
+        //     const filtered = services.filter(s => s.name.toLowerCase().includes(query));
+        //     renderServices(filtered);
+        // });
+
+        $("#service-list").on("click", ".service-item", function() {
+            const name = $(this).data("name");
+            const price = parseFloat($(this).data("price"));
+            const duration = parseInt($(this).data("duration"));
+
+            // prevent duplicates by checking name
+            if (!selectedServices.some(s => s.name === name)) {
+                const service = { name, price, duration };
+                selectedServices.push(service);
+
+                $("#selected-services-list").append(`
+            <li data-name="${name}">
+                ${name} - $${price} - ${duration} min
+                <button class="remove-service">Remove</button>
+            </li>
+        `);
+
+                updateSummary();
+            }
+        });
+
+        $("#selected-services-list").on("click", ".remove-service", function() {
+            const li = $(this).closest("li");
+            const serviceId = parseInt(li.data("id"));
+            selectedServices = selectedServices.filter(s => s.id !== serviceId);
+            li.remove();
+            updateSummary();
+        });
+
+        function updateSummary() {
+            const totalDuration = selectedServices.reduce((sum, s) => sum + s.duration, 0);
+            const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
+            $("#total-duration").text(totalDuration);
+            $("#total-price").text(totalPrice);
+            updateEndTime();
+        }
+
+        function updateEndTime() {
+            const startTime = $("#appointment-time").val();
+            if (!startTime || selectedServices.length === 0) {
+                $("#end-time").text("--:--");
+                return;
+            }
+            const totalMinutes = selectedServices.reduce((sum, s) => sum + s.duration, 0);
+            const [hours, minutes] = startTime.split(":").map(Number);
+            let date = new Date();
+            date.setHours(hours, minutes);
+            date.setMinutes(date.getMinutes() + totalMinutes);
+
+            const endHours = date.getHours().toString().padStart(2, "0");
+            const endMinutes = date.getMinutes().toString().padStart(2, "0");
+            $("#end-time").text(`${endHours}:${endMinutes}`);
+        }
+
+        $("#appointment-time, #appointment-date").on("change", function() {
+            const date = $("#appointment-date").val();
+            const time = $("#appointment-time").val();
+            if (!date || !time) return;
+
+            const totalDuration = selectedServices.reduce((sum, s) => sum + s.duration, 0);
+            const [hours, minutes] = time.split(":").map(Number);
+            let startDateTime = new Date(`${date}T${time}`);
+            let endDateTime = new Date(startDateTime);
+            endDateTime.setMinutes(endDateTime.getMinutes() + totalDuration);
+
+            // Check if appointment goes beyond closing time (19:00)
+            const closingTime = new Date(`${date}T19:00`);
+            if (endDateTime > closingTime) {
+                alert("Selected services exceed closing time. Please pick an earlier time or fewer services.");
+                $("#appointment-time").val("");
+                $("#end-time").text("--:--");
+                return;
+            }
+
+            // Check against blocked slots
+            // const dayBlocked = blockedSlots[date] || [];
+            // for (const slot of dayBlocked) {
+            //     const blockStart = new Date(`${date}T${slot.start}`);
+            //     const blockEnd = new Date(`${date}T${slot.end}`);
+            //     if (startDateTime < blockEnd && endDateTime > blockStart) {
+            //         alert("Selected time overlaps with a blocked slot. Please choose another time.");
+            //         $("#appointment-time").val("");
+            //         $("#end-time").text("--:--");
+            //         return;
+            //     }
+            // }
+
+            updateEndTime();
+        });
+
+        $("#book-appointment").on("click", function() {
+            const date = $("#appointment-date").val();
+            const time = $("#appointment-time").val();
+            if (!date || !time || selectedServices.length === 0) {
+                alert("Please select services, date, and time.");
+                return;
+            }
+            alert("Appointment booked successfully!");
+            // Here you would send data to backend
+        });
     });
-
-    document.getElementById('prev-month').onclick = () => {
-        current.setMonth(current.getMonth() - 1);
-        renderCalendar(current);
-    };
-    document.getElementById('next-month').onclick = () => {
-        current.setMonth(current.getMonth() + 1);
-        renderCalendar(current);
-    };
-
-    renderCalendar(current);
 </script>
+
 </body>
 </html>

@@ -15,5 +15,5 @@ public interface ServicesService {
 
     List<ServiceCombo> getComboServices(Integer comboId);
 
-    List<Service> getTenServices();
+    List<Service> getServices(String query, int page);
 }

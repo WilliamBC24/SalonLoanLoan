@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.generator.EventType;
 
 @Data
 @Builder
@@ -37,7 +38,7 @@ public class OrderInvoiceDetails {
     private Integer priceAtSale;
 
     //TODO: delete this in production
-    @Generated(GenerationTime.ALWAYS)
+    @Generated(event = EventType.INSERT)
     @Column(
             name = "subtotal",
             insertable = false,

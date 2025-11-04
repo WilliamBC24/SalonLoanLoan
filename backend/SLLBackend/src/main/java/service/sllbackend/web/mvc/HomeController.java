@@ -23,8 +23,8 @@ public class HomeController {
             model.addAttribute("username", principal.getName());
         }
 
-        model.addAttribute("services", servicesService.getTenServices());
-        model.addAttribute("products", productsService.getTenProducts());
+        model.addAttribute("services", servicesService.getServices("", 10));
+        model.addAttribute("products", productsService.getProducts("", 10));
 
         model.addAttribute("lat", 21.018502);
         model.addAttribute("lng", 105.811386);

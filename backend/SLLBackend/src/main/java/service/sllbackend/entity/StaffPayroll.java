@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.generator.EventType;
 
 import java.time.LocalDate;
 
@@ -55,7 +56,7 @@ public class StaffPayroll {
     private Integer payrollBonus = 0;
 
     //TODO: delete this in production
-    @Generated(GenerationTime.ALWAYS)
+    @Generated(event = EventType.INSERT)
     @Column(
             name = "total_payment",
             insertable = false,

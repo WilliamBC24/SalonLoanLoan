@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -53,10 +54,18 @@ public class SecurityConfig {
 	@Order(1)
 	public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/", "/services/**", "/products/**",  "/job/**", "/error")
+				.securityMatcher("/", "/services/**", "/products/**",  "/job/**", "/error", "/appointment/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/services/**", "/products/**", "/job/**", "/error").permitAll()
+						.requestMatchers("/error").permitAll()
+						.requestMatchers("/", "/services/**", "/products/**", "/job/**", "/appointment/**").access((authen, context) -> {
+			 				if (authen.get() instanceof AnonymousAuthenticationToken) {
+								return new org.springframework.security.authorization.AuthorizationDecision(true);
+							}
+							boolean isUser = authen.get().getAuthorities().stream()
+									.anyMatch(a -> a.getAuthority().equals("ROLE_USER"));
+							return new org.springframework.security.authorization.AuthorizationDecision(isUser);
+						})
 						.anyRequest().denyAll())
 				.build();
 	}
@@ -69,9 +78,7 @@ public class SecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/auth/user/login", "/auth/user/register/**").anonymous()
-						.requestMatchers("/user/profile").hasRole("USER")
-						.requestMatchers("/cart/**").hasAnyRole("USER", "ADMIN")
-						.requestMatchers("/order/**").hasAnyRole("USER", "ADMIN")
+						.requestMatchers("/user/profile", "/order/**", "/cart/**").hasRole("USER")
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/user/login")
 						.usernameParameter("username")

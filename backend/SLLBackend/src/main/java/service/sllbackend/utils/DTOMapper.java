@@ -32,4 +32,6 @@ public interface DTOMapper {
 
     @Mapping(target = "user.username", source = "userAccount.username")
     AppointmentDetailsViewDTO toAppointmentDetailsViewDTO(AppointmentDetails appointment, UserAccount userAccount);
+
+    SimpleServiceDTO toSimpleServiceDTO(Service service);
 }

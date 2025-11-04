@@ -1,13 +1,11 @@
 package service.sllbackend.web.mvc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Service;
@@ -15,14 +13,17 @@ import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.ServiceCombo;
 import service.sllbackend.enumerator.ServiceType;
 import service.sllbackend.service.ServicesService;
+import service.sllbackend.utils.DTOMapper;
+import service.sllbackend.web.dto.SimpleServiceDTO;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/services")
 @RequiredArgsConstructor
 public class ServicesController {
     private final ServicesService servicesService;
+    private final DTOMapper dtoMapper;
 
-    @GetMapping("services")
+    @GetMapping
     public String listServices(
             @RequestParam(required = false) List<String> types,
             @RequestParam(required = false) List<Integer> categories,
@@ -44,7 +45,7 @@ public class ServicesController {
         return "services";
     }
 
-    @GetMapping("services/{id}")
+    @GetMapping("/{id}")
     public String viewServiceDetails(@PathVariable Integer id, Model model) {
         Service service = servicesService.getServiceDetails(id);
         
@@ -58,6 +59,17 @@ public class ServicesController {
         }
         
         return "service-details";
+    }
+
+    @GetMapping("/search")
+    @ResponseBody
+    public List<SimpleServiceDTO> searchServices(@RequestParam String query) {
+        List<Service> serviceList = servicesService.getServices(query, 5);
+        List<SimpleServiceDTO> simpleServiceDTOList = new ArrayList<>();
+        for(Service service : serviceList) {
+            simpleServiceDTOList.add(dtoMapper.toSimpleServiceDTO(service));
+        }
+        return simpleServiceDTOList;
     }
 }
 

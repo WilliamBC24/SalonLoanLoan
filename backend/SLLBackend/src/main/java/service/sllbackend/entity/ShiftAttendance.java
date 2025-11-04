@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.generator.EventType;
 import service.sllbackend.enumerator.ShiftAttendanceStatus;
 
 
@@ -41,7 +42,7 @@ public class ShiftAttendance {
     private LocalDateTime checkOut;
 
     //TODO: delete this in production
-    @Generated(GenerationTime.ALWAYS)
+    @Generated(event = EventType.INSERT)
     @Column(
             name = "duration_minutes",
             insertable = false,

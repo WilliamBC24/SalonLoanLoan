@@ -14,12 +14,12 @@ import service.sllbackend.entity.Product;
 import service.sllbackend.service.impl.ProductsServiceImpl;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductsController {
     private final ProductsServiceImpl productsService;
 
-    @GetMapping("products")
+    @GetMapping
     public String listProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Boolean activeStatus,
@@ -33,7 +33,7 @@ public class ProductsController {
         return "products";
     }
 
-    @GetMapping("products/{id}")
+    @GetMapping("/{id}")
     public String viewProductDetails(@PathVariable Integer id, Model model) {
         Product product = productsService.getProductById(id);
 

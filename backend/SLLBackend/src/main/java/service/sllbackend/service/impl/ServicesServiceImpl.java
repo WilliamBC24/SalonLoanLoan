@@ -74,7 +74,7 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Service> getTenServices() {
-        return serviceRepo.findAllServices(PageRequest.of(0, 10));
+    public List<Service> getServices(String query, int page) {
+        return serviceRepo.findAllServices(query, PageRequest.of(0, page));
     }
 }

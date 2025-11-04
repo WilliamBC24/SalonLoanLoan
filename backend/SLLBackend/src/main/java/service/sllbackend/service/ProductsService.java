@@ -10,7 +10,7 @@ public interface ProductsService {
 
     Product getProductById(Integer id);
 
-    List<Product> getTenProducts();
+    List<Product> getProducts(String query, int page);
     
     Product createProduct(Product product);
     

@@ -25,7 +25,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/staff/registration")
 @RequiredArgsConstructor
-@Slf4j
 public class StaffRegistrationManagementController {
     private final AppointmentServiceImpl appointmentService;
     private final AppointmentDetailsServiceImpl appointmentDetailsService;

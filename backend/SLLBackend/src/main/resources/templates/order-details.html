@@ -311,6 +311,21 @@
                     <span th:text="${order.totalPrice} + ' VND'">0 VND</span>
                 </div>
 
+                <!-- QR Code for Bank Transfer -->
+                <div th:if="${order.paymentMethod == 'BANK_TRANSFER' and order.orderStatus.name() == 'PENDING' and paymentQrUrl != null}" 
+                     style="margin-top: 20px; text-align: center; padding: 15px; background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px;">
+                    <h3 style="margin-bottom: 10px; font-size: 16px; color: #856404;">Payment Required</h3>
+                    <p style="margin-bottom: 15px; font-size: 14px; color: #856404; font-weight: bold;">
+                        ⚠️ Please complete the payment to confirm your order
+                    </p>
+                    <img th:src="${paymentQrUrl}" 
+                         alt="Payment QR Code" 
+                         style="max-width: 100%; height: auto; border: 2px solid #dee2e6; border-radius: 4px; background: white; padding: 10px;" />
+                    <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                        Scan this QR code to complete your payment
+                    </p>
+                </div>
+
                 <div class="actions">
                     <a th:if="${order.orderStatus.name() == 'PENDING' or order.orderStatus.name() == 'CONFIRMED'}"
                        href="#" 

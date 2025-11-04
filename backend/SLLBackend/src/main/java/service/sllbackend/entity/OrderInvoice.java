@@ -45,7 +45,4 @@ public class OrderInvoice {
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "payment_qr_url", columnDefinition = "TEXT")
-    private String paymentQrUrl;
 }

@@ -53,47 +53,47 @@ public class DataLoader implements CommandLineRunner {
 		registerAppointments();
 	}
 
-	public void registerPromotions() {
-		PromotionStatus activeStatus = promotionStatusRepo.save(PromotionStatus.builder()
-				.name("ACTIVE")
-				.build());
+	// public void registerPromotions() {
+	// 	PromotionStatus activeStatus = promotionStatusRepo.save(PromotionStatus.builder()
+	// 			.name("ACTIVE")
+	// 			.build());
 
-		PromotionStatus inactiveStatus = promotionStatusRepo.save(PromotionStatus.builder()
-				.name("INACTIVE")
-				.build());
+	// 	PromotionStatus inactiveStatus = promotionStatusRepo.save(PromotionStatus.builder()
+	// 			.name("INACTIVE")
+	// 			.build());
 
-		promotionRepo.save(Promotion.builder()
-				.promotionName("Holiday Discount")
-				.promotionDescription("20% off on all services during the holiday season")
-				.discountType(DiscountType.PERCENTAGE)
-				.discountAmount(20)
-				.effectiveFrom(LocalDateTime.of(2024, 12, 1, 0, 0))
-				.effectiveTo(LocalDateTime.of(2024, 12, 31, 23, 59))
-				.promotionStatus(activeStatus)
-				.build());
+	// 	promotionRepo.save(Promotion.builder()
+	// 			.promotionName("Holiday Discount")
+	// 			.promotionDescription("20% off on all services during the holiday season")
+	// 			.discountType(DiscountType.PERCENTAGE)
+	// 			.discountAmount(20)
+	// 			.effectiveFrom(LocalDateTime.of(2024, 12, 1, 0, 0))
+	// 			.effectiveTo(LocalDateTime.of(2024, 12, 31, 23, 59))
+	// 			.promotionStatus(activeStatus)
+	// 			.build());
 
-		promotionRepo.save(Promotion.builder()
-				.promotionName("New Year Special")
-				.promotionDescription("Flat 100,000 VND off on all services")
-				.discountType(DiscountType.AMOUNT)
-				.discountAmount(100000)
-				.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
-				.effectiveTo(LocalDateTime.of(2025, 1, 15, 23, 59))
-				.promotionStatus(activeStatus)
-				.build());
+	// 	promotionRepo.save(Promotion.builder()
+	// 			.promotionName("New Year Special")
+	// 			.promotionDescription("Flat 100,000 VND off on all services")
+	// 			.discountType(DiscountType.AMOUNT)
+	// 			.discountAmount(100000)
+	// 			.effectiveFrom(LocalDateTime.of(2025, 1, 1, 0, 0))
+	// 			.effectiveTo(LocalDateTime.of(2025, 1, 15, 23, 59))
+	// 			.promotionStatus(activeStatus)
+	// 			.build());
 
-		promotionRepo.save(Promotion.builder()
-				.promotionName("Summer Sale")
-				.promotionDescription("15% off on selected services")
-				.discountType(DiscountType.PERCENTAGE)
-				.discountAmount(15)
-				.effectiveFrom(LocalDateTime.of(2024, 6, 1, 0, 0))
-				.effectiveTo(LocalDateTime.of(2024, 6, 30, 23, 59))
-				.promotionStatus(inactiveStatus)
-				.build());
+	// 	promotionRepo.save(Promotion.builder()
+	// 			.promotionName("Summer Sale")
+	// 			.promotionDescription("15% off on selected services")
+	// 			.discountType(DiscountType.PERCENTAGE)
+	// 			.discountAmount(15)
+	// 			.effectiveFrom(LocalDateTime.of(2024, 6, 1, 0, 0))
+	// 			.effectiveTo(LocalDateTime.of(2024, 6, 30, 23, 59))
+	// 			.promotionStatus(inactiveStatus)
+	// 			.build());
 
-		log.info("Successfully loaded 3 promotions with 2 statuses");
-	}
+	// 	log.info("Successfully loaded 3 promotions with 2 statuses");
+	// }
 
 	public void registerUser() {
 		String username = "alice";
@@ -114,16 +114,49 @@ public class DataLoader implements CommandLineRunner {
 	}
 
 	public void registerStaff() {
-		String name = "admin";
-		String role = "admin";
+		// Create Admin account
+		String adminName = "admin";
+		String adminRole = "admin";
+
+		Staff adminStaff = staffRepo.save(Staff.builder()
+				.name(adminName)
+				.birthDate(LocalDate.of(2004, 1, 1))
+				.build());
+
+		StaffPosition adminPosition = staffPositionRepo.save(StaffPosition.builder()
+				.positionName(adminRole)
+				.build());
+
+		staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
+				.staff(adminStaff)
+				.position(adminPosition)
+				.build());
+
+		// Ensure admin account 'admin' with password 'admin'
+		staffAccountRepo.findByUsername("admin").ifPresentOrElse(acc -> {
+			acc.setPassword(passwordEncoder.encode("admin"));
+			staffAccountRepo.save(acc);
+		}, () -> {
+			staffAccountRepo.save(StaffAccount.builder()
+					.staff(adminStaff)
+					.username("admin")
+					.password(passwordEncoder.encode("admin"))
+					.build());
+		});
+
+		log.info("Admin registered: " + adminName + " with role: " + adminRole + " - Username: admin, Password: admin");
+
+		// Create Staff account
+		String staffName = "staff";
+		String staffRole = "staff";
 
 		Staff staff = staffRepo.save(Staff.builder()
-				.name(name)
+				.name(staffName)
 				.birthDate(LocalDate.of(2004, 1, 1))
 				.build());
 
 		StaffPosition staffPosition = staffPositionRepo.save(StaffPosition.builder()
-				.positionName(role)
+				.positionName(staffRole)
 				.build());
 
 		staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
@@ -131,19 +164,19 @@ public class DataLoader implements CommandLineRunner {
 				.position(staffPosition)
 				.build());
 
-		// Ensure staff account 'admin' with password 'admin'
-		staffAccountRepo.findByUsername("admin").ifPresentOrElse(acc -> {
-			acc.setPassword(passwordEncoder.encode("admin"));
+		// EnsSure staff account 'staff' with password 'staff'
+		staffAccountRepo.findByUsername("staff").ifPresentOrElse(acc -> {
+			acc.setPassword(passwordEncoder.encode("staff"));
 			staffAccountRepo.save(acc);
 		}, () -> {
 			staffAccountRepo.save(StaffAccount.builder()
 					.staff(staff)
-					.username("admin")
-					.password(passwordEncoder.encode("admin"))
+					.username("staff")
+					.password(passwordEncoder.encode("staff"))
 					.build());
 		});
 
-		log.info("Staff registered: " + name + " with role: " + role);
+		log.info("Staff registered: " + staffName + " with role: " + staffRole + " - Username: staff, Password: staff");
 	}
 
 	public void registerServices() {

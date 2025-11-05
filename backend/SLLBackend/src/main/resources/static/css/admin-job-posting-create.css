@@ -1,0 +1,121 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+
+/* Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Header (reuse list style) */
+.header.admin-layout-header {
+    background-color: #1e3a8a;
+    color: #fff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+}
+
+.header-left .btn {
+    color: #fff;
+    border-color: rgba(255, 255, 255, .5);
+}
+
+.header-left .btn:hover {
+    background-color: rgba(255, 255, 255, .1);
+    border-color: #fff;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info {
+    color: #fff;
+    font-weight: 500;
+}
+
+/* Page */
+.content-area {
+    min-height: calc(100vh - 70px);
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e3a8a;
+}
+
+/* Form Card */
+.form-card {
+    border-radius: 12px;
+}
+
+.form-label {
+    color: #495057;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: all .2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 .2rem rgba(30, 58, 138, .15);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 500;
+    transition: all .2s;
+}
+
+.btn-primary {
+    background-color: #1e3a8a;
+    border-color: #1e3a8a;
+}
+
+.btn-primary:hover {
+    background-color: #172d6e;
+    border-color: #172d6e;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 24px;
+    }
+}

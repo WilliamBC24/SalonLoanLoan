@@ -63,6 +63,21 @@
 | POST | `/cart/adjust` | Điều chỉnh số lượng sản phẩm (params: productId, amount) |
 | POST | `/cart/api/update-quantity` | API cập nhật số lượng sản phẩm (trả về JSON) |
 
+### OrderController (`/order`)
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| GET | `/order/checkout` | Trang thanh toán đơn hàng |                                                         done
+| POST | `/order/checkout` | Tạo đơn hàng mới (params: customerName, phoneNumber, shippingAddress, paymentMethod) |
+| GET | `/order/history` | Lịch sử đơn hàng của người dùng |                    done                                     
+| GET | `/order/details` | Chi tiết đơn hàng (params: orderId) |                done                                  
+| GET | `/order/cancel` | Hủy đơn hàng (params: orderId) |                      done
+| POST | `/order/api/cancel` | API hủy đơn hàng (trả về JSON) |                                   
+
+### AppointmentHistoryController (`/user/appointment-history`)                                          
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| GET | `/user/appointment-history` | Lịch sử đặt lịch của người dùng (filter: statuses) |                  
+
 ---
 
 ## 👔 Endpoints Nhân Viên (Staff)
@@ -126,6 +141,25 @@
 | POST | `/staff/job/accept/{id}` | Chấp nhận đơn ứng tuyển |
 | POST | `/staff/job/reject/{id}` | Từ chối đơn ứng tuyển |
 
+### StaffOrderController (`/staff/order`)
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| GET | `/staff/order/list` | Danh sách tất cả đơn hàng |           done                                                 
+| GET | `/staff/order/edit` | Trang chỉnh sửa trạng thái đơn hàng (params: orderId) |   done        
+| POST | `/staff/order/edit` | Cập nhật trạng thái đơn hàng (params: orderId, orderStatus) |
+
+### LoyaltyManagementController (`/staff/loyalty`)
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| GET | `/staff/loyalty/list` | Danh sách điểm thưởng khách hàng (filter: username) |         done 
+
+### StaffRegistrationManagementController (`/staff/registration`)
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| GET | `/staff/registration/list` | Danh sách đăng ký dịch vụ (filter: name, statuses) |       done     
+| GET | `/staff/registration/view/{id}` | Chi tiết đăng ký dịch vụ |                            done           
+| POST | `/staff/registration/save/{id}` | Cập nhật đăng ký dịch vụ |
+
 ---
 
 ## 🔐 Endpoints Quản Trị (Admin)
@@ -142,10 +176,10 @@
 ### JobPostingController (`/admin/job`)
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| GET | `/admin/job/list` | Danh sách bài tuyển dụng (filter: title, status) |
-| GET | `/admin/job/create-form` | Form tạo bài tuyển dụng mới |
+| GET | `/admin/job/list` | Danh sách bài tuyển dụng (filter: title, status) |      done
+| GET | `/admin/job/create-form` | Form tạo bài tuyển dụng mới |                    done
 | POST | `/admin/job/create` | Tạo bài tuyển dụng mới |
-| GET | `/admin/job/view/{id}` | Xem chi tiết bài tuyển dụng |
+| GET | `/admin/job/view/{id}` | Xem chi tiết bài tuyển dụng |                      done
 | POST | `/admin/job/edit/{id}` | Cập nhật bài tuyển dụng |
 
 ---
@@ -163,6 +197,8 @@
 **User (Cần đăng nhập user):**
 - Profile management
 - Cart management
+- Order management
+- Appointment history
 - Job applications
 
 **Staff (Cần đăng nhập staff):**
@@ -172,16 +208,19 @@
 - Supplier management
 - Promotion management
 - Voucher management
+- Order management
+- Loyalty management
+- Registration management
 - Job application review
 
 **Admin (Cần đăng nhập admin):**
 - Account management
 - Job posting management
 
-### Tổng Số Endpoints: 78
+### Tổng Số Endpoints: 95
 
-- **GET endpoints:** 50
-- **POST endpoints:** 28
+- **GET endpoints:** 59
+- **POST endpoints:** 36
 
 ### Filters & Query Parameters:
 
@@ -190,4 +229,9 @@
 - **Profiles (Admin):** `?username=...&activeStatus=...&staffOnly=...`
 - **Job Postings:** `?title=...&status=...`
 - **Vouchers:** `?code=...&name=...&discountType=...&statusId=...`
+- **Orders (User):** `?orderId=...`
+- **Orders (Staff):** `?orderId=...`
+- **Appointment History:** `?statuses=...`
+- **Loyalty:** `?username=...`
+- **Registration:** `?name=...&statuses=...`
 

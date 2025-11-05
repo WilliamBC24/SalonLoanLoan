@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Admin Header Fragment -->
+<div th:fragment="admin-header" class="header admin-layout-header">
+    <div class="header-left">
+        <a href="#" class="btn btn-outline-secondary" th:onclick="|if(window.history.length>1){window.history.back();}else{window.location.href='@{/}'}; return false;|">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{btn.back}">Back</span>
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span th:text="#{admin.dashboard}">Admin Dashboard</span>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-shield"></i>
+                <span th:text="#{admin.label}">Admin</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/auth/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    <span th:text="#{btn.logout}">Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Header with Add Job Posting Button -->
+<div th:fragment="admin-header-with-add-job" class="header admin-layout-header">
+    <div class="header-left">
+        <a href="#" class="btn btn-outline-secondary" th:onclick="|if(window.history.length>1){window.history.back();}else{window.location.href='@{/}'}; return false;|">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{btn.back}">Back</span>
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <span th:text="#{admin.dashboard}">Admin Dashboard</span>
+        </div>
+        <a th:href="@{/admin/job/create-form}" class="btn btn-success">
+            <i class="fas fa-plus"></i>
+            <span th:text="#{admin.job.posting.create}">Create New Job Posting</span>
+        </a>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-shield"></i>
+                <span th:text="#{admin.label}">Admin</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/auth/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    <span th:text="#{btn.logout}">Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+

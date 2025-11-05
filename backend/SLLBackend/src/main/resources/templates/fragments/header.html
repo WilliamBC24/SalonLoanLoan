@@ -60,9 +60,25 @@
                             <li sec:authorize="hasRole('USER')">
                                 <a class="dropdown-item text-dark" th:href="@{/user/profile}" th:text="#{profile.title}">Profile</a>
                             </li>
+                            <!-- User Order History -->
+                            <li sec:authorize="hasRole('USER')">
+                                <a class="dropdown-item text-dark" th:href="@{/order/history}" th:text="#{nav.order.history}">Order History</a>
+                            </li>
+                            <!-- Cart -->
+                            <li sec:authorize="hasRole('USER')">
+                                <a class="dropdown-item text-dark" th:href="@{/cart}" th:text="#{nav.cart}">Cart</a>
+                            </li>
+                            <!-- Change password (user) -->
+                            <li sec:authorize="hasRole('USER')">
+                                <a class="dropdown-item text-dark" th:href="@{/user/change-password}" th:text="#{nav.change.password}">Change Password</a>
+                            </li>
                             <!-- Staff Profile Link -->
                             <li sec:authorize="hasAnyRole('STAFF', 'MANAGER', 'ADMIN')">
                                 <a class="dropdown-item text-dark" th:href="@{/staff/profile}" th:text="#{profile.title}">Profile</a>
+                            </li>
+                            <!-- Change password (staff) -->
+                            <li sec:authorize="hasAnyRole('STAFF','MANAGER','ADMIN')">
+                                <a class="dropdown-item text-dark" th:href="@{/staff/change-password}" th:text="#{nav.change.password}">Change Password</a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" th:href="@{/logout}" th:text="#{btn.logout}">Logout</a></li>

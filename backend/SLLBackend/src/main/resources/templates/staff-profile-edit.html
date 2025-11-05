@@ -87,42 +87,42 @@
                                                     <i class="fa-solid fa-circle-check me-1"></i>
                                                     <span th:text="#{label.status}">Status</span>
                                                 </label>
-                                                <input type="text" class="form-control" th:value="${staffAccount.accountStatus}" readonly>
+                                                <input type="text" class="form-control" th:value="${staffAccount.active ? 'ACTIVE' : 'INACTIVE'}" readonly>
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <label class="form-label required">
                                                     <i class="fa-solid fa-id-badge me-1"></i>
                                                     <span th:text="#{label.name}">Name</span>
                                                 </label>
-                                                <input type="text" class="form-control" name="name" th:value="${staffAccount.staff.name}" required>
+                                                <input type="text" class="form-control" name="name" th:value="${staffAccount.name}" required>
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <label class="form-label">
                                                     <i class="fa-solid fa-envelope me-1"></i>
                                                     <span th:text="#{label.email}">Email</span>
                                                 </label>
-                                                <input type="email" class="form-control" name="email" th:value="${staffAccount.staff.email}" readonly>
+                                                <input type="email" class="form-control" name="email" th:value="${staffAccount.email}" readonly>
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <label class="form-label">
                                                     <i class="fa-solid fa-calendar me-1"></i>
                                                     <span th:text="#{label.date.hired}">Date Hired</span>
                                                 </label>
-                                                <input type="text" class="form-control" th:value="${#temporals.format(staffAccount.staff.dateHired, 'dd MMM yyyy')}" readonly>
+                                                <input type="text" class="form-control" th:value="${staffAccount.dateHired != null ? #temporals.format(staffAccount.dateHired, 'dd MMM yyyy') : '—'}" readonly>
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <label class="form-label">
                                                     <i class="fa-solid fa-id-card me-1"></i>
                                                     <span th:text="#{label.ssn}">SSN</span>
                                                 </label>
-                                                <input type="text" class="form-control" th:value="${staffAccount.staff.socialSecurityNum ?: '—'}" readonly>
+                                                <input type="text" class="form-control" th:value="${staffAccount.socialSecurityNum ?: '—'}" readonly>
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <label class="form-label">
                                                     <i class="fa-solid fa-user-check me-1"></i>
                                                     <span th:text="#{label.staff.status}">Staff Status</span>
                                                 </label>
-                                                <input type="text" class="form-control" th:value="${staffAccount.staff.staffStatus}" readonly>
+                                                <input type="text" class="form-control" th:value="${staffAccount.staffStatus}" readonly>
                                             </div>
                                         </div>
                                     </div>

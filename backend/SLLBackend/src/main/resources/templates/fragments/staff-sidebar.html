@@ -118,6 +118,30 @@
             </div>
         </div>
 
+        <!-- Manage Orders -->
+        <div class="nav-item">
+            <a th:href="@{/staff/order/list}" class="nav-link">
+                <i class="fas fa-receipt"></i>
+                <span th:text="#{staff.orders.title}">Manage Orders</span>
+            </a>
+        </div>
+
+        <!-- Manage Loyalty -->
+        <div class="nav-item">
+            <a th:href="@{/staff/loyalty/list}" class="nav-link">
+                <i class="fas fa-star"></i>
+                <span th:text="#{staff.loyalty.title}">Manage Loyalty</span>
+            </a>
+        </div>
+
+        <!-- Manage Registrations -->
+        <div class="nav-item">
+            <a th:href="@{/staff/registration/list}" class="nav-link">
+                <i class="fas fa-clipboard-list"></i>
+                <span th:text="#{staff.registration.title}">Staff Registrations</span>
+            </a>
+        </div>
+
         <!-- Profile -->
         <div class="nav-item">
             <a th:href="@{/staff/profile}" class="nav-link">

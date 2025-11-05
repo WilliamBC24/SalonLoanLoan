@@ -1,260 +1,119 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8" />
-    <title>Checkout - Place Your Order</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 1000px;
-            background: #f5f5f5;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .back-link {
-            display: inline-block;
-            color: #007bff;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        h1 {
-            color: #333;
-        }
-        .checkout-container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-        .checkout-form {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .form-section {
-            margin-bottom: 30px;
-        }
-        .form-section h2 {
-            color: #333;
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #007bff;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="tel"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        .error {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-        .payment-options {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .payment-option {
-            flex: 1;
-            min-width: 200px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .payment-option:hover {
-            border-color: #007bff;
-        }
-        .payment-option input[type="radio"] {
-            margin-right: 8px;
-        }
-        .payment-option.selected {
-            border-color: #007bff;
-            background: #e7f3ff;
-        }
-        .order-summary {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            height: fit-content;
-        }
-        .order-summary h2 {
-            color: #333;
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #007bff;
-        }
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .summary-total {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            font-size: 20px;
-            font-weight: bold;
-            color: #28a745;
-        }
-        .place-order-btn {
-            width: 100%;
-            padding: 15px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        .place-order-btn:hover:not(:disabled) {
-            background: #218838;
-        }
-        .place-order-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        @media (max-width: 768px) {
-            .checkout-container {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{order.checkout.title} + ' | ' + #{app.name}">Checkout | Salon Loan Loan</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Global site styles for header/footer fragments -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Page CSS -->
+    <link rel="stylesheet" th:href="@{/css/order-checkout.css}">
 </head>
-<body>
-    <div class="header">
-        <h1>Checkout</h1>
-        <a href="/cart" class="back-link">← Back to Cart</a>
-    </div>
+<body class="bg-light">
+    <div th:replace="fragments/header :: top-header"></div>
+    <div th:replace="fragments/header :: navbar"></div>
+    
+    <!-- Breadcrumb Section -->
+    <div th:replace="fragments/breadcrumb :: breadcrumb(current=#{order.checkout.title}, parent=null, parentUrl=null)"></div>
+    
+    <section class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 m-0" th:text="#{order.checkout.title}">Checkout</h1>
+            <a th:href="@{/cart}" class="text-decoration-none">
+                <i class="fa-solid fa-arrow-left me-1"></i>
+                <span th:text="#{order.checkout.back.to.cart}">Back to Cart</span>
+            </a>
+        </div>
 
-    <div th:if="${param.error}" class="alert alert-error">
-        <span th:text="${param.error}">Error message</span>
-    </div>
+        <div th:if="${param.error}" class="alert alert-danger">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>
+            <span th:text="${param.error}">Error message</span>
+        </div>
 
-    <div class="checkout-container">
-        <div class="checkout-form">
-            <form id="checkoutForm" action="/order/checkout" method="post" onsubmit="return validateForm()">
+        <div class="checkout-grid">
+            <div class="card shadow-sm border-0 p-3 p-md-4">
+                <form id="checkoutForm" action="/order/checkout" method="post" onsubmit="return validateForm()">
                 
                 <!-- Customer Information -->
-                <div class="form-section">
-                    <h2>1. Customer Information</h2>
+                <div class="form-section mb-4">
+                    <h2 class="section-title" th:text="#{order.checkout.section.customer}">1. Customer Information</h2>
                     <div class="form-group">
-                        <label for="customerName">Full Name *</label>
+                        <label for="customerName" th:text="#{label.full.name} + ' *'">Full Name *</label>
                         <input type="text" id="customerName" name="customerName" required />
-                        <span class="error" id="nameError">Please enter your full name</span>
+                        <span class="error" id="nameError" th:text="#{validation.full.name}">Please enter your full name</span>
                     </div>
                     <div class="form-group">
-                        <label for="phoneNumber">Phone Number *</label>
+                        <label for="phoneNumber" th:text="#{label.phone.number} + ' *'">Phone Number *</label>
                         <input type="tel" id="phoneNumber" name="phoneNumber" 
                                placeholder="0123456789" required />
-                        <span class="error" id="phoneError">Please enter a valid phone number</span>
+                        <span class="error" id="phoneError" th:text="#{validation.phone}">Please enter a valid phone number</span>
                     </div>
                 </div>
 
                 <!-- Delivery Information -->
-                <div class="form-section">
-                    <h2>2. Delivery Address</h2>
+                <div class="form-section mb-4">
+                    <h2 class="section-title" th:text="#{order.checkout.section.delivery}">2. Delivery Address</h2>
                     <div class="form-group">
-                        <label for="shippingAddress">Shipping Address *</label>
+                        <label for="shippingAddress" th:text="#{label.shipping.address} + ' *'">Shipping Address *</label>
                         <textarea id="shippingAddress" name="shippingAddress" 
                                   placeholder="Enter your complete address" required></textarea>
-                        <span class="error" id="addressError">Please enter your shipping address</span>
+                        <span class="error" id="addressError" th:text="#{validation.address}">Please enter your shipping address</span>
                     </div>
                 </div>
 
                 <!-- Payment Method -->
-                <div class="form-section">
-                    <h2>3. Payment Method</h2>
-                    <div class="payment-options">
+                <div class="form-section mb-3">
+                    <h2 class="section-title" th:text="#{order.checkout.section.payment}">3. Payment Method</h2>
+                    <div class="payment-options d-flex gap-3 flex-wrap">
                         <label class="payment-option" onclick="selectPayment(this)">
                             <input type="radio" name="paymentMethod" value="BANK_TRANSFER" required />
                             <div>
-                                <strong>Bank Transfer</strong>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
-                                    Pay via bank transfer
-                                </p>
+                                <strong th:text="#{payment.bank_transfer.title}">Bank Transfer</strong>
+                                <p class="payment-desc" th:text="#{payment.bank_transfer.desc}">Pay via bank transfer</p>
                             </div>
                         </label>
                         <label class="payment-option" onclick="selectPayment(this)">
                             <input type="radio" name="paymentMethod" value="COD" required />
                             <div>
-                                <strong>Cash on Delivery</strong>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
-                                    Pay when you receive
-                                </p>
+                                <strong th:text="#{payment.cod.title}">Cash on Delivery</strong>
+                                <p class="payment-desc" th:text="#{payment.cod.desc}">Pay when you receive</p>
                             </div>
                         </label>
                     </div>
-                    <span class="error" id="paymentError">Please select a payment method</span>
+                    <span class="error" id="paymentError" th:text="#{validation.payment.method}">Please select a payment method</span>
                 </div>
 
-                <button type="submit" class="place-order-btn">Place Order</button>
-            </form>
-        </div>
+                <button type="submit" class="btn btn-success w-100 fw-semibold place-order-btn" th:text="#{button.place.order}">Place Order</button>
+                </form>
+            </div>
 
-        <!-- Order Summary -->
-        <div class="order-summary">
-            <h2>Order Summary</h2>
-            <div class="summary-item">
-                <span>Items:</span>
-                <span th:text="${cartSummary.itemCount}">0</span>
-            </div>
-            <div class="summary-item">
-                <span>Subtotal:</span>
-                <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
-            </div>
-            <div class="summary-total">
-                <span>Total:</span>
-                <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+            <!-- Order Summary -->
+            <div class="order-summary card shadow-sm border-0 h-fit-content">
+                <div class="card-body">
+                    <h2 class="section-title" th:text="#{order.checkout.summary}">Order Summary</h2>
+                    <div class="summary-item">
+                        <span th:text="#{order.checkout.summary.items}">Items:</span>
+                        <span th:text="${cartSummary.itemCount}">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span th:text="#{order.checkout.summary.subtotal}">Subtotal:</span>
+                        <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+                    </div>
+                    <div class="summary-total">
+                        <span th:text="#{order.checkout.summary.total}">Total:</span>
+                        <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+    <div th:replace="fragments/footer :: footer"></div>
 
     <script>
         function selectPayment(element) {
@@ -330,5 +189,6 @@
             }
         });
     </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

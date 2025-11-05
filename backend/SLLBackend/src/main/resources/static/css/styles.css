@@ -27,9 +27,9 @@ body {
 /* ===== Top Header ===== */
 .top-header {
   font-family: var(--font-primary);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
-  padding: 6px 0;
+  padding: 4px 0; /* compact top strip */
 }
 
 .top-header .container {
@@ -60,7 +60,7 @@ body {
 
 /* ===== Navbar ===== */
 .logo-img {
-  height: 46px;
+  height: 40px; /* compact brand mark */
   object-fit: contain
 }
 
@@ -91,6 +91,12 @@ body {
   color: #000;
   font-weight: 600;
   transform: translateY(-1px);
+}
+
+/* Compact navbar vertical padding */
+.navbar {
+  padding-top: .5rem !important;
+  padding-bottom: .5rem !important;
 }
 
 .navbar-actions {
@@ -1215,6 +1221,8 @@ p, span, div, a {
 .site-footer {
   background: #151515;
   font-family: var(--font-primary);
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .site-footer h6 {
@@ -1567,4 +1575,51 @@ p, span, div, a {
   .product-title-mini { font-size: 13px; }
   .product-desc-mini { font-size: 11px; min-height: 30px; }
   .product-price-mini .price-value { font-size: 12px; }
+}
+
+/* ===== Breadcrumb Navigation ===== */
+.breadcrumb-section {
+  background-color: transparent;
+  padding: 8px 0;
+}
+
+.breadcrumb-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 16px;
+}
+
+.breadcrumb-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.breadcrumb-nav a {
+  color: #374151;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-nav a:hover {
+  color: #1e3a8a;
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  color: #6b7280;
+  margin: 0 4px;
+}
+
+.breadcrumb-current {
+  color: #111827;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .breadcrumb-container { padding: 6px 12px; }
+  .breadcrumb-nav { font-size: 12px; gap: 4px; }
 }

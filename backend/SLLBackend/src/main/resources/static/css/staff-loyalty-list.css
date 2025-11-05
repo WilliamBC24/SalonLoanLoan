@@ -1,0 +1,257 @@
+/* ========== STAFF LOYALTY LIST STYLES ========== */
+
+/* Root Variables */
+:root {
+    --primary-color: #2c3e50;
+    --primary-dark: #7a7a7a91;
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --border-color: #e9ecef;
+    --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --transition: all 0.3s ease;
+}
+
+/* Layout */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.loyalty-list-main {
+    flex: 1;
+    padding: 20px 0;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.card-header {
+    background: var(--bg-light);
+    border-bottom: 2px solid var(--primary-color);
+    padding: 20px 25px;
+}
+
+.card-title {
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+/* Search Form */
+.search-form {
+    margin: 0;
+}
+
+.form-label {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.form-control {
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 15px;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+    outline: none;
+}
+
+/* Button Styling */
+.btn {
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    transition: var(--transition);
+    border: 2px solid transparent;
+    font-size: 15px;
+}
+
+/* Loyalty search form styling */
+.loyalty-search-form {
+    display: block;
+}
+
+.loyalty-search-form .form-label {
+    margin-bottom: 8px;
+    display: block;
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+.loyalty-search-form .form-control {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.loyalty-search-form .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Buttons for search form */
+.loyalty-search-form .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3 !important;
+    border-color: #0056b3 !important;
+    color: #fff !important;
+}
+
+/* Reset button - solid gray style */
+.loyalty-search-form .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+.loyalty-search-form .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+    color: #fff;
+}
+
+/* Table Styling */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--primary-color);
+    padding: 15px 20px;
+}
+
+.table tbody td {
+    padding: 15px 20px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(44, 62, 80, 0.03);
+    transition: var(--transition);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 40px 20px;
+}
+
+.empty-state i {
+    opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .card-body {
+        padding: 20px;
+    }
+
+    .loyalty-list-main {
+        padding: 15px 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .loyalty-list-main {
+        padding: 10px 0;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 12px 10px;
+        font-size: 13px;
+    }
+
+    .search-form .row {
+        margin: 0;
+    }
+
+    .search-form .col-md-4 {
+        margin-top: 10px;
+    }
+
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+
+    .d-flex.gap-2 .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .table-responsive {
+        font-size: 12px;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 10px 8px;
+    }
+
+    .badge {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+}
+

@@ -14,7 +14,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet">
-    <!-- Your CSS -->
+    <!-- Global styles + page styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/user-profile-edit.css}">
 </head>
 
@@ -22,6 +23,9 @@
     <!-- ========== HEADER & NAVBAR ========== -->
     <div th:replace="fragments/header :: top-header"></div>
     <div th:replace="fragments/header :: navbar"></div>
+    
+    <!-- Breadcrumb Section -->
+    <div th:replace="fragments/breadcrumb :: breadcrumb(current=#{profile.edit.title}, parent=#{profile.title}, parentUrl='/user/profile')"></div>
 
     <!-- ========== MAIN CONTENT ========== -->
     <main class="profile-edit-main">

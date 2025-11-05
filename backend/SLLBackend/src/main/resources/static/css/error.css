@@ -1,0 +1,29 @@
+/* Error page styles */
+* { box-sizing: border-box; }
+body.error-body { background: #f6f7fb; color: #1f2937; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+.card { border-radius: 14px; }
+.error-icon { font-size: 56px; color: #dc3545; }
+
+.btn-primary { background-color: #1e3a8a; border-color: #1e3a8a; }
+.btn-primary:hover { background-color: #172d6e; border-color: #172d6e; }
+
+.error-details-wrap { border-radius: 0 0 14px 14px; }
+.error-pre {
+  max-height: 360px;
+  overflow: auto;
+  padding: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Dark mode tweak */
+@media (prefers-color-scheme: dark) {
+  body.error-body { background: #0b1220; color: #e5e7eb; }
+  .card { background-color: #0f172a; color: #e5e7eb; }
+  .error-details-wrap { background: #0b1220; }
+}
+

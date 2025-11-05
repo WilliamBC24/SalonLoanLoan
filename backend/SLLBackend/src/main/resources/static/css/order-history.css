@@ -1,0 +1,74 @@
+.order-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .06);
+    transition: box-shadow .2s ease, transform .1s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .10);
+}
+
+.order-status.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.order-status.status-confirmed {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.order-status.status-processing {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.order-status.status-shipped {
+    background: #d4edda;
+    color: #155724;
+}
+
+.order-status.status-delivered {
+    background: #d4edda;
+    color: #155724;
+}
+
+.order-status.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Constrain main content width consistently with other pages */
+.order-history-page main.container {
+    max-width: 1100px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 40px; /* extra breathing room above footer */
+}
+
+/* Ensure footer stays at the bottom (sticky footer layout) */
+.order-history-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.order-history-page main {
+  flex: 1 0 auto;
+}
+
+.order-history-page .site-footer,
+.order-history-page .footer-bottom {
+  flex-shrink: 0;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .order-card { padding: 14px !important; }
+  .order-header { flex-direction: column !important; align-items: flex-start !important; gap: 6px; }
+  .order-actions { flex-wrap: wrap; }
+  .order-actions .btn { width: 100%; }
+}

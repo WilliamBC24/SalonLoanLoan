@@ -82,42 +82,42 @@
                                                     <label class="form-label fw-semibold" th:text="#{label.status}">Status</label>
                                                     <div class="info-value">
                                                         <i class="fa-solid fa-circle-check me-2 text-muted"></i>
-                                                        <span th:text="${staffAccount.accountStatus}"></span>
+                                                        <span th:text="${staffAccount.active ? 'ACTIVE' : 'INACTIVE'}"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label fw-semibold" th:text="#{label.name}">Name</label>
                                                     <div class="info-value">
                                                         <i class="fa-solid fa-id-badge me-2 text-muted"></i>
-                                                        <span th:text="${staffAccount.staff.name}"></span>
+                                                        <span th:text="${staffAccount.name}"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label fw-semibold" th:text="#{label.email}">Email</label>
                                                     <div class="info-value">
                                                         <i class="fa-solid fa-envelope me-2 text-muted"></i>
-                                                        <span th:text="${staffAccount.staff.email ?: '—'}"></span>
+                                                        <span th:text="${staffAccount.email ?: '—'}"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label fw-semibold" th:text="#{label.date.hired}">Date Hired</label>
                                                     <div class="info-value">
                                                         <i class="fa-solid fa-calendar me-2 text-muted"></i>
-                                                        <span th:text="${#temporals.format(staffAccount.staff.dateHired, 'dd MMM yyyy')}"></span>
+                                                        <span th:text="${staffAccount.dateHired != null ? #temporals.format(staffAccount.dateHired, 'dd MMM yyyy') : '—'}"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label fw-semibold" th:text="#{label.ssn}">SSN</label>
                                                     <div class="info-value">
                                                         <i class="fa-solid fa-id-card me-2 text-muted"></i>
-                                                        <span th:text="${staffAccount.staff.socialSecurityNum ?: '—'}"></span>
+                                                        <span th:text="${staffAccount.socialSecurityNum ?: '—'}"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label fw-semibold" th:text="#{label.staff.status}">Staff Status</label>
                                                     <div class="info-value">
                                                         <i class="fa-solid fa-user-check me-2 text-muted"></i>
-                                                        <span th:text="${staffAccount.staff.staffStatus}"></span>
+                                                        <span th:text="${staffAccount.staffStatus}"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -125,15 +125,21 @@
                                     </div>
                                 </div>
 
-                                <div class="text-center mt-4 d-flex justify-content-center gap-3">
-                                    <a href="/auth/staff/landing" class="btn btn-secondary px-4">
-                                        <i class="fa-solid fa-arrow-left me-2"></i>
-                                        <span th:text="#{btn.back.to.home}">Back to Home</span>
-                                    </a>
-                                    <a th:href="@{/staff/profile/edit}" class="btn btn-primary px-4">
-                                        <i class="fa-solid fa-edit me-2"></i>
-                                        <span th:text="#{btn.edit.profile}">Edit Profile</span>
-                                    </a>
+                                <div class="profile-actions mt-4">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <a href="/auth/staff/landing" class="btn btn-outline-secondary btn-lg w-100">
+                                                <i class="fa-solid fa-arrow-left me-2"></i>
+                                                <span th:text="#{btn.back.to.home}">Back to Home</span>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a th:href="@{/staff/profile/edit}" class="btn btn-primary btn-lg w-100">
+                                                <i class="fa-solid fa-edit me-2"></i>
+                                                <span th:text="#{btn.edit.profile}">Edit Profile</span>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- Breadcrumb Fragment -->
+    <!-- Usage examples:
+         Simple: th:replace="fragments/breadcrumb :: breadcrumb(current=${'Thanh toán'})"
+         With parent: th:replace="fragments/breadcrumb :: breadcrumb(parent=${'Sản phẩm'}, parentUrl='/products', current=${'Chi tiết sản phẩm'})"
+    -->
+    <div class="breadcrumb-section" th:fragment="breadcrumb(current, parent, parentUrl)">
+        <div class="breadcrumb-container">
+            <nav class="breadcrumb-nav">
+                <!-- Always start with Home -->
+                <a th:href="@{/}" th:text="#{nav.home}">Trang chủ</a>
+                
+                <!-- Parent item (if provided) -->
+                <th:block th:if="${parent != null and !#strings.isEmpty(parent)}">
+                    <span class="breadcrumb-separator">/</span>
+                    <th:block th:if="${parentUrl != null and !#strings.isEmpty(parentUrl)}">
+                        <a th:href="${parentUrl}" th:text="${parent}">Parent</a>
+                    </th:block>
+                    <th:block th:unless="${parentUrl != null and !#strings.isEmpty(parentUrl)}">
+                        <span th:text="${parent}">Parent</span>
+                    </th:block>
+                </th:block>
+                
+                <!-- Current page -->
+                <th:block th:if="${current != null and !#strings.isEmpty(current)}">
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current" th:text="${current}">Current</span>
+                </th:block>
+            </nav>
+        </div>
+    </div>
+</body>
+
+</html>

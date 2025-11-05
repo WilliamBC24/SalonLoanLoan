@@ -14,21 +14,26 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet">
-    <!-- Your CSS -->
+    <!-- Global styles + page styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/user-profile.css}">
+    
 </head>
 
-<body>
+<body class="user-profile-page bg-light">
     <!-- ========== HEADER & NAVBAR ========== -->
     <div th:replace="fragments/header :: top-header"></div>
     <div th:replace="fragments/header :: navbar"></div>
+    
+    <!-- Breadcrumb Section -->
+    <div th:replace="fragments/breadcrumb :: breadcrumb(current=#{profile.title}, parent=null, parentUrl=null)"></div>
 
     <!-- ========== MAIN CONTENT ========== -->
     <main class="profile-main">
         <div class="container py-5">
-            <div class="row">
+            <div class="row fade-in">
                 <!-- Sidebar Navigation -->
-                <div class="col-lg-3 mb-4">
+                <div class="col-lg-3 mb-4 slide-in-left">
                     <div class="profile-sidebar">
                         <div class="profile-avatar">
                             <div class="avatar-circle">
@@ -48,7 +53,7 @@
                 </div>
 
                 <!-- Profile Content -->
-                <div class="col-lg-9">
+                <div class="col-lg-9 slide-in-right">
                     <div class="profile-content">
                         <!-- Header -->
                         <div class="profile-header">
@@ -134,35 +139,56 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="text-center mt-4 d-flex justify-content-center gap-3">
-                            <a href="/auth/user/landing" class="btn btn-secondary px-4">
-                                <i class="fa-solid fa-arrow-left me-2"></i>
-                                <span th:text="#{btn.back.to.home}">Back to Home</span>
-                            </a>
-                            <a th:href="@{/user/profile/edit}" class="btn btn-primary px-4">
-                                <i class="fa-solid fa-edit me-2"></i>
-                                <span th:text="#{btn.edit.profile}">Edit Profile</span>
-                            </a>
+                        <div class="profile-actions mt-4">
+                            <div class="row">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <a href="/auth/user/landing" class="btn btn-outline-secondary btn-lg w-100">
+                                        <i class="fa-solid fa-arrow-left me-2"></i>
+                                        <span th:text="#{btn.back.to.home}">Back to Home</span>
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a th:href="@{/user/profile/edit}" class="btn btn-primary btn-lg w-100">
+                                        <i class="fa-solid fa-edit me-2"></i>
+                                        <span th:text="#{btn.edit.profile}">Edit Profile</span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <hr class="my-4">
-            <h5 class="text-secondary mb-3">Loyalty Information</h5>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <strong>Loyalty Level:</strong>
-                    <span th:text="${user.loyalty.level.name ?: '—'}"></span>
+            <!-- Loyalty Section -->
+            <section class="loyalty-section my-4">
+                <div class="card loyalty-card shadow-sm border-0">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0"><i class="fa-solid fa-crown me-2"></i><span th:text="#{profile.loyalty.title}">Loyalty Information</span></h5>
+                        <span class="badge rounded-pill loyalty-level" th:text="${user.loyalty.level.name ?: '—'}">Gold</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
+                                <div class="metric">
+                                    <div class="metric-label" th:text="#{profile.loyalty.points}">Points</div>
+                                    <div class="metric-value" th:text="${user.loyalty.point ?: 0}">0</div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="metric mb-2">
+                                    <div class="metric-label d-flex justify-content-between">
+                                        <span th:text="#{profile.loyalty.next.points}">Points until next level</span>
+                                        <span><span th:text="${user.loyalty.point ?: 0}"></span>/<span th:text="${user.loyalty.level.pointRequired ?: 0}"></span></span>
+                                    </div>
+                                    <div class="progress loyalty-progress">
+                                        <div class="progress-bar" role="progressbar"
+                                             th:style="${(user.loyalty.point * 100.0) / (user.loyalty.level.pointRequired == 0 ? 1 : user.loyalty.level.pointRequired)} + '%'"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <strong>Loyalty Points:</strong>
-                    <span th:text="${user.loyalty.point ?: 0}"></span>
-                </div>
-                <div class="col-md-6">
-                    <strong>Loyalty Points Til Next Level:</strong>
-                    <span th:text="${user.loyalty.level.pointRequired - user.loyalty.point ?: 0}"></span>
-                </div>
-            </div>
+            </section>
         </div>
     </main>
 

@@ -1,131 +1,234 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Edit Appointment</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        form { background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        .form-buttons { margin-top: 20px; }
-        .form-buttons button { padding: 8px 16px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; }
-        .save-btn { background: #007bff; color: white; }
-        .save-btn:hover { background: #0056b3; }
-        .cancel-btn { background: #6c757d; color: white; }
-        .cancel-btn:hover { background: #545b62; }
-        .section-title { margin-top: 30px; margin-bottom: 10px; font-size: 1.2em; font-weight: bold; }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{staff.registration.edit.title} + ' | ' + #{app.name}">Edit Appointment | Salon Loan Loan</title>
+    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Page CSS -->
+    <link rel="stylesheet" th:href="@{/css/staff-registration-edit.css}">
+    <!-- Staff Sidebar CSS -->
+    <link rel="stylesheet" th:href="@{/css/staff-sidebar.css}">
 </head>
 <body>
-<h1>Edit Appointment</h1>
+    <div class="d-flex">
+        <!-- Sidebar Fragment -->
+        <div th:replace="fragments/staff-sidebar :: staff-sidebar"></div>
 
-<form th:action="@{/staff/registration/save/{id}(id=${appointment.id})}" method="post">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header Fragment -->
+            <div th:replace="fragments/staff-sidebar :: staff-header"></div>
 
-    <!-- Appointment Section -->
-    <div class="section-title">Appointment Details</div>
+            <main class="registration-edit-main">
+                <div class="container py-4">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="h4 m-0" th:text="#{staff.registration.edit.title}">Edit Appointment</h1>
+                        <a th:href="@{/staff/registration/list}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-arrow-left me-2"></i>
+                            <span th:text="#{staff.registration.edit.back}">Back to List</span>
+                        </a>
+                    </div>
 
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name"
-               th:placeholder="${appointment.name}" readonly/>
+                    <!-- Form -->
+                    <form th:action="@{/staff/registration/save/{id}(id=${appointment.id})}" method="post" class="registration-edit-form">
+                        <!-- Appointment Details Section -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="card-title mb-0">
+                                    <i class="fa-solid fa-calendar-check me-2"></i>
+                                    <span th:text="#{staff.registration.edit.appointment.details}">Appointment Details</span>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="name" class="form-label fw-semibold">
+                                            <span th:text="#{label.name}">Name</span>
+                                        </label>
+                                        <input type="text" 
+                                               name="name" 
+                                               id="name"
+                                               class="form-control"
+                                               th:value="${appointment.name}"
+                                               readonly/>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="phoneNumber" class="form-label fw-semibold">
+                                            <span th:text="#{staff.registration.edit.phone.number}">Phone Number</span>
+                                        </label>
+                                        <input type="text" 
+                                               name="phoneNumber" 
+                                               id="phoneNumber"
+                                               class="form-control"
+                                               th:value="${appointment.phoneNumber}"/>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="scheduledAt" class="form-label fw-semibold">
+                                            <span th:text="#{staff.registration.table.scheduled.at}">Scheduled At</span>
+                                        </label>
+                                        <input type="datetime-local" 
+                                               name="scheduledAt" 
+                                               id="scheduledAt"
+                                               class="form-control"
+                                               th:value="${#temporals.format(appointment.scheduledAt, 'yyyy-MM-dd''T''HH:mm')}"/>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="status" class="form-label fw-semibold">
+                                            <span th:text="#{label.status}">Status</span>
+                                        </label>
+                                        <select name="status" id="status" class="form-select">
+                                            <option th:each="s : ${allStatuses}" 
+                                                    th:value="${s}"
+                                                    th:text="${s}" 
+                                                    th:selected="${s == appointment.status}">PENDING</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Appointment Execution Details Section -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="card-title mb-0">
+                                    <i class="fa-solid fa-clipboard-list me-2"></i>
+                                    <span th:text="#{staff.registration.edit.execution.details}">Appointment Execution Details</span>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label for="userSearch" class="form-label fw-semibold">
+                                            <span th:text="#{staff.registration.edit.assigned.user}">Assigned User</span>
+                                        </label>
+                                        <input type="hidden" name="username" th:value="${appointmentDetails.user}" id="username"/>
+                                        <input type="text" 
+                                               id="userSearch" 
+                                               class="form-control"
+                                               th:placeholder="${appointmentDetails.user}"/>
+                                        <div id="userResults" class="user-search-results"></div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <span th:text="#{staff.registration.edit.scheduled.start}">Scheduled Start</span>
+                                        </label>
+                                        <input type="datetime-local" 
+                                               class="form-control"
+                                               th:value="${#temporals.format(appointmentDetails.scheduledStart, 'yyyy-MM-dd''T''HH:mm')}" 
+                                               readonly/>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <span th:text="#{staff.registration.edit.scheduled.end}">Scheduled End</span>
+                                        </label>
+                                        <input type="datetime-local" 
+                                               class="form-control"
+                                               th:value="${#temporals.format(appointmentDetails.scheduledEnd, 'yyyy-MM-dd''T''HH:mm')}" 
+                                               readonly/>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="actualStart" class="form-label fw-semibold">
+                                            <span th:text="#{staff.registration.edit.actual.start}">Actual Start</span>
+                                        </label>
+                                        <input type="datetime-local" 
+                                               name="actualStart" 
+                                               id="actualStart"
+                                               class="form-control"
+                                               th:value="${#temporals.format(appointmentDetails.actualStart, 'yyyy-MM-dd''T''HH:mm')}"/>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="actualEnd" class="form-label fw-semibold">
+                                            <span th:text="#{staff.registration.edit.actual.end}">Actual End</span>
+                                        </label>
+                                        <input type="datetime-local" 
+                                               name="actualEnd" 
+                                               id="actualEnd"
+                                               class="form-control"
+                                               th:value="${#temporals.format(appointmentDetails.actualEnd, 'yyyy-MM-dd''T''HH:mm')}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-save me-2"></i>
+                                <span th:text="#{btn.save}">Save</span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                <i class="fa-solid fa-times me-2"></i>
+                                <span th:text="#{btn.cancel}">Cancel</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="phoneNumber">Phone Number</label>
-        <input type="text" name="phoneNumber" id="phoneNumber"
-               th:placeholder="${appointment.phoneNumber}"/>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div th:replace="fragments/staff-sidebar :: staff-scripts"></div>
+    
+    <script>
+        // Simple fetch-based user search
+        const userSearchInput = document.getElementById('userSearch');
+        const userResults = document.getElementById('userResults');
+        const userIdInput = document.getElementById('username');
 
-    <div class="form-group">
-        <label for="scheduledAt">Scheduled At</label>
-        <input type="datetime-local" name="scheduledAt" id="scheduledAt"
-               th:value="${#temporals.format(appointment.scheduledAt, 'yyyy-MM-dd''T''HH:mm')}"/>
-    </div>
-
-    <div class="form-group">
-        <label for="status">Status</label>
-        <select name="status" id="status">
-            <option th:each="s : ${allStatuses}" th:value="${s}"
-                    th:text="${s}" th:selected="${s == appointment.status}">PENDING</option>
-        </select>
-    </div>
-
-    <!-- AppointmentDetails Section -->
-    <div class="section-title">Appointment Execution Details</div>
-
-    <div class="form-group">
-        <label for="userSearch">Assigned User</label>
-        <input type="hidden" name="username" th:value="${appointmentDetails.user}" id="username"/>
-        <input type="text" id="userSearch" th:placeholder="${appointmentDetails.user}" />
-        <div id="userResults" style="border: 1px solid #ddd; padding: 5px; margin-top: 5px;"></div>
-    </div>
-
-    <div class="form-group">
-        <label>Scheduled Start</label>
-        <input type="datetime-local" th:value="${#temporals.format(appointmentDetails.scheduledStart, 'yyyy-MM-dd''T''HH:mm')}" readonly/>
-    </div>
-
-    <div class="form-group">
-        <label>Scheduled End</label>
-        <input type="datetime-local" th:value="${#temporals.format(appointmentDetails.scheduledEnd, 'yyyy-MM-dd''T''HH:mm')}" readonly/>
-    </div>
-
-    <div class="form-group">
-        <label for="actualStart">Actual Start</label>
-        <input type="datetime-local" name="actualStart" id="actualStart"
-               th:value="${#temporals.format(appointmentDetails.actualStart, 'yyyy-MM-dd''T''HH:mm')}"/>
-    </div>
-
-    <div class="form-group">
-        <label for="actualEnd">Actual End</label>
-        <input type="datetime-local" name="actualEnd" id="actualEnd"
-               th:value="${#temporals.format(appointmentDetails.actualEnd, 'yyyy-MM-dd''T''HH:mm')}"/>
-    </div>
-
-    <div class="form-buttons">
-        <button type="submit" class="save-btn">Save</button>
-        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
-    </div>
-
-</form>
-
-<script>
-    // Simple fetch-based user search
-    const userSearchInput = document.getElementById('userSearch');
-    const userResults = document.getElementById('userResults');
-    const userIdInput = document.getElementById('username');
-
-    let timeout = null;
-    userSearchInput.addEventListener('input', () => {
-        clearTimeout(timeout);
-        const query = userSearchInput.value.trim();
-        if (query.length < 2) {
-            userResults.innerHTML = '';
-            return;
-        }
-        timeout = setTimeout(() => {
-            fetch(`/staff/users/search?query=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(users => {
-                    userResults.innerHTML = '';
-                    users.forEach(user => {
-                        const div = document.createElement('div');
-                        div.textContent = `${user.username} (${user.fullName})`;
-                        div.style.cursor = 'pointer';
-                        div.style.padding = '2px 5px';
-                        div.addEventListener('click', () => {
-                            userSearchInput.value = `${user.username} (${user.fullName})`;
-                            userIdInput.value = user.username;
-                            userResults.innerHTML = '';
+        let timeout = null;
+        userSearchInput.addEventListener('input', () => {
+            clearTimeout(timeout);
+            const query = userSearchInput.value.trim();
+            if (query.length < 2) {
+                userResults.innerHTML = '';
+                userResults.style.display = 'none';
+                return;
+            }
+            timeout = setTimeout(() => {
+                fetch(`/staff/users/search?query=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(users => {
+                        userResults.innerHTML = '';
+                        if (users.length === 0) {
+                            userResults.style.display = 'none';
+                            return;
+                        }
+                        userResults.style.display = 'block';
+                        users.forEach(user => {
+                            const div = document.createElement('div');
+                            div.className = 'user-result-item';
+                            div.textContent = `${user.username} (${user.fullName})`;
+                            div.addEventListener('click', () => {
+                                userSearchInput.value = `${user.username} (${user.fullName})`;
+                                userIdInput.value = user.username;
+                                userResults.innerHTML = '';
+                                userResults.style.display = 'none';
+                            });
+                            userResults.appendChild(div);
                         });
-                        userResults.appendChild(div);
+                    })
+                    .catch(err => {
+                        console.error('Search error:', err);
+                        userResults.style.display = 'none';
                     });
-                });
-        }, 300); // debounce
-    });
-</script>
-
+            }, 300); // debounce
+        });
+    </script>
 </body>
 </html>

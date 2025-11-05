@@ -208,8 +208,10 @@
 <div id="map" style="height: 400px;"></div>
 
 <script th:inline="javascript">
-    var lat = [[${lat}]];
-    var lng = [[${lng}]];
+    /*<![CDATA[*/
+    var lat = /*[[${lat}]]*/ 0;
+    var lng = /*[[${lng}]]*/ 0;
+    /*]]>*/
 
     var map = L.map('map').setView([lat, lng], 15);
 

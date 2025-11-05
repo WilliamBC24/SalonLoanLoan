@@ -1,0 +1,115 @@
+.section-title {
+    color: #111827;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #000000;
+}
+
+/* Card polishing */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    transition: box-shadow .2s ease, transform .1s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.10);
+}
+
+.status-badge.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.status-confirmed {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-badge.status-processing {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-badge.status-shipped {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-delivered {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Table refinements */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background: #f8fafc;
+    border-bottom: 2px solid #eef2f7 !important;
+    color: #374151;
+}
+
+.table tbody td {
+    border-color: #f1f5f9 !important;
+}
+
+.table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Sidebar total row spacing */
+.order-summary-total {
+    padding-top: 10px;
+    margin-top: 6px;
+}
+
+/* Order item thumbnail */
+.item-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+@media (max-width: 768px) {
+    .table {
+        font-size: 14px;
+    }
+}
+
+/* Sticky footer & compact header for order-details page */
+.order-details-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-details-page main { flex: 1 0 auto; }
+.order-details-page .site-footer, .order-details-page .footer-bottom { flex-shrink: 0; }
+
+/* Compact frame without shrinking font */
+.order-details-page .top-header { padding: 0; }
+.order-details-page .logo-img { height: 30px; }
+.order-details-page .navbar { padding-top: .25rem !important; padding-bottom: .25rem !important; }
+.order-details-page .site-footer { padding-top: 10px; padding-bottom: 10px; }
+.order-details-page .footer-bottom { padding: 8px 0; }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .card { padding: 14px !important; }
+  .d-flex.justify-content-between.align-items-center { flex-direction: column !important; align-items: flex-start !important; gap: 6px; }
+  .table { font-size: 14px; }
+  .d-flex.gap-2 .btn { width: 100%; }
+}

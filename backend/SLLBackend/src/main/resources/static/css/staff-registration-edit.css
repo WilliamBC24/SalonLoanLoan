@@ -1,0 +1,198 @@
+/* ========== STAFF REGISTRATION EDIT STYLES ========== */
+
+/* Root Variables */
+:root {
+    --primary-color: #2c3e50;
+    --primary-dark: #7a7a7a91;
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --border-color: #e9ecef;
+    --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --transition: all 0.3s ease;
+}
+
+/* Layout */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.registration-edit-main {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.registration-edit-main .container {
+    max-width: 1100px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.card-header {
+    background: var(--bg-light);
+    border-bottom: 2px solid var(--primary-color);
+    padding: 20px 25px;
+}
+
+.card-title {
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+/* Form Styling */
+.registration-edit-form {
+    margin-bottom: 30px;
+}
+
+.registration-edit-form .form-label {
+    color: var(--text-dark);
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.registration-edit-form .form-control,
+.registration-edit-form .form-select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.registration-edit-form .form-control:focus,
+.registration-edit-form .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.registration-edit-form .form-control[readonly] {
+    background-color: var(--bg-light);
+    cursor: not-allowed;
+}
+
+/* User Search Results */
+.user-search-results {
+    display: none;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-top: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--bg-white);
+    box-shadow: var(--shadow-light);
+}
+
+.user-result-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.user-result-item:last-child {
+    border-bottom: none;
+}
+
+.user-result-item:hover {
+    background-color: var(--bg-light);
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.form-actions .btn {
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+    color: #fff;
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .card-body {
+        padding: 20px;
+    }
+
+    .registration-edit-main {
+        padding: 15px 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .registration-edit-main {
+        padding: 10px 0;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .registration-edit-main .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+

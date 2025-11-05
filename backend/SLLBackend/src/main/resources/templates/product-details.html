@@ -13,6 +13,9 @@
 <body>
     <div th:replace="fragments/header :: top-header"></div>
     <div th:replace="fragments/header :: navbar"></div>
+    
+    <!-- Breadcrumb Section -->
+    <div th:replace="fragments/breadcrumb :: breadcrumb(current=#{product.details.title}, parent=#{nav.products}, parentUrl='/products')"></div>
 
     <main class="product-details-main py-5">
         <div class="container">

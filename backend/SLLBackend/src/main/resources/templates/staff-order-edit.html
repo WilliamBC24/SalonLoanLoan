@@ -1,286 +1,197 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Edit Order Status</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
-            background: #f5f5f5;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .back-link {
-            display: inline-block;
-            color: #007bff;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        h1 {
-            color: #333;
-        }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .form-section {
-            margin-bottom: 25px;
-        }
-        .form-section h2 {
-            color: #333;
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #007bff;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .info-item {
-            display: flex;
-            flex-direction: column;
-        }
-        .info-label {
-            color: #666;
-            font-size: 12px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-        .info-value {
-            color: #333;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .order-status {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-            display: inline-block;
-        }
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .status-confirmed {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        .status-processing {
-            background: #cce5ff;
-            color: #004085;
-        }
-        .status-shipped {
-            background: #d4edda;
-            color: #155724;
-        }
-        .status-delivered {
-            background: #d4edda;
-            color: #155724;
-        }
-        .status-cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: bold;
-        }
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-            background: white;
-        }
-        select:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-        .error {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-primary {
-            background: #007bff;
-            color: white;
-        }
-        .btn-primary:hover:not(:disabled) {
-            background: #0056b3;
-        }
-        .btn-primary:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-        .help-text {
-            color: #666;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-        @media (max-width: 768px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{staff.order.edit.title} + ' | ' + #{app.name}">Edit Order Status | Salon Loan Loan</title>
+    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Page CSS -->
+    <link rel="stylesheet" th:href="@{/css/staff-order-edit.css}">
+    <!-- Staff Sidebar CSS -->
+    <link rel="stylesheet" th:href="@{/css/staff-sidebar.css}">
 </head>
 <body>
-    <div class="header">
-        <h1>Staff - Edit Order Status</h1>
-        <a th:href="@{/staff/order/list(orderId=${order.id})}" class="back-link">← Back to Order List</a>
-    </div>
+    <div class="d-flex">
+        <!-- Sidebar Fragment -->
+        <div th:replace="fragments/staff-sidebar :: staff-sidebar"></div>
 
-    <div th:if="${param.error}" class="alert alert-error">
-        <span th:text="${param.error}">Error message</span>
-    </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header Fragment -->
+            <div th:replace="fragments/staff-sidebar :: staff-header"></div>
 
-    <div class="card">
-        <!-- Current Order Information -->
-        <div class="form-section">
-            <h2>Order Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Order ID</span>
-                    <span class="info-value" th:text="${order.id}">123</span>
+            <main class="order-edit-main">
+                <div class="container py-4">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="h4 m-0" th:text="#{staff.order.edit.title}">Edit Order Status</h1>
+                        <a th:href="@{/staff/order/list}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-arrow-left me-2"></i>
+                            <span th:text="#{staff.order.edit.back}">Back to Order List</span>
+                        </a>
+                    </div>
+
+                    <!-- Error Alert -->
+                    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-exclamation-circle me-2"></i>
+                        <span th:text="${param.error}">Error message</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <!-- Order Information Card -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="card-title mb-0">
+                                <i class="fa-solid fa-info-circle me-2"></i>
+                                <span th:text="#{staff.order.edit.order.info}">Order Information</span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="info-item">
+                                        <label class="info-label" th:text="#{order.details.order.id}">Order ID</label>
+                                        <div class="info-value fw-bold" th:text="${order.id}">123</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="info-item">
+                                        <label class="info-label" th:text="#{order.details.order.date}">Order Date</label>
+                                        <div class="info-value" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">01 Jan 2024 10:00</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="info-item">
+                                        <label class="info-label" th:text="#{order.history.customer}">Customer</label>
+                                        <div class="info-value" th:text="${order.customerInfo.name}">Customer Name</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="info-item">
+                                        <label class="info-label" th:text="#{order.details.status}">Current Status</label>
+                                        <span class="badge rounded-pill order-status" 
+                                              th:classappend="' status-' + ${#strings.toLowerCase(order.orderStatus)}"
+                                              th:text="${order.orderStatus}">PENDING</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="info-item">
+                                        <label class="info-label" th:text="#{staff.orders.total}">Total Amount</label>
+                                        <div class="info-value fw-bold text-success" th:text="${order.totalPrice} + ' ' + #{currency.unit}">0 VND</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Status Form -->
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="card-title mb-0">
+                                <i class="fa-solid fa-edit me-2"></i>
+                                <span th:text="#{staff.order.edit.update.status}">Update Order Status</span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="editStatusForm" th:action="@{/staff/order/edit}" method="post" novalidate>
+                                <input type="hidden" name="orderId" th:value="${order.id}" />
+                                
+                                <div class="mb-4">
+                                    <label for="orderStatus" class="form-label fw-semibold">
+                                        <span th:text="#{staff.order.edit.new.status}">New Status</span>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="orderStatus" name="orderStatus" class="form-select" required>
+                                        <option value="" th:text="#{staff.order.edit.select.status}">-- Select New Status --</option>
+                                        <option th:each="status : ${orderStatuses}" 
+                                                th:value="${status}" 
+                                                th:text="${status}"
+                                                th:selected="${status == order.orderStatus}">
+                                            PENDING
+                                        </option>
+                                    </select>
+                                    <div class="form-text" th:text="#{staff.order.edit.select.status.help}">Select the new status for this order</div>
+                                    <div class="invalid-feedback" id="statusError" th:text="#{staff.order.edit.status.required}">Please select a status</div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <a th:href="@{/staff/order/list}" class="btn btn-outline-secondary btn-lg w-100">
+                                                <i class="fa-solid fa-times me-2"></i>
+                                                <span th:text="#{btn.cancel}">Cancel</span>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                                <i class="fa-solid fa-save me-2"></i>
+                                                <span th:text="#{staff.order.edit.update}">Update Status</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Order Date</span>
-                    <span class="info-value" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
-                        01 Jan 2024 10:00
-                    </span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Customer</span>
-                    <span class="info-value" th:text="${order.customerInfo.name}">Customer Name</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Current Status</span>
-                    <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
-                          th:text="${order.orderStatus}">
-                        PENDING
-                    </span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Total Amount</span>
-                    <span class="info-value" th:text="${order.totalPrice} + ' VND'">0 VND</span>
-                </div>
-            </div>
+            </main>
         </div>
-
-        <!-- Edit Status Form -->
-        <form id="editStatusForm" action="/staff/order/edit" method="post" onsubmit="return validateForm()">
-            <input type="hidden" name="orderId" th:value="${order.id}" />
-            
-            <div class="form-section">
-                <h2>Update Order Status</h2>
-                <div class="form-group">
-                    <label for="orderStatus">New Status *</label>
-                    <select id="orderStatus" name="orderStatus" required>
-                        <option value="">-- Select New Status --</option>
-                        <option th:each="status : ${orderStatuses}" 
-                                th:value="${status}" 
-                                th:text="${status}"
-                                th:selected="${status == order.orderStatus}">
-                            PENDING
-                        </option>
-                    </select>
-                    <span class="help-text">Select the new status for this order</span>
-                    <span class="error" id="statusError">Please select a status</span>
-                </div>
-            </div>
-
-            <div class="actions">
-                <button type="submit" class="btn btn-primary">Update Status</button>
-                <a th:href="@{/staff/order/list(orderId=${order.id})}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div th:replace="fragments/staff-sidebar :: staff-scripts"></div>
     <script>
-        function validateForm() {
-            let isValid = true;
+        (function() {
+            const form = document.getElementById('editStatusForm');
+            const statusSelect = document.getElementById('orderStatus');
+            const statusError = document.getElementById('statusError');
+            const currentStatus = /*[[${order.orderStatus}]]*/ '';
 
-            // Reset errors
-            document.querySelectorAll('.error').forEach(err => err.style.display = 'none');
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
 
-            // Validate status selection
-            const status = document.getElementById('orderStatus').value;
-            if (!status) {
-                document.getElementById('statusError').style.display = 'block';
-                isValid = false;
-            }
+                // Reset validation state
+                statusSelect.classList.remove('is-invalid');
+                statusError.style.display = 'none';
 
-            // Check if status has changed
-            const currentStatus = '[[${order.orderStatus}]]';
-            if (status === currentStatus) {
-                alert('Please select a different status to update');
-                return false;
-            }
+                // Validate status selection
+                if (!statusSelect.value) {
+                    statusSelect.classList.add('is-invalid');
+                    statusError.style.display = 'block';
+                    isValid = false;
+                }
 
-            return isValid;
-        }
+                // Check if status has changed
+                if (statusSelect.value === currentStatus) {
+                    e.preventDefault();
+                    alert(/*[[#{staff.order.edit.status.unchanged}]]*/ 'Please select a different status to update');
+                    return false;
+                }
 
-        // Add real-time validation
-        document.getElementById('orderStatus').addEventListener('change', function() {
-            if (this.value) {
-                document.getElementById('statusError').style.display = 'none';
-            }
-        });
+                if (!isValid) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+                return isValid;
+            });
+
+            // Real-time validation
+            statusSelect.addEventListener('change', function() {
+                if (this.value) {
+                    this.classList.remove('is-invalid');
+                    statusError.style.display = 'none';
+                }
+            });
+        })();
     </script>
 </body>
 </html>

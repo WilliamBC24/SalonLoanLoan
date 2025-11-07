@@ -172,6 +172,7 @@
                 <th>Name</th>
                 <th>Price (VND)</th>
                 <th>Description</th>
+                <th>Stock</th>
                 <th>Active</th>
                 <th>Actions</th>
             </tr>
@@ -182,6 +183,11 @@
                 <td th:text="${product.productName}">Product name</td>
                 <td th:text="${product.currentPrice}">0</td>
                 <td th:text="${product.productDescription}">Description</td>
+                <td>
+                    <span th:text="${stockMap[product.id]}">0</span>
+                    <span th:if="${stockMap[product.id] == 0}" style="color: red; font-weight: bold;"> (Out of Stock)</span>
+                    <span th:if="${stockMap[product.id] > 0 && stockMap[product.id] < 10}" style="color: orange; font-weight: bold;"> (Low)</span>
+                </td>
                 <td th:text="${product.activeStatus}">false</td>
                 <td>
                     <a th:href="@{/staff/products/edit/{id}(id=${product.id})}" class="edit-link">Edit</a>

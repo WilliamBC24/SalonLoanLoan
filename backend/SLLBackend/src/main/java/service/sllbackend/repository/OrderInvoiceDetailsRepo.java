@@ -15,6 +15,8 @@ import java.util.List;
 public interface OrderInvoiceDetailsRepo extends JpaRepository<OrderInvoiceDetails, Integer> {
     List<OrderInvoiceDetails> findByOrderInvoice(OrderInvoice orderInvoice);
     
+    List<OrderInvoiceDetails> findByOrderInvoice_Id(Integer orderInvoiceId);
+    
     @Query("SELECT CASE WHEN COUNT(oid) > 0 THEN true ELSE false END " +
            "FROM OrderInvoiceDetails oid " +
            "JOIN oid.orderInvoice oi " +

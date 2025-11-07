@@ -15,4 +15,6 @@ public interface ProductsService {
     Product createProduct(Product product);
     
     Product updateProduct(Integer id, Product product);
+    
+    Integer getProductStock(Integer productId);
 }

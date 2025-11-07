@@ -280,6 +280,15 @@
         </div>
         
         <div class="detail-row">
+            <div class="detail-label">Available Stock:</div>
+            <div class="detail-value">
+                <span th:text="${availableStock}">0</span> units
+                <span th:if="${availableStock == 0}" style="color: red; font-weight: bold;"> (Out of Stock)</span>
+                <span th:if="${availableStock > 0 && availableStock < 10}" style="color: orange; font-weight: bold;"> (Low Stock)</span>
+            </div>
+        </div>
+        
+        <div class="detail-row">
             <div class="detail-label">Status:</div>
             <div class="detail-value" th:text="${product.activeStatus} ? 'Active' : 'Inactive'">Active</div>
         </div>

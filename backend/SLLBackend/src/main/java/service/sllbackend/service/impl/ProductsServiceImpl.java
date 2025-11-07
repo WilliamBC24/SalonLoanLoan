@@ -10,12 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Product;
 import service.sllbackend.repository.ProductRepo;
+import service.sllbackend.service.InventoryService;
 import service.sllbackend.service.ProductsService;
 
 @Service
 @RequiredArgsConstructor
 public class ProductsServiceImpl implements ProductsService {
     private final ProductRepo productRepo;
+    private final InventoryService inventoryService;
 
     @Override
     @Transactional(readOnly = true)
@@ -79,5 +81,11 @@ public class ProductsServiceImpl implements ProductsService {
         existingProduct.setActiveStatus(product.getActiveStatus());
 
         return productRepo.save(existingProduct);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getProductStock(Integer productId) {
+        return inventoryService.getAvailableStock(productId);
     }
 }

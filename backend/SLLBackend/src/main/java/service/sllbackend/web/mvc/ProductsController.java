@@ -40,8 +40,10 @@ public class ProductsController {
     @GetMapping("/{id}")
     public String viewProductDetails(@PathVariable Integer id, Model model, Principal principal) {
         Product product = productsService.getProductById(id);
+        Integer availableStock = productsService.getProductStock(id);
 
         model.addAttribute("product", product);
+        model.addAttribute("availableStock", availableStock);
         
         // Get all product feedback
         List<ProductFeedback> feedbackList = productFeedbackService.getProductFeedback(id);

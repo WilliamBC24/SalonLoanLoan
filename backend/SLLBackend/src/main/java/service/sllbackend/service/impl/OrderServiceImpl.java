@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import service.sllbackend.entity.*;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.repository.*;
+import service.sllbackend.service.InventoryService;
 import service.sllbackend.service.OrderService;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerInfoRepo customerInfoRepo;
     private final CartRepo cartRepo;
     private final UserAccountRepo userAccountRepo;
+    private final InventoryService inventoryService;
 
     @Override
     @Transactional
@@ -34,6 +36,19 @@ public class OrderServiceImpl implements OrderService {
         List<Cart> cartItems = cartRepo.findByUserAccount(userAccount);
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Cart is empty");
+        }
+        
+        // Check stock availability for all items first
+        for (Cart cartItem : cartItems) {
+            Integer productId = cartItem.getProduct().getId();
+            Integer requiredQuantity = cartItem.getAmount();
+            
+            if (!inventoryService.hasEnoughStock(productId, requiredQuantity)) {
+                Integer availableStock = inventoryService.getAvailableStock(productId);
+                throw new RuntimeException("Insufficient stock for product: " + 
+                        cartItem.getProduct().getProductName() + 
+                        ". Required: " + requiredQuantity + ", Available: " + availableStock);
+            }
         }
         
         // Calculate total price
@@ -65,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         orderInvoice = orderInvoiceRepo.save(orderInvoice);
         
-        // Create order details
+        // Create order details and reduce stock
         for (Cart cartItem : cartItems) {
             OrderInvoiceDetails details = OrderInvoiceDetails.builder()
                     .orderInvoice(orderInvoice)
@@ -74,6 +89,13 @@ public class OrderServiceImpl implements OrderService {
                     .priceAtSale(cartItem.getProduct().getCurrentPrice())
                     .build();
             orderInvoiceDetailsRepo.save(details);
+            
+            // Reduce stock for this product
+            inventoryService.reduceStock(
+                    cartItem.getProduct().getId(), 
+                    cartItem.getAmount(),
+                    orderInvoice.getId()
+            );
         }
         
         // Clear cart
@@ -123,6 +145,9 @@ public class OrderServiceImpl implements OrderService {
             order.getOrderStatus() != OrderStatus.CONFIRMED) {
             throw new RuntimeException("Cannot cancel order in " + order.getOrderStatus() + " status");
         }
+        
+        // Return stock before marking as cancelled
+        inventoryService.returnStock(orderId);
         
         order.setOrderStatus(OrderStatus.CANCELLED);
         orderInvoiceRepo.save(order);

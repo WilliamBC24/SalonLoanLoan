@@ -137,6 +137,16 @@
         </div>
 
         <div class="form-group">
+            <label>Available Stock</label>
+            <div class="info-text">
+                <span th:text="${availableStock}">0</span> units available
+                <span th:if="${availableStock == 0}" style="color: red; font-weight: bold;"> (Out of Stock)</span>
+                <span th:if="${availableStock > 0 && availableStock < 10}" style="color: orange; font-weight: bold;"> (Low Stock)</span>
+            </div>
+            <div class="info-text" style="margin-top: 5px;">Stock is managed through inventory system</div>
+        </div>
+
+        <div class="form-group">
             <label class="checkbox-label">
                 <input type="checkbox" id="activeStatus" name="activeStatus" value="true"
                        th:checked="${product.activeStatus}">

@@ -10,9 +10,7 @@ import service.sllbackend.enumerator.InventoryTransactionType;
 import service.sllbackend.repository.*;
 import service.sllbackend.service.InventoryService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +21,6 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryTransactionRepo inventoryTransactionRepo;
     private final OrderInvoiceDetailsRepo orderInvoiceDetailsRepo;
     private final StaffRepo staffRepo;
-    
-    // Map to track which lots were used for which order
-    // Key: orderId, Value: Map of lotId -> quantity taken
-    private final Map<Integer, Map<Integer, Integer>> orderLotTracking = new HashMap<>();
     
     @Override
     @Transactional(readOnly = true)
@@ -58,7 +52,6 @@ public class InventoryServiceImpl implements InventoryService {
         }
         
         int remainingQuantity = quantity;
-        Map<Integer, Integer> lotsUsed = new HashMap<>();
         
         // Get first staff (admin) for transaction record
         Staff staff = staffRepo.findAll().stream().findFirst()
@@ -83,9 +76,6 @@ public class InventoryServiceImpl implements InventoryService {
                     .build();
             inventoryTransactionRepo.save(transaction);
             
-            // Track which lot we took from
-            lotsUsed.put(lot.getId(), quantityFromThisLot);
-            
             remainingQuantity -= quantityFromThisLot;
             
             log.info("Reduced {} units from lot {} for product {}", 
@@ -96,9 +86,6 @@ public class InventoryServiceImpl implements InventoryService {
             throw new RuntimeException("Insufficient stock for product ID: " + productId + 
                     ". Required: " + quantity + ", Available: " + (quantity - remainingQuantity));
         }
-        
-        // Track the lots used for this order for potential rollback
-        orderLotTracking.put(orderId, lotsUsed);
         
         log.info("Successfully reduced {} units for product {} (order {})", 
                 quantity, productId, orderId);
@@ -152,9 +139,6 @@ public class InventoryServiceImpl implements InventoryService {
             log.info("Returned {} units to lot {} for product {} (order cancelled: {})", 
                     quantity, lot.getId(), productId, orderId);
         }
-        
-        // Clean up tracking
-        orderLotTracking.remove(orderId);
         
         log.info("Successfully returned stock for cancelled order {}", orderId);
     }

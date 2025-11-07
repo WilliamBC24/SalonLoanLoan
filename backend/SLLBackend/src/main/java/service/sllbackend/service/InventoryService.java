@@ -1,7 +1,5 @@
 package service.sllbackend.service;
 
-import service.sllbackend.entity.Product;
-
 public interface InventoryService {
     
     /**

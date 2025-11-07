@@ -1,6 +1,8 @@
 package service.sllbackend.web.mvc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +34,15 @@ public class StaffProductController {
         
         List<Product> products = productsService.getProducts(name, activeStatus);
         
+        // Add stock information for each product
+        Map<Integer, Integer> stockMap = new HashMap<>();
+        for (Product product : products) {
+            Integer stock = productsService.getProductStock(product.getId());
+            stockMap.put(product.getId(), stock);
+        }
+        
         model.addAttribute("products", products);
+        model.addAttribute("stockMap", stockMap);
         model.addAttribute("searchName", name);
         model.addAttribute("selectedActiveStatus", activeStatus);
         
@@ -72,12 +82,14 @@ public class StaffProductController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Integer id, Model model) {
         Product product = productsService.getProductById(id);
+        Integer availableStock = productsService.getProductStock(id);
         
         if (product == null) {
             throw new RuntimeException("Product not found");
         }
         
         model.addAttribute("product", product);
+        model.addAttribute("availableStock", availableStock);
         return "staff-product-edit";
     }
 

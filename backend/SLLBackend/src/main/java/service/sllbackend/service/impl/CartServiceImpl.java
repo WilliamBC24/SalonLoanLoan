@@ -20,6 +20,7 @@ public class CartServiceImpl implements CartService {
     private final CartRepo cartRepo;
     private final UserAccountRepo userAccountRepo;
     private final ProductRepo productRepo;
+    private final InventoryService inventoryService;
 
     @Override
     @Transactional(readOnly = true)
@@ -37,13 +38,33 @@ public class CartServiceImpl implements CartService {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         
+        // Check if product has stock
+        Integer availableStock = inventoryService.getAvailableStock(productId);
+        if (availableStock <= 0) {
+            throw new RuntimeException("Product is out of stock");
+        }
+        
         Optional<Cart> existingCart = cartRepo.findByUserAccountAndProduct_Id(userAccount, productId);
         
         if (existingCart.isPresent()) {
             Cart cart = existingCart.get();
-            cart.setAmount(cart.getAmount() + amount);
+            int newAmount = cart.getAmount() + amount;
+            
+            // Check if new amount exceeds available stock
+            if (newAmount > availableStock) {
+                throw new RuntimeException("Not enough stock. Available: " + availableStock + 
+                        ", Requested: " + newAmount);
+            }
+            
+            cart.setAmount(newAmount);
             cartRepo.save(cart);
         } else {
+            // Check if amount exceeds available stock
+            if (amount > availableStock) {
+                throw new RuntimeException("Not enough stock. Available: " + availableStock + 
+                        ", Requested: " + amount);
+            }
+            
             Cart cart = Cart.builder()
                     .userAccount(userAccount)
                     .product(product)
@@ -69,6 +90,13 @@ public class CartServiceImpl implements CartService {
         if (amount <= 0) {
             removeProductFromCart(username, productId);
             return;
+        }
+        
+        // Check stock availability
+        Integer availableStock = inventoryService.getAvailableStock(productId);
+        if (amount > availableStock) {
+            throw new RuntimeException("Not enough stock. Available: " + availableStock + 
+                    ", Requested: " + amount);
         }
         
         UserAccount userAccount = userAccountRepo.findByUsername(username)

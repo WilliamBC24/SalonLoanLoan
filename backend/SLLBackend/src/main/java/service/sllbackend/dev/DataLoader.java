@@ -35,6 +35,10 @@ public class DataLoader implements CommandLineRunner {
 	private final JobPostingApplicationRepo jobPostingApplicationRepo;
 	private final LoyaltyLevelRepo loyaltyLevelRepo;
 	private final AppointmentRepo appointmentRepo;
+	private final InventoryLotRepo inventoryLotRepo;
+	private final InventoryConsignmentRepo inventoryConsignmentRepo;
+	private final InventoryInvoiceRepo inventoryInvoiceRepo;
+	private final InventoryInvoiceDetailRepo inventoryInvoiceDetailRepo;
 
 	@Override
 	public void run(String... args) {
@@ -44,6 +48,7 @@ public class DataLoader implements CommandLineRunner {
 		registerStaff();
 		registerServices();
 		registerProducts();
+		registerInventory();
 		registerVouchers();
 		registerPromotions();
 		registerProviders();
@@ -679,6 +684,60 @@ public class DataLoader implements CommandLineRunner {
 				.build());
 
 		log.info("Successfully loaded 30 products");
+	}
+
+	public void registerInventory() {
+		// Get all products
+		List<Product> products = productRepo.findAll();
+		
+		// Get first staff for creating invoice
+		Staff staff = staffRepo.findAll().stream().findFirst()
+				.orElseThrow(() -> new RuntimeException("No staff found"));
+		
+		// Get first supplier
+		Supplier supplier = supplierRepo.findAll().stream().findFirst()
+				.orElseThrow(() -> new RuntimeException("No supplier found"));
+		
+		// Create inventory invoice
+		InventoryInvoice inventoryInvoice = inventoryInvoiceRepo.save(InventoryInvoice.builder()
+				.staff(staff)
+				.supplier(supplier)
+				.note("Initial stock load")
+				.invoiceStatus(InventoryInvoiceStatus.RECEIVED)
+				.build());
+		
+		// For each product, create inventory invoice detail, consignment, and lot
+		for (Product product : products) {
+			// Create inventory invoice detail
+			InventoryInvoiceDetail invoiceDetail = inventoryInvoiceDetailRepo.save(
+				InventoryInvoiceDetail.builder()
+						.inventoryInvoice(inventoryInvoice)
+						.product(product)
+						.orderedQuantity(100) // Initial stock of 100 units per product
+						.unitPrice(product.getCurrentPrice() / 2) // Cost is half of retail price
+						.build()
+			);
+			
+			// Create inventory consignment
+			InventoryConsignment consignment = inventoryConsignmentRepo.save(
+				InventoryConsignment.builder()
+						.inventoryInvoiceDetail(invoiceDetail)
+						.product(product)
+						.supplier(supplier)
+						.receivedQuantity(100)
+						.build()
+			);
+			
+			// Create inventory lot with expiry date 2 years from now
+			inventoryLotRepo.save(InventoryLot.builder()
+					.inventoryConsignment(consignment)
+					.product(product)
+					.availableQuantity(100)
+					.productExpiryDate(LocalDate.now().plusYears(2))
+					.build());
+		}
+		
+		log.info("Successfully loaded inventory stock for {} products (100 units each)", products.size());
 	}
 
 	public void registerVouchers() {

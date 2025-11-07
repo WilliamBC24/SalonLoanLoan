@@ -16,6 +16,7 @@ import service.sllbackend.service.ProductsService;
 @RequiredArgsConstructor
 public class ProductsServiceImpl implements ProductsService {
     private final ProductRepo productRepo;
+    private final InventoryService inventoryService;
 
     @Override
     @Transactional(readOnly = true)
@@ -79,5 +80,11 @@ public class ProductsServiceImpl implements ProductsService {
         existingProduct.setActiveStatus(product.getActiveStatus());
 
         return productRepo.save(existingProduct);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getProductStock(Integer productId) {
+        return inventoryService.getAvailableStock(productId);
     }
 }

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.entity.OrderInvoiceDetails;
 import service.sllbackend.enumerator.OrderStatus;
-import service.sllbackend.service.impl.OrderServiceImpl;
-import service.sllbackend.service.impl.VietQrServiceImpl;
+import service.sllbackend.service.OrderService;
+import service.sllbackend.service.VietQrService;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -22,8 +22,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderController {
     
-    private final OrderServiceImpl orderService;
-    private final VietQrServiceImpl vietQrService;
+    private final OrderService orderService;
+    private final VietQrService vietQrService;
 
     @GetMapping("/checkout")
     @Transactional(readOnly = true)

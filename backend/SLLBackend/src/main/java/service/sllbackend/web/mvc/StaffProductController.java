@@ -40,7 +40,7 @@ public class StaffProductController {
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm() {
         return "staff-product-create";
     }
 

@@ -13,7 +13,7 @@ import org.hibernate.annotations.Check;
 @AllArgsConstructor
 @Entity
 @Table(name = "requested_service")
-@Check(constraints = "price_at_booking > 0")
+@Check(constraints = "price_at_booking >= 0")
 public class RequestedService {
 
     @Id
@@ -28,10 +28,10 @@ public class RequestedService {
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
-    @Column(name = "price_at_booking", nullable = false)
-    private Integer priceAtBooking;
+    @Column(name = "price_at_booking", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer priceAtBooking = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "responsible_staff_id", nullable = false)
+    @JoinColumn(name = "responsible_staff_id")
     private Staff responsibleStaff;
 }

@@ -9,4 +9,5 @@ import java.util.List;
 public interface UserAccountService extends UserDetailsService {
     UserDetails loadUserByUsername(String username);
     List<UserAccount> getSomeByPhoneNumber(String phoneNumber);
+    UserAccount findByUsername(String username);
 }

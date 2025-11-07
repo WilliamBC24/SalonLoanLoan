@@ -36,6 +36,7 @@ public class JobPostingDTO {
     @NotNull
     private JobPostingStatus status;
 
+    //TODO: make this an annotation
     @AssertTrue(message = "effectiveTo must be later than or equal to effectiveFrom")
     public boolean isEffectiveRangeValid() {
         return effectiveTo == null || !effectiveTo.isBefore(effectiveFrom);

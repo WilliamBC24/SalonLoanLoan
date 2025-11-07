@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.enumerator.OrderStatus;
-import service.sllbackend.service.impl.OrderServiceImpl;
+import service.sllbackend.service.OrderService;
 
 import java.security.Principal;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StaffOrderController {
     
-    private final OrderServiceImpl orderService;
+    private final OrderService orderService;
 
     @GetMapping("/list")
     @Transactional(readOnly = true)

@@ -11,7 +11,7 @@ import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.repository.StaffAccountRepo;
 import service.sllbackend.repository.UserAccountRepo;
-import service.sllbackend.service.impl.ProfileServiceImpl;
+import service.sllbackend.service.ProfileService;
 import service.sllbackend.web.dto.AdminStaffProfileDTO;
 import service.sllbackend.web.dto.AdminUserProfileDTO;
 
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/admin/profiles")
 @RequiredArgsConstructor
 public class AccountManagementController {
-    private final ProfileServiceImpl profileService;
+    private final ProfileService profileService;
     private final UserAccountRepo userAccountRepo;
     private final StaffAccountRepo staffAccountRepo;
 

@@ -49,10 +49,10 @@ public class DataLoader implements CommandLineRunner {
 		registerStaff();
 		registerServices();
 		registerProducts();
-		registerInventory();
 		registerVouchers();
 		registerPromotions();
 		registerProviders();
+		registerInventory();
 		registerJobPosting();
 		registerJobApplication();
 		registerAppointments();

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.Loyalty;
 import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
-import service.sllbackend.service.impl.LoyaltyServiceImpl;
-import service.sllbackend.service.impl.ProfileServiceImpl;
+import service.sllbackend.service.LoyaltyService;
+import service.sllbackend.service.ProfileService;
 import service.sllbackend.utils.DTOMapper;
 import service.sllbackend.web.dto.*;
 
@@ -24,8 +24,8 @@ import java.security.Principal;
 @RequestMapping("/")
 @RequiredArgsConstructor
 public class ProfileController {
-    private final ProfileServiceImpl profileService;
-    private final LoyaltyServiceImpl loyaltyService;
+    private final ProfileService profileService;
+    private final LoyaltyService loyaltyService;
     private final DTOMapper DTOMapper;
 
     @GetMapping("/user/profile")

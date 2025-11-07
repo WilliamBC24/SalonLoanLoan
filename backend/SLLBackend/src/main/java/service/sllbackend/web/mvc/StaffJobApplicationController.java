@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.JobPostingApplication;
 import service.sllbackend.repository.JobPostingApplicationRepo;
-import service.sllbackend.service.impl.JobApplicationServiceImpl;
+import service.sllbackend.service.JobApplicationService;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StaffJobApplicationController {
     private final JobPostingApplicationRepo jobPostingApplicationRepo;
-    private final JobApplicationServiceImpl jobApplicationService;
+    private final JobApplicationService jobApplicationService;
 
     @GetMapping("/list")
     public String staffJobApplicationList(Model model){

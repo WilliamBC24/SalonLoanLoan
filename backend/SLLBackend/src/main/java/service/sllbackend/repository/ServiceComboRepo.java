@@ -17,4 +17,5 @@ public interface ServiceComboRepo extends JpaRepository<ServiceCombo, Integer> {
 		   "where sc.combo.id = :comboId")
 	List<ServiceCombo> findByComboIdWithDetails(@Param("comboId") Integer comboId);
 
+	List<ServiceCombo> findByComboId(Integer comboId);
 }

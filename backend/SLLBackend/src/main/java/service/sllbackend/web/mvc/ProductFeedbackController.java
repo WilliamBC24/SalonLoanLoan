@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import service.sllbackend.service.impl.ProductFeedbackServiceImpl;
+import service.sllbackend.service.ProductFeedbackService;
 
 import java.security.Principal;
 
@@ -14,7 +14,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class ProductFeedbackController {
     
-    private final ProductFeedbackServiceImpl productFeedbackService;
+    private final ProductFeedbackService productFeedbackService;
     
     @PostMapping("/rate")
     public String submitRating(

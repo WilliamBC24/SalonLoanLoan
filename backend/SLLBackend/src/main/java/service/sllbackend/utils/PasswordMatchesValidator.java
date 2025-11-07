@@ -2,6 +2,7 @@ package service.sllbackend.utils;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import service.sllbackend.utils.annotations.PasswordMatches;
 import service.sllbackend.web.dto.PasswordChangeDTO;
 
 public class PasswordMatchesValidator implements ConstraintValidator<PasswordMatches, PasswordChangeDTO> {

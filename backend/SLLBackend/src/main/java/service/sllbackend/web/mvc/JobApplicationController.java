@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.JobPosting;
 import service.sllbackend.enumerator.JobPostingStatus;
 import service.sllbackend.repository.JobPostingRepo;
-import service.sllbackend.service.impl.JobApplicationServiceImpl;
+import service.sllbackend.service.JobApplicationService;
 import service.sllbackend.web.dto.JobApplicationDTO;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JobApplicationController {
     private final JobPostingRepo jobPostingRepo;
-    private final JobApplicationServiceImpl jobApplicationService;
+    private final JobApplicationService jobApplicationService;
 
     @GetMapping("/list")
     public String jobApplicationList(Model model){

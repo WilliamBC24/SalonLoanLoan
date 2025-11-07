@@ -6,7 +6,7 @@
     -- CREATE TYPE account_status_enum AS ENUM ('ACTIVE', 'DEACTIVATED', 'BANNED');
     -- CREATE TYPE commission_type_enum AS ENUM ('APPOINTMENT', 'PRODUCT');
     -- CREATE TYPE staff_status_enum AS ENUM ('ACTIVE', 'ON_LEAVE', 'TERMINATED');
-    -- CREATE TYPE appointment_status_enum AS ENUM ('PENDING', 'REGISTERED', 'STARTED', 'COMPLETED', 'RESCHEDULED', 'CANCELLED');
+    -- CREATE TYPE appointment_status_enum AS ENUM ('PENDING', 'REGISTERED', 'REJECTED', 'STARTED', 'COMPLETED', 'RESCHEDULED', 'CANCELLED');
     -- CREATE TYPE service_type_enum AS ENUM ('SINGLE', 'COMBO');
     -- CREATE TYPE shift_attendance_status_enum AS ENUM ('FULL', 'PARTIAL', 'MISSED');
     -- CREATE TYPE discount_type_enum AS ENUM ('AMOUNT', 'PERCENTAGE');
@@ -308,7 +308,7 @@
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         appointment_id INT NOT NULL REFERENCES appointment(id),
         service_id INT NOT NULL REFERENCES service(id),
-        price_at_booking INT NOT NULL CHECK (price_at_booking > 0),
+        price_at_booking INT NOT NULL DEFAULT 0 CHECK (price_at_booking >= 0),
         responsible_staff_id INT REFERENCES staff(id)
     );
 

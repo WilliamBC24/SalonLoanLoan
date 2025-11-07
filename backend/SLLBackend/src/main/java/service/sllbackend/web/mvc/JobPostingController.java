@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.JobPosting;
 import service.sllbackend.repository.JobPostingRepo;
-import service.sllbackend.service.impl.JobPostingServiceImpl;
+import service.sllbackend.service.JobPostingService;
 import service.sllbackend.web.dto.JobPostingDTO;
 import service.sllbackend.web.dto.JobPostingEditDTO;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/admin/job")
 @RequiredArgsConstructor
 public class JobPostingController {
-    private final JobPostingServiceImpl jobPostingService;
+    private final JobPostingService jobPostingService;
     private final JobPostingRepo jobPostingRepo;
 
     @GetMapping("/list")

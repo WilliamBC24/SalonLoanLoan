@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import service.sllbackend.entity.Product;
 import service.sllbackend.entity.ProductFeedback;
-import service.sllbackend.service.impl.ProductsServiceImpl;
-import service.sllbackend.service.impl.ProductFeedbackServiceImpl;
+import service.sllbackend.service.ProductFeedbackService;
+import service.sllbackend.service.ProductsService;
 
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductsController {
-    private final ProductsServiceImpl productsService;
-    private final ProductFeedbackServiceImpl productFeedbackService;
+    private final ProductsService productsService;
+    private final ProductFeedbackService productFeedbackService;
 
     @GetMapping
     public String listProducts(

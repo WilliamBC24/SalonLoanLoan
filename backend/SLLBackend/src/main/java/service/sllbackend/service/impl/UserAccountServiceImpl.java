@@ -42,6 +42,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         return userAccountRepo.findTop3ByPhoneNumber(phoneNumber);
     }
 
+    @Override
     public UserAccount findByUsername(String username) {
         return userAccountRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }

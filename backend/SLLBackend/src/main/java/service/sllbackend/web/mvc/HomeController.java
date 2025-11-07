@@ -5,8 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import service.sllbackend.service.impl.ProductsServiceImpl;
-import service.sllbackend.service.impl.ServicesServiceImpl;
+import service.sllbackend.service.ProductsService;
+import service.sllbackend.service.ServicesService;
 
 import java.security.Principal;
 
@@ -14,8 +14,8 @@ import java.security.Principal;
 @RequestMapping("/")
 @RequiredArgsConstructor
 public class HomeController {
-    private final ServicesServiceImpl servicesService;
-    private final ProductsServiceImpl productsService;
+    private final ServicesService servicesService;
+    private final ProductsService productsService;
 
     @GetMapping()
     public String home(Model model, Principal principal) {

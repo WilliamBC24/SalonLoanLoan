@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,39 +19,80 @@
         .blocked { background: #ffcccc; cursor: not-allowed; }
         button { padding: 10px 20px; background: #3b82f6; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
         button:hover { background: #2563eb; }
+
+        .customer-info input[type="text"],
+        .customer-info input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .customer-info input[type="text"]:focus,
+        .customer-info input[type="tel"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 </head>
 <body>
 <div class="container">
     <h1>Book an Appointment</h1>
+    <h2 id="error"></h2>
 
-    <label for="service-search">Search Services:</label>
-    <input type="text" id="service-search" placeholder="Type to search services...">
+    <form th:action="@{/appointment/book}" method="post" id="appointment-form">
+        <label for="service-search">Search Services:</label>
+        <input type="text" id="service-search" name="serviceSearch" placeholder="Type to search services...">
 
-    <div class="service-list" id="service-list">
-        <!-- Services will be populated here dynamically -->
+        <div class="service-list" id="service-list">
+            <!-- Services will be populated dynamically -->
+        </div>
+
+        <div class="selected-services" id="selected-services">
+            <strong>Selected Services:</strong>
+            <ul id="selected-services-list"></ul>
+            <!-- Hidden input to send selected services JSON -->
+            <input type="hidden" id="selected-services-input" name="selectedServices">
+        </div>
+
+        <div class="customer-info">
+            <label for="customer-name">Full Name:</label>
+            <input type="text" id="customer-name" name="name" th:value="${customerName}" placeholder="Enter your name" required>
+
+            <label for="phone-number">Phone Number:</label>
+            <input type="tel" id="phone-number" name="phoneNumber" th:value="${phoneNumber}" placeholder="Enter your phone number" required pattern="^\+?[0-9]{7,15}$">
+        </div>
+
+
+        <label for="appointment-date">Select Date:</label>
+        <input type="date" id="appointment-date" name="appointmentDate" th:value="${appointmentDate}" required>
+
+        <label for="appointment-time">Select Time:</label>
+        <input type="time" id="appointment-time" name="appointmentTime" th:value="${appointmentTime}" required>
+
+        <div class="summary">
+            <p>Estimated Duration: <span id="total-duration">0</span> minutes</p>
+            <input type="hidden" id="total-duration-input" name="totalDuration" th:value="${totalDuration}">
+            <p>Estimated Price: $<span id="total-price">0</span></p>
+            <input type="hidden" id="total-price-input" name="totalPrice" th:value="${totalPrice}">
+            <p>End Time: <span id="end-time">--:--</span></p>
+            <input type="hidden" id="end-time-input" name="endTime" th:value="${endTime}">
+        </div>
+
+        <button type="submit" id="book-appointment">Book Appointment</button>
+    </form>
+    <div th:if="${param.error}" class="message">
+        Invalid inputs
     </div>
-
-    <div class="selected-services" id="selected-services">
-        <strong>Selected Services:</strong>
-        <ul id="selected-services-list"></ul>
+    <div th:if="${param.success}" class="message">
+        Registered successfully
     </div>
-
-    <label for="appointment-date">Select Date:</label>
-    <input type="date" id="appointment-date">
-
-    <label for="appointment-time">Select Time:</label>
-    <input type="time" id="appointment-time">
-
-    <div class="summary">
-        <p>Total Duration: <span id="total-duration">0</span> minutes</p>
-        <p>Total Price: $<span id="total-price">0</span></p>
-        <p>End Time: <span id="end-time">--:--</span></p>
-    </div>
-
-    <button id="book-appointment">Book Appointment</button>
-
 </div>
 
 <script>
@@ -108,7 +149,6 @@
 //
 //
         let debounceTimer;
-        // here
         $("#service-search").on("input", function() {
             const query = $(this).val().trim();
 
@@ -134,7 +174,6 @@
                 });
             }, 300); // 300ms debounce
         });
-        // to here
 
 
         // Sample blocked slots from backend (date + time ranges)
@@ -143,51 +182,49 @@
         // };
 
         let selectedServices = [];
+        let selectedServicesId = [];
 
         function renderServices(list) {
             $("#service-list").empty();
             list.forEach(s => {
-                $("#service-list").append(`<div class="service-item" data-name="${s.serviceName}" data-price="${s.servicePrice}" data-duration="${s.durationMinutes}">
+                $("#service-list").append(`<div class="service-item" data-id="${s.id}" data-name="${s.serviceName}" data-price="${s.servicePrice}" data-duration="${s.durationMinutes}">
                 ${s.serviceName} - $${s.servicePrice} - ${s.durationMinutes} min
             </div>`);
             });
         }
 
-        // renderServices(services);
-
-        // $("#service-search").on("input", function() {
-        //     const query = $(this).val().toLowerCase();
-        //     const filtered = services.filter(s => s.name.toLowerCase().includes(query));
-        //     renderServices(filtered);
-        // });
-
         $("#service-list").on("click", ".service-item", function() {
+            const id = parseInt($(this).data("id"));
             const name = $(this).data("name");
             const price = parseFloat($(this).data("price"));
             const duration = parseInt($(this).data("duration"));
 
             // prevent duplicates by checking name
             if (!selectedServices.some(s => s.name === name)) {
-                const service = { name, price, duration };
+                const service = { id, name, price, duration };
                 selectedServices.push(service);
+                selectedServicesId.push(service.id);
 
                 $("#selected-services-list").append(`
-            <li data-name="${name}">
+            <li data-id="${id}" data-name="${name}">
                 ${name} - $${price} - ${duration} min
                 <button class="remove-service">Remove</button>
             </li>
         `);
-
                 updateSummary();
+                updateSelectedServicesInput();
             }
         });
 
         $("#selected-services-list").on("click", ".remove-service", function() {
             const li = $(this).closest("li");
-            const serviceId = parseInt(li.data("id"));
-            selectedServices = selectedServices.filter(s => s.id !== serviceId);
+            const serviceName = li.data("name");
+            const serviceId =li.data("id");
+            selectedServices = selectedServices.filter(s => s.name !== serviceName);
+            selectedServicesId = selectedServicesId.filter(id => id !== serviceId);
             li.remove();
             updateSummary();
+            updateSelectedServicesInput();
         });
 
         function updateSummary() {
@@ -195,6 +232,8 @@
             const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
             $("#total-duration").text(totalDuration);
             $("#total-price").text(totalPrice);
+            $("#total-duration-input").val(totalDuration);
+            $("#total-price-input").val(totalPrice);
             updateEndTime();
         }
 
@@ -212,7 +251,9 @@
 
             const endHours = date.getHours().toString().padStart(2, "0");
             const endMinutes = date.getMinutes().toString().padStart(2, "0");
-            $("#end-time").text(`${endHours}:${endMinutes}`);
+            const endTimeStr = `${endHours}:${endMinutes}`;
+            $("#end-time").text(endTimeStr);
+            $("#end-time-input").val(endTimeStr);
         }
 
         $("#appointment-time, #appointment-date").on("change", function() {
@@ -229,11 +270,10 @@
             // Check if appointment goes beyond closing time (19:00)
             const closingTime = new Date(`${date}T19:00`);
             if (endDateTime > closingTime) {
-                alert("Selected services exceed closing time. Please pick an earlier time or fewer services.");
-                $("#appointment-time").val("");
-                $("#end-time").text("--:--");
+                $("#error").text("Selected services exceed closing time. Please pick an earlier time or fewer services.")
                 return;
             }
+            $("#error").text("")
 
             // Check against blocked slots
             // const dayBlocked = blockedSlots[date] || [];
@@ -251,16 +291,9 @@
             updateEndTime();
         });
 
-        $("#book-appointment").on("click", function() {
-            const date = $("#appointment-date").val();
-            const time = $("#appointment-time").val();
-            if (!date || !time || selectedServices.length === 0) {
-                alert("Please select services, date, and time.");
-                return;
-            }
-            alert("Appointment booked successfully!");
-            // Here you would send data to backend
-        });
+        function updateSelectedServicesInput() {
+            $("#selected-services-input").val(selectedServicesId.join(","));
+        }
     });
 </script>
 

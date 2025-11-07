@@ -1,5 +1,6 @@
 package service.sllbackend.web.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
@@ -16,14 +17,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class JobApplicationDTO {
 
-    @NotNull
+    @NotBlank
     private String applicantName;
 
     @NotNull
     @PastOrPresent
     private LocalDate applicantDob;
 
-    @NotNull
+    @NotBlank
     @Pattern(regexp = "^\\+?[0-9]{7,15}$")
     private String applicantPhoneNumber;
 

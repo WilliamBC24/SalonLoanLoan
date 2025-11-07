@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import service.sllbackend.service.impl.RegisterServiceImpl;
+import service.sllbackend.service.RegisterService;
 import service.sllbackend.web.dto.UserRegisterDTO;
 
 @Controller
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final RegisterServiceImpl registerService;
+    private final RegisterService registerService;
 
     @GetMapping("/staff/login")
     public String staffLogin(){

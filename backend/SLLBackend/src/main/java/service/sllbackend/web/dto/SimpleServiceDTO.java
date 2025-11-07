@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SimpleServiceDTO {
+    private Integer id;
     private String serviceName;
     private Integer servicePrice;
     private Short durationMinutes;

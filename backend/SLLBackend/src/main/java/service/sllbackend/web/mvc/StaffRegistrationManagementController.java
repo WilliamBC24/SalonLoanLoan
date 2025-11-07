@@ -2,7 +2,6 @@ package service.sllbackend.web.mvc;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,9 +10,9 @@ import service.sllbackend.entity.Appointment;
 import service.sllbackend.entity.AppointmentDetails;
 import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.AppointmentStatus;
-import service.sllbackend.service.impl.AppointmentDetailsServiceImpl;
-import service.sllbackend.service.impl.AppointmentServiceImpl;
-import service.sllbackend.service.impl.UserAccountServiceImpl;
+import service.sllbackend.service.AppointmentDetailsService;
+import service.sllbackend.service.AppointmentService;
+import service.sllbackend.service.UserAccountService;
 import service.sllbackend.utils.DTOMapper;
 import service.sllbackend.web.dto.AppointmentDetailsEditDTO;
 import service.sllbackend.web.dto.AppointmentDetailsViewDTO;
@@ -26,9 +25,9 @@ import java.util.List;
 @RequestMapping("/staff/registration")
 @RequiredArgsConstructor
 public class StaffRegistrationManagementController {
-    private final AppointmentServiceImpl appointmentService;
-    private final AppointmentDetailsServiceImpl appointmentDetailsService;
-    private final UserAccountServiceImpl userAccountService;
+    private final AppointmentService appointmentService;
+    private final AppointmentDetailsService appointmentDetailsService;
+    private final UserAccountService userAccountService;
     private final DTOMapper dtoMapper;
 
     @GetMapping("/list")

@@ -1,7 +1,8 @@
-package service.sllbackend.utils;
+package service.sllbackend.utils.annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import service.sllbackend.utils.PasswordMatchesValidator;
 
 import java.lang.annotation.*;
 

@@ -7,8 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.Cart;
-import service.sllbackend.service.impl.CartServiceImpl;
-
+import service.sllbackend.service.CartService;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/cart")
 @RequiredArgsConstructor
 public class CartController {
-    private final CartServiceImpl cartService;
+    private final CartService cartService;
 
     @GetMapping
     @Transactional(readOnly = true)

@@ -10,6 +10,7 @@ import service.sllbackend.repository.CartRepo;
 import service.sllbackend.repository.ProductRepo;
 import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.CartService;
+import service.sllbackend.service.InventoryService;
 
 import java.util.List;
 import java.util.Optional;

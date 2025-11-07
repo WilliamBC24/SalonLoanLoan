@@ -2,6 +2,7 @@ package service.sllbackend.dev;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -703,7 +704,7 @@ public class DataLoader implements CommandLineRunner {
 				.staff(staff)
 				.supplier(supplier)
 				.note("Initial stock load")
-				.invoiceStatus(InventoryInvoiceStatus.RECEIVED)
+				.invoiceStatus(InventoryInvoiceStatus.COMPLETE)
 				.build());
 		
 		// For each product, create inventory invoice detail, consignment, and lot

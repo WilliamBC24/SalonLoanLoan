@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import service.sllbackend.entity.*;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.repository.*;
+import service.sllbackend.service.InventoryService;
 import service.sllbackend.service.OrderService;
 
 import java.util.HashMap;

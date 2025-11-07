@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Product;
 import service.sllbackend.repository.ProductRepo;
+import service.sllbackend.service.InventoryService;
 import service.sllbackend.service.ProductsService;
 
 @Service

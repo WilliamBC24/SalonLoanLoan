@@ -131,6 +131,13 @@
         </div>
 
         <div class="form-group">
+            <label for="stock" class="required">Stock</label>
+            <input type="number" id="stock" name="stock" min="0"
+                   th:value="${product.stock}" required>
+            <div class="error" id="stockError">Stock must be a non-negative number</div>
+        </div>
+
+        <div class="form-group">
             <label for="productDescription" class="required">Product Description</label>
             <textarea id="productDescription" name="productDescription" required th:text="${product.productDescription}"></textarea>
             <div class="error" id="productDescriptionError">Product description is required</div>

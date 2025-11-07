@@ -49,6 +49,7 @@ public class StaffProductController {
             @RequestParam String productName,
             @RequestParam Integer currentPrice,
             @RequestParam String productDescription,
+            @RequestParam(required = false, defaultValue = "0") Integer stock,
             @RequestParam(required = false, defaultValue = "false") Boolean activeStatus,
             RedirectAttributes redirectAttributes) {
         
@@ -57,6 +58,7 @@ public class StaffProductController {
                 .productName(productName)
                 .currentPrice(currentPrice)
                 .productDescription(productDescription)
+                .stock(stock)
                 .activeStatus(activeStatus)
                 .build();
             
@@ -87,6 +89,7 @@ public class StaffProductController {
             @RequestParam String productName,
             @RequestParam Integer currentPrice,
             @RequestParam String productDescription,
+            @RequestParam(required = false, defaultValue = "0") Integer stock,
             @RequestParam(required = false, defaultValue = "false") Boolean activeStatus,
             RedirectAttributes redirectAttributes) {
         
@@ -95,6 +98,7 @@ public class StaffProductController {
                 .productName(productName)
                 .currentPrice(currentPrice)
                 .productDescription(productDescription)
+                .stock(stock)
                 .activeStatus(activeStatus)
                 .build();
             

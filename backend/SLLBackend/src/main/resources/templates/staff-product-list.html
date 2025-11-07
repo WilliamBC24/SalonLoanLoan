@@ -171,6 +171,7 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Price (VND)</th>
+                <th>Stock</th>
                 <th>Description</th>
                 <th>Active</th>
                 <th>Actions</th>
@@ -181,6 +182,11 @@
                 <td th:text="${product.id}">1</td>
                 <td th:text="${product.productName}">Product name</td>
                 <td th:text="${product.currentPrice}">0</td>
+                <td>
+                    <span th:text="${product.stock}">0</span>
+                    <span th:if="${product.stock <= 0}" style="color: red; font-weight: bold;"> (Out)</span>
+                    <span th:if="${product.stock > 0 && product.stock <= 10}" style="color: orange; font-weight: bold;"> (Low)</span>
+                </td>
                 <td th:text="${product.productDescription}">Description</td>
                 <td th:text="${product.activeStatus}">false</td>
                 <td>

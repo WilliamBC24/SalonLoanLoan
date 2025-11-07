@@ -77,6 +77,7 @@ public class ProductsServiceImpl implements ProductsService {
         existingProduct.setCurrentPrice(product.getCurrentPrice());
         existingProduct.setProductDescription(product.getProductDescription());
         existingProduct.setActiveStatus(product.getActiveStatus());
+        existingProduct.setStock(product.getStock());
 
         return productRepo.save(existingProduct);
     }

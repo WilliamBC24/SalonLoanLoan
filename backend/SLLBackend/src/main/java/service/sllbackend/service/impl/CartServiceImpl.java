@@ -37,13 +37,30 @@ public class CartServiceImpl implements CartService {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         
+        // Check if product has stock
+        if (product.getStock() <= 0) {
+            throw new RuntimeException("Product is out of stock");
+        }
+        
         Optional<Cart> existingCart = cartRepo.findByUserAccountAndProduct_Id(userAccount, productId);
         
         if (existingCart.isPresent()) {
             Cart cart = existingCart.get();
-            cart.setAmount(cart.getAmount() + amount);
+            int newAmount = cart.getAmount() + amount;
+            
+            // Check if new amount exceeds available stock
+            if (newAmount > product.getStock()) {
+                throw new RuntimeException("Not enough stock. Available: " + product.getStock() + ", Requested: " + newAmount);
+            }
+            
+            cart.setAmount(newAmount);
             cartRepo.save(cart);
         } else {
+            // Check if amount exceeds available stock
+            if (amount > product.getStock()) {
+                throw new RuntimeException("Not enough stock. Available: " + product.getStock() + ", Requested: " + amount);
+            }
+            
             Cart cart = Cart.builder()
                     .userAccount(userAccount)
                     .product(product)
@@ -75,6 +92,13 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = cartRepo.findByUserAccountAndProduct_Id(userAccount, productId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        
+        // Check if new amount exceeds available stock
+        Product product = cart.getProduct();
+        if (amount > product.getStock()) {
+            throw new RuntimeException("Not enough stock. Available: " + product.getStock() + ", Requested: " + amount);
+        }
+        
         cart.setAmount(amount);
         cartRepo.save(cart);
     }

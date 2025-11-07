@@ -21,6 +21,7 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerInfoRepo customerInfoRepo;
     private final CartRepo cartRepo;
     private final UserAccountRepo userAccountRepo;
+    private final ProductRepo productRepo;
 
     @Override
     @Transactional
@@ -34,6 +35,15 @@ public class OrderServiceImpl implements OrderService {
         List<Cart> cartItems = cartRepo.findByUserAccount(userAccount);
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Cart is empty");
+        }
+        
+        // Check stock availability for all items before proceeding
+        for (Cart cartItem : cartItems) {
+            Product product = cartItem.getProduct();
+            if (cartItem.getAmount() > product.getStock()) {
+                throw new RuntimeException("Not enough stock for " + product.getProductName() + 
+                    ". Available: " + product.getStock() + ", Requested: " + cartItem.getAmount());
+            }
         }
         
         // Calculate total price
@@ -65,15 +75,21 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         orderInvoice = orderInvoiceRepo.save(orderInvoice);
         
-        // Create order details
+        // Create order details and reduce stock
         for (Cart cartItem : cartItems) {
+            Product product = cartItem.getProduct();
+            
             OrderInvoiceDetails details = OrderInvoiceDetails.builder()
                     .orderInvoice(orderInvoice)
-                    .product(cartItem.getProduct())
+                    .product(product)
                     .quantity(cartItem.getAmount())
-                    .priceAtSale(cartItem.getProduct().getCurrentPrice())
+                    .priceAtSale(product.getCurrentPrice())
                     .build();
             orderInvoiceDetailsRepo.save(details);
+            
+            // Reduce stock
+            product.setStock(product.getStock() - cartItem.getAmount());
+            productRepo.save(product);
         }
         
         // Clear cart
@@ -122,6 +138,14 @@ public class OrderServiceImpl implements OrderService {
         if (order.getOrderStatus() != OrderStatus.PENDING && 
             order.getOrderStatus() != OrderStatus.CONFIRMED) {
             throw new RuntimeException("Cannot cancel order in " + order.getOrderStatus() + " status");
+        }
+        
+        // Restore stock for all items in the order
+        List<OrderInvoiceDetails> orderItems = orderInvoiceDetailsRepo.findByOrderInvoice(order);
+        for (OrderInvoiceDetails item : orderItems) {
+            Product product = item.getProduct();
+            product.setStock(product.getStock() + item.getQuantity());
+            productRepo.save(product);
         }
         
         order.setOrderStatus(OrderStatus.CANCELLED);

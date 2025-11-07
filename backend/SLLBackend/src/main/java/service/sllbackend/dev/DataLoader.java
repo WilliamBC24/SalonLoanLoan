@@ -470,6 +470,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(250000)
 				.productDescription("Premium salon-grade shampoo for all hair types")
 				.activeStatus(true)
+				.stock(50)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -477,6 +478,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(280000)
 				.productDescription("Deep conditioning formula for silky smooth hair")
 				.activeStatus(true)
+				.stock(45)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -484,6 +486,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(350000)
 				.productDescription("Anti-frizz serum for shiny, manageable hair")
 				.activeStatus(true)
+				.stock(30)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -491,6 +494,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(320000)
 				.productDescription("Nourishing oil for damaged hair repair")
 				.activeStatus(true)
+				.stock(35)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -498,6 +502,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(180000)
 				.productDescription("Strong hold gel for long-lasting styles")
 				.activeStatus(true)
+				.stock(40)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -505,6 +510,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(220000)
 				.productDescription("Professional finishing spray for all-day hold")
 				.activeStatus(true)
+				.stock(55)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -512,6 +518,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(400000)
 				.productDescription("Intensive repair mask for damaged hair")
 				.activeStatus(true)
+				.stock(25)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -519,6 +526,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(200000)
 				.productDescription("Quick refresh between washes")
 				.activeStatus(true)
+				.stock(60)
 				.build());
 
 		// Skin Care Products (8 products)
@@ -527,6 +535,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(300000)
 				.productDescription("Gentle cleansing for all skin types")
 				.activeStatus(true)
+				.stock(40)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -534,6 +543,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(550000)
 				.productDescription("Brightening serum with antioxidants")
 				.activeStatus(true)
+				.stock(20)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -541,6 +551,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(480000)
 				.productDescription("Intense hydration for plump, youthful skin")
 				.activeStatus(true)
+				.stock(35)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -548,6 +559,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(620000)
 				.productDescription("Anti-aging night treatment")
 				.activeStatus(true)
+				.stock(15)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -555,6 +567,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(350000)
 				.productDescription("Broad spectrum sun protection")
 				.activeStatus(true)
+				.stock(50)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -562,6 +575,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(280000)
 				.productDescription("Gentle exfoliation for smooth skin")
 				.activeStatus(true)
+				.stock(45)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -569,6 +583,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(420000)
 				.productDescription("Reduces dark circles and fine lines")
 				.activeStatus(true)
+				.stock(30)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -576,6 +591,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(380000)
 				.productDescription("5-piece variety mask collection")
 				.activeStatus(true)
+				.stock(25)
 				.build());
 
 		// Nail Care Products (7 products)
@@ -584,6 +600,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(450000)
 				.productDescription("12 colors long-lasting gel polish")
 				.activeStatus(true)
+				.stock(10)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -591,6 +608,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(250000)
 				.productDescription("Protein treatment for weak nails")
 				.activeStatus(true)
+				.stock(35)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -598,6 +616,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(180000)
 				.productDescription("Nourishing oil for healthy cuticles")
 				.activeStatus(true)
+				.stock(50)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -605,6 +624,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(200000)
 				.productDescription("Quick-dry glossy finish")
 				.activeStatus(true)
+				.stock(45)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -612,6 +632,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(200000)
 				.productDescription("Protective base for nail polish")
 				.activeStatus(true)
+				.stock(45)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -619,6 +640,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(150000)
 				.productDescription("Professional quality nail files")
 				.activeStatus(true)
+				.stock(60)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -626,6 +648,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(500000)
 				.productDescription("Complete nail art design tools")
 				.activeStatus(true)
+				.stock(12)
 				.build());
 
 		// Makeup Products (7 products)
@@ -634,6 +657,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(580000)
 				.productDescription("Full coverage matte foundation")
 				.activeStatus(true)
+				.stock(30)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -641,6 +665,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(650000)
 				.productDescription("24-color professional palette")
 				.activeStatus(true)
+				.stock(15)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -648,6 +673,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(320000)
 				.productDescription("Volumizing and lengthening mascara")
 				.activeStatus(true)
+				.stock(40)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -655,6 +681,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(480000)
 				.productDescription("6 shades long-lasting lipstick")
 				.activeStatus(true)
+				.stock(20)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -662,6 +689,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(550000)
 				.productDescription("15-piece professional brush set")
 				.activeStatus(true)
+				.stock(18)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -669,6 +697,7 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(350000)
 				.productDescription("All-day makeup setting spray")
 				.activeStatus(true)
+				.stock(35)
 				.build());
 
 		productRepo.save(Product.builder()
@@ -676,9 +705,10 @@ public class DataLoader implements CommandLineRunner {
 				.currentPrice(280000)
 				.productDescription("Gentle oil-free makeup remover")
 				.activeStatus(true)
+				.stock(55)
 				.build());
 
-		log.info("Successfully loaded 30 products");
+		log.info("Successfully loaded 30 products with stock");
 	}
 
 	public void registerVouchers() {

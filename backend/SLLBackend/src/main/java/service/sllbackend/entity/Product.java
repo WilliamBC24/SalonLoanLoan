@@ -32,4 +32,8 @@ public class Product {
     @Column(name = "active_status", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     @Builder.Default
     private Boolean activeStatus = false;
+
+    @Column(name = "stock", nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Builder.Default
+    private Integer stock = 0;
 }

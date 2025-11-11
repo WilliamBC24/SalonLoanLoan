@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="site-footer">
+    <div class="container footer-grid">
+        <div>
+            <div class="footer-brand" th:text="#{footer.brand}">LoanLoan Salon</div>
+            <p th:text="#{footer.tagline}">Không gian sang trọng, dịch vụ tận tâm.</p>
+        </div>
+        <div>
+            <div class="footer-title" th:text="#{footer.contact.title}">Thông tin liên hệ</div>
+            <p><span th:text="#{footer.contact.address}">Địa chỉ: 76 Huỳnh Thúc Khang - Ba Đình - Hà Nội</span></p>
+            <p><span th:text="#{footer.contact.phone}">Điện thoại: (+84)0973.801.972</span></p>
+            <p><span th:text="#{footer.contact.email}">Email: Loanloanhairsalon@gmail.com</span></p>
+        </div>
+        <div>
+            <div class="footer-title" th:text="#{footer.guide.title}">Hướng dẫn</div>
+            <ul class="footer-links">
+                <li><a href="#" th:text="#{footer.guide.shopping}">Hướng dẫn mua hàng</a></li>
+                <li><a href="#" th:text="#{footer.guide.payment}">Hướng dẫn thanh toán</a></li>
+                <li><a href="#" th:text="#{footer.guide.shipping}">Chính sách vận chuyển</a></li>
+                <li><a href="#" th:text="#{footer.guide.security}">Bảo mật thông tin</a></li>
+            </ul>
+        </div>
+        <div>
+            <div class="footer-title" th:text="#{footer.newsletter.title}">Nhận tin khuyến mãi</div>
+            <form class="newsletter" id="newsletterForm" action="#" method="post" novalidate>
+                <input type="email" name="email" th:placeholder="#{footer.newsletter.placeholder}" required>
+                <button type="submit" class="btn small" th:text="#{footer.newsletter.submit}">Đăng ký</button>
+            </form>
+            <div class="newsletter-feedback" id="newsletterFeedback" role="status" aria-live="polite"></div>
+        </div>
+    </div>
+    <div class="copyright" th:text="#{footer.copyright}">© 2025 Salon Loan Loan. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
+

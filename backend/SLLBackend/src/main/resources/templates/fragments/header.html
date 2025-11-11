@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- Header Fragment -->
+<header th:fragment="header(username, cartCount)" class="topbar">
+    <div class="topstrip">
+        <div class="container strip">
+            <div class="strip-left" th:text="#{header.topstrip.tagline}">Thiên đường làm đẹp</div>
+            <div class="strip-right">
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <button type="button" id="langToggle" class="btn small outline lang-btn" th:aria-label="#{header.language.label}">
+                        <span class="lang-icon">🌐</span>
+                        <span class="lang-text" id="currentLang">VI</span>
+                    </button>
+                    <div class="lang-dropdown" id="langDropdown">
+                        <a href="#" class="lang-option" data-lang="vi">
+                            <span class="lang-flag">🇻🇳</span>
+                            <span th:text="#{header.language.vi}">Tiếng Việt</span>
+                        </a>
+                        <a href="#" class="lang-option" data-lang="en">
+                            <span class="lang-flag">🇬🇧</span>
+                            <span th:text="#{header.language.en}">English</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Chưa đăng nhập -->
+                <div th:if="${username == null}" class="strip-actions">
+                    <a th:href="@{/auth/user/login}" class="btn small outline">
+                        <span class="material-symbols-outlined">person</span>
+                        <span th:text="#{header.login}">Đăng nhập</span>
+                    </a>
+                    <a th:href="@{/auth/user/register}" class="btn small" th:text="#{header.register}">Đăng ký</a>
+                    <a th:href="@{/stores}" class="btn small outline">
+                        <span class="material-symbols-outlined">location_on</span>
+                        <span th:text="#{header.store.system}">Hệ thống cửa hàng</span>
+                    </a>
+                </div>
+                <!-- Đã đăng nhập -->
+                <div th:if="${username != null}" class="strip-actions user-logged-in">
+                    <span class="user-greeting">
+                        <span class="material-symbols-outlined">person</span>
+                        <span class="user-name" th:text="${username}">Tên người dùng</span>
+                    </span>
+                    <form th:action="@{/auth/logout}" method="post">
+                        <button type="submit" class="btn small outline">
+                            <span class="material-symbols-outlined">logout</span>
+                            <span th:text="#{header.logout}">Đăng xuất</span>
+                        </button>
+                    </form>
+                    <a th:href="@{/stores}" class="btn small outline">
+                        <span class="material-symbols-outlined">location_on</span>
+                        <span th:text="#{header.store.system}">Hệ thống cửa hàng</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mainbar">
+        <div class="container mainbar-inner">
+            <a th:href="@{/}" class="brand brand-link">
+                <img th:src="@{/images/logo.png}" th:alt="#{alt.logo}" class="logo-img"/>
+                <span class="tagline" th:text="#{header.brand.tagline}">HairSalon center</span>
+            </a>
+            <nav class="menu mainmenu">
+                <a th:href="@{/}" class="active" th:text="#{header.nav.home}">Trang chủ</a>
+                <a th:href="@{/about}" th:text="#{header.nav.about}">Giới thiệu</a>
+                <a th:href="@{/products}" th:text="#{header.nav.products}">Sản phẩm</a>
+                <a th:href="@{/services}" th:text="#{header.nav.services}">Dịch vụ</a>
+                <a th:href="@{/appointment/register}" th:text="#{header.nav.appointment}">Đặt lịch hẹn</a>
+                <a th:href="@{/contact}" th:text="#{header.nav.contact}">Liên hệ</a>
+            </nav>
+            <div class="header-actions">
+                <!-- <a th:href="@{/search}" th:aria-label="#{header.search.label}" class="action">
+                    <span class="material-symbols-outlined">search</span>
+                </a> -->
+                <a th:href="@{/wishlist}" th:aria-label="#{header.wishlist.label}" class="action badge-wrap">
+                    <span class="material-symbols-outlined">favorite</span>
+                    <span class="badge" data-wishlist-count>0</span>
+                </a>
+                <a th:href="@{/cart}" th:aria-label="#{header.cart.label}" class="action badge-wrap">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span class="badge" data-cart-count th:text="${cartCount != null ? cartCount : 0}">0</span>
+                </a>
+                <button type="button" id="sidebarToggle" th:aria-label="#{header.menu.label}" class="action btn-toggle">
+                    <span class="material-symbols-outlined">apps</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Breadcrumbs Fragment -->
+<nav th:fragment="breadcrumbs(homeKey, currentPageKey)" class="breadcrumbs" th:aria-label="#{label.breadcrumb}">
+    <a th:href="@{/}" th:text="#{${homeKey}}">Trang chủ</a>
+    <span class="separator">></span>
+    <span th:text="#{${currentPageKey}}">Current Page</span>
+</nav>
+
+</body>
+</html>
+

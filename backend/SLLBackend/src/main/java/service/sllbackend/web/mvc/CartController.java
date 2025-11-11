@@ -111,4 +111,20 @@ public class CartController {
         
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/api/count")
+    @ResponseBody
+    @Transactional(readOnly = true)
+    public ResponseEntity<Map<String, Object>> getCartCount(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.ok(Map.of("count", 0));
+        }
+        
+        List<Cart> cartItems = cartService.getCartByUser(principal.getName());
+        int count = cartItems.stream()
+                .mapToInt(Cart::getAmount)
+                .sum();
+        
+        return ResponseEntity.ok(Map.of("count", count));
+    }
 }

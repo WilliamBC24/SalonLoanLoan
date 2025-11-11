@@ -2,65 +2,315 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Salon Loan Loan | Home</title>
+    <title th:text="#{page.title}">Salon Loan Loan | Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
 
-<header>
-    <h1>Welcome to Salon Loan Loan</h1>
-    <nav>
-        <a th:href="@{/}">Home</a> |
-        <a th:href="@{/products}">Products</a> |
-        <a th:href="@{/services}">Services</a> |
-        <a th:href="@{/auth/user/login}">User Login</a> |
-        <a th:href="@{/auth/staff/login}">Staff Login</a>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="button logout-btn">Logout</button>
-        </form>
-    </nav>
-</header>
+<!-- Header Fragment -->
+<div th:replace="~{fragments/header :: header(${username}, ${cartCount})}"></div>
 
-<hr>
-
-<section>
-    <h2>Our Services</h2>
-    <div th:if="${#lists.isEmpty(services)}">
-        <p>No services available at the moment.</p>
+<section class="hero">
+    <div class="hero-slider" data-hero-slider data-autoplay="true" data-interval="5000">
+        <div class="hero-slides">
+            <div class="hero-slide is-active">
+                <img th:src="'https://picsum.photos/1600/720?random=1'" th:alt="#{alt.banner.1}" class="hero-img"/>
+                <div class="container hero-content">
+                    <h1 class="hero-title" th:text="#{hero.title.1}">LoanLoan Salon</h1>
+                    <p class="hero-subtitle" th:text="#{hero.subtitle.1}">Không gian sang trọng — Hòa lẫn giữa hiện đại và cổ điển</p>
+                    <div class="hero-actions">
+                        <a th:href="@{/services}" class="btn primary" data-track data-track-category="Hero" data-track-action="cta" th:data-track-label="#{track.hero.cta.view}" th:text="#{hero.cta.view}">Xem ngay</a>
+                        <a th:href="@{/products}" class="btn outline" data-track data-track-category="Hero" data-track-action="cta" th:data-track-label="#{track.hero.cta.products}" th:text="#{hero.cta.products}">Sản phẩm</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <img th:src="'https://picsum.photos/1600/720?random=2'" th:alt="#{alt.banner.2}" class="hero-img"/>
+                <div class="container hero-content">
+                    <h1 class="hero-title" th:text="#{hero.title.2}">Liệu trình chuyên sâu</h1>
+                    <p class="hero-subtitle" th:text="#{hero.subtitle.2}">Thư giãn tuyệt đối cùng đội ngũ kỹ thuật viên dày dặn kinh nghiệm</p>
+                    <div class="hero-actions">
+                        <a th:href="@{/appointment/register}" class="btn primary" data-track data-track-category="Hero" data-track-action="cta" th:data-track-label="#{track.hero.cta.book}" th:text="#{hero.cta.book}">Đặt lịch ngay</a>
+                        <a th:href="@{/services}" class="btn outline" data-track data-track-category="Hero" data-track-action="cta" th:data-track-label="#{track.hero.cta.services}" th:text="#{hero.cta.services}">Xem dịch vụ</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <img th:src="'https://picsum.photos/1600/720?random=3'" th:alt="#{alt.banner.3}" class="hero-img"/>
+                <div class="container hero-content">
+                    <h1 class="hero-title" th:text="#{hero.title.3}">Ưu đãi thành viên</h1>
+                    <p class="hero-subtitle" th:text="#{hero.subtitle.3}">Nhận nhiều khuyến mãi khi tham gia thành viên Dola Spa</p>
+                    <div class="hero-actions">
+                        <a th:href="@{/promotions}" class="btn primary" data-track data-track-category="Hero" data-track-action="cta" th:data-track-label="#{track.hero.cta.promotions}" th:text="#{hero.cta.promotions}">Xem khuyến mãi</a>
+                        <a th:href="@{/auth/user/register}" class="btn outline" data-track data-track-category="Hero" data-track-action="cta" th:data-track-label="#{track.hero.cta.register.member}" th:text="#{hero.cta.register.member}">Đăng ký thành viên</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="hero-arrow prev" type="button" th:aria-label="#{common.slider.prev}">&lsaquo;</button>
+        <button class="hero-arrow next" type="button" th:aria-label="#{common.slider.next}">&rsaquo;</button>
+        <div class="hero-dots" role="tablist" th:aria-label="#{label.hero.pagination}"></div>
     </div>
-    <div th:each="service : ${services}">
-        <div class="service-card">
-            <h3 th:text="${service.serviceName}">Service Name</h3>
-            <p th:text="${service.serviceDescription}">Description</p>
-            <p><strong>Price:</strong> ₫<span th:text="${service.servicePrice}">0</span></p>
+</section>
+
+<!-- <section class="usp container" data-animate="fade-up">
+    <div class="usp-item">
+        <div class="usp-icon">🚚</div>
+        <div>
+            <div class="usp-title" th:text="#{usp.free.shipping.title}">Miễn phí vận chuyển</div>
+            <div class="usp-desc" th:text="#{usp.free.shipping.desc}">Cho tất cả đơn hàng nội thành Hà Nội</div>
+        </div>
+    </div>
+    <div class="usp-item">
+        <div class="usp-icon">🔁</div>
+        <div>
+            <div class="usp-title" th:text="#{usp.free.return.title}">Miễn phí đổi - trả</div>
+            <div class="usp-desc" th:text="#{usp.free.return.desc}">Đối với sản phẩm lỗi sản xuất hoặc vận chuyển</div>
+        </div>
+    </div>
+    <div class="usp-item">
+        <div class="usp-icon">📞</div>
+        <div>
+            <div class="usp-title" th:text="#{usp.support.title}">Hỗ trợ nhanh chóng</div>
+            <div class="usp-desc" th:text="#{usp.support.desc}">Gọi (+84)0973.801.972 để được hỗ trợ ngay</div>
+        </div>
+    </div>
+    <div class="usp-item">
+        <div class="usp-icon">🎁</div>
+        <div>
+            <div class="usp-title" th:text="#{usp.member.benefits.title}">Ưu đãi thành viên</div>
+            <div class="usp-desc" th:text="#{usp.member.benefits.desc}">Đăng ký thành viên để nhận nhiều khuyến mãi</div>
+        </div>
+    </div>
+</section> -->
+
+<section class="promo container" data-animate="fade-up">
+    <div class="promo-left">
+        <a data-lightbox="spa-gallery">
+            <img th:src="'https://picsum.photos/800/600?random=promo1'" th:alt="#{alt.promo.image}" class="promo-photo"/>
+        </a>
+    </div>
+    <div class="promo-right">
+        <h3 th:text="#{promo.title}">Xây dựng sức khỏe thể chất và tinh thần</h3>
+        <p th:text="#{promo.description}">Đến với LoanLoan Salon, chúng tôi cung cấp cho Quý khách hàng những liệu trình chăm sóc, điều trị da chuyên sâu. Chúng tôi luôn lắng nghe và hoàn thiện dịch vụ để mang lại trải nghiệm thư giãn nhất cho khách hàng.</p>
+        <ul class="checks">
+            <li th:text="#{promo.benefit.1}">Nâng niu, chăm sóc làn da</li>
+            <li th:text="#{promo.benefit.2}">Sản phẩm điều trị đặc biệt</li>
+            <li th:text="#{promo.benefit.3}">Trang thiết bị hiện đại</li>
+            <li th:text="#{promo.benefit.4}">Điều trị chuyên sâu</li>
+            <li th:text="#{promo.benefit.5}">Thăm khám, soi da miễn phí</li>
+            <li th:text="#{promo.benefit.6}">Đội ngũ kỹ thuật viên giàu kinh nghiệm</li>
+        </ul>
+        <a th:href="@{/appointment/register}" class="btn dark" th:text="#{promo.cta}">Tìm hiểu thêm</a>
+    </div>
+</section>
+
+<section class="section container" data-animate="fade-up">
+    <h2 class="section-title" th:text="#{section.featured.services}">Dịch vụ nổi bật</h2>
+    <div th:if="${#lists.isEmpty(services)}" class="empty" th:text="#{section.empty.services}">
+        Chưa có dịch vụ.
+    </div>
+    <div class="slider" data-slider="services">
+        <button class="slider-btn slider-prev" type="button" th:aria-label="#{common.slider.prev}">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <div class="slider-track">
+            <div th:each="service,iterStat : ${services}" th:if="${iterStat.index} < 8" class="slide">
+                <div class="card service w-100">
+                    <img th:src="'https://picsum.photos/400/300?random=' + ${service.id}" th:alt="#{alt.service.image}" class="card-thumb rounded"/>
+                    <div class="card-body">
+                        <h3 class="card-title" th:text="${service.serviceName}">Service Name</h3>
+                        <p class="card-desc clamp-3" th:text="${service.serviceDescription}">Description</p>
+                        <div class="meta">
+                            <span class="label" th:text="#{card.price.label}">Giá</span>
+                            <span class="value"><span th:text="${#numbers.formatInteger(service.servicePrice,0,'POINT')}">0</span><span class="currency" th:text="#{common.currency}">₫</span></span>
+                        </div>
+                        <a th:href="@{/services/{id}(id=${service.id})}" class="btn primary small" th:text="#{card.view.now}">Xem ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="slider-btn slider-next" type="button" th:aria-label="#{common.slider.next}">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    </div>
+</section>
+
+<section class="section container" data-animate="fade-up">
+    <h2 class="section-title" th:text="#{section.featured.products}">Sản phẩm nổi bật</h2>
+    <div th:if="${#lists.isEmpty(products)}" class="empty" th:text="#{section.empty.products}">
+        Chưa có sản phẩm.
+    </div>
+    <div class="slider" data-slider="featured-products">
+        <button class="slider-btn slider-prev" type="button" th:aria-label="#{common.slider.prev}">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <div class="slider-track">
+            <div th:each="product,iterStat : ${products}" th:if="${iterStat.index} < 8" class="slide">
+                <div class="card product w-100">
+                    <img th:src="'https://picsum.photos/400/300?random=' + ${product.id}" th:alt="#{alt.product.image}" class="card-thumb"/>
+                    <div class="card-body">
+                        <h3 class="card-title" th:text="${product.productName}">Product Name</h3>
+                        <p class="card-desc clamp-2" th:text="${product.productDescription}">Description</p>
+                        <p class="card-price"><span th:text="${#numbers.formatInteger(product.currentPrice,0,'POINT')}">0</span><span class="currency" th:text="#{common.currency}">₫</span></p>
+                        <a th:href="@{/products/{id}(id=${product.id})}" class="btn outline small" th:text="#{card.view.details}">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="slider-btn slider-next" type="button" th:aria-label="#{common.slider.next}">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    </div>
+</section>
+
+<section class="best container" data-animate="fade-up">
+    <div class="best-left">
+        <h3 class="best-title" th:text="#{section.best.services}">Dịch vụ tốt nhất</h3>
+        <p th:text="#{stats.description}">Với hơn 1000+ khách hàng đã trải nghiệm và hài lòng. Chúng tôi luôn cam kết mang đến trải nghiệm thư giãn và chăm sóc khách hàng tốt nhất.</p>
+        <div class="stats">
+            <div class="stat"><div class="num" data-count="2" data-suffix="+">0</div><div class="label" th:text="#{stats.stores}">Cửa hàng</div></div>
+            <div class="stat"><div class="num" data-count="50" data-suffix="+">0</div><div class="label" th:text="#{stats.staff}">Nhân viên</div></div>
+            <div class="stat"><div class="num" data-count="5000" data-suffix="+">0</div><div class="label" th:text="#{stats.customers}">Khách hàng</div></div>
+        </div>
+    </div>
+    <div class="best-right">
+        <a data-lightbox="spa-gallery">
+            <img th:src="'https://picsum.photos/800/600?random=promo2'" th:alt="#{alt.promo.image}" class="promo-photo"/>
+        </a>
+    </div>
+</section>
+
+<section class="section container" data-animate="fade-up">
+    <h2 class="section-title" th:text="#{section.testimonials}">Feedback từ khách hàng</h2>
+    <div class="row g-3">
+        <div class="col-12 col-md-4 d-flex">
+            <div class="testimonial w-100">
+                <img th:src="'https://picsum.photos/120/120?random=101'" th:alt="#{alt.avatar}" class="avatar"/>
+                <div class="name" th:text="#{testimonial.1.name}">Hoàng Dung</div>
+                <div class="role" th:text="#{testimonial.1.role}">Kế Toán</div>
+                <p th:text="#{testimonial.1.text}">LoanLoan Salon là nơi tuyệt vời để thư giãn với nhân viên chuyên nghiệp và thân thiện.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 d-flex">
+            <div class="testimonial w-100">
+                <img th:src="'https://picsum.photos/120/120?random=102'" th:alt="#{alt.avatar}" class="avatar"/>
+                <div class="name" th:text="#{testimonial.2.name}">Sở Binh</div>
+                <div class="role" th:text="#{testimonial.2.role}">Chủ Shop Thời Trang</div>
+                <p th:text="#{testimonial.2.text}">Dịch vụ đa dạng và chất lượng. Liệu trình mang lại cảm giác thư thái rõ rệt.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 d-flex">
+            <div class="testimonial w-100">
+                <img th:src="'https://picsum.photos/120/120?random=103'" th:alt="#{alt.avatar}" class="avatar"/>
+                <div class="name" th:text="#{testimonial.3.name}">Ngọc Tuyền</div>
+                <div class="role" th:text="#{testimonial.3.role}">Đầu Bếp</div>
+                <p th:text="#{testimonial.3.text}">Sản phẩm và liệu trình được chọn kỹ càng, hiệu quả thực tế rất tốt.</p>
+            </div>
         </div>
     </div>
 </section>
 
-<hr>
-
-<section>
-    <h2>Our Products</h2>
-    <div th:if="${#lists.isEmpty(products)}">
-        <p>No products available at the moment.</p>
-    </div>
-    <div th:each="product : ${products}">
-        <div class="product-card">
-            <h3 th:text="${product.productName}">Product Name</h3>
-            <p th:text="${product.productDescription}">Description</p>
-            <p><strong>Price:</strong> ₫<span th:text="${product.currentPrice}">0</span></p>
+<section class="section container">
+    <h2 class="section-title" th:text="#{section.team}">Đội ngũ của chúng tôi</h2>
+    <div class="row g-3">
+        <div class="col-6 col-md-3 d-flex">
+            <div class="member w-100">
+                <img th:src="'https://picsum.photos/300/380?random=201'" th:alt="#{alt.member}" class="portrait"/>
+                <div class="member-name" th:text="#{team.member.1.name}">Lenda Murray</div>
+                <div class="member-role" th:text="#{team.member.1.role}">Chuyên viên tư vấn</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 d-flex">
+            <div class="member w-100">
+                <img th:src="'https://picsum.photos/300/380?random=202'" th:alt="#{alt.member}" class="portrait"/>
+                <div class="member-name" th:text="#{team.member.2.name}">Emely Jonson</div>
+                <div class="member-role" th:text="#{team.member.2.role}">Chuyên viên massage</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 d-flex">
+            <div class="member w-100">
+                <img th:src="'https://picsum.photos/300/380?random=203'" th:alt="#{alt.member}" class="portrait"/>
+                <div class="member-name" th:text="#{team.member.3.name}">Lola Jonson</div>
+                <div class="member-role" th:text="#{team.member.3.role}">Chuyên viên chăm sóc da</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 d-flex">
+            <div class="member w-100">
+                <img th:src="'https://picsum.photos/300/380?random=204'" th:alt="#{alt.member}" class="portrait"/>
+                <div class="member-name" th:text="#{team.member.4.name}">Rose Marian</div>
+                <div class="member-role" th:text="#{team.member.4.role}">Chuyên viên chăm sóc da</div>
+            </div>
         </div>
     </div>
 </section>
 
-<hr>
-<div id="map" style="height: 400px;"></div>
+<section class="section container" data-animate="fade-up">
+    <h2 class="section-title" th:text="#{section.find.us}">Tìm chúng tôi</h2>
+    <div id="map" class="map"></div>
+</section>
+
+<!-- Footer Fragment -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<button id="backToTop" th:aria-label="#{common.back.to.top}">↑</button>
+
+<!-- Sidebar Sub-menu -->
+<div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-brand" th:text="#{sidebar.brand}">LoanLoan Salon</div>
+        <button type="button" id="sidebarClose" class="sidebar-close" th:aria-label="#{sidebar.close}">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div class="sidebar-content">
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">
+                <span class="sidebar-icon">✱</span>
+                <span th:text="#{sidebar.services.title}">Dịch vụ</span>
+            </h3>
+            <ul class="sidebar-menu">
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.1}">Cắt tóc chuyên sâu</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.2}">Tư vấn chăm sóc tóc</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.3}">Chăm sóc tóc cơ bản</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.4}">Nhuộm tóc</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.5}">Cắt tóc tạo kiểu</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.6}">Hấp tóc phục hồi</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.7}">Tráng tóc tạo bóng phủ màu</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.8}">Nuôi dưỡng tóc – tái tạo chuyên sâu</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.9}">Uốn tóc</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">
+                <span class="sidebar-icon">✱</span>
+                <span th:text="#{sidebar.store.info.title}">Thông tin cửa hàng</span>
+            </h3>
+            <div class="sidebar-info">
+                <p><strong th:text="#{label.address}">Địa chỉ:</strong> <span th:text="#{footer.contact.address}">76 Huỳnh Thúc Khang - Ba Đình - Hà Nội</span></p>
+                <p><strong th:text="#{label.phone}">Điện thoại:</strong> <span th:text="#{footer.contact.phone}">(+84)0973.801.972</span></p>
+                <p><strong th:text="#{label.email}">Email:</strong> <span th:text="#{footer.contact.email}">Loanloanhairsalon@gmail.com</span></p>
+            </div>
+            <div class="sidebar-socials">
+                <a href="#" aria-label="Facebook" class="social-icon facebook">f</a>
+                <a href="#" aria-label="YouTube" class="social-icon youtube">▶</a>
+                <a href="#" aria-label="Twitter" class="social-icon twitter">🐦</a>
+                <a href="#" aria-label="Pinterest" class="social-icon pinterest">P</a>
+                <a href="#" aria-label="Instagram" class="social-icon instagram">📷</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
 
 <script th:inline="javascript">
-    var lat = [[${lat}]];
-    var lng = [[${lng}]];
+    var lat = /*[[${lat}]]*/ 0;
+    var lng = /*[[${lng}]]*/ 0;
 
     var map = L.map('map').setView([lat, lng], 15);
 
@@ -69,14 +319,18 @@
     }).addTo(map);
 
     L.marker([lat, lng]).addTo(map)
-        .bindPopup('Here is the address!')
+        .bindPopup(/*[[#{map.popup.address}]]*/ 'Here is the address!')
         .openPopup();
 </script>
+<script th:src="@{/js/main.js}"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXX', { anonymize_ip: true });
+</script>
 
-
-<footer>
-    <p>&copy; 2025 Salon Loan Loan. All rights reserved.</p>
-</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import service.sllbackend.entity.Product;
 import service.sllbackend.entity.ProductFeedback;
+import service.sllbackend.service.CartService;
 import service.sllbackend.service.ProductFeedbackService;
 import service.sllbackend.service.ProductsService;
 
@@ -22,17 +23,30 @@ import service.sllbackend.service.ProductsService;
 public class ProductsController {
     private final ProductsService productsService;
     private final ProductFeedbackService productFeedbackService;
+    private final CartService cartService;
 
     @GetMapping
     public String listProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Boolean activeStatus,
-            Model model) {
+            Model model,
+            Principal principal) {
         List<Product> products = productsService.getProducts(name, activeStatus);
 
         model.addAttribute("products", products);
         model.addAttribute("searchName", name);
         model.addAttribute("selectedActiveStatus", activeStatus);
+        
+        // Add username and cartCount for header fragment
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+            int cartCount = cartService.getCartByUser(principal.getName()).stream()
+                    .mapToInt(cart -> cart.getAmount())
+                    .sum();
+            model.addAttribute("cartCount", cartCount);
+        } else {
+            model.addAttribute("cartCount", 0);
+        }
         
         return "products";
     }

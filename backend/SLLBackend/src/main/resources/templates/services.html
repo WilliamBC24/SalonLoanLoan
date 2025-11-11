@@ -1,166 +1,282 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Services</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .search-bar {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-        }
-        .filter-group {
-            margin-bottom: 15px;
-        }
-        .filter-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-        }
-        .checkbox-item input {
-            margin-right: 5px;
-        }
-        .search-buttons {
-            margin-top: 15px;
-        }
-        .search-buttons button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
-        }
-        .search-btn {
-            background: #007bff;
-            color: white;
-        }
-        .search-btn:hover {
-            background: #0056b3;
-        }
-        .reset-btn {
-            background: #6c757d;
-            color: white;
-        }
-        .reset-btn:hover {
-            background: #545b62;
-        }
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-        }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-            text-align: left;
-        }
-        th { 
-            background: #f4f4f4; 
-        }
-        tr:hover {
-            background: #f5f5f5;
-        }
-        .view-link {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .view-link:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title th:text="#{page.services.title}">Salon Loan Loan | All Services</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/services.css}">
 </head>
 <body>
-    <h1>All Services</h1>
 
-    <!-- Search and Filter Bar -->
-    <div class="search-bar">
-        <form method="get" action="/services">
-            <div class="filter-group">
-                <label for="search-name">Search by Name:</label>
-                <input type="text" id="search-name" name="name" 
-                       th:value="${searchName}" 
-                       placeholder="Enter service name..."
-                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            </div>
+<!-- Header Fragment -->
+<div th:replace="~{fragments/header :: header(${username}, ${cartCount})}"></div>
 
-            <div class="filter-group">
-                <label>Service Type:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-single" name="types" value="SINGLE" 
-                               th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
-                        <label for="type-single">Single</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-combo" name="types" value="COMBO"
-                               th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
-                        <label for="type-combo">Combo</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="filter-group">
-                <label>Service Category:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item" th:each="category : ${allCategories}">
-                        <input type="checkbox" th:id="'category-' + ${category.id}" 
-                               name="categories" th:value="${category.id}"
-                               th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
-                        <label th:for="'category-' + ${category.id}" th:text="${category.name}">Category</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="search-buttons">
-                <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/services'">Reset</button>
-            </div>
-        </form>
+<!-- Hero Section -->
+<section class="services-hero">
+    <div class="container">
+        <h1 class="services-title" th:text="#{services.title}">Tất cả dịch vụ</h1>
+        <div th:replace="~{fragments/header :: breadcrumbs('services.breadcrumb.home', 'services.breadcrumb.services')}"></div>
     </div>
+</section>
 
-    <!-- Services Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Duration (min)</th>
-                <th>Active</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="svc : ${services}" th:data-service-name="${svc.serviceName}">
-                <td th:text="${svc.id}">1</td>
-                <td th:text="${svc.serviceName}">Service name</td>
-                <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
-                <td th:text="${svc.serviceType}">SINGLE</td>
-                <td th:text="${svc.servicePrice}">0</td>
-                <td th:text="${svc.durationMinutes}">0</td>
-                <td th:text="${svc.activeStatus}">false</td>
-                <td>
-                    <a th:href="@{/services/{id}(id=${svc.id})}" class="view-link">View Details</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<!-- Main Content -->
+<section class="services-section">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Left Sidebar - Filters -->
+            <aside class="col-12 col-lg-3">
+                <div class="services-sidebar">
+                    <!-- Search and Filter Form -->
+                    <form method="get" th:action="@{/services}" class="search-filter-form">
+                        <div class="filter-group">
+                            <label for="search-name" th:text="#{services.search.name.label}">Tìm kiếm theo tên</label>
+                            <input type="text" id="search-name" name="name" 
+                                   th:value="${searchName}" 
+                                   th:placeholder="#{services.search.name.placeholder}"
+                                   class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <label th:text="#{services.filter.type.label}">Loại dịch vụ</label>
+                            <div class="filter-options">
+                                <label class="filter-option">
+                                    <input type="checkbox" name="types" value="SINGLE" 
+                                           th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
+                                    <span th:text="#{services.filter.type.single}">Đơn lẻ</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="types" value="COMBO"
+                                           th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
+                                    <span th:text="#{services.filter.type.combo}">Combo</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="filter-group" th:if="${!#lists.isEmpty(allCategories)}">
+                            <label th:text="#{services.filter.category.label}">Danh mục dịch vụ</label>
+                            <div class="filter-options">
+                                <label class="filter-option" th:each="category : ${allCategories}">
+                                    <input type="checkbox" th:id="'category-' + ${category.id}" 
+                                           name="categories" th:value="${category.id}"
+                                           th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
+                                    <span th:text="${category.name}">Category</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="filter-actions">
+                            <button type="submit" class="btn primary small" th:text="#{services.search.submit}">Tìm kiếm</button>
+                            <a th:href="@{/services}" class="btn outline small" th:text="#{services.search.reset}">Đặt lại</a>
+                        </div>
+                    </form>
+                </div>
+            </aside>
 
+            <!-- Main Content Area -->
+            <main class="col-12 col-lg-9">
+                <!-- Sorting Options -->
+                <div class="services-sorting">
+                    <span class="sort-label" th:text="#{services.sort.title}">Xếp theo:</span>
+                    <div class="sort-buttons">
+                        <button type="button" class="sort-btn active" data-sort="default" th:text="#{services.sort.default}">Mặc định</button>
+                        <button type="button" class="sort-btn" data-sort="name-az" th:text="#{services.sort.name.az}">Tên A-Z</button>
+                        <button type="button" class="sort-btn" data-sort="name-za" th:text="#{services.sort.name.za}">Tên Z-A</button>
+                        <button type="button" class="sort-btn" data-sort="new" th:text="#{services.sort.new}">Hàng mới</button>
+                        <button type="button" class="sort-btn" data-sort="price-low" th:text="#{services.sort.price.low}">Giá thấp đến cao</button>
+                        <button type="button" class="sort-btn" data-sort="price-high" th:text="#{services.sort.price.high}">Giá cao xuống thấp</button>
+                    </div>
+                </div>
+
+                <!-- Services Grid -->
+                <div th:if="${#lists.isEmpty(services)}" class="services-empty">
+                    <p th:text="#{services.empty}">Không tìm thấy dịch vụ</p>
+                </div>
+                <div class="services-grid" id="servicesGrid">
+                    <div th:each="service : ${services}" class="service-card" 
+                         th:data-price="${service.servicePrice}" 
+                         th:data-name="${service.serviceName}"
+                         th:data-id="${service.id}">
+                        <a th:href="@{/services/{id}(id=${service.id})}" class="service-link">
+                            <div class="service-image">
+                                <img th:src="'https://picsum.photos/400/300?random=' + ${service.id}" 
+                                     th:alt="${service.serviceName}" 
+                                     class="service-img"/>
+                            </div>
+                            <div class="service-info">
+                                <h3 class="service-title" th:text="${service.serviceName}">Service Name</h3>
+                                <p class="service-desc clamp-2" th:text="${service.serviceDescription}">Description</p>
+                                <div class="service-meta">
+                                    <div class="service-price">
+                                        <span th:text="${#numbers.formatInteger(service.servicePrice,0,'POINT')}">0</span>
+                                        <span class="currency" th:text="#{common.currency}">₫</span>
+                                    </div>
+                                    <div class="service-duration" th:if="${service.durationMinutes != null}">
+                                        <span class="material-symbols-outlined">schedule</span>
+                                        <span th:text="${service.durationMinutes}">0</span>
+                                        <span th:text="#{services.duration.minutes}">phút</span>
+                                    </div>
+                                </div>
+                                <div class="service-action">
+                                    <span class="btn outline small" th:text="#{services.view.details}">Xem chi tiết</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Fragment -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<button id="backToTop" th:aria-label="#{common.back.to.top}">↑</button>
+
+<!-- Sidebar Sub-menu -->
+<div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-brand" th:text="#{sidebar.brand}">LoanLoan Salon</div>
+        <button type="button" id="sidebarClose" class="sidebar-close" th:aria-label="#{sidebar.close}">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div class="sidebar-content">
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">
+                <span class="sidebar-icon">✱</span>
+                <span th:text="#{sidebar.services.title}">Dịch vụ</span>
+            </h3>
+            <ul class="sidebar-menu">
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.1}">Cắt tóc chuyên sâu</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.2}">Tư vấn chăm sóc tóc</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.3}">Chăm sóc tóc cơ bản</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.4}">Nhuộm tóc</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.5}">Cắt tóc tạo kiểu</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.6}">Hấp tóc phục hồi</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.7}">Tráng tóc tạo bóng phủ màu</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.8}">Nuôi dưỡng tóc – tái tạo chuyên sâu</a></li>
+                <li><a th:href="@{/services}" th:text="#{sidebar.services.9}">Uốn tóc</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">
+                <span class="sidebar-icon">✱</span>
+                <span th:text="#{sidebar.store.info.title}">Thông tin cửa hàng</span>
+            </h3>
+            <div class="sidebar-info">
+                <p><strong th:text="#{label.address}">Địa chỉ:</strong> <span th:text="#{footer.contact.address}">76 Huỳnh Thúc Khang - Ba Đình - Hà Nội</span></p>
+                <p><strong th:text="#{label.phone}">Điện thoại:</strong> <span th:text="#{footer.contact.phone}">(+84)0973.801.972</span></p>
+                <p><strong th:text="#{label.email}">Email:</strong> <span th:text="#{footer.contact.email}">Loanloanhairsalon@gmail.com</span></p>
+            </div>
+            <div class="sidebar-socials">
+                <a href="#" th:aria-label="#{social.facebook}" class="social-icon facebook">f</a>
+                <a href="#" th:aria-label="#{social.youtube}" class="social-icon youtube">▶</a>
+                <a href="#" th:aria-label="#{social.twitter}" class="social-icon twitter">🐦</a>
+                <a href="#" th:aria-label="#{social.pinterest}" class="social-icon pinterest">P</a>
+                <a href="#" th:aria-label="#{social.instagram}" class="social-icon instagram">📷</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- Cart Popup -->
+<div id="cartPopup" class="cart-popup">
+    <div class="cart-popup-header">
+        <h3 class="cart-popup-title" th:text="#{cart.title}">Giỏ hàng</h3>
+        <button type="button" id="cartClose" class="cart-popup-close" th:aria-label="#{sidebar.close}">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div class="cart-popup-content" id="cartContent">
+        <!-- Cart items will be loaded here -->
+        <div class="cart-empty" id="cartEmpty">
+            <p th:text="#{cart.empty}">Giỏ hàng của bạn đang trống</p>
+        </div>
+        <div class="cart-items" id="cartItems" style="display: none;">
+            <!-- Cart items list -->
+        </div>
+    </div>
+    <div class="cart-popup-footer" id="cartFooter" style="display: none;">
+        <div class="cart-total">
+            <span class="cart-total-label" th:text="#{cart.total}">Tổng tiền:</span>
+            <span class="cart-total-price" id="cartTotalPrice">0<span th:text="#{common.currency}">₫</span></span>
+        </div>
+        <a th:href="@{/cart}" class="btn primary w-100" th:text="#{cart.checkout}">Thanh toán</a>
+    </div>
+</div>
+<div id="cartOverlay" class="cart-overlay"></div>
+
+<script th:src="@{/js/main.js}"></script>
+<script>
+// Services Page Sorting
+document.addEventListener('DOMContentLoaded', () => {
+  const sortButtons = document.querySelectorAll('.sort-btn');
+  const servicesGrid = document.getElementById('servicesGrid');
+  const serviceCards = Array.from(document.querySelectorAll('.service-card'));
+
+  if (!sortButtons.length || !servicesGrid) return;
+
+  sortButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Update active state
+      sortButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Get sort type
+      const sortType = btn.dataset.sort;
+      const sortedCards = [...serviceCards];
+
+      // Sort services
+      switch(sortType) {
+        case 'name-az':
+          sortedCards.sort((a, b) => {
+            const nameA = a.dataset.name || '';
+            const nameB = b.dataset.name || '';
+            return nameA.localeCompare(nameB);
+          });
+          break;
+        case 'name-za':
+          sortedCards.sort((a, b) => {
+            const nameA = a.dataset.name || '';
+            const nameB = b.dataset.name || '';
+            return nameB.localeCompare(nameA);
+          });
+          break;
+        case 'price-low':
+          sortedCards.sort((a, b) => {
+            const priceA = parseFloat(a.dataset.price) || 0;
+            const priceB = parseFloat(b.dataset.price) || 0;
+            return priceA - priceB;
+          });
+          break;
+        case 'price-high':
+          sortedCards.sort((a, b) => {
+            const priceA = parseFloat(a.dataset.price) || 0;
+            const priceB = parseFloat(b.dataset.price) || 0;
+            return priceB - priceA;
+          });
+          break;
+        case 'new':
+          // Sort by ID descending (assuming higher ID = newer)
+          sortedCards.sort((a, b) => {
+            const idA = parseInt(a.dataset.id) || 0;
+            const idB = parseInt(b.dataset.id) || 0;
+            return idB - idA;
+          });
+          break;
+        case 'default':
+        default:
+          // Keep original order
+          break;
+      }
+
+      // Re-append sorted cards
+      sortedCards.forEach(card => servicesGrid.appendChild(card));
+    });
+  });
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>

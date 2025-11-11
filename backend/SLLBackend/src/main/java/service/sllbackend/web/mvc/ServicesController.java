@@ -1,5 +1,6 @@
 package service.sllbackend.web.mvc;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.ServiceCombo;
 import service.sllbackend.enumerator.ServiceType;
+import service.sllbackend.service.CartService;
 import service.sllbackend.service.ServicesService;
 import service.sllbackend.utils.DTOMapper;
 import service.sllbackend.web.dto.SimpleServiceDTO;
@@ -22,13 +24,15 @@ import service.sllbackend.web.dto.SimpleServiceDTO;
 public class ServicesController {
     private final ServicesService servicesService;
     private final DTOMapper dtoMapper;
+    private final CartService cartService;
 
     @GetMapping
     public String listServices(
             @RequestParam(required = false) List<String> types,
             @RequestParam(required = false) List<Integer> categories,
             @RequestParam(required = false) String name,
-            Model model) {
+            Model model,
+            Principal principal) {
 
         // Get all categories for filters
         List<ServiceCategory> allCategories = servicesService.getAllCategories();
@@ -41,6 +45,17 @@ public class ServicesController {
         model.addAttribute("selectedTypes", types);
         model.addAttribute("selectedCategories", categories);
         model.addAttribute("searchName", name);
+        
+        // Add username and cartCount for header fragment
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+            int cartCount = cartService.getCartByUser(principal.getName()).stream()
+                    .mapToInt(cart -> cart.getAmount())
+                    .sum();
+            model.addAttribute("cartCount", cartCount);
+        } else {
+            model.addAttribute("cartCount", 0);
+        }
         
         return "services";
     }

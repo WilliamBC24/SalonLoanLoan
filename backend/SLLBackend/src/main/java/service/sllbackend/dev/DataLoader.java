@@ -40,6 +40,7 @@ public class DataLoader implements CommandLineRunner {
 	private final InventoryConsignmentRepo inventoryConsignmentRepo;
 	private final InventoryInvoiceRepo inventoryInvoiceRepo;
 	private final InventoryInvoiceDetailRepo inventoryInvoiceDetailRepo;
+	private final StaffAccountRepo staffAccountRepo;
 
 	@Override
 	public void run(String... args) {
@@ -119,24 +120,63 @@ public class DataLoader implements CommandLineRunner {
 	}
 
 	public void registerStaff() {
-		String name = "admin";
-		String role = "admin";
+		// Create admin staff
+		String adminName = "admin";
+		String adminUsername = "admin";
+		String adminPassword = "admin";
 
-		Staff staff = staffRepo.save(Staff.builder()
-				.name(name)
+		Staff adminStaff = staffRepo.save(Staff.builder()
+				.name(adminName)
 				.birthDate(LocalDate.of(2004, 1, 1))
+				.email("admin@salon.com")
 				.build());
 
-		StaffPosition staffPosition = staffPositionRepo.save(StaffPosition.builder()
-				.positionName(role)
+		StaffPosition adminPosition = staffPositionRepo.save(StaffPosition.builder()
+				.positionName("admin")
 				.build());
 
 		staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
-				.staff(staff)
+				.staff(adminStaff)
+				.position(adminPosition)
+				.build());
+
+		staffAccountRepo.save(StaffAccount.builder()
+				.staff(adminStaff)
+				.username(adminUsername)
+				.password(passwordEncoder.encode(adminPassword))
+				.accountStatus(AccountStatus.ACTIVE)
+				.build());
+
+		log.info("Admin staff registered: {} with password: {}", adminUsername, adminPassword);
+
+		// Create regular staff member
+		String staffName = "staff1";
+		String staffUsername = "staff";
+		String staffPassword = "staff";
+
+		Staff regularStaff = staffRepo.save(Staff.builder()
+				.name(staffName)
+				.birthDate(LocalDate.of(1995, 5, 15))
+				.email("staff1@salon.com")
+				.build());
+
+		StaffPosition staffPosition = staffPositionRepo.save(StaffPosition.builder()
+				.positionName("staff")
+				.build());
+
+		staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
+				.staff(regularStaff)
 				.position(staffPosition)
 				.build());
 
-		log.info("Staff registered: " + name + " with role: " + role);
+		staffAccountRepo.save(StaffAccount.builder()
+				.staff(regularStaff)
+				.username(staffUsername)
+				.password(passwordEncoder.encode(staffPassword))
+				.accountStatus(AccountStatus.ACTIVE)
+				.build());
+
+		log.info("Regular staff registered: {} with password: {}", staffUsername, staffPassword);
 	}
 
 	public void registerServices() {

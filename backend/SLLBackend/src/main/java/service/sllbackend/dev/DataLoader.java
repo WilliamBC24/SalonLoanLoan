@@ -140,12 +140,12 @@ public class DataLoader implements CommandLineRunner {
 				.position(adminPosition)
 				.build());
 
-		staffAccountRepo.save(StaffAccount.builder()
-				.staff(adminStaff)
-				.username(adminUsername)
-				.password(passwordEncoder.encode(adminPassword))
-				.accountStatus(AccountStatus.ACTIVE)
-				.build());
+		// Update the auto-generated staff account (created by database trigger)
+		staffAccountRepo.findByUsername("adminA").ifPresent(account -> {
+			account.setUsername(adminUsername);
+			account.setPassword(passwordEncoder.encode(adminPassword));
+			staffAccountRepo.save(account);
+		});
 
 		log.info("Admin staff registered: {} with password: {}", adminUsername, adminPassword);
 
@@ -169,12 +169,12 @@ public class DataLoader implements CommandLineRunner {
 				.position(staffPosition)
 				.build());
 
-		staffAccountRepo.save(StaffAccount.builder()
-				.staff(regularStaff)
-				.username(staffUsername)
-				.password(passwordEncoder.encode(staffPassword))
-				.accountStatus(AccountStatus.ACTIVE)
-				.build());
+		// Update the auto-generated staff account (created by database trigger)
+		staffAccountRepo.findByUsername("staff1S").ifPresent(account -> {
+			account.setUsername(staffUsername);
+			account.setPassword(passwordEncoder.encode(staffPassword));
+			staffAccountRepo.save(account);
+		});
 
 		log.info("Regular staff registered: {} with password: {}", staffUsername, staffPassword);
 	}

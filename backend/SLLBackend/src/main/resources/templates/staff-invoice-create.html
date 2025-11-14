@@ -466,55 +466,75 @@
                 if (response.ok) {
                     // Show success message
                     const alertDiv = document.getElementById('modalAlert');
-                    alertDiv.textContent = 'Product created successfully! Reloading to add it to the list...';
+                    alertDiv.textContent = 'Product created successfully! Adding to list...';
                     alertDiv.style.display = 'block';
 
-                    // Store the import price for the newly created product in sessionStorage
-                    sessionStorage.setItem('newProductImportPrice', importPrice);
-                    sessionStorage.setItem('newProductName', productName);
-
-                    // Close modal and reload after a short delay
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    // Fetch updated product list
+                    try {
+                        const productsResponse = await fetch('/staff/products/api/list');
+                        if (productsResponse.ok) {
+                            const products = await productsResponse.json();
+                            
+                            // Find the newly created product
+                            const newProduct = products.find(p => p.productName === productName);
+                            
+                            if (newProduct) {
+                                // Add the new product to all product dropdowns
+                                const productSelects = document.querySelectorAll('select[name="productId[]"]');
+                                productSelects.forEach(select => {
+                                    const option = document.createElement('option');
+                                    option.value = newProduct.id;
+                                    option.textContent = newProduct.productName;
+                                    select.appendChild(option);
+                                });
+                                
+                                // Select the new product in the first dropdown and set import price
+                                if (productSelects.length > 0) {
+                                    const firstSelect = productSelects[0];
+                                    firstSelect.value = newProduct.id;
+                                    
+                                    // Set the import price as unit price
+                                    const row = firstSelect.closest('.item-row');
+                                    const unitPriceInput = row.querySelector('input[name="unitPrice[]"]');
+                                    if (unitPriceInput) {
+                                        unitPriceInput.value = importPrice;
+                                    }
+                                }
+                                
+                                alertDiv.textContent = 'Product created and added successfully!';
+                                
+                                // Close modal after a short delay
+                                setTimeout(() => {
+                                    closeProductModal();
+                                }, 1500);
+                            } else {
+                                // Fallback to reload if product not found
+                                alertDiv.textContent = 'Product created! Reloading page...';
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
+                            }
+                        } else {
+                            // Fallback to reload if API call fails
+                            alertDiv.textContent = 'Product created! Reloading page...';
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }
+                    } catch (fetchError) {
+                        console.error('Error fetching products:', fetchError);
+                        // Fallback to reload
+                        alertDiv.textContent = 'Product created! Reloading page...';
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    }
                 } else {
                     alert('Error creating product. Please try again.');
                 }
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error creating product: ' + error.message);
-            }
-        });
-
-        // Check if we just created a product and need to set its import price
-        window.addEventListener('DOMContentLoaded', function() {
-            const importPrice = sessionStorage.getItem('newProductImportPrice');
-            const productName = sessionStorage.getItem('newProductName');
-            
-            if (importPrice && productName) {
-                // Find the newly created product in the dropdown
-                const productSelects = document.querySelectorAll('select[name="productId[]"]');
-                productSelects.forEach(select => {
-                    const options = select.querySelectorAll('option');
-                    options.forEach(option => {
-                        if (option.textContent.trim() === productName) {
-                            // Select this product in the first row
-                            if (select === productSelects[0]) {
-                                select.value = option.value;
-                                // Set the import price as the unit price
-                                const row = select.closest('.item-row');
-                                const unitPriceInput = row.querySelector('input[name="unitPrice[]"]');
-                                if (unitPriceInput) {
-                                    unitPriceInput.value = importPrice;
-                                }
-                            }
-                        }
-                    });
-                });
-                
-                // Clear the session storage
-                sessionStorage.removeItem('newProductImportPrice');
-                sessionStorage.removeItem('newProductName');
             }
         });
 

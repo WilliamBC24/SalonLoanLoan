@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import service.sllbackend.entity.Product;
@@ -60,6 +62,7 @@ public class StaffProductController {
             @RequestParam Integer currentPrice,
             @RequestParam String productDescription,
             @RequestParam(required = false, defaultValue = "false") Boolean activeStatus,
+            @RequestParam(required = false) String source,
             RedirectAttributes redirectAttributes) {
         
         try {
@@ -70,11 +73,23 @@ public class StaffProductController {
                 .activeStatus(activeStatus)
                 .build();
             
-            productsService.createProduct(product);
+            Product createdProduct = productsService.createProduct(product);
+            
+            // If called from invoice page, include product ID in redirect
+            if ("invoice".equals(source)) {
+                redirectAttributes.addFlashAttribute("newProductId", createdProduct.getId());
+                redirectAttributes.addFlashAttribute("newProductName", createdProduct.getProductName());
+                return "redirect:/staff/invoices/create";
+            }
+            
             redirectAttributes.addFlashAttribute("successMessage", "Product created successfully!");
             return "redirect:/staff/products/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating product: " + e.getMessage());
+            
+            if ("invoice".equals(source)) {
+                return "redirect:/staff/invoices/create";
+            }
             return "redirect:/staff/products/create";
         }
     }
@@ -117,5 +132,12 @@ public class StaffProductController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating product: " + e.getMessage());
             return "redirect:/staff/products/edit/" + id;
         }
+    }
+    
+    @GetMapping("/api/list")
+    @ResponseBody
+    public ResponseEntity<List<Product>> getProductsApi() {
+        List<Product> products = productsService.getProducts(null, null);
+        return ResponseEntity.ok(products);
     }
 }

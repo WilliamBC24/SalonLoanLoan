@@ -39,28 +39,25 @@ public class InventoryInvoiceController {
     
     /**
      * Function 15.6: View Invoice List
+     * Function 15.5: Search Invoice By Parameter
      */
     @GetMapping("/list")
     @Secured({"ROLE_STAFF", "ROLE_MANAGER", "ROLE_ADMIN"})
-    public String listInvoices(Model model) {
-        List<InventoryInvoiceListDTO> invoices = inventoryInvoiceService.getAllInvoices();
-        model.addAttribute("invoices", invoices);
-        return "staff-invoice-list";
-    }
-    
-    /**
-     * Function 15.5: Search Invoice By Parameter
-     */
-    @GetMapping("/search")
-    @Secured({"ROLE_STAFF", "ROLE_MANAGER", "ROLE_ADMIN"})
-    public String searchInvoices(
+    public String listInvoices(
             @RequestParam(required = false) Integer supplierId,
             @RequestParam(required = false) InventoryInvoiceStatus status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fromDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime toDate,
             Model model) {
         
-        List<InventoryInvoiceListDTO> invoices = inventoryInvoiceService.searchInvoices(supplierId, status, fromDate, toDate);
+        List<InventoryInvoiceListDTO> invoices;
+        
+        // If any search parameters are provided, use search; otherwise get all
+        if (supplierId != null || status != null || fromDate != null || toDate != null) {
+            invoices = inventoryInvoiceService.searchInvoices(supplierId, status, fromDate, toDate);
+        } else {
+            invoices = inventoryInvoiceService.getAllInvoices();
+        }
         
         model.addAttribute("invoices", invoices);
         model.addAttribute("suppliers", supplierRepo.findAll());
@@ -70,7 +67,7 @@ public class InventoryInvoiceController {
         model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", toDate);
         
-        return "staff-invoice-search";
+        return "staff-invoice-list";
     }
     
     /**

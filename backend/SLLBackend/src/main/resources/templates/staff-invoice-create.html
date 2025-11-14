@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Staff - Create Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .back-link {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .items-container {
+            margin-bottom: 20px;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: end;
+        }
+        .item-row select,
+        .item-row input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 18px;
+            height: 38px;
+        }
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        .add-item-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .add-item-btn:hover {
+            background: #218838;
+        }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/staff/invoices/list" class="back-link">← Back to Invoice List</a>
+        
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="form-card">
+            <h1>Create New Invoice</h1>
+
+            <form method="post" action="/staff/invoices/create" id="invoiceForm">
+                <div class="form-group">
+                    <label for="supplierId">Supplier <span class="required">*</span></label>
+                    <select id="supplierId" name="supplierId" required>
+                        <option value="">Select Supplier</option>
+                        <option th:each="supplier : ${suppliers}" 
+                                th:value="${supplier.id}" 
+                                th:text="${supplier.supplierName}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="note">Note</label>
+                    <textarea id="note" name="note" placeholder="Add any notes about this invoice..."></textarea>
+                </div>
+
+                <h3 class="section-title">Invoice Items <span class="required">*</span></h3>
+                
+                <div class="items-container" id="itemsContainer">
+                    <div class="item-row">
+                        <div>
+                            <label>Product</label>
+                            <select name="productId[]" required>
+                                <option value="">Select Product</option>
+                                <option th:each="product : ${products}" 
+                                        th:value="${product.id}" 
+                                        th:text="${product.productName}"></option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Quantity</label>
+                            <input type="number" name="quantity[]" min="1" value="1" required />
+                        </div>
+                        <div>
+                            <label>Unit Price (VND)</label>
+                            <input type="number" name="unitPrice[]" min="1" value="1000" required />
+                        </div>
+                        <div>
+                            <label>&nbsp;</label>
+                            <button type="button" class="remove-btn" onclick="removeItem(this)" style="visibility: hidden;">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="add-item-btn" onclick="addItem()">+ Add Item</button>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Invoice</button>
+                    <a href="/staff/invoices/list" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let itemCount = 1;
+
+        function addItem() {
+            const container = document.getElementById('itemsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <div>
+                    <label>Product</label>
+                    <select name="productId[]" required>
+                        <option value="">Select Product</option>
+                        ${Array.from(document.querySelectorAll('#itemsContainer select[name="productId[]"]:first-of-type option'))
+                            .slice(1)
+                            .map(opt => `<option value="${opt.value}">${opt.textContent}</option>`)
+                            .join('')}
+                    </select>
+                </div>
+                <div>
+                    <label>Quantity</label>
+                    <input type="number" name="quantity[]" min="1" value="1" required />
+                </div>
+                <div>
+                    <label>Unit Price (VND)</label>
+                    <input type="number" name="unitPrice[]" min="1" value="1000" required />
+                </div>
+                <div>
+                    <label>&nbsp;</label>
+                    <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+                </div>
+            `;
+            container.appendChild(newRow);
+            itemCount++;
+            updateRemoveButtons();
+        }
+
+        function removeItem(button) {
+            const row = button.closest('.item-row');
+            row.remove();
+            itemCount--;
+            updateRemoveButtons();
+        }
+
+        function updateRemoveButtons() {
+            const rows = document.querySelectorAll('.item-row');
+            rows.forEach((row, index) => {
+                const btn = row.querySelector('.remove-btn');
+                if (rows.length === 1) {
+                    btn.style.visibility = 'hidden';
+                } else {
+                    btn.style.visibility = 'visible';
+                }
+            });
+        }
+
+        document.getElementById('invoiceForm').addEventListener('submit', function(e) {
+            const productSelects = document.querySelectorAll('select[name="productId[]"]');
+            if (productSelects.length === 0) {
+                e.preventDefault();
+                alert('Please add at least one item to the invoice.');
+                return false;
+            }
+            
+            let hasEmptyProduct = false;
+            productSelects.forEach(select => {
+                if (!select.value) {
+                    hasEmptyProduct = true;
+                }
+            });
+            
+            if (hasEmptyProduct) {
+                e.preventDefault();
+                alert('Please select a product for all items.');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

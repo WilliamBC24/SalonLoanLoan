@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin - Pending Invoices</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-link {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            color: #333;
+        }
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .empty-state {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .empty-state h2 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            color: #999;
+        }
+        .invoice-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            transition: box-shadow 0.3s;
+        }
+        .invoice-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .invoice-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .invoice-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .detail-value {
+            font-size: 14px;
+            color: #333;
+        }
+        .note {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #666;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        .btn-info:hover {
+            background: #138496;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/staff/landing" class="back-link">← Back to Dashboard</a>
+        
+        <h1>Pending Invoices</h1>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div th:if="${invoices.empty}" class="empty-state">
+            <h2>No Pending Invoices</h2>
+            <p>All invoices have been processed.</p>
+        </div>
+
+        <div th:if="${!invoices.empty}">
+            <p style="color: #666; margin-bottom: 20px;">
+                <strong th:text="${invoices.size()}"></strong> invoice(s) awaiting approval
+            </p>
+
+            <div th:each="invoice : ${invoices}" class="invoice-card">
+                <div class="invoice-header">
+                    <span class="invoice-id">Invoice #<span th:text="${invoice.id}"></span></span>
+                    <span class="status-badge">AWAITING APPROVAL</span>
+                </div>
+
+                <div class="invoice-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Staff</span>
+                        <span class="detail-value" th:text="${invoice.staffName}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Supplier</span>
+                        <span class="detail-value" th:text="${invoice.supplierName}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Created At</span>
+                        <span class="detail-value" th:text="${#temporals.format(invoice.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Total Amount</span>
+                        <span class="detail-value" th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Items</span>
+                    <span class="detail-value" th:text="${invoice.totalItems} + ' item(s)'"></span>
+                </div>
+
+                <div class="actions">
+                    <a th:href="@{/staff/invoices/detail/{id}(id=${invoice.id})}" class="btn btn-info">View Details</a>
+                    <form method="post" th:action="@{/admin/invoices/approve/{id}(id=${invoice.id})}" style="display: inline;">
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to approve this invoice?')">
+                            ✓ Approve
+                        </button>
+                    </form>
+                    <form method="post" th:action="@{/admin/invoices/reject/{id}(id=${invoice.id})}" style="display: inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this invoice?')">
+                            ✗ Reject
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

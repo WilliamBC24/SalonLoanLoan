@@ -739,6 +739,57 @@ public class DataLoader implements CommandLineRunner {
 		}
 		
 		log.info("Successfully loaded inventory stock for {} products (100 units each)", products.size());
+		
+		// Create additional test invoices with different statuses
+		createTestInvoices(staff, supplier, products);
+	}
+	
+	private void createTestInvoices(Staff staff, Supplier supplier, List<Product> products) {
+		// Create an AWAITING invoice for testing approval flow
+		InventoryInvoice awaitingInvoice = inventoryInvoiceRepo.save(InventoryInvoice.builder()
+				.staff(staff)
+				.supplier(supplier)
+				.note("Pending approval - Test order for hair products")
+				.invoiceStatus(InventoryInvoiceStatus.AWAITING)
+				.createdAt(LocalDateTime.now().minusDays(2))
+				.build());
+		
+		// Add 3 products to awaiting invoice
+		for (int i = 0; i < Math.min(3, products.size()); i++) {
+			Product product = products.get(i);
+			inventoryInvoiceDetailRepo.save(
+				InventoryInvoiceDetail.builder()
+						.inventoryInvoice(awaitingInvoice)
+						.product(product)
+						.orderedQuantity(50)
+						.unitPrice(product.getCurrentPrice() / 2)
+						.build()
+			);
+		}
+		
+		// Create a CANCELLED invoice for testing
+		InventoryInvoice cancelledInvoice = inventoryInvoiceRepo.save(InventoryInvoice.builder()
+				.staff(staff)
+				.supplier(supplier)
+				.note("Cancelled - Supplier out of stock")
+				.invoiceStatus(InventoryInvoiceStatus.CANCELLED)
+				.createdAt(LocalDateTime.now().minusDays(5))
+				.build());
+		
+		// Add 2 products to cancelled invoice
+		for (int i = 3; i < Math.min(5, products.size()); i++) {
+			Product product = products.get(i);
+			inventoryInvoiceDetailRepo.save(
+				InventoryInvoiceDetail.builder()
+						.inventoryInvoice(cancelledInvoice)
+						.product(product)
+						.orderedQuantity(30)
+						.unitPrice(product.getCurrentPrice() / 2)
+						.build()
+			);
+		}
+		
+		log.info("Successfully created test invoices: 1 AWAITING, 1 CANCELLED");
 	}
 
 	public void registerVouchers() {

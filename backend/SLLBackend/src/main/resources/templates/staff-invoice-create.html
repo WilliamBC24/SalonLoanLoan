@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Staff - Create Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .back-link {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .items-container {
+            margin-bottom: 20px;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: end;
+        }
+        .item-row select,
+        .item-row input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 18px;
+            height: 38px;
+        }
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        .add-item-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .add-item-btn:hover {
+            background: #218838;
+        }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .required {
+            color: red;
+        }
+        .create-product-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .create-product-btn:hover {
+            background: #138496;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+        .modal .form-group {
+            margin-bottom: 15px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .modal .form-group input,
+        .modal .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .modal .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .modal .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal .checkbox-label input {
+            width: auto;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/staff/invoices/list" class="back-link">← Back to Invoice List</a>
+        
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="form-card">
+            <h1>Create New Invoice</h1>
+
+            <form method="post" action="/staff/invoices/create" id="invoiceForm">
+                <div class="form-group">
+                    <label for="supplierId">Supplier <span class="required">*</span></label>
+                    <select id="supplierId" name="supplierId" required>
+                        <option value="">Select Supplier</option>
+                        <option th:each="supplier : ${suppliers}" 
+                                th:value="${supplier.id}" 
+                                th:text="${supplier.supplierName}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="note">Note</label>
+                    <textarea id="note" name="note" placeholder="Add any notes about this invoice..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 class="section-title" style="margin: 0; border: none; padding: 0;">Invoice Items <span class="required">*</span></h3>
+                    <button type="button" class="create-product-btn" onclick="openProductModal()">+ Create New Product</button>
+                </div>
+                <div style="margin-bottom: 15px;"></div>
+                
+                <div class="items-container" id="itemsContainer">
+                    <div class="item-row">
+                        <div>
+                            <label>Product</label>
+                            <select name="productId[]" required id="productSelect0">
+                                <option value="">Select Product</option>
+                                <option th:each="product : ${products}" 
+                                        th:value="${product.id}" 
+                                        th:text="${product.productName}"></option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Quantity</label>
+                            <input type="number" name="quantity[]" min="1" value="1" required />
+                        </div>
+                        <div>
+                            <label>Unit Price (VND)</label>
+                            <input type="number" name="unitPrice[]" min="1" value="1000" required />
+                        </div>
+                        <div>
+                            <label>&nbsp;</label>
+                            <button type="button" class="remove-btn" onclick="removeItem(this)" style="visibility: hidden;">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="add-item-btn" onclick="addItem()">+ Add Item</button>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Invoice</button>
+                    <a href="/staff/invoices/list" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Product</h2>
+                <span class="close" onclick="closeProductModal()">&times;</span>
+            </div>
+            
+            <div id="modalAlert" class="alert-success" style="display: none;"></div>
+            
+            <form id="createProductForm">
+                <div class="form-group">
+                    <label for="modalProductName">Product Name <span class="required">*</span></label>
+                    <input type="text" id="modalProductName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modalCurrentPrice">Retail Price (VND) <span class="required">*</span></label>
+                    <input type="number" id="modalCurrentPrice" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modalImportPrice">Import Price (VND) <span class="required">*</span></label>
+                    <input type="number" id="modalImportPrice" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modalProductDescription">Product Description <span class="required">*</span></label>
+                    <textarea id="modalProductDescription" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="modalActiveStatus" value="true" checked>
+                        <span>Active Status</span>
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Create & Add to Invoice</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let itemCount = 1;
+        let newlyCreatedProducts = [];
+
+        function addItem() {
+            const container = document.getElementById('itemsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <div>
+                    <label>Product</label>
+                    <select name="productId[]" required>
+                        <option value="">Select Product</option>
+                        ${Array.from(document.querySelectorAll('#itemsContainer select[name="productId[]"]:first-of-type option'))
+                            .slice(1)
+                            .map(opt => `<option value="${opt.value}">${opt.textContent}</option>`)
+                            .join('')}
+                    </select>
+                </div>
+                <div>
+                    <label>Quantity</label>
+                    <input type="number" name="quantity[]" min="1" value="1" required />
+                </div>
+                <div>
+                    <label>Unit Price (VND)</label>
+                    <input type="number" name="unitPrice[]" min="1" value="1000" required />
+                </div>
+                <div>
+                    <label>&nbsp;</label>
+                    <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+                </div>
+            `;
+            container.appendChild(newRow);
+            itemCount++;
+            updateRemoveButtons();
+        }
+
+        function removeItem(button) {
+            const row = button.closest('.item-row');
+            row.remove();
+            itemCount--;
+            updateRemoveButtons();
+        }
+
+        function updateRemoveButtons() {
+            const rows = document.querySelectorAll('.item-row');
+            rows.forEach((row, index) => {
+                const btn = row.querySelector('.remove-btn');
+                if (rows.length === 1) {
+                    btn.style.visibility = 'hidden';
+                } else {
+                    btn.style.visibility = 'visible';
+                }
+            });
+        }
+
+        // Modal functions
+        function openProductModal() {
+            document.getElementById('productModal').style.display = 'block';
+            document.getElementById('modalAlert').style.display = 'none';
+            document.getElementById('createProductForm').reset();
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target == modal) {
+                closeProductModal();
+            }
+        }
+
+        // Handle product creation form submission
+        document.getElementById('createProductForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const productName = document.getElementById('modalProductName').value;
+            const currentPrice = document.getElementById('modalCurrentPrice').value;
+            const importPrice = document.getElementById('modalImportPrice').value;
+            const productDescription = document.getElementById('modalProductDescription').value;
+            const activeStatus = document.getElementById('modalActiveStatus').checked;
+
+            try {
+                // Create FormData for the POST request
+                const formData = new FormData();
+                formData.append('productName', productName);
+                formData.append('currentPrice', currentPrice);
+                formData.append('productDescription', productDescription);
+                formData.append('activeStatus', activeStatus);
+
+                // Call the product creation endpoint
+                const response = await fetch('/staff/products/create', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Show success message
+                    const alertDiv = document.getElementById('modalAlert');
+                    alertDiv.textContent = 'Product created successfully! Adding to list...';
+                    alertDiv.style.display = 'block';
+
+                    // Fetch updated product list
+                    try {
+                        const productsResponse = await fetch('/staff/products/api/list');
+                        if (productsResponse.ok) {
+                            const products = await productsResponse.json();
+                            
+                            // Find the newly created product
+                            const newProduct = products.find(p => p.productName === productName);
+                            
+                            if (newProduct) {
+                                // Add the new product to all product dropdowns
+                                const productSelects = document.querySelectorAll('select[name="productId[]"]');
+                                productSelects.forEach(select => {
+                                    const option = document.createElement('option');
+                                    option.value = newProduct.id;
+                                    option.textContent = newProduct.productName;
+                                    select.appendChild(option);
+                                });
+                                
+                                // Select the new product in the first dropdown and set import price
+                                if (productSelects.length > 0) {
+                                    const firstSelect = productSelects[0];
+                                    firstSelect.value = newProduct.id;
+                                    
+                                    // Set the import price as unit price
+                                    const row = firstSelect.closest('.item-row');
+                                    const unitPriceInput = row.querySelector('input[name="unitPrice[]"]');
+                                    if (unitPriceInput) {
+                                        unitPriceInput.value = importPrice;
+                                    }
+                                }
+                                
+                                alertDiv.textContent = 'Product created and added successfully!';
+                                
+                                // Close modal after a short delay
+                                setTimeout(() => {
+                                    closeProductModal();
+                                }, 1500);
+                            } else {
+                                // Fallback to reload if product not found
+                                alertDiv.textContent = 'Product created! Reloading page...';
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
+                            }
+                        } else {
+                            // Fallback to reload if API call fails
+                            alertDiv.textContent = 'Product created! Reloading page...';
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }
+                    } catch (fetchError) {
+                        console.error('Error fetching products:', fetchError);
+                        // Fallback to reload
+                        alertDiv.textContent = 'Product created! Reloading page...';
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    alert('Error creating product. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating product: ' + error.message);
+            }
+        });
+
+        document.getElementById('invoiceForm').addEventListener('submit', function(e) {
+            const productSelects = document.querySelectorAll('select[name="productId[]"]');
+            if (productSelects.length === 0) {
+                e.preventDefault();
+                alert('Please add at least one item to the invoice.');
+                return false;
+            }
+            
+            let hasEmptyProduct = false;
+            productSelects.forEach(select => {
+                if (!select.value) {
+                    hasEmptyProduct = true;
+                }
+            });
+            
+            if (hasEmptyProduct) {
+                e.preventDefault();
+                alert('Please select a product for all items.');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

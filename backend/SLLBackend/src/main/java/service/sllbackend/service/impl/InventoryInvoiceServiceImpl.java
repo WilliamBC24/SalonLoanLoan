@@ -10,6 +10,7 @@ import service.sllbackend.repository.*;
 import service.sllbackend.service.InventoryInvoiceService;
 import service.sllbackend.web.dto.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
     private final StaffRepo staffRepo;
     private final SupplierRepo supplierRepo;
     private final ProductRepo productRepo;
+    private final InventoryConsignmentRepo inventoryConsignmentRepo;
+    private final InventoryLotRepo inventoryLotRepo;
     
     @Override
     @Transactional
@@ -82,6 +85,9 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
         invoice.setInvoiceStatus(InventoryInvoiceStatus.COMPLETE);
         inventoryInvoiceRepo.save(invoice);
         
+        // Update inventory when invoice is approved
+        updateInventoryForCompletedInvoice(invoice);
+        
         log.info("Approved invoice with id: {}", invoiceId);
     }
     
@@ -107,8 +113,19 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
         InventoryInvoice invoice = inventoryInvoiceRepo.findById(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Invoice not found with id: " + invoiceId));
         
+        // Prevent changing status if already COMPLETE
+        if (invoice.getInvoiceStatus() == InventoryInvoiceStatus.COMPLETE) {
+            throw new RuntimeException("Cannot change status of a completed invoice");
+        }
+        
+        InventoryInvoiceStatus previousStatus = invoice.getInvoiceStatus();
         invoice.setInvoiceStatus(status);
         inventoryInvoiceRepo.save(invoice);
+        
+        // Update inventory when status is changed to COMPLETE
+        if (status == InventoryInvoiceStatus.COMPLETE && previousStatus != InventoryInvoiceStatus.COMPLETE) {
+            updateInventoryForCompletedInvoice(invoice);
+        }
         
         log.info("Updated invoice {} status to: {}", invoiceId, status);
     }
@@ -190,5 +207,40 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
         }
         
         return dtos;
+    }
+    
+    /**
+     * Update inventory when invoice is marked as COMPLETE
+     * Creates consignments and lots for all invoice details
+     */
+    private void updateInventoryForCompletedInvoice(InventoryInvoice invoice) {
+        List<InventoryInvoiceDetail> details = inventoryInvoiceDetailRepo.findByInvoiceIdWithProduct(invoice.getId());
+        
+        for (InventoryInvoiceDetail detail : details) {
+            // Create inventory consignment
+            InventoryConsignment consignment = InventoryConsignment.builder()
+                    .inventoryInvoiceDetail(detail)
+                    .product(detail.getProduct())
+                    .supplier(invoice.getSupplier())
+                    .receivedQuantity(detail.getOrderedQuantity())
+                    .build();
+            
+            consignment = inventoryConsignmentRepo.save(consignment);
+            
+            // Create inventory lot with expiry date 2 years from now
+            InventoryLot lot = InventoryLot.builder()
+                    .inventoryConsignment(consignment)
+                    .product(detail.getProduct())
+                    .availableQuantity(detail.getOrderedQuantity())
+                    .productExpiryDate(java.time.LocalDate.now().plusYears(2))
+                    .build();
+            
+            inventoryLotRepo.save(lot);
+            
+            log.info("Created inventory consignment and lot for product {} with quantity {}", 
+                    detail.getProduct().getId(), detail.getOrderedQuantity());
+        }
+        
+        log.info("Updated inventory for completed invoice {}", invoice.getId());
     }
 }

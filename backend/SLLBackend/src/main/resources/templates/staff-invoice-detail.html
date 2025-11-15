@@ -230,7 +230,7 @@
             </table>
 
             <div class="actions">
-                <form method="post" th:action="@{/staff/invoices/edit-status/{id}(id=${invoice.id})}" class="status-form">
+                <form method="post" th:action="@{/staff/invoices/edit-status/{id}(id=${invoice.id})}" class="status-form" th:if="${invoice.invoiceStatus.name() != 'COMPLETE'}">
                     <label for="status">Change Status:</label>
                     <select id="status" name="status" required>
                         <option value="AWAITING" th:selected="${invoice.invoiceStatus.name() == 'AWAITING'}">AWAITING</option>
@@ -239,6 +239,10 @@
                     </select>
                     <button type="submit" class="btn btn-primary">Update Status</button>
                 </form>
+                <div th:if="${invoice.invoiceStatus.name() == 'COMPLETE'}" style="padding: 12px; background: #d4edda; color: #155724; border-radius: 4px; border: 1px solid #c3e6cb;">
+                    <strong>✓ Invoice Completed</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 14px;">This invoice is marked as complete and inventory has been updated. Status can no longer be changed.</p>
+                </div>
             </div>
         </div>
     </div>

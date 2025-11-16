@@ -14,4 +14,5 @@ public interface ProductFeedbackRepo extends JpaRepository<ProductFeedback, Inte
     List<ProductFeedback> findByProductOrderByIdDesc(Product product);
     Optional<ProductFeedback> findByUserAccountAndProduct(UserAccount userAccount, Product product);
     boolean existsByUserAccountAndProduct(UserAccount userAccount, Product product);
+    List<ProductFeedback> findByUserAccount(UserAccount userAccount);
 }

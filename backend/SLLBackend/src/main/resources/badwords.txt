@@ -1,0 +1,35 @@
+# Bad words list for content filtering
+# One word per line, case-insensitive matching
+# This is a sample list - should be customized for your use case
+
+# Profanity
+fuck
+shit
+damn
+hell
+bastard
+bitch
+ass
+crap
+
+# Offensive terms
+idiot
+stupid
+moron
+dumb
+loser
+
+# Inappropriate
+porn
+sex
+drug
+scam
+fraud
+fake
+trash
+garbage
+terrible
+awful
+horrible
+worst
+hate

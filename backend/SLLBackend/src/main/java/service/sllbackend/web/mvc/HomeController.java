@@ -30,5 +30,6 @@ public class HomeController {
         model.addAttribute("lng", 105.811386);
 
         return "home";
+//        return "barbro/index";
     }
 }

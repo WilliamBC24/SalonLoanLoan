@@ -86,10 +86,9 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
             throw new IllegalArgumentException("You cannot submit feedback due to previous violations of our content policy");
         }
         
-        // Check if the current comment contains bad words
-        if (comment != null && badWordFilter.containsBadWord(comment)) {
-            throw new IllegalArgumentException("Your feedback contains inappropriate language and cannot be submitted");
-        }
+        // Note: We allow saving feedback with bad words to the database
+        // They will be filtered out when loading to frontend in getProductFeedback()
+        // But they are saved to track user violations and prevent future submissions
         
         // Check if user has already rated this product
         ProductFeedback existingFeedback = productFeedbackRepo

@@ -21,6 +21,7 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
     private final UserAccountRepo userAccountRepo;
     private final ProductRepo productRepo;
     private final OrderInvoiceDetailsRepo orderInvoiceDetailsRepo;
+    private final service.sllbackend.utils.BadWordFilter badWordFilter;
 
     @Override
     @Transactional(readOnly = true)
@@ -50,7 +51,15 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         
-        return productFeedbackRepo.findByProductOrderByIdDesc(product);
+        List<ProductFeedback> allFeedback = productFeedbackRepo.findByProductOrderByIdDesc(product);
+        
+        // Filter out feedback containing bad words
+        return allFeedback.stream()
+                .filter(feedback -> {
+                    String comment = feedback.getComment();
+                    return comment == null || !badWordFilter.containsBadWord(comment);
+                })
+                .toList();
     }
 
     @Override
@@ -71,6 +80,15 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
         if (!canUserRateProduct(username, productId)) {
             throw new IllegalArgumentException("You can only rate products from your completed orders");
         }
+        
+        // Check if user has violated bad word policy in their previous reviews
+        if (hasUserViolatedBadWordPolicy(username)) {
+            throw new IllegalArgumentException("You cannot submit feedback due to previous violations of our content policy");
+        }
+        
+        // Note: We allow saving feedback with bad words to the database
+        // They will be filtered out when loading to frontend in getProductFeedback()
+        // But they are saved to track user violations and prevent future submissions
         
         // Check if user has already rated this product
         ProductFeedback existingFeedback = productFeedbackRepo
@@ -125,5 +143,26 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
         
         return productFeedbackRepo.findByUserAccountAndProduct(userAccount, product)
                 .orElse(null);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasUserViolatedBadWordPolicy(String username) {
+        UserAccount userAccount = userAccountRepo.findByUsername(username)
+                .orElse(null);
+        
+        if (userAccount == null) {
+            return false;
+        }
+        
+        // Get all feedback by this user
+        List<ProductFeedback> userFeedback = productFeedbackRepo.findByUserAccount(userAccount);
+        
+        // Check if any feedback contains bad words
+        return userFeedback.stream()
+                .anyMatch(feedback -> {
+                    String comment = feedback.getComment();
+                    return comment != null && badWordFilter.containsBadWord(comment);
+                });
     }
 }

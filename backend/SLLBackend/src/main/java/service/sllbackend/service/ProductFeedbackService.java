@@ -46,4 +46,11 @@ public interface ProductFeedbackService {
      * @return User's product feedback if exists
      */
     ProductFeedback getUserFeedback(String username, Integer productId);
+    
+    /**
+     * Check if user has any reviews containing bad words
+     * @param username User's username
+     * @return true if user has reviews with bad words, false otherwise
+     */
+    boolean hasUserViolatedBadWordPolicy(String username);
 }

@@ -38,6 +38,6 @@ server:
   port: 8080
 
 vietqr:
-  bank-id: ${VIETQR_BANK_ID:970415}
-  account-no: ${VIETQR_ACCOUNT_NO:113366668888}
+  bank-id: ${VIETQR_BANK_ID:970407}
+  account-no: ${VIETQR_ACCOUNT_NO:9720032001}
   template: ${VIETQR_TEMPLATE:qr_only}

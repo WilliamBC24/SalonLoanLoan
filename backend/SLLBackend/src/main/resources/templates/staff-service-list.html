@@ -1,205 +1,454 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Manage Services</title>
+    <title>Staff - Manage Services | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles (sidebar + staff-main scroll behaviour) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        /* ===== PAGE STRUCTURE ===== */
+        .services-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
         }
-        .header {
+
+        .services-layout-inner {
+            max-width: 85vw;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .services-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .services-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .create-btn {
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
+
+        .services-title-block {
+            text-align: left;
+        }
+
+        .services-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .services-title-block h2 {
+            margin: 0;
+        }
+
+        .services-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .back-link-pill {
+            font-size: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            padding: 0.4rem 0.9rem;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
             text-decoration: none;
-            border-radius: 4px;
+            color: var(--text-main);
         }
-        .create-btn:hover {
-            background: #218838;
+
+        .back-link-pill span.icon {
+            font-size: 1.05rem;
+            line-height: 1;
         }
+
+        .back-link-pill:hover {
+            background: #f4f4f4;
+        }
+
+        .create-btn-pill {
+            border-radius: 999px;
+            padding: 0.6rem 1.3rem;
+            font-size: 0.9rem;
+            border: none;
+            background: #1643a3;
+            color: #ffffff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 6px 15px rgba(22, 71, 163, 0.35);
+            cursor: pointer;
+        }
+
+        .create-btn-pill span.icon {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .create-btn-pill:hover {
+            background: #154380;
+        }
+
+        /* ===== ALERTS ===== */
         .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
         }
+
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
         }
+
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
         }
-        .search-bar {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
+
+        /* ===== SEARCH BAR ===== */
+        .search-panel {
+            background: #ffffff;
+            padding: 1.3rem 1.4rem 1.1rem;
+            border-radius: 18px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 1.6rem;
+            border: 1px solid #e5e7eb;
         }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.9rem;
+            gap: 0.8rem;
+        }
+
+        .search-header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .search-header-title span.emoji {
+            font-size: 1.2rem;
+        }
+
+        .search-header-title h3 {
+            margin: 0;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr);
+            gap: 1rem;
+            margin-bottom: 0.9rem;
+        }
+
         .filter-group {
-            margin-bottom: 15px;
+            margin-bottom: 0.5rem;
         }
+
         .filter-group label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+            color: #374151;
         }
+
+        .filter-group input[type="text"] {
+            width: 100%;
+            padding: 0.5rem 0.7rem;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            background: #fafafa;
+            box-sizing: border-box;
+        }
+
+        .filter-group input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100, 179, 255, 0.35);
+            background: #ffffff;
+        }
+
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 0.9rem 1.4rem;
         }
+
         .checkbox-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .checkbox-item input {
+            margin: 0;
+        }
+
+        .search-buttons {
+            margin-top: 0.8rem;
             display: flex;
+            gap: 0.6rem;
             align-items: center;
         }
-        .checkbox-item input {
-            margin-right: 5px;
-        }
-        .search-buttons {
-            margin-top: 15px;
-        }
-        .search-buttons button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            cursor: pointer;
+
+        .btn {
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
             border: none;
-            border-radius: 4px;
-        }
-        .search-btn {
-            background: #007bff;
-            color: white;
-        }
-        .search-btn:hover {
-            background: #0056b3;
-        }
-        .reset-btn {
-            background: #6c757d;
-            color: white;
-        }
-        .reset-btn:hover {
-            background: #545b62;
-        }
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-        }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-            text-align: left;
-        }
-        th { 
-            background: #f4f4f4; 
-        }
-        tr:hover {
-            background: #f5f5f5;
-        }
-        .edit-link {
-            color: #007bff;
+            cursor: pointer;
             text-decoration: none;
-            margin-right: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
         }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== TABLE ===== */
+        .services-table-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        th {
+            font-weight: 700;
+            color: #4b5563;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        /* ===== ACTION BUTTON (EDIT LINK STYLE) ===== */
+        .edit-link {
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+            text-decoration: none;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #111827;
+            font-size: 0.86rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
         .edit-link:hover {
-            text-decoration: underline;
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <h1>Staff - Manage Services</h1>
-        <a href="/staff/service/create" class="create-btn">+ Create New Service</a>
-    </div>
+<body class="staff-layout">
 
-    <!-- Success/Error Messages -->
-    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-    <!-- Search and Filter Bar -->
-    <div class="search-bar">
-        <form method="get" action="/staff/service/list">
-            <div class="filter-group">
-                <label for="search-name">Search by Name:</label>
-                <input type="text" id="search-name" name="name" 
-                       th:value="${searchName}" 
-                       placeholder="Enter service name..."
-                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            </div>
-
-            <div class="filter-group">
-                <label>Service Type:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-single" name="types" value="SINGLE" 
-                               th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
-                        <label for="type-single">Single</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-combo" name="types" value="COMBO"
-                               th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
-                        <label for="type-combo">Combo</label>
-                    </div>
+<!-- MAIN SCROLLABLE CONTENT -->
+<main class="staff-main services-page">
+    <div class="services-layout-inner">
+        <section class="services-card">
+            <!-- Header -->
+            <div class="services-header-row">
+                <div class="services-title-block section-heading">
+                    <p class="section-kicker">Service Management</p>
+                    <h2>Manage Services</h2>
+                </div>
+                <div class="services-actions">
+                    <a href="/staff/landing" class="back-link-pill">
+                        <span class="icon">←</span>
+                        <span>Back to Dashboard</span>
+                    </a>
+                    <a href="/staff/service/create" class="create-btn-pill">
+                        <span class="icon">＋</span>
+                        <span>Create New Service</span>
+                    </a>
                 </div>
             </div>
 
-            <div class="filter-group">
-                <label>Service Category:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item" th:each="category : ${allCategories}">
-                        <input type="checkbox" th:id="'category-' + ${category.id}" 
-                               name="categories" th:value="${category.id}"
-                               th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
-                        <label th:for="'category-' + ${category.id}" th:text="${category.name}">Category</label>
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Search and Filter Bar -->
+            <div class="search-panel">
+                <div class="search-header">
+                    <div class="search-header-title">
+                        <span class="emoji">🔍</span>
+                        <h3>Search &amp; Filters</h3>
                     </div>
                 </div>
+
+                <form method="get" action="/staff/service/list">
+                    <div class="search-form">
+                        <div class="filter-group">
+                            <label for="search-name">Search by Name</label>
+                            <input type="text"
+                                   id="search-name"
+                                   name="name"
+                                   th:value="${searchName}"
+                                   placeholder="Enter service name..." />
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Service Type</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox"
+                                           id="type-single"
+                                           name="types"
+                                           value="SINGLE"
+                                           th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
+                                    <label for="type-single">Single</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox"
+                                           id="type-combo"
+                                           name="types"
+                                           value="COMBO"
+                                           th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
+                                    <label for="type-combo">Combo</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Service Category</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item" th:each="category : ${allCategories}">
+                                    <input type="checkbox"
+                                           th:id="'category-' + ${category.id}"
+                                           name="categories"
+                                           th:value="${category.id}"
+                                           th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
+                                    <label th:for="'category-' + ${category.id}"
+                                           th:text="${category.name}">Category</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-buttons">
+                        <button type="submit" class="btn btn-primary">
+                            <span>🔎</span>
+                            <span>Search</span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                onclick="window.location.href='/staff/service/list'">
+                            <span>✕</span>
+                            <span>Reset</span>
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <div class="search-buttons">
-                <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/staff/service/list'">Reset</button>
+            <!-- Services Table -->
+            <div class="services-table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Price</th>
+                        <th>Duration (min)</th>
+                        <th>Active</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="svc : ${services}">
+                        <td th:text="${svc.id}">1</td>
+                        <td th:text="${svc.serviceName}">Service name</td>
+                        <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
+                        <td th:text="${svc.serviceType}">SINGLE</td>
+                        <td th:text="${svc.servicePrice}">0</td>
+                        <td th:text="${svc.durationMinutes}">0</td>
+                        <td th:text="${svc.activeStatus}">false</td>
+                        <td>
+                            <a th:href="@{/staff/service/edit/{id}(id=${svc.id})}" class="edit-link">
+                                <span>Edit</span>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </form>
+        </section>
     </div>
-
-    <!-- Services Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Duration (min)</th>
-                <th>Active</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="svc : ${services}">
-                <td th:text="${svc.id}">1</td>
-                <td th:text="${svc.serviceName}">Service name</td>
-                <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
-                <td th:text="${svc.serviceType}">SINGLE</td>
-                <td th:text="${svc.servicePrice}">0</td>
-                <td th:text="${svc.durationMinutes}">0</td>
-                <td th:text="${svc.activeStatus}">false</td>
-                <td>
-                    <a th:href="@{/staff/service/edit/{id}(id=${svc.id})}" class="edit-link">Edit</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
+</main>
 </body>
 </html>

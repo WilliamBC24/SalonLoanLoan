@@ -629,3 +629,268 @@ button {
         width: min(320px, 80vw);
     }
 }
+
+/* ================= STAFF LAYOUT / SIDEBAR ================= */
+
+.staff-layout {
+    display: flex;
+    flex-direction: row !important;
+    min-height: 100vh;
+    background: var(--bg-light);
+}
+
+/* Sidebar container (fragment root) */
+.staff-sidebar {
+    width: 250px;
+    background: #111827;
+    color: #e5e7eb;
+    padding: 1.5rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Inner stack so we can space-between vertically if needed later */
+.staff-sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    height: 100%;
+}
+
+/* Logo block */
+.staff-logo-block {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.staff-logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: #1f2937;
+    display: grid;
+    place-items: center;
+    font-size: 1.3rem;
+}
+
+.staff-logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.staff-logo-text .brand-name {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-size: 0.95rem;
+}
+
+.staff-logo-text .brand-tagline {
+    font-size: 0.78rem;
+    color: #9ca3af;
+}
+
+/* Nav */
+.staff-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.staff-nav-link {
+    padding: 0.45rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.staff-nav-link:hover {
+    background-color: #1f2937;
+    color: #ffffff;
+}
+
+/* Account / logout area */
+.staff-account {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.staff-username {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.9rem;
+}
+
+.staff-avatar-pill {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: #374151;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.staff-username-text {
+    font-weight: 600;
+}
+
+.staff-logout-form {
+    margin: 0;
+}
+
+.staff-logout-btn {
+    width: 100%;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+}
+
+/* Main content area for staff pages */
+.staff-main {
+    flex: 1;
+    padding: 2.5rem 2.5rem;
+}
+
+/* Make profile page work nicely inside staff-main */
+.staff-main .profile-page {
+    padding-top: 0;
+    padding-bottom: 2.5rem;
+}
+
+/* Responsive: collapse sidebar to top bar on small screens */
+@media (max-width: 768px) {
+    .staff-layout {
+        flex-direction: column;
+    }
+
+    .staff-sidebar {
+        width: 100%;
+        flex-direction: row;
+        padding: 1rem 1.2rem;
+    }
+
+    .staff-sidebar-inner {
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .staff-nav {
+        flex-direction: row;
+        margin-top: 0;
+        gap: 0.75rem;
+    }
+
+    .staff-account {
+        margin-top: 0;
+        margin-left: auto;
+        align-items: center;
+    }
+
+    .staff-main {
+        padding: 1.8rem 1.4rem;
+    }
+}
+
+
+/* Group wrapper */
+.staff-nav-group {
+    position: relative;
+}
+
+/* Parent item (title) */
+.staff-nav-parent {
+    padding: 0.55rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.94rem;
+    color: #e5e7eb;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.staff-nav-parent:hover {
+    background-color: #1f2937;
+    color: white;
+}
+
+.caret {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+/* Dropdown children (hidden by default) */
+.staff-nav-children {
+    display: none;
+    flex-direction: column;
+    padding-left: 1rem;
+    margin-top: 0.3rem;
+}
+
+/* Show on hover */
+.staff-nav-group:hover .staff-nav-children {
+    display: flex;
+}
+
+/* Sublinks */
+.staff-nav-sublink {
+    padding: 0.35rem 0.9rem;
+    margin: 0.1rem 0;
+    font-size: 0.88rem;
+    border-radius: 999px;
+    color: #d1d5db;
+    opacity: 0.9;
+    text-decoration: none;
+    transition: background .15s ease, color .15s ease, transform .1s ease;
+}
+
+.staff-nav-sublink:hover {
+    background-color: rgba(249, 115, 22, 0.12);
+    color: #f97316;
+    transform: translateX(2px);
+}
+
+body.staff-layout {
+    overflow: hidden;
+}
+@media (min-width: 769px) {
+    .staff-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto;
+    }
+
+    .staff-main {
+        margin-left: 250px;   /* same as sidebar width */
+        max-height: 100vh;
+        overflow-y: auto;     /* this is now the scroll container */
+    }
+}
+@media (max-width: 768px) {
+    body.staff-layout {
+        overflow: auto;
+    }
+    .staff-sidebar {
+        position: static;
+        height: auto;
+        overflow: visible;
+    }
+    .staff-main {
+        margin-left: 0;
+        max-height: none;
+        overflow: visible;
+    }
+}

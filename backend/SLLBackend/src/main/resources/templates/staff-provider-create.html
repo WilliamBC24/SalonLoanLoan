@@ -1,231 +1,395 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Create Provider</title>
+    <title>Staff - Create Provider | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles (sidebar + layout) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
+        /* ===== PAGE STRUCTURE ===== */
+        .provider-create-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
         }
-        h1 {
-            color: #333;
+
+        .provider-create-layout-inner {
+            max-width: 70vw;
+            width: 100%;
+            margin: 1rem auto;
         }
+
+        .provider-create-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .provider-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .provider-title-block {
+            text-align: left;
+        }
+
+        .provider-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .provider-title-block h2 {
+            margin: 0;
+        }
+
+        .provider-actions {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .back-link-pill {
+            font-size: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            padding: 0.4rem 0.9rem;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .back-link-pill span.icon {
+            font-size: 1.05rem;
+            line-height: 1;
+        }
+
+        .back-link-pill:hover {
+            background: #f4f4f4;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        /* ===== FORM ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr);
+            gap: 1.2rem;
+            margin-top: 0.4rem;
+        }
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 0.3rem;
         }
+
         .form-group label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+            color: #374151;
         }
+
+        .required::after {
+            content: " *";
+            color: #dc2626;
+        }
+
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 0.55rem 0.7rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
             box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.9rem;
+            background: #fafafa;
         }
+
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 110px;
         }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100, 179, 255, 0.35);
+            background: #ffffff;
+        }
+
         .form-group .error {
-            color: #dc3545;
-            font-size: 0.875em;
+            color: #dc2626;
+            font-size: 0.8rem;
             display: none;
-            margin-top: 5px;
+            margin-top: 0.25rem;
         }
+
         .form-group input.invalid,
         .form-group select.invalid,
         .form-group textarea.invalid {
-            border-color: #dc3545;
+            border-color: #dc2626;
         }
+
+        /* ===== BUTTONS ===== */
         .button-group {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 0.8rem;
+            margin-top: 1.8rem;
+            flex-wrap: wrap;
         }
+
         .btn {
-            padding: 10px 20px;
+            padding: 0.55rem 1.2rem;
+            border-radius: 999px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
         }
+
         .btn-primary {
-            background: #007bff;
-            color: white;
+            background: #2563eb;
+            color: #ffffff;
         }
+
         .btn-primary:hover {
-            background: #0056b3;
+            background: #1d4ed8;
         }
+
         .btn-secondary {
-            background: #6c757d;
-            color: white;
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
         }
+
         .btn-secondary:hover {
-            background: #545b62;
-        }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .required::after {
-            content: " *";
-            color: #dc3545;
+            background: #f3f4f6;
         }
     </style>
 </head>
-<body>
-    <h1>Create New Provider</h1>
+<body class="staff-layout">
 
-    <!-- Error Messages -->
-    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-    <form id="createProviderForm" method="post" action="/staff/supplier/create">
-        <div class="form-group">
-            <label for="supplierName" class="required">Provider Name</label>
-            <input type="text" id="supplierName" name="supplierName" maxlength="100" required>
-            <div class="error" id="supplierNameError">Provider name is required (max 100 characters)</div>
-        </div>
+<!-- MAIN SCROLLABLE CONTENT -->
+<main class="staff-main provider-create-page">
+    <div class="provider-create-layout-inner">
+        <section class="provider-create-card">
+            <!-- Header -->
+            <div class="provider-header-row">
+                <div class="provider-title-block section-heading">
+                    <p class="section-kicker">Provider Management</p>
+                    <h2>Create New Provider</h2>
+                </div>
+                <div class="provider-actions">
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label for="supplierCategoryId" class="required">Provider Category</label>
-            <select id="supplierCategoryId" name="supplierCategoryId" required>
-                <option value="">-- Select Category --</option>
-                <option th:each="category : ${categories}" 
-                        th:value="${category.id}" 
-                        th:text="${category.name}">Category</option>
-            </select>
-            <div class="error" id="supplierCategoryIdError">Provider category is required</div>
-        </div>
+            <!-- Error Messages -->
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-        <div class="form-group">
-            <label for="phoneNumber">Phone Number</label>
-            <input type="text" id="phoneNumber" name="phoneNumber" maxlength="20">
-            <div class="error" id="phoneNumberError">Phone number must be max 20 characters</div>
-        </div>
+            <!-- Form -->
+            <form id="createProviderForm"
+                  method="post"
+                  action="/staff/supplier/create"
+                  class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label for="supplierName" class="required">Provider Name</label>
+                        <input type="text"
+                               id="supplierName"
+                               name="supplierName"
+                               maxlength="100"
+                               required>
+                        <div class="error" id="supplierNameError">
+                            Provider name is required (max 100 characters)
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" maxlength="100">
-            <div class="error" id="emailError">Email must be valid and max 100 characters</div>
-        </div>
+                    <div class="form-group">
+                        <label for="supplierCategoryId" class="required">Provider Category</label>
+                        <select id="supplierCategoryId" name="supplierCategoryId" required>
+                            <option value="">-- Select Category --</option>
+                            <option th:each="category : ${categories}"
+                                    th:value="${category.id}"
+                                    th:text="${category.name}">
+                                Category
+                            </option>
+                        </select>
+                        <div class="error" id="supplierCategoryIdError">
+                            Provider category is required
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            <label for="note">Note</label>
-            <textarea id="note" name="note"></textarea>
-        </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="text"
+                               id="phoneNumber"
+                               name="phoneNumber"
+                               maxlength="20">
+                        <div class="error" id="phoneNumberError">
+                            Phone number must be max 20 characters
+                        </div>
+                    </div>
 
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">Create Provider</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/supplier/list'">Cancel</button>
-        </div>
-    </form>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               maxlength="100">
+                        <div class="error" id="emailError">
+                            Email must be valid and max 100 characters
+                        </div>
+                    </div>
 
-    <script>
-        document.getElementById('createProviderForm').addEventListener('submit', function(event) {
-            let isValid = true;
+                    <div class="form-group">
+                        <label for="note">Note</label>
+                        <textarea id="note" name="note"></textarea>
+                    </div>
 
-            // Validate provider name
-            const supplierName = document.getElementById('supplierName');
-            const supplierNameError = document.getElementById('supplierNameError');
-            if (!supplierName.value.trim() || supplierName.value.length > 100) {
-                supplierName.classList.add('invalid');
-                supplierNameError.style.display = 'block';
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span>➕</span>
+                            <span>Create Provider</span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                onclick="window.location.href='/staff/supplier/list'">
+                            <span>✕</span>
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+<script>
+    document.getElementById('createProviderForm').addEventListener('submit', function(event) {
+        let isValid = true;
+
+        // Validate provider name
+        const supplierName = document.getElementById('supplierName');
+        const supplierNameError = document.getElementById('supplierNameError');
+        if (!supplierName.value.trim() || supplierName.value.length > 100) {
+            supplierName.classList.add('invalid');
+            supplierNameError.style.display = 'block';
+            isValid = false;
+        } else {
+            supplierName.classList.remove('invalid');
+            supplierNameError.style.display = 'none';
+        }
+
+        // Validate provider category
+        const supplierCategoryId = document.getElementById('supplierCategoryId');
+        const supplierCategoryIdError = document.getElementById('supplierCategoryIdError');
+        if (!supplierCategoryId.value) {
+            supplierCategoryId.classList.add('invalid');
+            supplierCategoryIdError.style.display = 'block';
+            isValid = false;
+        } else {
+            supplierCategoryId.classList.remove('invalid');
+            supplierCategoryIdError.style.display = 'none';
+        }
+
+        // Validate phone number (optional but max 20 chars)
+        const phoneNumber = document.getElementById('phoneNumber');
+        const phoneNumberError = document.getElementById('phoneNumberError');
+        if (phoneNumber.value && phoneNumber.value.length > 20) {
+            phoneNumber.classList.add('invalid');
+            phoneNumberError.style.display = 'block';
+            isValid = false;
+        } else {
+            phoneNumber.classList.remove('invalid');
+            phoneNumberError.style.display = 'none';
+        }
+
+        // Validate email (optional but must be valid and max 100 chars)
+        const email = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+        if (email.value) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email.value) || email.value.length > 100) {
+                email.classList.add('invalid');
+                emailError.style.display = 'block';
                 isValid = false;
             } else {
-                supplierName.classList.remove('invalid');
-                supplierNameError.style.display = 'none';
+                email.classList.remove('invalid');
+                emailError.style.display = 'none';
             }
+        }
 
-            // Validate provider category
-            const supplierCategoryId = document.getElementById('supplierCategoryId');
-            const supplierCategoryIdError = document.getElementById('supplierCategoryIdError');
-            if (!supplierCategoryId.value) {
-                supplierCategoryId.classList.add('invalid');
-                supplierCategoryIdError.style.display = 'block';
-                isValid = false;
-            } else {
-                supplierCategoryId.classList.remove('invalid');
-                supplierCategoryIdError.style.display = 'none';
-            }
+        if (!isValid) {
+            event.preventDefault();
+            alert('Please correct the errors in the form before submitting.');
+        }
+    });
 
-            // Validate phone number (optional but max 20 chars)
-            const phoneNumber = document.getElementById('phoneNumber');
-            const phoneNumberError = document.getElementById('phoneNumberError');
-            if (phoneNumber.value && phoneNumber.value.length > 20) {
-                phoneNumber.classList.add('invalid');
-                phoneNumberError.style.display = 'block';
-                isValid = false;
-            } else {
-                phoneNumber.classList.remove('invalid');
-                phoneNumberError.style.display = 'none';
-            }
+    // Real-time validation on input
+    document.getElementById('supplierName').addEventListener('input', function() {
+        const error = document.getElementById('supplierNameError');
+        if (this.value.trim() && this.value.length <= 100) {
+            this.classList.remove('invalid');
+            error.style.display = 'none';
+        }
+    });
 
-            // Validate email (optional but must be valid and max 100 chars)
-            const email = document.getElementById('email');
-            const emailError = document.getElementById('emailError');
-            if (email.value) {
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(email.value) || email.value.length > 100) {
-                    email.classList.add('invalid');
-                    emailError.style.display = 'block';
-                    isValid = false;
-                } else {
-                    email.classList.remove('invalid');
-                    emailError.style.display = 'none';
-                }
-            }
+    document.getElementById('supplierCategoryId').addEventListener('change', function() {
+        const error = document.getElementById('supplierCategoryIdError');
+        if (this.value) {
+            this.classList.remove('invalid');
+            error.style.display = 'none';
+        }
+    });
 
-            if (!isValid) {
-                event.preventDefault();
-                alert('Please correct the errors in the form before submitting.');
-            }
-        });
+    document.getElementById('phoneNumber').addEventListener('input', function() {
+        const error = document.getElementById('phoneNumberError');
+        if (!this.value || this.value.length <= 20) {
+            this.classList.remove('invalid');
+            error.style.display = 'none';
+        }
+    });
 
-        // Real-time validation on input
-        document.getElementById('supplierName').addEventListener('input', function() {
-            const error = document.getElementById('supplierNameError');
-            if (this.value.trim() && this.value.length <= 100) {
-                this.classList.remove('invalid');
-                error.style.display = 'none';
-            }
-        });
-
-        document.getElementById('supplierCategoryId').addEventListener('change', function() {
-            const error = document.getElementById('supplierCategoryIdError');
-            if (this.value) {
-                this.classList.remove('invalid');
-                error.style.display = 'none';
-            }
-        });
-
-        document.getElementById('phoneNumber').addEventListener('input', function() {
-            const error = document.getElementById('phoneNumberError');
-            if (!this.value || this.value.length <= 20) {
-                this.classList.remove('invalid');
-                error.style.display = 'none';
-            }
-        });
-
-        document.getElementById('email').addEventListener('input', function() {
-            const error = document.getElementById('emailError');
-            if (!this.value || (this.value.length <= 100 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value))) {
-                this.classList.remove('invalid');
-                error.style.display = 'none';
-            }
-        });
-    </script>
+    document.getElementById('email').addEventListener('input', function() {
+        const error = document.getElementById('emailError');
+        if (!this.value || (this.value.length <= 100 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value))) {
+            this.classList.remove('invalid');
+            error.style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>

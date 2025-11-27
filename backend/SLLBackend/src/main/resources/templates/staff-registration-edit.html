@@ -1,101 +1,365 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Edit Appointment</title>
+    <title>Edit Appointment | Staff</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Global staff layout styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        form { background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        .form-buttons { margin-top: 20px; }
-        .form-buttons button { padding: 8px 16px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; }
-        .save-btn { background: #007bff; color: white; }
-        .save-btn:hover { background: #0056b3; }
-        .cancel-btn { background: #6c757d; color: white; }
-        .cancel-btn:hover { background: #545b62; }
-        .section-title { margin-top: 30px; margin-bottom: 10px; font-size: 1.2em; font-weight: bold; }
+        /* ===== PAGE LAYOUT ===== */
+        .edit-page {
+            padding: 2.5rem 0 3rem;
+            min-height: 100vh;
+            background: var(--bg-light);
+        }
+
+        .edit-layout-inner {
+            max-width: 820px; /* <-- keep the form narrow and clean */
+            margin: 0 auto;
+        }
+
+        .edit-card {
+            background: #fff;
+            padding: 2rem 2.3rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.6rem;
+            gap: 1rem;
+        }
+
+        .header-title-block h2 {
+            margin: 0;
+        }
+
+        .header-title-block .section-kicker {
+            margin: 0 0 0.2rem;
+        }
+
+        .back-link-pill {
+            padding: 0.35rem 0.9rem;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            color: #111827;
+            white-space: nowrap;
+        }
+
+        .back-link-pill:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== FORM BASE ===== */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .form-section {
+            padding: 1.1rem 1.2rem;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .form-section-header {
+            margin-bottom: 0.9rem;
+        }
+
+        .form-section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .form-section-subtitle {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin: 0.25rem 0 0;
+        }
+
+        .field-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem 1.25rem;
+        }
+
+        .field {
+            flex: 1 1 240px; /* 2 columns on desktop, stack on small */
+            min-width: 0;
+        }
+
+        .field-full {
+            flex-basis: 100%;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        input,
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d1d5db;
+            padding: 0.55rem 0.7rem;
+            border-radius: 10px;
+            background: #fafafa;
+            font-size: 0.9rem;
+            color: #111827;
+        }
+
+        input:focus,
+        select:focus {
+            background: #fff;
+            outline: none;
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100, 179, 255, 0.35);
+        }
+
+        input[readonly] {
+            background: #f3f4f6;
+            color: #6b7280;
+            cursor: default;
+        }
+
+        /* ===== USER SEARCH DROPDOWN ===== */
+        .user-search-wrapper {
+            position: relative;
+        }
+
+        #userResults {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            margin-top: 4px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            max-height: 180px;
+            overflow-y: auto;
+            box-shadow: var(--shadow-soft);
+            z-index: 20;
+        }
+
+        .user-option {
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .user-option:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== BUTTONS ===== */
+        .form-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 0.4rem;
+        }
+
+        .btn {
+            border: none;
+            cursor: pointer;
+            padding: 0.55rem 1.3rem;
+            border-radius: 999px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        @media (max-width: 640px) {
+            .edit-card {
+                padding: 1.4rem 1.2rem;
+            }
+
+            .header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-buttons {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
-<body>
-<h1>Edit Appointment</h1>
 
-<form th:action="@{/staff/registration/save/{id}(id=${appointment.id})}" method="post">
+<body class="staff-layout">
 
-    <!-- Appointment Section -->
-    <div class="section-title">Appointment Details</div>
+<!-- SIDEBAR -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name"
-               th:placeholder="${appointment.name}" readonly/>
+<!-- MAIN -->
+<main class="staff-main edit-page">
+    <div class="edit-layout-inner">
+
+        <section class="edit-card">
+
+            <!-- Header -->
+            <div class="header-row">
+                <div class="header-title-block">
+                    <p class="section-kicker">Appointment Management</p>
+                    <h2>Edit Appointment</h2>
+                </div>
+                <a class="back-link-pill" onclick="window.history.back()">← Back</a>
+            </div>
+
+            <!-- FORM -->
+            <form th:action="@{/staff/registration/save/{id}(id=${appointment.id})}" method="post">
+
+                <!-- SECTION 1: BASIC APPOINTMENT -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <p class="form-section-title">Appointment Details</p>
+                        <p class="form-section-subtitle">
+                            Basic information about the customer and scheduled time.
+                        </p>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label>Name</label>
+                            <input type="text"
+                                   th:placeholder="${appointment.name}"
+                                   readonly />
+                        </div>
+
+                        <div class="field">
+                            <label>Phone Number</label>
+                            <input type="text" name="phoneNumber"
+                                   th:placeholder="${appointment.phoneNumber}" />
+                        </div>
+
+                        <div class="field">
+                            <label>Scheduled At</label>
+                            <input type="datetime-local" name="scheduledAt"
+                                   th:value="${#temporals.format(appointment.scheduledAt, 'yyyy-MM-dd''T''HH:mm')}" />
+                        </div>
+
+                        <div class="field">
+                            <label>Status</label>
+                            <select name="status">
+                                <option th:each="s : ${allStatuses}"
+                                        th:value="${s}"
+                                        th:text="${s}"
+                                        th:selected="${s == appointment.status}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: EXECUTION DETAILS -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <p class="form-section-title">Appointment Execution</p>
+                        <p class="form-section-subtitle">
+                            Staff assignment and actual working time.
+                        </p>
+                    </div>
+
+                    <div class="field-row">
+
+                        <!-- Assigned User (full width) -->
+                        <div class="field field-full">
+                            <label>Assigned User</label>
+                            <div class="user-search-wrapper">
+                                <input type="hidden" name="username" id="username"
+                                       th:disabled="${disableDetails}" />
+
+                                <input type="text" id="userSearch"
+                                       th:placeholder="${appointmentDetails.user != null ? appointmentDetails.user.username : ''}"
+                                       th:readonly="${disableDetails}" />
+
+                                <div id="userResults"></div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label>Scheduled Start</label>
+                            <input type="datetime-local" readonly
+                                   th:value="${#temporals.format(appointmentDetails.scheduledStart,'yyyy-MM-dd''T''HH:mm')}" />
+                        </div>
+
+                        <div class="field">
+                            <label>Scheduled End</label>
+                            <input type="datetime-local" readonly
+                                   th:value="${#temporals.format(appointmentDetails.scheduledEnd,'yyyy-MM-dd''T''HH:mm')}" />
+                        </div>
+
+                        <div class="field">
+                            <label>Actual Start</label>
+                            <input type="datetime-local" name="actualStart"
+                                   th:readonly="${disableDetails}"
+                                   th:value="${#temporals.format(appointmentDetails.actualStart,'yyyy-MM-dd''T''HH:mm')}" />
+                        </div>
+
+                        <div class="field">
+                            <label>Actual End</label>
+                            <input type="datetime-local" name="actualEnd"
+                                   th:readonly="${disableDetails}"
+                                   th:value="${#temporals.format(appointmentDetails.actualEnd,'yyyy-MM-dd''T''HH:mm')}" />
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </section>
     </div>
+</main>
 
-    <div class="form-group">
-        <label for="phoneNumber">Phone Number</label>
-        <input type="text" name="phoneNumber" id="phoneNumber"
-               th:placeholder="${appointment.phoneNumber}"/>
-    </div>
-
-    <div class="form-group">
-        <label for="scheduledAt">Scheduled At</label>
-        <input type="datetime-local" name="scheduledAt" id="scheduledAt"
-               th:value="${#temporals.format(appointment.scheduledAt, 'yyyy-MM-dd''T''HH:mm')}"/>
-    </div>
-
-    <div class="form-group">
-        <label for="status">Status</label>
-        <select name="status" id="status">
-            <option th:each="s : ${allStatuses}" th:value="${s}"
-                    th:text="${s}" th:selected="${s == appointment.status}">PENDING</option>
-        </select>
-    </div>
-
-    <!-- AppointmentDetails Section -->
-    <div class="section-title">Appointment Execution Details</div>
-
-    <div class="form-group">
-        <label for="userSearch">Assigned User</label>
-        <input type="hidden" name="username" id="username"
-               th:disabled="${disableDetails}" />
-
-        <input type="text" id="userSearch" th:placeholder="${appointmentDetails.user != null ? appointmentDetails.user.username : ''}"
-               th:readonly="${disableDetails}" />
-        <div id="userResults" style="border: 1px solid #ddd; padding: 5px; margin-top: 5px;" ></div>
-    </div>
-
-    <div class="form-group">
-        <label>Scheduled Start</label>
-        <input type="datetime-local" th:value="${#temporals.format(appointmentDetails.scheduledStart, 'yyyy-MM-dd''T''HH:mm')}" readonly/>
-    </div>
-
-    <div class="form-group">
-        <label>Scheduled End</label>
-        <input type="datetime-local" th:value="${#temporals.format(appointmentDetails.scheduledEnd, 'yyyy-MM-dd''T''HH:mm')}" readonly/>
-    </div>
-
-    <div class="form-group">
-        <label for="actualStart">Actual Start</label>
-        <input type="datetime-local" name="actualStart" id="actualStart"
-               th:value="${#temporals.format(appointmentDetails.actualStart, 'yyyy-MM-dd''T''HH:mm')}"
-               th:readonly="${disableDetails}" />
-    </div>
-
-    <div class="form-group">
-        <label for="actualEnd">Actual End</label>
-        <input type="datetime-local" name="actualEnd" id="actualEnd"
-               th:value="${#temporals.format(appointmentDetails.actualEnd, 'yyyy-MM-dd''T''HH:mm')}"
-               th:readonly="${disableDetails}" />
-    </div>
-
-    <div class="form-buttons">
-        <button type="submit" class="save-btn">Save</button>
-        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
-    </div>
-
-</form>
-
+<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -120,10 +384,10 @@
                         data.forEach(user => {
                             $('#userResults').append(
                                 `<div class="user-option"
-                                  data-username="${user.username}"
-                                  data-phonenumber="${user.phoneNumber}">
-                                ${user.username} (${user.phoneNumber})
-                             </div>`
+                                      data-username="${user.username}"
+                                      data-phonenumber="${user.phoneNumber}">
+                                     ${user.username} (${user.phoneNumber})
+                                 </div>`
                             );
                         });
                     }
@@ -131,22 +395,15 @@
             }, 350);
         });
 
-        // ✅ When selecting a user from results
         $(document).on('click', '.user-option', function () {
-            const phoneNumber = $(this).data('phonenumber');
             const username = $(this).data('username');
-
-            $('#userSearch').val(username); // visible field → phone
-            $('#username').val(username); // hidden → username binding for form submission
-
-            $('#userResults').empty(); // ✅ collapse results
+            $('#userSearch').val(username);
+            $('#username').val(username);
+            $('#userResults').empty();
         });
 
-        // ✅ Close suggestion box on blur
         $('#userSearch').on('blur', function () {
-            setTimeout(() => {
-                $('#userResults').empty();
-            }, 200);
+            setTimeout(() => $('#userResults').empty(), 200);
         });
     });
 </script>

@@ -1,76 +1,324 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Staff View: Job Applications</title>
+    <meta charset="UTF-8" />
+    <title>Staff - Job Applications | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles (sidebar + main scroll) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        /* ===== PAGE STRUCTURE ===== */
+        .job-app-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
+
+        .job-app-layout-inner {
+            max-width: 85vw;
+            width: 100%;
+            margin: 1rem auto;
         }
+
+        .job-app-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .job-app-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .job-app-title-block {
+            text-align: left;
+        }
+
+        .job-app-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .job-app-title-block h2 {
+            margin: 0;
+        }
+
+        .job-app-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .back-link-pill {
+            font-size: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            padding: 0.4rem 0.9rem;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .back-link-pill span.icon {
+            font-size: 1.05rem;
+            line-height: 1;
+        }
+
+        .back-link-pill:hover {
+            background: #f4f4f4;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        /* ===== TABLE WRAPPER ===== */
+        .job-app-table-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: auto;
+            background: transparent;
         }
+
+        thead {
+            background: #f9fafb;
+        }
+
         th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 0.75rem 1rem;
             text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
         }
+
         th {
-            background-color: #f2f2f2;
+            font-weight: 700;
+            color: #4b5563;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
         }
-        tr:hover {
-            background-color: #f9f9f9;
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        /* ===== STATUS BADGE ===== */
+        .status-badge {
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-accepted {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .actions-cell {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .inline-form {
+            display: inline;
+        }
+
+        .action-btn {
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #111827;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .action-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-accept {
+            background: #ecfdf3;
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+
+        .btn-accept:hover {
+            background: #dcfce7;
+        }
+
+        .btn-reject {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+
+        .btn-reject:hover {
+            background: #fee2e2;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            background: #ffffff;
+            padding: 2.3rem 1.8rem;
+            text-align: center;
+            border-radius: 18px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #e5e7eb;
+        }
+
+        .empty-state h2 {
+            color: #4b5563;
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .empty-state p {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 0;
         }
     </style>
 </head>
-<body>
+<body class="staff-layout">
 
-<h1>Job Applications</h1>
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-<table>
-    <thead>
-    <tr>
-        <th>Job Name</th>
-        <th>Applicant Name</th>
-        <th>Date of Birth</th>
-        <th>Phone Number</th>
-        <th>Application Date</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="app : ${applications}">
-        <td th:text="${app.jobPosting.jobPostingName}">Job Name</td>
-        <td th:text="${app.applicantName}">Applicant Name</td>
-        <td th:text="${app.applicantDob}">YYYY-MM-DD</td>
-        <td th:text="${app.applicantPhoneNumber}">Phone</td>
-        <td th:text="${app.applicationDate}">YYYY-MM-DD HH:mm</td>
-        <td th:text="${app.status}">Status</td>
-        <td>
-            <!-- Accept Form -->
-            <form th:action="@{/staff/job/accept/{id}(id=${app.id})}" method="post" style="display:inline">
-                <button type="submit">Accept</button>
-            </form>
+<!-- MAIN SCROLLABLE CONTENT -->
+<main class="staff-main job-app-page">
+    <div class="job-app-layout-inner">
+        <section class="job-app-card">
+            <!-- Header -->
+            <div class="job-app-header-row">
+                <div class="job-app-title-block section-heading">
+                    <p class="section-kicker">HR &amp; Staffing</p>
+                    <h2>Job Applications</h2>
+                </div>
+                <div class="job-app-actions">
+                </div>
+            </div>
 
-            <!-- Reject Form -->
-            <form th:action="@{/staff/job/reject/{id}(id=${app.id})}" method="post" style="display:inline">
-                <button type="submit">Reject</button>
-            </form>
-        </td>
-    </tr>
-    <tr th:if="${#lists.isEmpty(applications)}">
-        <td colspan="6">No applications found.</td>
-    </tr>
-    </tbody>
-</table>
+            <!-- Optional alerts (if you use them in controller) -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(applications)}" class="empty-state">
+                <h2>No Applications Found</h2>
+                <p>There are currently no job applications to review.</p>
+            </div>
+
+            <!-- Applications table -->
+            <div th:if="${!#lists.isEmpty(applications)}" class="job-app-table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Job Name</th>
+                        <th>Applicant Name</th>
+                        <th>Date of Birth</th>
+                        <th>Phone Number</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="app : ${applications}">
+                        <td th:text="${app.jobPosting.jobPostingName}">Job Name</td>
+                        <td th:text="${app.applicantName}">Applicant Name</td>
+                        <td th:text="${app.applicantDob}">YYYY-MM-DD</td>
+                        <td th:text="${app.applicantPhoneNumber}">Phone</td>
+                        <td th:text="${app.applicationDate}">YYYY-MM-DD HH:mm</td>
+                        <td>
+                            <!-- Map your enum/string to classes as needed -->
+                            <span class="status-badge"
+                                  th:class="'status-badge status-' + ${#strings.toLowerCase(app.status)}"
+                                  th:text="${app.status}">
+                                Status
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <!-- Accept Form -->
+                                <form th:action="@{/staff/job/accept/{id}(id=${app.id})}"
+                                      method="post"
+                                      class="inline-form">
+                                    <button type="submit" class="action-btn btn-accept">
+                                        ✅ <span>Accept</span>
+                                    </button>
+                                </form>
+
+                                <!-- Reject Form -->
+                                <form th:action="@{/staff/job/reject/{id}(id=${app.id})}"
+                                      method="post"
+                                      class="inline-form">
+                                    <button type="submit" class="action-btn btn-reject">
+                                        ✖ <span>Reject</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
 </body>
 </html>

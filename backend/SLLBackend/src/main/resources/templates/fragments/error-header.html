@@ -1,4 +1,4 @@
-<header class="staff-site-header" th:fragment="staff-site-header">
+<header class="site-header" th:fragment="error-site-header">
     <div class="container header-inner">
         <div class="logo">
             <span class="logo-icon">✂</span>
@@ -7,11 +7,16 @@
             </a>
         </div>
 
-        <nav class="main-nav">
-            <a th:href="@{/staff/profile}">Profile</a>
-        </nav>
-
         <div class="header-actions">
+
+            <!-- When NOT logged in -->
+            <a th:if="${username == null}"
+               th:href="@{/auth/user/login}"
+               class="btn-outline"
+               style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.85rem;">
+                Login
+            </a>
+
             <!-- When logged in -->
             <div th:if="${username != null}" style="display: flex; align-items: center; gap: 0.6rem;">
                 <a th:href="@{/user/profile}" style="font-size:0.9rem; text-decoration:none; color:inherit;">

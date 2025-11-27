@@ -44,7 +44,7 @@ public class SecurityConfig {
 	@Order(0)
 	public SecurityFilterChain staticResourcesSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/css/**", "/js/**", "/api/**", "/cdn/**")
+				.securityMatcher("/css/**", "/js/**", "/api/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
 				.build();
@@ -84,7 +84,7 @@ public class SecurityConfig {
 						.usernameParameter("username")
 						.passwordParameter("password")
 						.failureUrl("/auth/user/login?error")
-						.defaultSuccessUrl("/auth/user/landing", true))
+						.defaultSuccessUrl("/", true))
 				.authenticationManager(userProviderManager())
 				.build();
 	}
@@ -103,7 +103,7 @@ public class SecurityConfig {
 						.usernameParameter("username")
 						.passwordParameter("password")
 						.failureUrl("/auth/staff/login?error")
-						.defaultSuccessUrl("/auth/staff/landing", true))
+						.defaultSuccessUrl("/staff/profile", true))
 				.authenticationManager(staffProviderManager())
 				.build();
 	}
@@ -121,7 +121,7 @@ public class SecurityConfig {
 						.usernameParameter("username")
 						.passwordParameter("password")
 						.failureUrl("/auth/staff/login?error")
-						.defaultSuccessUrl("/auth/staff/landing", true))
+						.defaultSuccessUrl("/staff/profile", true))
 				.authenticationManager(staffProviderManager())
 				.build();
 	}
@@ -130,13 +130,13 @@ public class SecurityConfig {
 	@Order(5)
 	public SecurityFilterChain logoutSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/auth/logout")
+				.securityMatcher("/logout")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/logout").permitAll()
+						.requestMatchers("/logout").permitAll()
 						.anyRequest().authenticated())
-				.logout(logout -> logout.logoutUrl("/auth/logout")
-						.logoutSuccessUrl("/?logout")
+				.logout(logout -> logout.logoutUrl("/logout")
+						.logoutSuccessUrl("/")
 						.invalidateHttpSession(true)
 						.deleteCookies("JSESSIONID"))
 				.build();

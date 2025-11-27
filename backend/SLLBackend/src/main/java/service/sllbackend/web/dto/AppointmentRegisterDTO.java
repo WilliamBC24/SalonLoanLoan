@@ -23,11 +23,11 @@ public class AppointmentRegisterDTO {
     @Future
     private LocalDate appointmentDate;
 
-    @TimeInRange(start = "07:30", end = "19:00")
+    @TimeInRange(start = "05:30", end = "19:00")
     private LocalTime appointmentTime;
 
     @NotNull
-    @TimeInRange(start = "07:30", end = "19:30")
+    @TimeInRange(start = "05:30", end = "23:59")
     private LocalTime endTime;
 
     @NotBlank

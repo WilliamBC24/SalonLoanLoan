@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Appointment Details | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+    <style>
+        .appointment-detail-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            /*min-height: calc(100vh - 140px);*/
+        }
+
+        .appointment-detail-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .appointment-card {
+            background: #ffffff;
+            padding: 2.2rem 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .appointment-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .appointment-title h2 {
+            margin: 0;
+            font-size: clamp(1.6rem, 2.6vw, 1.9rem);
+        }
+
+        .appointment-sub {
+            margin: .25rem 0 0;
+            font-size: .92rem;
+            color: var(--text-muted);
+        }
+
+        .appointment-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+        }
+
+        .status-pill {
+            border-radius: 999px;
+            padding: 0.3rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-confirmed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .meta-section-title {
+            margin-top: .4rem;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .appointment-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .9rem 1.4rem;
+            margin-top: .8rem;
+        }
+
+        .meta-item {
+            background: #fafafa;
+            border-radius: 14px;
+            border: 1px solid #f0f0f0;
+            padding: .75rem .9rem;
+        }
+
+        .meta-label {
+            font-size: .8rem;
+            color: var(--text-muted);
+            margin-bottom: .2rem;
+        }
+
+        .meta-value {
+            font-size: .96rem;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .meta-value-highlight {
+            color: #16a34a;
+        }
+
+        /* Services list */
+        .services-section {
+            margin-top: 1.8rem;
+        }
+
+        .services-header-row {
+            display: grid;
+            grid-template-columns: 2.2fr 1.2fr 0.8fr;
+            gap: 1rem;
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-muted);
+            margin-bottom: .4rem;
+        }
+
+        .service-list {
+            border-radius: 18px;
+            border: 1px solid #f0f0f0;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .service-row {
+            display: grid;
+            grid-template-columns: 2.2fr 1.2fr 0.8fr;
+            gap: 1rem;
+            padding: .85rem 1rem;
+            border-top: 1px solid #f5f5f5;
+            align-items: center;
+        }
+
+        .service-row:first-child {
+            border-top: none;
+        }
+
+        .service-main-title {
+            font-weight: 700;
+            font-size: .96rem;
+        }
+
+        .service-main-meta {
+            font-size: .82rem;
+            color: var(--text-muted);
+            margin-top: .1rem;
+        }
+
+        .service-staff {
+            font-size: .9rem;
+        }
+
+        .service-price {
+            font-weight: 800;
+            font-size: .95rem;
+            text-align: right;
+        }
+
+        .services-summary {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 1.4rem;
+            margin-top: 1.1rem;
+            font-size: .9rem;
+        }
+
+        .summary-item-label {
+            color: var(--text-muted);
+            margin-right: .3rem;
+        }
+
+        .summary-item-value {
+            font-weight: 700;
+        }
+
+        .summary-item-value.price {
+            color: #16a34a;
+        }
+
+        .alert-note {
+            margin-top: 1.3rem;
+            background: #f7f8ff;
+            border-radius: 14px;
+            border: 1px solid #e3e6ff;
+            padding: .85rem 1rem;
+            font-size: .88rem;
+            color: #3a3a55;
+        }
+
+        @media (max-width: 768px) {
+            .appointment-card {
+                padding: 1.6rem 1.4rem;
+            }
+            .appointment-meta-grid {
+                grid-template-columns: 1fr;
+            }
+            .services-header-row,
+            .service-row {
+                grid-template-columns: 1.7fr 1.3fr;
+            }
+            .service-price {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .services-header-row {
+                display: none;
+            }
+            .service-row {
+                grid-template-columns: 1fr;
+                align-items: flex-start;
+            }
+            .service-price {
+                text-align: left;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div th:replace="~{fragments/profile-header :: profile-site-header}"></div>
+
+<main class="appointment-detail-page">
+    <div class="container appointment-detail-wrapper">
+
+        <section class="appointment-card">
+
+            <!-- Top header -->
+            <div class="appointment-header-row">
+                <div class="appointment-title">
+                    <h2>Appointment Details</h2>
+                    <p class="appointment-sub">
+                        Review your booking information and services.
+                    </p>
+                </div>
+
+                <div class="appointment-actions">
+                    <span class="status-pill"
+                          th:text="${appointmentDetails.appointment.status}"
+                          th:classappend="${' status-' + #strings.toLowerCase(appointmentDetails.appointment.status.name())}">
+                        PENDING
+                    </span>
+
+                    <a th:href="@{/user/appointment-history}" class="btn-outline" style="padding:.45rem 1rem;">
+                        Back to Appointments
+                    </a>
+                </div>
+            </div>
+
+            <!-- Appointment meta -->
+            <h3 class="meta-section-title">Appointment Summary</h3>
+
+            <div class="appointment-meta-grid">
+                <div class="meta-item">
+                    <div class="meta-label">Registered At</div>
+                    <div class="meta-value"
+                         th:text="${#temporals.format(appointmentDetails.appointment.registeredAt, 'dd MMM yyyy HH:mm')}">
+                        01 Jan 2025 10:00
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-label">Scheduled Date</div>
+                    <div class="meta-value"
+                         th:text="${#temporals.format(appointmentDetails.scheduledStart, 'dd MMM yyyy')}">
+                        02 Jan 2025
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-label">Time</div>
+                    <div class="meta-value meta-value-highlight"
+                         th:text="${#temporals.format(appointmentDetails.scheduledStart, 'HH:mm')} + ' - ' + ${#temporals.format(appointmentDetails.scheduledEnd, 'HH:mm')}">
+                        14:00 - 15:30
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-label">Estimated Duration</div>
+                    <div class="meta-value"
+                         th:text="${totalDuration != null ? totalDuration + ' min' : '—'}">
+                        0 min
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-label">Total Price</div>
+                    <div class="meta-value meta-value-highlight"
+                         th:text="${totalPrice != null ? totalPrice + ' VND' : '—'}">
+                        0 VND
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-label">Customer Name</div>
+                    <div class="meta-value"
+                         th:text="${appointmentDetails.appointment.name}">
+                        Customer Name
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-label">Phone Number</div>
+                    <div class="meta-value"
+                         th:text="${appointmentDetails.appointment.phoneNumber}">
+                        0123456789
+                    </div>
+                </div>
+
+                <div class="meta-item" th:if="${appointmentDetails.actualStart != null}">
+                    <div class="meta-label">Actual Start</div>
+                    <div class="meta-value"
+                         th:text="${#temporals.format(appointmentDetails.actualStart, 'dd MMM yyyy HH:mm')}">
+                        02 Jan 2025 14:05
+                    </div>
+                </div>
+
+                <div class="meta-item" th:if="${appointmentDetails.actualEnd != null}">
+                    <div class="meta-label">Actual End</div>
+                    <div class="meta-value"
+                         th:text="${#temporals.format(appointmentDetails.actualEnd, 'dd MMM yyyy HH:mm')}">
+                        02 Jan 2025 15:35
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services -->
+            <div class="services-section" th:if="${requestedServices != null and !#lists.isEmpty(requestedServices)}">
+                <h3 class="meta-section-title">Requested Services</h3>
+
+                <div class="services-header-row">
+                    <span>Service</span>
+                    <span>Staff</span>
+                    <span style="text-align:right;">Price</span>
+                </div>
+
+                <div class="service-list">
+                    <div class="service-row" th:each="item : ${requestedServices}">
+                        <div>
+                            <div class="service-main-title"
+                                 th:text="${item.service.serviceName}">Service Name</div>
+                            <div class="service-main-meta">
+                                <span th:if="${item.service.durationMinutes != null}"
+                                      th:text="${item.service.durationMinutes} + ' min'">60 min</span>
+                            </div>
+                        </div>
+
+                        <div class="service-staff"
+                             th:text="${item.responsibleStaff != null ? item.responsibleStaff.name : 'Not assigned'}">
+                            Not assigned
+                        </div>
+
+                        <div class="service-price"
+                             th:text="${item.priceAtBooking} + ' VND'">
+                            0 VND
+                        </div>
+                    </div>
+                </div>
+
+                <div class="services-summary">
+                    <div class="summary-item" th:if="${totalDuration != null}">
+                        <span class="summary-item-label">Estimated Duration:</span>
+                        <span class="summary-item-value"
+                              th:text="${totalDuration} + ' min'">0 min</span>
+                    </div>
+                    <div class="summary-item" th:if="${totalPrice != null}">
+                        <span class="summary-item-label">Total Price:</span>
+                        <span class="summary-item-value price"
+                              th:text="${totalPrice} + ' VND'">0 VND</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-note">
+                If you need to reschedule or cancel this appointment, please contact the salon directly
+                at least a few hours before your scheduled time.
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
+</body>
+</html>

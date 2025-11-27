@@ -1,81 +1,215 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Staff Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Edit Staff Profile | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+    <style>
+        .edit-staff-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .edit-staff-wrapper {
+            width: 100%;
+            max-width: 720px;
+            padding: 0 1.5rem;
+        }
+
+        .edit-card {
+            background: #ffffff;
+            padding: 2.2rem 2.3rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .edit-title {
+            text-align: center;
+            margin-bottom: 1.6rem;
+        }
+
+        .edit-title h2 {
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .edit-title p {
+            margin: 0.4rem 0 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .section-subtitle {
+            margin-top: 1.5rem;
+            margin-bottom: 0.6rem;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #333;
+            letter-spacing: .02em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem 1.4rem;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.85rem 1.1rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            font-size: 0.95rem;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent, #ff8400);
+            box-shadow: 0 0 0 3px rgba(255,132,0,.2);
+        }
+
+        .form-input[readonly] {
+            background: #f7f7f7;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        .button-row {
+            margin-top: 1.8rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 720px) {
+            .edit-card {
+                padding: 1.8rem 1.5rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-header bg-success text-white text-center fs-4 fw-semibold py-3">
-            Edit Staff Profile
-        </div>
+<body>
+<div th:replace="~{fragments/staff-header :: staff-site-header}"></div>
 
-        <div class="card-body p-4">
+<main class="edit-staff-page">
+    <div class="edit-staff-wrapper">
+
+        <section class="edit-card">
+            <div class="edit-title">
+                <h2>Edit Staff Profile</h2>
+                <p>Update staff details below.</p>
+            </div>
+
             <form th:action="@{/staff/profile/update}" method="post">
 
-                <h5 class="text-secondary mb-3">Account Info</h5>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Username:</label>
-                        <input type="text" class="form-control rounded-3"
-                               th:value="${staffAccount.username}" readonly>
+                <!-- Account Info -->
+                <h3 class="section-subtitle">Account Info</h3>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="form-label">Username</label>
+                        <input type="text"
+                               class="form-input"
+                               th:value="${staffAccount.username}"
+                               readonly>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Active:</label>
-                        <input type="text" class="form-control rounded-3"
+
+                    <div class="form-field">
+                        <label class="form-label">Active</label>
+                        <input type="text"
+                               class="form-input"
                                th:value="${staffAccount.active ? 'Yes' : 'No'}"
                                readonly>
                     </div>
                 </div>
 
-                <hr class="my-4">
-
-                <h5 class="text-secondary mb-3">Staff Details</h5>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Name:</label>
-                        <input type="text" name="name" class="form-control rounded-3"
+                <!-- Staff Details -->
+                <h3 class="section-subtitle">Staff Details</h3>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="form-label">Name</label>
+                        <input type="text"
+                               name="name"
+                               class="form-input"
                                th:value="${staffAccount.name}">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Email:</label>
-                        <input type="email" name="email" class="form-control rounded-3"
-                               th:value="${staffAccount.email}" readonly>
+
+                    <div class="form-field">
+                        <label class="form-label">Email</label>
+                        <input type="email"
+                               name="email"
+                               class="form-input"
+                               th:value="${staffAccount.email}"
+                               readonly>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">Date Hired</label>
+                        <input type="text"
+                               class="form-input"
+                               th:value="${#temporals.format(staffAccount.dateHired, 'dd MMM yyyy')}"
+                               readonly>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">SSN</label>
+                        <input type="text"
+                               class="form-input"
+                               th:value="${staffAccount.socialSecurityNum ?: '—'}"
+                               readonly>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">Status</label>
+                        <input type="text"
+                               class="form-input"
+                               th:value="${staffAccount.staffStatus}"
+                               readonly>
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Date Hired:</label>
-                        <input type="text" class="form-control rounded-3"
-                               th:value="${#temporals.format(staffAccount.dateHired, 'dd MMM yyyy')}" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">SSN:</label>
-                        <input type="text" class="form-control rounded-3"
-                               th:value="${staffAccount.socialSecurityNum ?: '—'}" readonly>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Status:</label>
-                        <input type="text" class="form-control rounded-3"
-                               th:value="${staffAccount.staffStatus}" readonly>
-                    </div>
-                </div>
-
-                <div class="text-center mt-4 d-flex justify-content-center gap-3">
-                    <a href="/staff/profile" class="btn btn-secondary px-4">Cancel</a>
-                    <button type="submit" class="btn btn-success px-4">Save Changes</button>
+                <!-- Buttons -->
+                <div class="button-row">
+                    <a href="/staff/profile" class="btn-outline" style="padding:.6rem 1.3rem;">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn-primary" style="padding:.6rem 1.3rem;">
+                        Save Changes
+                    </button>
                 </div>
 
             </form>
-        </div>
+        </section>
+
     </div>
-</div>
+</main>
+
 </body>
 </html>
+

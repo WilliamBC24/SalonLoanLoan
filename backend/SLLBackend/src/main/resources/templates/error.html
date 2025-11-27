@@ -1,12 +1,164 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Error</title>
+    <meta charset="UTF-8">
+    <title>Error | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+    <style>
+        .error-page {
+            padding: 3rem 0 3.5rem;
+        }
+
+        .error-wrapper {
+            max-width: 640px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+            padding: 2.4rem 2.6rem;
+            text-align: center;
+        }
+
+        .error-title {
+            font-size: 1.9rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .error-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .error-message {
+            background: #fff3cd;
+            border-radius: 16px;
+            border: 1px solid #ffe08a;
+            padding: 0.9rem 1rem;
+            font-size: 0.9rem;
+            color: #856404;
+            margin-bottom: 1.4rem;
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .error-message strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        details.error-details {
+            text-align: left;
+            margin-top: 0.8rem;
+            background: #f7f7f7;
+            border-radius: 16px;
+            border: 1px solid #e0e0e0;
+            padding: 0.7rem 0.9rem;
+            font-size: 0.85rem;
+        }
+
+        details.error-details summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #444;
+            list-style: none;
+        }
+
+        details.error-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.error-details summary::before {
+            content: "▶";
+            display: inline-block;
+            margin-right: 0.4rem;
+            font-size: 0.75rem;
+        }
+
+        details[open].error-details summary::before {
+            content: "▼";
+        }
+
+        details.error-details pre {
+            margin: 0.7rem 0 0;
+            max-height: 260px;
+            overflow: auto;
+            background: #111827;
+            color: #e5e7eb;
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .error-actions {
+            margin-top: 1.6rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 600px) {
+            .error-wrapper {
+                padding: 2rem 1.6rem;
+                margin: 0 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>Something went wrong!</h1>
-<p th:text="${message}">Error message goes here</p>
-<pre th:text="${exception}"></pre>
-<a href="/">Return to home</a>
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: site-header}"></div>
+
+<main class="error-page">
+    <div class="container">
+        <div class="error-wrapper">
+            <div class="section-heading text-center" style="margin-bottom:1.2rem;">
+                <p class="section-kicker">Oops...</p>
+                <h1 class="error-title">Something went wrong</h1>
+            </div>
+
+            <p class="error-subtitle">
+                An unexpected error occurred while processing your request.
+            </p>
+
+            <!-- Friendly error message -->
+            <div class="error-message">
+                <strong>Error message:</strong>
+                <span th:text="${message} ?: 'An unknown error has occurred.'">
+                    Error message goes here
+                </span>
+            </div>
+
+            <!-- Technical details (collapsible) -->
+            <details class="error-details" th:if="${exception != null}">
+                <summary>Show technical details</summary>
+                <pre th:text="${exception}">Stack trace here</pre>
+            </details>
+
+            <div class="error-actions">
+                <a th:href="@{/}" class="btn-primary">
+                    Return to Home
+                </a>
+                <button type="button"
+                        class="btn-outline"
+                        onclick="window.history.back()">
+                    Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
 </body>
 </html>

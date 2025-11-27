@@ -1,334 +1,433 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Checkout - Place Your Order</title>
+    <title>Checkout | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 1000px;
-            background: #f5f5f5;
+        .checkout-page {
+            padding: 2.5rem 0 3rem;
         }
-        .header {
+
+        .checkout-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
         }
+
+        .checkout-title {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
         .back-link {
-            display: inline-block;
-            color: #007bff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+            color: var(--accent, #ff8400);
             text-decoration: none;
-            font-size: 14px;
         }
+
         .back-link:hover {
             text-decoration: underline;
         }
-        h1 {
-            color: #333;
-        }
-        .checkout-container {
+
+        .checkout-layout {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+            gap: 1.8rem;
+            max-width: 1024px;
+            margin: 0 auto;
         }
-        .checkout-form {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        .checkout-card,
+        .summary-card {
+            background: #ffffff;
+            padding: 2rem 2.2rem;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.04);
         }
+
         .form-section {
-            margin-bottom: 30px;
+            margin-bottom: 1.9rem;
         }
+
         .form-section h2 {
+            font-size: 1.05rem;
+            margin: 0 0 0.9rem;
             color: #333;
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #007bff;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 0.5rem;
         }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 0.95rem;
         }
-        label {
+
+        .form-label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 0.35rem;
             color: #555;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
-        input[type="text"],
-        input[type="tel"],
-        textarea,
-        select {
+
+        .form-input,
+        .form-textarea,
+        .form-select {
             width: 100%;
-            padding: 10px;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
+            font-size: 0.95rem;
             box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        textarea {
+
+        .form-textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 90px;
         }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent, #ff8400);
+            box-shadow: 0 0 0 3px rgba(255,132,0,0.2);
+        }
+
         .error {
             color: #dc3545;
-            font-size: 12px;
-            margin-top: 5px;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
             display: none;
         }
+
         .payment-options {
             display: flex;
-            gap: 15px;
+            gap: 1rem;
             flex-wrap: wrap;
         }
+
         .payment-option {
             flex: 1;
-            min-width: 200px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            min-width: 220px;
+            padding: 0.9rem 1rem;
+            border-radius: 16px;
+            border: 2px solid #e1e1e1;
             cursor: pointer;
-            transition: all 0.3s;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.45rem;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            background: #fafafa;
         }
-        .payment-option:hover {
-            border-color: #007bff;
-        }
+
         .payment-option input[type="radio"] {
-            margin-right: 8px;
+            margin-top: 0.2rem;
         }
+
+        .payment-option:hover {
+            border-color: var(--accent, #ff8400);
+        }
+
         .payment-option.selected {
-            border-color: #007bff;
-            background: #e7f3ff;
+            border-color: var(--accent, #ff8400);
+            background: #fff7ec;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.04);
         }
-        .order-summary {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            height: fit-content;
-        }
-        .order-summary h2 {
+
+        .payment-option-title {
+            font-weight: 600;
+            font-size: 0.95rem;
             color: #333;
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #007bff;
         }
+
+        .payment-option-desc {
+            margin: 0.15rem 0 0;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            margin-top: 0.4rem;
+            padding: 0.9rem 1.4rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .place-order-btn.btn-primary {
+            /* uses global btn-primary styles, this only ensures full-width radius */
+        }
+
+        .place-order-btn:disabled {
+            background: #9ca3af !important;
+            cursor: not-allowed;
+        }
+
+        .summary-card h2 {
+            font-size: 1.05rem;
+            margin: 0 0 1rem;
+            color: #333;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 0.5rem;
+        }
+
         .summary-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
+            padding: 0.45rem 0;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f1f1f1;
         }
+
         .summary-total {
             display: flex;
             justify-content: space-between;
-            padding: 15px 0;
-            font-size: 20px;
-            font-weight: bold;
-            color: #28a745;
+            padding-top: 0.7rem;
+            margin-top: 0.7rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #16a34a;
+            border-top: 2px solid #e5e5e5;
         }
-        .place-order-btn {
-            width: 100%;
-            padding: 15px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        .place-order-btn:hover:not(:disabled) {
-            background: #218838;
-        }
-        .place-order-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
+
         .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 1.4rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
         }
+
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
         }
-        @media (max-width: 768px) {
-            .checkout-container {
+
+        @media (max-width: 900px) {
+            .checkout-layout {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .checkout-card,
+            .summary-card {
+                padding: 1.6rem 1.4rem;
+            }
+            .checkout-header-row {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Checkout</h1>
-        <a href="/cart" class="back-link">← Back to Cart</a>
-    </div>
 
-    <div th:if="${param.error}" class="alert alert-error">
-        <span th:text="${param.error}">Error message</span>
-    </div>
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: site-header}"></div>
 
-    <div class="checkout-container">
-        <div class="checkout-form">
-            <form id="checkoutForm" action="/order/checkout" method="post" onsubmit="return validateForm()">
-                
-                <!-- Customer Information -->
-                <div class="form-section">
-                    <h2>1. Customer Information</h2>
-                    <div class="form-group">
-                        <label for="customerName">Full Name *</label>
-                        <input type="text" id="customerName" name="customerName" required />
-                        <span class="error" id="nameError">Please enter your full name</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="phoneNumber">Phone Number *</label>
-                        <input type="tel" id="phoneNumber" name="phoneNumber" 
-                               placeholder="0123456789" required />
-                        <span class="error" id="phoneError">Please enter a valid phone number</span>
-                    </div>
-                </div>
+<main class="checkout-page">
+    <div class="container">
 
-                <!-- Delivery Information -->
-                <div class="form-section">
-                    <h2>2. Delivery Address</h2>
-                    <div class="form-group">
-                        <label for="shippingAddress">Shipping Address *</label>
-                        <textarea id="shippingAddress" name="shippingAddress" 
-                                  placeholder="Enter your complete address" required></textarea>
-                        <span class="error" id="addressError">Please enter your shipping address</span>
-                    </div>
-                </div>
-
-                <!-- Payment Method -->
-                <div class="form-section">
-                    <h2>3. Payment Method</h2>
-                    <div class="payment-options">
-                        <label class="payment-option" onclick="selectPayment(this)">
-                            <input type="radio" name="paymentMethod" value="BANK_TRANSFER" required />
-                            <div>
-                                <strong>Bank Transfer</strong>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
-                                    Pay via bank transfer
-                                </p>
-                            </div>
-                        </label>
-                        <label class="payment-option" onclick="selectPayment(this)">
-                            <input type="radio" name="paymentMethod" value="COD" required />
-                            <div>
-                                <strong>Cash on Delivery</strong>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
-                                    Pay when you receive
-                                </p>
-                            </div>
-                        </label>
-                    </div>
-                    <span class="error" id="paymentError">Please select a payment method</span>
-                </div>
-
-                <button type="submit" class="place-order-btn">Place Order</button>
-            </form>
+        <div class="checkout-header-row">
+            <h1 class="checkout-title">Checkout</h1>
+            <a href="/cart" class="back-link">← Back to Cart</a>
         </div>
 
-        <!-- Order Summary -->
-        <div class="order-summary">
-            <h2>Order Summary</h2>
-            <div class="summary-item">
-                <span>Items:</span>
-                <span th:text="${cartSummary.itemCount}">0</span>
+        <div th:if="${param.error}" class="alert alert-error">
+            <span th:text="${param.error}">Error message</span>
+        </div>
+
+        <div class="checkout-layout">
+            <!-- Left: Form -->
+            <div class="checkout-card">
+                <form id="checkoutForm"
+                      action="/order/checkout"
+                      method="post"
+                      onsubmit="return validateForm()">
+
+                    <!-- Customer Information -->
+                    <div class="form-section">
+                        <h2>1. Customer Information</h2>
+
+                        <div class="form-group">
+                            <label class="form-label" for="customerName">Full Name *</label>
+                            <input class="form-input" type="text" id="customerName" name="customerName" required />
+                            <span class="error" id="nameError">Please enter your full name</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="phoneNumber">Phone Number *</label>
+                            <input class="form-input" type="tel" id="phoneNumber" name="phoneNumber"
+                                   placeholder="0123456789" required />
+                            <span class="error" id="phoneError">Please enter a valid phone number</span>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Information -->
+                    <div class="form-section">
+                        <h2>2. Delivery Address</h2>
+
+                        <div class="form-group">
+                            <label class="form-label" for="shippingAddress">Shipping Address *</label>
+                            <textarea class="form-textarea"
+                                      id="shippingAddress"
+                                      name="shippingAddress"
+                                      placeholder="Enter your complete address"
+                                      required></textarea>
+                            <span class="error" id="addressError">Please enter your shipping address</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="form-section">
+                        <h2>3. Payment Method</h2>
+
+                        <div class="payment-options">
+                            <label class="payment-option" onclick="selectPayment(this)">
+                                <input type="radio" name="paymentMethod" value="BANK_TRANSFER" required />
+                                <div>
+                                    <div class="payment-option-title">Bank Transfer</div>
+                                    <p class="payment-option-desc">
+                                        Pay via bank transfer using the instructions after placing your order.
+                                    </p>
+                                </div>
+                            </label>
+
+                            <label class="payment-option" onclick="selectPayment(this)">
+                                <input type="radio" name="paymentMethod" value="COD" required />
+                                <div>
+                                    <div class="payment-option-title">Cash on Delivery</div>
+                                    <p class="payment-option-desc">
+                                        Pay in cash when your order is delivered.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <span class="error" id="paymentError">Please select a payment method</span>
+                    </div>
+
+                    <button type="submit" class="btn-primary place-order-btn">
+                        Place Order
+                    </button>
+                </form>
             </div>
-            <div class="summary-item">
-                <span>Subtotal:</span>
-                <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
-            </div>
-            <div class="summary-total">
-                <span>Total:</span>
-                <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+
+            <!-- Right: Summary -->
+            <div class="summary-card">
+                <h2>Order Summary</h2>
+
+                <div class="summary-item">
+                    <span>Items</span>
+                    <span th:text="${cartSummary.itemCount}">0</span>
+                </div>
+
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+                </div>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+                </div>
             </div>
         </div>
+
     </div>
+</main>
 
-    <script>
-        function selectPayment(element) {
-            // Remove selected class from all options
-            document.querySelectorAll('.payment-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            // Add selected class to clicked option
-            element.classList.add('selected');
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
+<script>
+    function selectPayment(element) {
+        document.querySelectorAll('.payment-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        const radio = element.querySelector('input[type="radio"]');
+        if (radio) {
+            radio.checked = true;
+        }
+    }
+
+    function validateForm() {
+        let isValid = true;
+
+        document.querySelectorAll('.error').forEach(err => err.style.display = 'none');
+
+        const name = document.getElementById('customerName').value.trim();
+        if (name.length < 2) {
+            document.getElementById('nameError').style.display = 'block';
+            isValid = false;
         }
 
-        function validateForm() {
-            let isValid = true;
-
-            // Reset errors
-            document.querySelectorAll('.error').forEach(err => err.style.display = 'none');
-
-            // Validate name
-            const name = document.getElementById('customerName').value.trim();
-            if (name.length < 2) {
-                document.getElementById('nameError').style.display = 'block';
-                isValid = false;
-            }
-
-            // Validate phone
-            const phone = document.getElementById('phoneNumber').value.trim();
-            const phoneRegex = /^[0-9]{10,11}$/;
-            if (!phoneRegex.test(phone)) {
-                document.getElementById('phoneError').style.display = 'block';
-                isValid = false;
-            }
-
-            // Validate address
-            const address = document.getElementById('shippingAddress').value.trim();
-            if (address.length < 10) {
-                document.getElementById('addressError').style.display = 'block';
-                isValid = false;
-            }
-
-            // Validate payment method
-            const paymentSelected = document.querySelector('input[name="paymentMethod"]:checked');
-            if (!paymentSelected) {
-                document.getElementById('paymentError').style.display = 'block';
-                isValid = false;
-            }
-
-            return isValid;
+        const phone = document.getElementById('phoneNumber').value.trim();
+        const phoneRegex = /^[0-9]{10,11}$/;
+        if (!phoneRegex.test(phone)) {
+            document.getElementById('phoneError').style.display = 'block';
+            isValid = false;
         }
 
-        // Add real-time validation
-        document.getElementById('customerName').addEventListener('blur', function() {
-            if (this.value.trim().length < 2) {
-                document.getElementById('nameError').style.display = 'block';
-            } else {
-                document.getElementById('nameError').style.display = 'none';
-            }
-        });
+        const address = document.getElementById('shippingAddress').value.trim();
+        if (address.length < 10) {
+            document.getElementById('addressError').style.display = 'block';
+            isValid = false;
+        }
 
-        document.getElementById('phoneNumber').addEventListener('blur', function() {
-            const phoneRegex = /^[0-9]{10,11}$/;
-            if (!phoneRegex.test(this.value.trim())) {
-                document.getElementById('phoneError').style.display = 'block';
-            } else {
-                document.getElementById('phoneError').style.display = 'none';
-            }
-        });
+        const paymentSelected = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!paymentSelected) {
+            document.getElementById('paymentError').style.display = 'block';
+            isValid = false;
+        }
 
-        document.getElementById('shippingAddress').addEventListener('blur', function() {
-            if (this.value.trim().length < 10) {
-                document.getElementById('addressError').style.display = 'block';
-            } else {
-                document.getElementById('addressError').style.display = 'none';
-            }
-        });
-    </script>
+        return isValid;
+    }
+
+    document.getElementById('customerName').addEventListener('blur', function() {
+        if (this.value.trim().length < 2) {
+            document.getElementById('nameError').style.display = 'block';
+        } else {
+            document.getElementById('nameError').style.display = 'none';
+        }
+    });
+
+    document.getElementById('phoneNumber').addEventListener('blur', function() {
+        const phoneRegex = /^[0-9]{10,11}$/;
+        if (!phoneRegex.test(this.value.trim())) {
+            document.getElementById('phoneError').style.display = 'block';
+        } else {
+            document.getElementById('phoneError').style.display = 'none';
+        }
+    });
+
+    document.getElementById('shippingAddress').addEventListener('blur', function() {
+        if (this.value.trim().length < 10) {
+            document.getElementById('addressError').style.display = 'block';
+        } else {
+            document.getElementById('addressError').style.display = 'none';
+        }
+    });
+</script>
+
 </body>
 </html>

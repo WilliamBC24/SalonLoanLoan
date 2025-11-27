@@ -1,398 +1,574 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Product Details</title>
+    <title>Product Details | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
+        .product-detail-page {
+            padding: 2.5rem 0 3rem;
         }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #007bff;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        .details-card {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .detail-row {
-            display: flex;
-            padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-        .detail-label {
-            font-weight: bold;
-            width: 200px;
-            color: #555;
-        }
-        .detail-value {
-            flex: 1;
-            color: #333;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .active-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-left: 10px;
-        }
-        .active-true {
-            background: #28a745;
-            color: white;
-        }
-        .active-false {
-            background: #dc3545;
-            color: white;
-        }
-        .add-to-cart-form {
-            margin-top: 20px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .add-to-cart-btn {
-            padding: 12px 24px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .add-to-cart-btn:hover {
-            background: #0056b3;
-        }
-        .quantity-input {
-            width: 80px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-        
-        /* Rating Styles */
-        .rating-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .rating-summary {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
-        }
-        .rating-average {
-            font-size: 48px;
-            font-weight: bold;
-            color: #ff9800;
-            margin-right: 20px;
-        }
-        .rating-details {
-            flex: 1;
-        }
-        .stars {
-            color: #ff9800;
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        .star {
-            display: inline-block;
-        }
-        .star.filled {
-            color: #ff9800;
-        }
-        .star.empty {
-            color: #ddd;
-        }
-        .rating-count {
-            color: #666;
-            font-size: 14px;
-        }
-        .rating-form {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .rating-form h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .star-rating {
-            display: flex;
-            flex-direction: row-reverse;
-            gap: 5px;
-            font-size: 32px;
-            margin: 15px 0;
-            justify-content: flex-end;
-        }
-        .star-rating input {
-            display: none;
-        }
-        .star-rating label {
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
-        }
-        .star-rating input:checked ~ label,
-        .star-rating label:hover,
-        .star-rating label:hover ~ label {
-            color: #ff9800;
-        }
-        .comment-input {
-            width: 100%;
-            min-height: 80px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: Arial, sans-serif;
-            resize: vertical;
-        }
-        .submit-rating-btn {
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        .submit-rating-btn:hover {
-            background: #218838;
-        }
-        .feedback-list {
-            margin-top: 20px;
-        }
-        .feedback-item {
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #eee;
-        }
-        .feedback-header {
+
+        .product-detail-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            gap: 1rem;
         }
-        .feedback-user {
-            font-weight: bold;
-            color: #333;
+
+        .product-detail-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
         }
-        .feedback-rating {
-            color: #ff9800;
-            font-size: 18px;
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid transparent;
         }
-        .feedback-comment {
+
+        .badge-active {
+            background: #e3ffe7;
+            color: #1a7c34;
+            border-color: #bdecc5;
+        }
+
+        .badge-inactive {
+            background: #ffe6e6;
+            color: #b00020;
+            border-color: #f2b7b7;
+        }
+
+        .product-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr);
+            gap: 2rem;
+            align-items: flex-start;
+            margin-top: 1.7rem;
+        }
+
+        .product-media-card,
+        .product-info-card,
+        .rating-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+            padding: 1.6rem 1.8rem;
+        }
+
+        .product-image-wrapper {
+            border-radius: 20px;
+            overflow: hidden;
+            background: #f6f6f8;
+        }
+
+        .product-image-wrapper img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .product-meta {
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
             color: #555;
+        }
+
+        .product-meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.35rem;
+        }
+
+        .product-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a7c34;
+            margin: 0.4rem 0 0.8rem;
+        }
+
+        .product-stock {
+            font-size: 0.95rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .product-stock span {
+            font-weight: 600;
+        }
+
+        .product-stock-status-out {
+            color: #b00020;
+            font-weight: 700;
+        }
+
+        .product-stock-status-low {
+            color: #a45a00;
+            font-weight: 700;
+        }
+
+        .product-description {
+            margin: 0.8rem 0 1.2rem;
+            font-size: 0.95rem;
+            color: #444;
             line-height: 1.5;
         }
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+
+        .add-to-cart-box {
+            margin-top: 1.2rem;
+            padding-top: 1.1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
         }
+
+        .quantity-input {
+            width: 80px;
+            padding: 0.5rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid #ccc;
+            font-size: 0.9rem;
+            margin-right: 0.4rem;
+        }
+
+        .quantity-input:focus {
+            outline: none;
+            border-color: var(--accent, #ff8400);
+            box-shadow: 0 0 0 2px rgba(255,132,0,0.2);
+        }
+
+        /* Rating section */
+        .rating-card {
+            margin-top: 2rem;
+        }
+
+        .rating-card h2 {
+            margin-top: 0;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 1.3rem;
+            padding-bottom: 1.1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .rating-average {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #ff9800;
+        }
+
+        .rating-details {
+            flex: 1;
+        }
+
+        .stars {
+            color: #ff9800;
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .star {
+            display: inline-block;
+        }
+
+        .star.filled {
+            color: #ff9800;
+        }
+
+        .star.empty {
+            color: #ddd;
+        }
+
+        .rating-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .alert {
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
         .alert-success {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
+
         .alert-error {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
         .alert-info {
             background: #d1ecf1;
             color: #0c5460;
             border: 1px solid #bee5eb;
         }
+
         .login-prompt {
             background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 0.9rem 1rem;
+            border-radius: 12px;
             border: 1px solid #ffc107;
             color: #856404;
-            margin-bottom: 20px;
+            margin-bottom: 1.2rem;
+            font-size: 0.9rem;
         }
+
         .login-link {
-            color: #007bff;
+            color: var(--accent, #ff8400);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
         }
+
         .login-link:hover {
             text-decoration: underline;
+        }
+
+        .rating-form {
+            background: #f9f9f9;
+            padding: 1.2rem 1.3rem;
+            border-radius: 18px;
+            margin-bottom: 1.4rem;
+        }
+
+        .rating-form h3 {
+            margin-top: 0;
+            font-size: 1.05rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 0.4rem;
+            font-size: 1.8rem;
+            margin: 0.6rem 0 0.9rem;
+            justify-content: flex-end;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ff9800;
+        }
+
+        .comment-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.7rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        .submit-rating-btn {
+            margin-top: 0.8rem;
+        }
+
+        .feedback-list {
+            margin-top: 1.2rem;
+        }
+
+        .feedback-item {
+            padding: 0.9rem 1rem;
+            background: #f9f9f9;
+            border-radius: 16px;
+            margin-bottom: 0.9rem;
+            border: 1px solid #eee;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+
+        .feedback-user {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .feedback-rating {
+            color: #ff9800;
+            font-size: 1rem;
+        }
+
+        .feedback-comment {
+            color: #555;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            .product-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .product-media-card,
+            .product-info-card,
+            .rating-card {
+                padding: 1.3rem 1.3rem;
+            }
+            .product-detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="/products" class="back-link">← Back to Products</a>
-    
-    <h1>
-        <span th:text="${product.productName}">Product Name</span>
-        <span class="active-badge" 
-              th:classappend="${product.activeStatus} ? 'active-true' : 'active-false'"
-              th:text="${product.activeStatus} ? 'Active' : 'Inactive'">Active</span>
-    </h1>
 
-    <div class="details-card">
-        <div class="detail-row">
-            <div class="detail-label">Product ID:</div>
-            <div class="detail-value" th:text="${product.id}">1</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Product Name:</div>
-            <div class="detail-value" th:text="${product.productName}">Product Name</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Price:</div>
-            <div class="detail-value" th:text="${product.currentPrice} + ' VND'">0 VND</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Description:</div>
-            <div class="detail-value" th:text="${product.productDescription}">Description</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Available Stock:</div>
-            <div class="detail-value">
-                <span th:text="${availableStock}">0</span> units
-                <span th:if="${availableStock == 0}" style="color: red; font-weight: bold;"> (Out of Stock)</span>
-                <span th:if="${availableStock > 0 && availableStock < 10}" style="color: orange; font-weight: bold;"> (Low Stock)</span>
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: site-header}"></div>
+
+<main class="product-detail-page">
+    <div class="container">
+
+        <div class="product-detail-header">
+            <div>
+                <h1>
+                    <span th:text="${product.productName}">Product Name</span>
+                </h1>
             </div>
         </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Status:</div>
-            <div class="detail-value" th:text="${product.activeStatus} ? 'Active' : 'Inactive'">Active</div>
-        </div>
-    </div>
 
-    <div class="add-to-cart-form" th:if="${product.activeStatus}">
-        <form action="/cart/add" method="post">
-            <input type="hidden" name="productId" th:value="${product.id}" />
-            <label for="amount">Quantity:</label>
-            <input type="number" id="amount" name="amount" value="1" min="1" class="quantity-input" />
-            <button type="submit" class="add-to-cart-btn">Add to Cart</button>
-        </form>
-    </div>
+        <!-- MAIN LAYOUT: IMAGE LEFT, DETAILS RIGHT -->
+        <div class="product-layout">
 
-    <!-- Rating Section -->
-    <div class="rating-section">
-        <h2>Product Ratings & Reviews</h2>
-        
-        <!-- Success/Error Messages -->
-        <div th:if="${param.ratingSuccess}" class="alert alert-success">
-            Rating submitted successfully!
-        </div>
-        <div th:if="${param.ratingError}" class="alert alert-error">
-            <span th:text="${param.ratingError}">Error submitting rating</span>
-        </div>
-        
-        <!-- Rating Summary -->
-        <div class="rating-summary" th:if="${totalReviews > 0}">
-            <div class="rating-average" th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0.0</div>
-            <div class="rating-details">
-                <div class="stars">
-                    <span th:each="i : ${#numbers.sequence(1, 5)}" class="star" 
-                          th:classappend="${i <= averageRating} ? 'filled' : 'empty'">★</span>
+            <!-- LEFT: MEDIA -->
+            <section class="product-media-card">
+                <div class="product-image-wrapper">
+                    <!-- Placeholder image (replace with real image if available later) -->
+                    <img src="https://via.placeholder.com/600x450.png?text=Product+Image"
+                         alt="Product image">
                 </div>
-                <div class="rating-count" th:text="${totalReviews} + ' review(s)'">0 reviews</div>
-            </div>
-        </div>
-        
-        <div th:if="${totalReviews == 0}" class="alert alert-info">
-            No reviews yet. Be the first to review this product!
-        </div>
-        
-        <!-- Rating Form (only if user can rate) -->
-        <div th:if="${canRate}" class="rating-form">
-            <h3 th:text="${userFeedback != null ? 'Update Your Review' : 'Write a Review'}">Write a Review</h3>
-            <form action="/products/rate" method="post">
-                <input type="hidden" name="productId" th:value="${product.id}" />
-                
-                <div>
-                    <label>Rating:</label>
-                    <div class="star-rating">
-                        <input type="radio" name="rating" value="5" id="star5" th:checked="${userFeedback?.rating == 5}" required />
-                        <label for="star5">★</label>
-                        <input type="radio" name="rating" value="4" id="star4" th:checked="${userFeedback?.rating == 4}" />
-                        <label for="star4">★</label>
-                        <input type="radio" name="rating" value="3" id="star3" th:checked="${userFeedback?.rating == 3}" />
-                        <label for="star3">★</label>
-                        <input type="radio" name="rating" value="2" id="star2" th:checked="${userFeedback?.rating == 2}" />
-                        <label for="star2">★</label>
-                        <input type="radio" name="rating" value="1" id="star1" th:checked="${userFeedback?.rating == 1}" />
-                        <label for="star1">★</label>
+
+                <div class="product-meta">
+                    <div class="product-meta-row">
+                        <span>Product ID:</span>
+                        <span th:text="${product.id}">1</span>
+                    </div>
+                    <div class="product-meta-row">
+                        <span>Status:</span>
+                        <span th:text="${product.activeStatus} ? 'Active' : 'Inactive'">Active</span>
                     </div>
                 </div>
-                
-                <div>
-                    <label for="comment">Comment (optional):</label>
-                    <textarea id="comment" name="comment" class="comment-input" 
-                              placeholder="Share your thoughts about this product..." 
-                              th:text="${userFeedback?.comment}"></textarea>
-                </div>
-                
-                <button type="submit" class="submit-rating-btn" 
-                        th:text="${userFeedback != null ? 'Update Review' : 'Submit Review'}">Submit Review</button>
-            </form>
-        </div>
-        
-        <!-- Login prompt if user is not logged in -->
-        <div th:if="${!canRate and !isLoggedIn}" 
-             class="login-prompt">
-            <a href="/auth/user/login" class="login-link">Log in</a> to rate this product after purchasing it.
-        </div>
-        
-        <!-- Message if logged in but cannot rate -->
-        <div th:if="${!canRate and isLoggedIn}" 
-             class="alert alert-info">
-            You can rate this product after purchasing and receiving it.
-        </div>
-        
-        <!-- List of Feedback -->
-        <div class="feedback-list" th:if="${totalReviews > 0}">
-            <h3>Customer Reviews</h3>
-            <div th:each="feedback : ${feedbackList}" class="feedback-item">
-                <div class="feedback-header">
-                    <span class="feedback-user" th:text="${feedback.userAccount.username}">Username</span>
-                    <span class="feedback-rating">
-                        <span th:each="i : ${#numbers.sequence(1, 5)}" 
-                              th:text="${i <= feedback.rating} ? '★' : '☆'">★</span>
+            </section>
+
+            <!-- RIGHT: INFO -->
+            <section class="product-info-card">
+                <h2 th:text="${product.productName}">Product Name</h2>
+
+                <p class="product-price"
+                   th:text="${product.currentPrice} + ' VND'">
+                    0 VND
+                </p>
+
+                <div class="product-stock">
+                    Available Stock:
+                    <span th:text="${availableStock}">0</span> units
+                    <span th:if="${availableStock == 0}" class="product-stock-status-out">
+                        (Out of Stock)
+                    </span>
+                    <span th:if="${availableStock > 0 && availableStock < 10}"
+                          class="product-stock-status-low">
+                        (Low Stock)
                     </span>
                 </div>
-                <div class="feedback-comment" th:if="${feedback.comment != null and !#strings.isEmpty(feedback.comment)}" 
-                     th:text="${feedback.comment}">Great product!</div>
-            </div>
+
+                <p class="product-description"
+                   th:text="${product.productDescription}">
+                    Description goes here.
+                </p>
+
+                <!-- Add to cart (only if active) -->
+                <div class="add-to-cart-box" th:if="${product.activeStatus}">
+                    <form th:action="@{/cart/add}" method="post" style="display:flex; flex-wrap:wrap; gap:0.8rem; align-items:center;">
+                        <input type="hidden" name="productId" th:value="${product.id}"/>
+
+                        <label for="amount" style="font-size:0.9rem;">Quantity:</label>
+                        <input type="number"
+                               id="amount"
+                               name="amount"
+                               value="1"
+                               min="1"
+                               class="quantity-input"/>
+
+                        <button type="submit" class="btn-primary">
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </section>
         </div>
+
+        <!-- RATING & REVIEWS -->
+        <section class="rating-card">
+            <h2>Product Ratings &amp; Reviews</h2>
+
+            <!-- Success/Error messages -->
+            <div th:if="${param.ratingSuccess}" class="alert alert-success">
+                Rating submitted successfully!
+            </div>
+            <div th:if="${param.ratingError}" class="alert alert-error">
+                <span th:text="${param.ratingError}">Error submitting rating</span>
+            </div>
+
+            <!-- Rating summary -->
+            <div class="rating-summary" th:if="${totalReviews > 0}">
+                <div class="rating-average"
+                     th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">
+                    0.0
+                </div>
+                <div class="rating-details">
+                    <div class="stars">
+                        <span th:each="i : ${#numbers.sequence(1, 5)}"
+                              class="star"
+                              th:classappend="${i <= averageRating} ? ' filled' : ' empty'">
+                            ★
+                        </span>
+                    </div>
+                    <div class="rating-count"
+                         th:text="${totalReviews} + ' review(s)'">
+                        0 review(s)
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${totalReviews == 0}" class="alert alert-info">
+                No reviews yet. Be the first to review this product!
+            </div>
+
+            <!-- Rating form (user can rate) -->
+            <div th:if="${canRate}" class="rating-form">
+                <h3 th:text="${userFeedback != null ? 'Update Your Review' : 'Write a Review'}">
+                    Write a Review
+                </h3>
+
+                <form th:action="@{/products/rate}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.id}"/>
+
+                    <div>
+                        <label style="font-size:0.9rem;">Rating:</label>
+                        <div class="star-rating">
+                            <input type="radio" name="rating" value="5" id="star5"
+                                   th:checked="${userFeedback?.rating == 5}" required/>
+                            <label for="star5">★</label>
+
+                            <input type="radio" name="rating" value="4" id="star4"
+                                   th:checked="${userFeedback?.rating == 4}"/>
+                            <label for="star4">★</label>
+
+                            <input type="radio" name="rating" value="3" id="star3"
+                                   th:checked="${userFeedback?.rating == 3}"/>
+                            <label for="star3">★</label>
+
+                            <input type="radio" name="rating" value="2" id="star2"
+                                   th:checked="${userFeedback?.rating == 2}"/>
+                            <label for="star2">★</label>
+
+                            <input type="radio" name="rating" value="1" id="star1"
+                                   th:checked="${userFeedback?.rating == 1}"/>
+                            <label for="star1">★</label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="comment" style="font-size:0.9rem;">Comment (optional):</label>
+                        <textarea id="comment"
+                                  name="comment"
+                                  class="comment-input"
+                                  placeholder="Share your thoughts about this product..."
+                                  th:text="${userFeedback?.comment}"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="btn-primary submit-rating-btn"
+                            th:text="${userFeedback != null ? 'Update Review' : 'Submit Review'}">
+                        Submit Review
+                    </button>
+                </form>
+            </div>
+
+            <!-- Login prompt if not logged in -->
+            <div th:if="${!canRate and !isLoggedIn}" class="login-prompt">
+                <a th:href="@{/auth/user/login}" class="login-link">Log in</a>
+                to rate this product after purchasing it.
+            </div>
+
+            <!-- Message if logged in but cannot rate yet -->
+            <div th:if="${!canRate and isLoggedIn}" class="alert alert-info">
+                You can rate this product after purchasing and receiving it.
+            </div>
+
+            <!-- Feedback list -->
+            <div class="feedback-list" th:if="${totalReviews > 0}">
+                <h3 style="margin-bottom:0.8rem;">Customer Reviews</h3>
+
+                <div th:each="feedback : ${feedbackList}" class="feedback-item">
+                    <div class="feedback-header">
+                        <span class="feedback-user"
+                              th:text="${feedback.userAccount.username}">
+                            Username
+                        </span>
+                        <span class="feedback-rating">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                  th:text="${i <= feedback.rating} ? '★' : '☆'">
+                                ★
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feedback-comment"
+                         th:if="${feedback.comment != null and !#strings.isEmpty(feedback.comment)}"
+                         th:text="${feedback.comment}">
+                        Great product!
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </div>
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
 
 </body>
 </html>

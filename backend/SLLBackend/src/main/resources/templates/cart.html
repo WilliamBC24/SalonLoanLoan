@@ -1,219 +1,330 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Shopping Cart</title>
+    <title>Shopping Cart | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 1000px;
+        .cart-page {
+            padding: 2.5rem 0 3rem;
         }
-        .header {
+
+        .cart-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .back-link {
-            display: inline-block;
-            color: #007bff;
-            text-decoration: none;
+
+        .cart-header-row h1 {
+            margin: 0;
+            font-size: 1.6rem;
         }
-        .back-link:hover {
-            text-decoration: underline;
+
+        .cart-wrapper {
+            display: grid;
+            grid-template-columns: minmax(0, 2.5fr) minmax(260px, 1fr);
+            gap: 1.8rem;
+            align-items: flex-start;
         }
-        h1 {
-            color: #333;
+
+        .cart-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+            padding: 1.6rem 1.8rem;
         }
+
         .cart-empty {
-            padding: 40px;
             text-align: center;
-            background: #f9f9f9;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+            padding: 2.5rem 1.2rem;
+            border-radius: 24px;
+            border: 1px dashed #dddddd;
+            background: #fafafa;
         }
+
+        .cart-empty h2 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
         .cart-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            background: white;
+            min-width: 640px;
         }
-        .cart-table th {
-            background: #f8f9fa;
-            padding: 12px;
-            text-align: left;
-            border-bottom: 2px solid #dee2e6;
-            font-weight: bold;
-        }
+
+        .cart-table th,
         .cart-table td {
-            padding: 12px;
-            border-bottom: 1px solid #dee2e6;
+            padding: 0.75rem 0.9rem;
+            text-align: left;
+            border-bottom: 1px solid #ececec;
+            font-size: 0.9rem;
         }
+
+        .cart-table th {
+            background: #f6f6f6;
+            font-weight: 600;
+        }
+
         .product-name {
-            color: #007bff;
+            color: var(--accent, #ff8400);
             text-decoration: none;
+            font-weight: 600;
         }
+
         .product-name:hover {
             text-decoration: underline;
         }
+
         .price {
-            font-weight: bold;
-            color: #28a745;
+            font-weight: 600;
+            color: #1c7c1c;
         }
+
         .quantity-input {
-            width: 60px;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            width: 70px;
+            padding: 0.4rem 0.5rem;
+            border-radius: 999px;
+            border: 1px solid #ccc;
+            font-size: 0.9rem;
+            text-align: center;
         }
+
+        .quantity-input:focus {
+            outline: none;
+            border-color: var(--accent, #ff8400);
+            box-shadow: 0 0 0 2px rgba(255,132,0,0.2);
+        }
+
         .remove-btn {
-            padding: 5px 10px;
+            padding: 0.4rem 0.7rem;
             background: #dc3545;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 999px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 0.8rem;
         }
+
         .remove-btn:hover {
             background: #c82333;
         }
-        .cart-summary {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-            margin-top: 20px;
+
+        .cart-summary-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+            padding: 1.5rem 1.6rem;
         }
+
+        .cart-summary-title {
+            margin: 0 0 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
         .summary-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            font-size: 18px;
+            align-items: baseline;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
         }
+
         .summary-total {
-            font-weight: bold;
-            font-size: 24px;
-            color: #28a745;
-            border-top: 2px solid #dee2e6;
-            padding-top: 10px;
-            margin-top: 10px;
+            margin-top: 0.8rem;
+            padding-top: 0.7rem;
+            border-top: 2px solid #eee;
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            color: #1c7c1c;
         }
-        .continue-shopping {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
+
+        .summary-total span:last-child {
+            font-size: 1.2rem;
         }
-        .continue-shopping:hover {
-            background: #5a6268;
+
+        .cart-actions-bottom {
+            margin-top: 1.4rem;
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 900px) {
+            .cart-wrapper {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cart-card,
+            .cart-summary-card {
+                padding: 1.3rem 1.2rem;
+            }
+
+            .cart-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Shopping Cart</h1>
-        <a href="/products" class="back-link">← Back to Products</a>
-    </div>
 
-    <div th:if="${#lists.isEmpty(cartItems)}" class="cart-empty">
-        <h2>Your cart is empty</h2>
-        <p>Start shopping to add items to your cart!</p>
-        <a href="/products" class="continue-shopping">Browse Products</a>
-    </div>
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: site-header}"></div>
 
-    <div th:if="${!#lists.isEmpty(cartItems)}">
-        <table class="cart-table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="item : ${cartItems}">
-                    <td>
-                        <a th:href="@{/products/{id}(id=${item.product.id})}" 
-                           th:text="${item.product.productName}" 
-                           class="product-name">Product Name</a>
-                    </td>
-                    <td>
-                        <span class="price" th:text="${item.product.currentPrice} + ' VND'">0 VND</span>
-                    </td>
-                    <td>
-                        <input type="number" 
-                               th:data-product-id="${item.product.id}"
-                               th:data-price="${item.product.currentPrice}"
-                               th:value="${item.amount}" 
-                               min="1" 
-                               class="quantity-input"
-                               onchange="updateQuantity(this)" />
-                    </td>
-                    <td>
-                        <span class="price" 
-                              th:id="'item-total-' + ${item.product.id}"
-                              th:text="${item.product.currentPrice * item.amount} + ' VND'">0 VND</span>
-                    </td>
-                    <td>
-                        <form action="/cart/remove" method="post" style="display: inline;">
-                            <input type="hidden" name="productId" th:value="${item.product.id}" />
-                            <button type="submit" class="remove-btn">Remove</button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<main class="cart-page">
+    <div class="container">
 
-        <div class="cart-summary">
-            <div class="summary-row summary-total">
-                <span>Total Cart Price:</span>
-                <span id="total-price" th:text="${totalPrice} + ' VND'">0 VND</span>
-            </div>
-            <a href="/order/checkout" class="continue-shopping" 
-               style="background: #28a745; margin-top: 10px; display: block; text-align: center;">
-                Proceed to Checkout
+        <div class="cart-header-row">
+            <h1>Shopping Cart</h1>
+            <a th:href="@{/products}" class="btn-outline">← Back to Products</a>
+        </div>
+
+        <!-- Empty Cart -->
+        <div th:if="${#lists.isEmpty(cartItems)}" class="cart-empty">
+            <h2>Your cart is empty</h2>
+            <p>Start shopping to add items to your cart!</p>
+            <a th:href="@{/products}" class="btn-primary" style="margin-top:1rem;">
+                Browse Products
             </a>
         </div>
 
-        <a href="/products" class="continue-shopping">Continue Shopping</a>
-    </div>
+        <!-- Cart with Items -->
+        <div th:if="${!#lists.isEmpty(cartItems)}" class="cart-wrapper">
 
-    <script>
-        function updateQuantity(input) {
-            const productId = input.getAttribute('data-product-id');
-            const amount = input.value;
-            const price = parseInt(input.getAttribute('data-price'));
-            
-            if (amount < 1) {
-                input.value = 1;
-                return;
-            }
-            
-            // Send AJAX request to update quantity
-            fetch('/cart/api/update-quantity', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `productId=${productId}&amount=${amount}`
-            })
+            <!-- LEFT: ITEMS -->
+            <section class="cart-card">
+                <div class="cart-table-wrapper">
+                    <table class="cart-table">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th style="width: 110px;">Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${cartItems}">
+                            <td>
+                                <a th:href="@{/products/{id}(id=${item.product.id})}"
+                                   th:text="${item.product.productName}"
+                                   class="product-name">
+                                    Product Name
+                                </a>
+                            </td>
+                            <td>
+                                <span class="price"
+                                      th:text="${item.product.currentPrice} + ' VND'">
+                                    0 VND
+                                </span>
+                            </td>
+                            <td>
+                                <input type="number"
+                                       class="quantity-input"
+                                       min="1"
+                                       th:data-product-id="${item.product.id}"
+                                       th:data-price="${item.product.currentPrice}"
+                                       th:value="${item.amount}"
+                                       onchange="updateQuantity(this)"/>
+                            </td>
+                            <td>
+                                <span class="price"
+                                      th:id="'item-total-' + ${item.product.id}"
+                                      th:text="${item.product.currentPrice * item.amount} + ' VND'">
+                                    0 VND
+                                </span>
+                            </td>
+                            <td>
+                                <form th:action="@{/cart/remove}" method="post" style="display:inline;">
+                                    <input type="hidden" name="productId" th:value="${item.product.id}"/>
+                                    <button type="submit" class="remove-btn">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bottom actions under table -->
+                <div class="cart-actions-bottom">
+                    <a th:href="@{/products}" class="btn-outline">
+                        ← Continue Shopping
+                    </a>
+                </div>
+            </section>
+
+            <!-- RIGHT: SUMMARY -->
+            <aside class="cart-summary-card">
+                <h3 class="cart-summary-title">Order Summary</h3>
+
+                <!-- You can add more summary rows later if needed -->
+                <div class="summary-total">
+                    <span>Total:</span>
+                    <span id="total-price"
+                          th:text="${totalPrice} + ' VND'">
+                        0 VND
+                    </span>
+                </div>
+
+                <a th:href="@{/order/checkout}"
+                   class="btn-primary"
+                   style="margin-top:1.1rem; display:block; text-align:center;">
+                    Proceed to Checkout
+                </a>
+            </aside>
+
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
+<script>
+    function updateQuantity(input) {
+        const productId = input.getAttribute('data-product-id');
+        const amount = input.value;
+        const price = parseInt(input.getAttribute('data-price'));
+
+        if (amount < 1) {
+            input.value = 1;
+            return;
+        }
+
+        fetch('/cart/api/update-quantity', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `productId=${productId}&amount=${amount}`
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update the item total
                     const itemTotalElement = document.getElementById('item-total-' + productId);
                     if (itemTotalElement && data.itemTotal !== undefined) {
                         itemTotalElement.textContent = data.itemTotal + ' VND';
                     }
-                    
-                    // Update the total price
+
                     const totalPriceElement = document.getElementById('total-price');
                     if (totalPriceElement && data.totalPrice !== undefined) {
                         totalPriceElement.textContent = data.totalPrice + ' VND';
@@ -222,11 +333,9 @@
             })
             .catch(error => {
                 console.error('Error updating quantity:', error);
-                // Optionally reload the page on error
-                // location.reload();
             });
-        }
-    </script>
+    }
+</script>
 
 </body>
 </html>

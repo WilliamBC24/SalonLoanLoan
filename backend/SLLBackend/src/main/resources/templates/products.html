@@ -1,155 +1,191 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Products</title>
+    <title>Products | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
         .search-bar {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
+            background: #ffffff;
+            padding: 1.8rem;
+            border-radius: 24px;
+            border: 1px solid #e6e6e6;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.05);
+            margin-bottom: 2.5rem;
         }
+
         .filter-group {
-            margin-bottom: 15px;
+            margin-bottom: 1.4rem;
         }
+
         .filter-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
             display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
+            color: #333;
         }
+
+        .search-input {
+            width: 100%;
+            padding: 0.85rem 1.1rem;
+            border: 1px solid #d0d0d0;
+            border-radius: 999px;
+            font-size: 0.95rem;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 132, 0, 0.25);
+            outline: none;
+        }
+
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 1rem;
         }
+
         .checkbox-item {
             display: flex;
             align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
         }
-        .checkbox-item input {
-            margin-right: 5px;
-        }
+
         .search-buttons {
-            margin-top: 15px;
-        }
-        .search-buttons button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
-        }
-        .search-btn {
-            background: #007bff;
-            color: white;
-        }
-        .search-btn:hover {
-            background: #0056b3;
-        }
-        .reset-btn {
-            background: #6c757d;
-            color: white;
-        }
-        .reset-btn:hover {
-            background: #545b62;
-        }
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-        }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-            text-align: left;
-        }
-        th { 
-            background: #f4f4f4; 
-        }
-        tr:hover {
-            background: #f5f5f5;
-        }
-        .view-link {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .view-link:hover {
-            text-decoration: underline;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem;
+            margin-top: 1.2rem;
         }
     </style>
 </head>
 <body>
-    <h1>All Products</h1>
 
-    <!-- Search and Filter Bar -->
-    <div class="search-bar">
-        <form method="get" action="/products">
-            <div class="filter-group">
-                <label for="search-name">Search by Name:</label>
-                <input type="text" id="search-name" name="name" 
-                       th:value="${searchName}" 
-                       placeholder="Enter product name..."
-                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+<!-- Header -->
+<div th:replace="~{fragments/header :: site-header}"></div>
+
+<main>
+
+    <section class="products" id="products">
+        <div class="container">
+
+            <!-- PAGE TITLE -->
+            <div class="section-heading text-center">
+                <p class="section-kicker">Product Management</p>
+                <h2>All Products</h2>
             </div>
 
-            <div class="filter-group">
-                <label>Active Status:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="radio" id="status-all" name="activeStatus" value="" 
-                               th:checked="${selectedActiveStatus == null}">
-                        <label for="status-all">All</label>
+            <!-- SEARCH / FILTER BAR -->
+            <div class="search-bar">
+                <form method="get" th:action="@{/products}">
+
+                    <!-- NAME SEARCH -->
+                    <div class="filter-group">
+                        <label for="product-search-name">Search by Name</label>
+                        <input type="text"
+                               id="product-search-name"
+                               name="name"
+                               class="search-input"
+                               th:value="${searchName}"
+                               placeholder="Enter product name...">
                     </div>
-                    <div class="checkbox-item">
-                        <input type="radio" id="status-active" name="activeStatus" value="true" 
-                               th:checked="${selectedActiveStatus != null and selectedActiveStatus == true}">
-                        <label for="status-active">Active Only</label>
+
+                    <!-- ACTIVE STATUS FILTER -->
+                    <div class="filter-group">
+                        <label>Active Status</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="radio" name="activeStatus" value=""
+                                       th:checked="${selectedActiveStatus == null}">
+                                All
+                            </label>
+
+                            <label class="checkbox-item">
+                                <input type="radio" name="activeStatus" value="true"
+                                       th:checked="${selectedActiveStatus != null and selectedActiveStatus == true}">
+                                Active only
+                            </label>
+
+                            <label class="checkbox-item">
+                                <input type="radio" name="activeStatus" value="false"
+                                       th:checked="${selectedActiveStatus != null and selectedActiveStatus == false}">
+                                Inactive only
+                            </label>
+                        </div>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="radio" id="status-inactive" name="activeStatus" value="false"
-                               th:checked="${selectedActiveStatus != null and selectedActiveStatus == false}">
-                        <label for="status-inactive">Inactive Only</label>
+
+                    <!-- BUTTONS -->
+                    <div class="search-buttons">
+                        <button type="submit" class="btn-primary">Search</button>
+                        <button type="button" class="btn-outline"
+                                onclick="window.location.href='/products'">
+                            Reset
+                        </button>
                     </div>
-                </div>
+
+                </form>
             </div>
 
-            <div class="search-buttons">
-                <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/products'">Reset</button>
-            </div>
-        </form>
-    </div>
 
-    <!-- Products Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price (VND)</th>
-                <th>Description</th>
-                <th>Active</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="product : ${products}" th:data-product-name="${product.productName}">
-                <td th:text="${product.id}">1</td>
-                <td th:text="${product.productName}">Product name</td>
-                <td th:text="${product.currentPrice}">0</td>
-                <td th:text="${product.productDescription}">Description</td>
-                <td th:text="${product.activeStatus}">false</td>
-                <td>
-                    <a th:href="@{/products/{id}(id=${product.id})}" class="view-link">View Details</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+            <!-- PRODUCT GRID (same design as homepage) -->
+            <div th:if="${#lists.isEmpty(products)}" class="text-center">
+                <p>No products available at the moment.</p>
+            </div>
+
+            <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
+
+                <article class="product-card" th:each="product : ${products}">
+                    <a th:href="@{/products/{id}(id=${product.id})}" style="display:block; color:inherit;">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/400x400.png?text=Product"
+                             alt="Product Image">
+
+                        <!-- Optional Active Indicator -->
+<!--                        <div class="badge"-->
+<!--                             th:if="${product.activeStatus}"-->
+<!--                             style="background-color:#d1ffd1; color:#0a7a0a;">-->
+<!--                            Active-->
+<!--                        </div>-->
+
+<!--                        <div class="badge"-->
+<!--                             th:if="${!product.activeStatus}"-->
+<!--                             style="background-color:#ffe1e1; color:#b30000;">-->
+<!--                            Inactive-->
+<!--                        </div>-->
+                    </div>
+
+                    <div class="product-body">
+                        <h3 th:text="${product.productName}">Product Name</h3>
+
+                        <p class="product-desc"
+                           th:text="${product.productDescription}">
+                            Description goes here.
+                        </p>
+
+                        <p class="price">
+                            <span th:text="'₫' + ${product.currentPrice}">₫0</span>
+                        </p>
+
+                        <!-- Action button -->
+                        </div>
+                    </a>
+                </article>
+
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
 
 </body>
 </html>

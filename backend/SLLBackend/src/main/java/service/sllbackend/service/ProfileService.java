@@ -12,7 +12,7 @@ public interface ProfileService {
     UserAccount getCurrentUser(Long userId);
     StaffAccount getCurrentStaff(String username);
     void updateUserProfile(Long userId, UserProfileDTO userProfileDTO);
-    void updateStaffProfile(Long staffId, StaffProfileDTO staffProfileDTO);
+    void updateStaffProfile(Long staffId, StaffProfileDTO staffProfileDTO) throws Exception;
     void userPasswordChange(Long userId, PasswordChangeDTO passwordChangeDTO);
     void staffPasswordChange(String username, PasswordChangeDTO passwordChangeDTO);
     List<StaffAccount> getStaffAccount(String username, AccountStatus activeStatus);

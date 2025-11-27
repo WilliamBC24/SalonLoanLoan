@@ -13,7 +13,7 @@ public interface DTOMapper {
     @Mapping(target = "loyalty.point", source = "loyalty.point")
     UserProfileViewDTO toUserProfileViewDTO(UserAccount userAccount, Loyalty loyalty);
 
-    UserProfileEditDTO toUserProfileEditDTO(UserAccount userAccount);
+    UserProfileEditDTO toUserProfileEditDTO(UserAccount userAccount, Loyalty loyalty);
 
     @Mapping(target = "active", expression = "java(staffAccount.getAccountStatus() == service.sllbackend.enumerator.AccountStatus.ACTIVE)")
     @Mapping(target = "name", source = "staff.name")

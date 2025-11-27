@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface CartRepo extends JpaRepository<Cart, Cart.CartId> {
     List<Cart> findByUserAccount(UserAccount userAccount);
     Optional<Cart> findByUserAccountAndProduct_Id(UserAccount userAccount, Integer productId);
+
+    int countCartByUserAccount(UserAccount userAccount);
 }

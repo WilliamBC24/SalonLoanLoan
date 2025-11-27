@@ -1,5 +1,6 @@
 package service.sllbackend.web.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,4 +15,6 @@ public class StaffProfileDTO {
     @Size(min = 3, max = 20)
     private String name;
 
+    @Email
+    private String email;
 }

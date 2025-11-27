@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface OrderInvoiceRepo extends JpaRepository<OrderInvoice, Integer> {
     List<OrderInvoice> findByUserAccountOrderByCreatedAtDesc(UserAccount userAccount);
+
+    long countByUserAccount(UserAccount user);
 }

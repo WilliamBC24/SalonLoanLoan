@@ -190,4 +190,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderInvoice> getAllOrders() {
         return orderInvoiceRepo.findAll();
     }
+
+    @Override
+    public long countByUser(UserAccount user) {
+        return orderInvoiceRepo.countByUserAccount(user);
+    }
 }

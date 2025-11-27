@@ -4,8 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import service.sllbackend.entity.Appointment;
+import service.sllbackend.entity.AppointmentDetails;
+import service.sllbackend.entity.RequestedService;
+import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.AppointmentStatus;
+import service.sllbackend.repository.AppointmentDetailsRepo;
 import service.sllbackend.repository.AppointmentRepo;
+import service.sllbackend.repository.RequestedServiceRepo;
+import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.AppointmentService;
 import service.sllbackend.web.dto.AppointmentRegisterDTO;
 
@@ -16,7 +22,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepo appointmentRepo;
+    private final AppointmentDetailsRepo appointmentDetailsRepo;
+    private final RequestedServiceRepo requestedServiceRepo;
     private final RequestedServicesServiceImpl requestedServicesService;
+    private final UserAccountRepo userAccountRepo;
 
     @Override
     @Transactional(readOnly = true)
@@ -35,6 +44,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment findById(Long id) {
         return appointmentRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+    }
+
+    @Override
+    public List<RequestedService> getRequestedServices(Integer appointmentId) {
+        return requestedServiceRepo.findByAppointmentId(appointmentId);
+    }
+
+    @Override
+    public AppointmentDetails getDetailsByAppointmentId(Integer appointmentId) {
+        return appointmentDetailsRepo.findByAppointmentId(Long.valueOf(appointmentId)).orElseThrow(() -> new RuntimeException("Can't find details"));
     }
 
     @Override
@@ -62,5 +81,10 @@ public class AppointmentServiceImpl implements AppointmentService {
                         .phoneNumber(appointmentRegisterDTO.getPhoneNumber())
                 .build());
         requestedServicesService.flattenAndSave(appointmentRegisterDTO.getSelectedServices(), savedAppointment.getId());
+        AppointmentDetails details = new AppointmentDetails();
+        details.setAppointment(savedAppointment);
+        userAccountRepo
+                .findByUsernameIgnoreCase(appointmentRegisterDTO.getName()).ifPresent(details::setUser);
+        appointmentDetailsRepo.save(details);
     }
 }

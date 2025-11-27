@@ -2,6 +2,7 @@ package service.sllbackend.service;
 
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.entity.OrderInvoiceDetails;
+import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.OrderStatus;
 
 import java.util.List;
@@ -68,4 +69,6 @@ public interface OrderService {
      * @return List of all order invoices
      */
     List<OrderInvoice> getAllOrders();
+
+    long countByUser(UserAccount user);
 }

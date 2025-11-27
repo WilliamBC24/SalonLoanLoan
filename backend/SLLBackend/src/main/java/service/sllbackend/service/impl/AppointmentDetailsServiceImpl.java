@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import service.sllbackend.entity.AppointmentDetails;
+import service.sllbackend.entity.UserAccount;
 import service.sllbackend.repository.AppointmentDetailsRepo;
 import service.sllbackend.service.AppointmentDetailsService;
 
@@ -22,5 +23,10 @@ public class AppointmentDetailsServiceImpl implements AppointmentDetailsService 
     @Transactional
     public void save(AppointmentDetails appointmentDetails) {
         appointmentDetailsRepo.save(appointmentDetails);
+    }
+
+    @Override
+    public long countByUser(UserAccount user) {
+        return appointmentDetailsRepo.countByUser(user);
     }
 }

@@ -131,12 +131,13 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public void updateStaffProfile(Long staffId, StaffProfileDTO staffProfileDTO) {
+    public void updateStaffProfile(Long staffId, StaffProfileDTO staffProfileDTO) throws Exception {
         Staff existingStaff = staffRepo.findById(staffId.intValue())
                 .orElseThrow(() -> new IllegalArgumentException("Staff not found"));
         validationUtils.validateStaffProfile(staffId, staffProfileDTO.getName());
 
         existingStaff.setName(staffProfileDTO.getName().trim());
+        existingStaff.setEmail(staffProfileDTO.getEmail().trim());
         staffRepo.save(existingStaff);
     }
 

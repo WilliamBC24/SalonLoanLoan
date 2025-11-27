@@ -42,10 +42,10 @@ public class AppointmentDetails {
     @JoinColumn(name = "user_id")
     private UserAccount user;
 
-    @Column(name = "scheduled_start", nullable = false)
+    @Column(name = "scheduled_start")
     private LocalDateTime scheduledStart;
 
-    @Column(name = "scheduled_end", nullable = false)
+    @Column(name = "scheduled_end")
     private LocalDateTime scheduledEnd;
 
     @Column(name = "actual_start")

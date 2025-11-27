@@ -197,8 +197,8 @@
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         appointment_id INT NOT NULL REFERENCES appointment(id),
         user_id INT REFERENCES user_account(id),
-        scheduled_start TIMESTAMP NOT NULL,
-        scheduled_end TIMESTAMP NOT NULL,
+        scheduled_start TIMESTAMP,
+        scheduled_end TIMESTAMP,
         actual_start TIMESTAMP,
         actual_end TIMESTAMP,
         duration_minutes INT GENERATED ALWAYS AS (

@@ -46,4 +46,6 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, Long> {
     limit 3
 """)
     List<UserAccount> findTop3ByPhoneNumber(String phoneNumber);
+
+    Optional<UserAccount> findByUsernameIgnoreCase(String username);
 }

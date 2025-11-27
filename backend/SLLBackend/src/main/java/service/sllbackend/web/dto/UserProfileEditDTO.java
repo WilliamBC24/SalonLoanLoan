@@ -20,4 +20,5 @@ public class UserProfileEditDTO {
     private Gender gender;
     private LocalDate birthDate;
     private String accountStatus;
+    private LoyaltyDTO loyalty;
 }

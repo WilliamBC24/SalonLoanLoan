@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.Loyalty;
 import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
-import service.sllbackend.service.LoyaltyService;
-import service.sllbackend.service.ProfileService;
+import service.sllbackend.service.*;
 import service.sllbackend.utils.DTOMapper;
 import service.sllbackend.web.dto.*;
 
@@ -26,6 +25,8 @@ import java.security.Principal;
 public class ProfileController {
     private final ProfileService profileService;
     private final LoyaltyService loyaltyService;
+    private final OrderService orderService;
+    private final AppointmentDetailsService appointmentDetailsService;
     private final DTOMapper DTOMapper;
 
     @GetMapping("/user/profile")
@@ -33,15 +34,29 @@ public class ProfileController {
         UserAccount userAccount = profileService.getCurrentUser(principal.getName());
         Loyalty loyalty = loyaltyService.findLoyaltyByUser(userAccount);
         UserProfileViewDTO userProfileViewDTO = DTOMapper.toUserProfileViewDTO(userAccount, loyalty);
+
+        long orderCount = orderService.countByUser(userAccount);
+        long appointmentCount = appointmentDetailsService.countByUser(userAccount);
+
         model.addAttribute("user", userProfileViewDTO);
+        model.addAttribute("orderCount", orderCount);
+        model.addAttribute("appointmentCount", appointmentCount);
         return "user-profile";
     }
 
     @GetMapping("/user/profile/edit")
     public String editProfile(Model model, Principal principal) {
         UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-        UserProfileEditDTO userProfileEditDTO = DTOMapper.toUserProfileEditDTO(userAccount);
+        Loyalty loyalty = loyaltyService.findLoyaltyByUser(userAccount);
+        UserProfileEditDTO userProfileEditDTO = DTOMapper.toUserProfileEditDTO(userAccount, loyalty);
+
+        long orderCount = orderService.countByUser(userAccount);
+        long appointmentCount = appointmentDetailsService.countByUser(userAccount);
+
         model.addAttribute("user", userProfileEditDTO);
+        model.addAttribute("orderCount", orderCount);
+        model.addAttribute("appointmentCount", appointmentCount);
+
         return "user-profile-edit";
     }
 
@@ -49,10 +64,7 @@ public class ProfileController {
     public String updateUserProfile(Model model, @Valid @ModelAttribute UserProfileDTO userProfileDTO,
                                     BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
-            UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-            UserProfileEditDTO userProfileEditDTO = DTOMapper.toUserProfileEditDTO(userAccount);
-            model.addAttribute("user", userProfileEditDTO);
-            return "user-profile-edit";
+            return "redirect:/user/profile/edit?error";
         }
         try {
             Integer userId = profileService.getCurrentUser(principal.getName()).getId();
@@ -78,11 +90,7 @@ public class ProfileController {
             model.addAttribute("user", updatedUserProfileViewDTO);
             return "redirect:/user/profile?updated";
         } catch (Exception e) {
-            UserAccount userAccount = profileService.getCurrentUser(principal.getName());
-            UserProfileEditDTO userProfileEditDTO = DTOMapper.toUserProfileEditDTO(userAccount);
-            model.addAttribute("user", userProfileEditDTO);
-            return "redirect:/user/profile/edit";
-        }
+            return "redirect:/user/profile/edit?error";        }
     }
 
     @GetMapping("/user/password")
@@ -94,14 +102,14 @@ public class ProfileController {
     public String userPasswordChange(@Valid @ModelAttribute PasswordChangeDTO passwordChangeDTO,
                                      BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
-            return "user-change-password";
+            return "redirect:/user/password?error";
         }
         try {
             long userId = profileService.getCurrentUser(principal.getName()).getId();
             profileService.userPasswordChange(userId, passwordChangeDTO);
-            return "redirect:/user/profile";
+            return "redirect:/user/profile?updated";
         } catch (Exception e) {
-            return "user-change-password";
+            return "redirect:/user/password?error";
         }
     }
 
@@ -125,10 +133,7 @@ public class ProfileController {
     public String updateStaffProfile(Model model, @Valid @ModelAttribute StaffProfileDTO staffProfileDTO,
                                      BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
-            StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
-            StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
-            model.addAttribute("staffAccount", staffProfileViewDTO);
-            return "staff-profile";
+            return "redirect:/staff/profile/edit?error";
         }
         try {
             Integer staffId = profileService.getCurrentStaff(principal.getName()).getId();
@@ -138,10 +143,7 @@ public class ProfileController {
             model.addAttribute("staffAccount", staffProfileViewDTO);
             return "redirect:/staff/profile?updated";
         } catch (Exception e) {
-            StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
-            StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
-            model.addAttribute("staffAccount", staffProfileViewDTO);
-            return "redirect:/staff/profile/edit";
+            return "redirect:/staff/profile/edit?error";
         }
     }
 

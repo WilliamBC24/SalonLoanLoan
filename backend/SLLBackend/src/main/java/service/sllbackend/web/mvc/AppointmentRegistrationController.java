@@ -23,17 +23,21 @@ public class AppointmentRegistrationController {
     }
 
     @PostMapping("/book")
-    public String appointmentRegistration(@Valid @ModelAttribute AppointmentRegisterDTO appointmentRegisterDTO,
-                                          BindingResult bindingResult) {
+    public String appointmentRegistration(
+            @Valid @ModelAttribute AppointmentRegisterDTO appointmentRegisterDTO,
+            BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult.getAllErrors());
-            return "appointment-register";
+            return "redirect:/appointment?error";
         }
-        try{
+
+        try {
             appointmentService.register(appointmentRegisterDTO);
         } catch (Exception e) {
-            return "redirect:/appointment";
+            return "redirect:/appointment?error";
         }
-        return "redirect:/appointment";
+
+        return "redirect:/appointment?success";
     }
+
 }

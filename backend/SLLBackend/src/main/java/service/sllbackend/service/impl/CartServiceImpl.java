@@ -32,6 +32,14 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public int getCartCount(String username) {
+        return userAccountRepo.findByUsername(username)
+                .map(cartRepo::countCartByUserAccount)
+                .orElse(0);
+    }
+
+
+    @Override
     @Transactional
     public void addProductToCart(String username, Integer productId, Integer amount) {
         UserAccount userAccount = userAccountRepo.findByUsername(username)

@@ -190,6 +190,7 @@
         name TEXT NOT NULL,
         phone_number VARCHAR(20) NOT NULL,
         status TEXT NOT NULL DEFAULT 'PENDING',
+        responsible_staff_id INT REFERENCES staff(id),
         CHECK (scheduled_at IS NULL OR scheduled_at >= registered_at)
     );
 

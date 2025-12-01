@@ -12,9 +12,9 @@ import service.sllbackend.web.dto.LoyaltyListViewDTO;
 import java.util.List;
 
 @Controller
-@RequestMapping("/staff/loyalty")
+@RequestMapping("/manager/loyalty")
 @RequiredArgsConstructor
-public class LoyaltyManagementController {
+public class ManagerLoyaltyManagementController {
     private final LoyaltyService loyaltyService;
 
     @GetMapping("/list")

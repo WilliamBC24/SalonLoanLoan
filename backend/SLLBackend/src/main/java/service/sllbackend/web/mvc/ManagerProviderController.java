@@ -17,13 +17,13 @@ import service.sllbackend.repository.SupplierCategoryRepo;
 import service.sllbackend.service.SupplierService;
 
 @Controller
-@RequestMapping("/staff/supplier")
-public class StaffProviderController {
+@RequestMapping("/manager/supplier")
+public class ManagerProviderController {
 
     private final SupplierService supplierService;
     private final SupplierCategoryRepo supplierCategoryRepo;
 
-    public StaffProviderController(SupplierService supplierService, SupplierCategoryRepo supplierCategoryRepo) {
+    public ManagerProviderController(SupplierService supplierService, SupplierCategoryRepo supplierCategoryRepo) {
         this.supplierService = supplierService;
         this.supplierCategoryRepo = supplierCategoryRepo;
     }

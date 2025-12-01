@@ -18,12 +18,12 @@ import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.service.PromotionService;
 
 @Controller
-@RequestMapping("/staff/promotion")
-public class StaffPromotionController {
+@RequestMapping("/manager/promotion")
+public class ManagerPromotionController {
 
     private final PromotionService promotionService;
 
-    public StaffPromotionController(PromotionService promotionService) {
+    public ManagerPromotionController(PromotionService promotionService) {
         this.promotionService = promotionService;
     }
 

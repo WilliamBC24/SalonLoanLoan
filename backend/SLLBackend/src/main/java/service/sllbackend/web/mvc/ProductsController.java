@@ -26,13 +26,11 @@ public class ProductsController {
     @GetMapping
     public String listProducts(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) Boolean activeStatus,
             Model model) {
-        List<Product> products = productsService.getProducts(name, activeStatus);
+        List<Product> products = productsService.getProducts(name, true);
 
         model.addAttribute("products", products);
         model.addAttribute("searchName", name);
-        model.addAttribute("selectedActiveStatus", activeStatus);
         
         return "products";
     }

@@ -18,9 +18,9 @@ import service.sllbackend.repository.ServiceCategoryRepo;
 import service.sllbackend.repository.ServiceRepo;
 
 @Controller
-@RequestMapping("/staff/service")
+@RequestMapping("/manager/service")
 @RequiredArgsConstructor
-public class StaffServiceController {
+public class ManagerServiceController {
 
     private final ServiceRepo serviceRepo;
     private final ServiceCategoryRepo serviceCategoryRepo;

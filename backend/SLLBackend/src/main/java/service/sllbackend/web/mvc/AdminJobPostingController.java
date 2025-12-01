@@ -15,9 +15,9 @@ import service.sllbackend.web.dto.JobPostingEditDTO;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/job")
+@RequestMapping("/admin/job-posting")
 @RequiredArgsConstructor
-public class JobPostingController {
+public class AdminJobPostingController {
     private final JobPostingService jobPostingService;
     private final JobPostingRepo jobPostingRepo;
 

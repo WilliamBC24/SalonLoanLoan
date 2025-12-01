@@ -30,7 +30,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/staff/invoices")
 @RequiredArgsConstructor
-public class InventoryInvoiceController {
+public class StaffInventoryInvoiceController {
     
     private final InventoryInvoiceService inventoryInvoiceService;
     private final SupplierRepo supplierRepo;

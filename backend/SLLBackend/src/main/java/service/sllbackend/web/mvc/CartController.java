@@ -49,7 +49,7 @@ public class CartController {
         }
         
         cartService.addProductToCart(principal.getName(), productId, amount);
-        return "redirect:/cart";
+        return "redirect:/products/" + productId;
     }
 
     @PostMapping("/remove")

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import service.sllbackend.entity.Staff;
+import service.sllbackend.enumerator.StaffStatus;
 
 import java.util.List;
 
@@ -20,5 +21,5 @@ public interface StaffRepo extends JpaRepository<Staff, Integer> {
             @Param("email") String email,
             @Param("ssn") String ssn,
             @Param("currentUserId") Long currentUserId);
-
+    List<Staff> findByStaffStatus(StaffStatus staffStatus);
 }

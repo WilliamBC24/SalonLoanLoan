@@ -11,27 +11,27 @@ import service.sllbackend.service.JobApplicationService;
 import java.util.List;
 
 @Controller
-@RequestMapping("/staff/job")
+@RequestMapping("/manager/job-application")
 @RequiredArgsConstructor
-public class StaffJobApplicationController {
+public class ManagerJobApplicationController {
     private final JobPostingApplicationRepo jobPostingApplicationRepo;
     private final JobApplicationService jobApplicationService;
 
     @GetMapping("/list")
-    public String staffJobApplicationList(Model model){
+    public String adminJobApplicationList(Model model){
         List<JobPostingApplication> applications = jobPostingApplicationRepo.findAll();
         model.addAttribute("applications", applications);
         return "staff-view-application-list";
     }
 
     @PostMapping("/accept/{id}")
-    public String staffJobApplicationAccept(@PathVariable("id") Long id){
+    public String adminJobApplicationAccept(@PathVariable("id") Long id){
         jobApplicationService.acceptApplication(id);
         return "redirect:/staff/job/list";
     }
 
     @PostMapping("/reject/{id}")
-    public String staffJobApplicationReject(@PathVariable("id") Long id){
+    public String adminJobApplicationReject(@PathVariable("id") Long id){
         jobApplicationService.rejectApplication(id);
         return "redirect:/staff/job/list";
     }

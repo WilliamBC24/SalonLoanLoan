@@ -5,7 +5,10 @@ import service.sllbackend.entity.AppointmentDetails;
 import service.sllbackend.entity.RequestedService;
 import service.sllbackend.enumerator.AppointmentStatus;
 import service.sllbackend.web.dto.AppointmentRegisterDTO;
+import service.sllbackend.web.dto.AvailableStaffDTO;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface AppointmentService {
@@ -15,5 +18,5 @@ public interface AppointmentService {
     AppointmentDetails getDetailsByAppointmentId(Integer appointmentId);
     void save(Appointment appointment);
     void register(AppointmentRegisterDTO appointmentRegisterDTO);
-
+    List<AvailableStaffDTO> findAvailableStaff(LocalDate date, LocalTime startTime, int durationMinutes);
 }

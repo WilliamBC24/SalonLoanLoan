@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/staff/registration")
+@RequestMapping("/manager/registration")
 @RequiredArgsConstructor
-public class StaffRegistrationManagementController {
+public class ManagerRegistrationManagementController {
     private final AppointmentService appointmentService;
     private final AppointmentDetailsService appointmentDetailsService;
     private final UserAccountService userAccountService;

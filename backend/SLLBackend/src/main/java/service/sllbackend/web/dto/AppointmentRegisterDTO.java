@@ -9,25 +9,23 @@ import service.sllbackend.utils.annotations.TimeInRange;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppointmentRegisterDTO {
-    @NotEmpty
-    private List<Integer> selectedServices;
+    @NotBlank
+    private String selectedServices;
 
     @NotNull
     @Future
     private LocalDate appointmentDate;
 
-    @TimeInRange(start = "05:30", end = "19:00")
+    @NotNull
     private LocalTime appointmentTime;
 
     @NotNull
-    @TimeInRange(start = "05:30", end = "23:59")
     private LocalTime endTime;
 
     @NotBlank
@@ -36,4 +34,9 @@ public class AppointmentRegisterDTO {
     @NotBlank
     @Pattern(regexp = "^\\+?[0-9]{7,15}$")
     private String phoneNumber;
+
+    private Integer staffId;
+
+    private Integer totalDuration;
+    private Long totalPrice;
 }

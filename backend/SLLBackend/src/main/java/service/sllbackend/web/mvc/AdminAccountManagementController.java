@@ -20,7 +20,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/profiles")
 @RequiredArgsConstructor
-public class AccountManagementController {
+public class AdminAccountManagementController {
     private final ProfileService profileService;
     private final UserAccountRepo userAccountRepo;
     private final StaffAccountRepo staffAccountRepo;
@@ -91,5 +91,10 @@ public class AccountManagementController {
         } catch (Exception e) {
             return "redirect:/admin/profiles/staff/edit/" + id + "?error";
         }
+    }
+
+    @GetMapping("create-account")
+    public String createStaffAccount() {
+        return "admin-create-account";
     }
 }

@@ -19,12 +19,12 @@ import service.sllbackend.entity.Product;
 import service.sllbackend.service.ProductsService;
 
 @Controller
-@RequestMapping("/staff/products")
-public class StaffProductController {
+@RequestMapping("/manager/products")
+public class ManagerProductController {
 
     private final ProductsService productsService;
 
-    public StaffProductController(ProductsService productsService) {
+    public ManagerProductController(ProductsService productsService) {
         this.productsService = productsService;
     }
 

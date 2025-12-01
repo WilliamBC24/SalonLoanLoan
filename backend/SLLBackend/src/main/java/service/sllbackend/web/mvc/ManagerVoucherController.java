@@ -18,12 +18,12 @@ import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.service.VoucherService;
 
 @Controller
-@RequestMapping("/staff/voucher")
-public class StaffVoucherController {
+@RequestMapping("/manager/voucher")
+public class ManagerVoucherController {
 
     private final VoucherService voucherService;
 
-    public StaffVoucherController(VoucherService voucherService) {
+    public ManagerVoucherController(VoucherService voucherService) {
         this.voucherService = voucherService;
     }
 

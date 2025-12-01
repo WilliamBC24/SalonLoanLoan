@@ -40,4 +40,8 @@ public class Appointment {
     @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'PENDING'")
     @Builder.Default
     private AppointmentStatus status = AppointmentStatus.PENDING;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "responsible_staff_id")
+    private Staff responsibleStaffId;
 }

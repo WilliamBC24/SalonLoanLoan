@@ -71,7 +71,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                         .phoneNumber(appointmentRegisterDTO.getPhoneNumber());
         if (appointmentRegisterDTO.getStaffId() != null) {
             staffRepo.findById(appointmentRegisterDTO.getStaffId())
-                    .ifPresent(builder::responsibleStaffId);
+                    .ifPresent(builder::preferredStaffId);
         }
 
         Appointment savedAppointment = appointmentRepo.save(builder.build());

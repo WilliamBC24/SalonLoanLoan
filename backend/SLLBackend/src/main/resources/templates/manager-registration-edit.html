@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8"/>
-    <title>Edit Appointment | Staff</title>
+    <title>Manager - Edit Appointment | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Global staff layout styles -->
@@ -252,7 +252,7 @@
             </div>
 
             <!-- FORM -->
-            <form th:action="@{/staff/registration/save/{id}(id=${appointment.id})}" method="post">
+            <form th:action="@{/manager/registration/save/{id}(id=${appointment.id})}" method="post">
 
                 <!-- SECTION 1: BASIC APPOINTMENT -->
                 <div class="form-section">
@@ -377,7 +377,7 @@
                 }
 
                 $.ajax({
-                    url: '/staff/registration/user-search',
+                    url: '/manager/registration/user-search',
                     type: 'GET',
                     data: { phone: query },
                     success: function (data) {

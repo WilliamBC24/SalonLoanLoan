@@ -3,27 +3,27 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Edit Service | Salon Loan Loan</title>
+    <title>Manager - Create Service | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Global styles (sidebar + staff-main scroll behaviour) -->
+    <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 
     <style>
         /* ===== PAGE STRUCTURE ===== */
-        .service-edit-page {
+        .service-create-page {
             padding: 2.5rem 0 3rem;
             background: var(--bg-light);
             min-height: 100vh;
         }
 
-        .service-edit-layout-inner {
+        .service-create-layout-inner {
             max-width: 70vw;
             width: 100%;
             margin: 1rem auto;
         }
 
-        .service-edit-card {
+        .service-create-card {
             background: #ffffff;
             padding: 2.2rem;
             border-radius: var(--radius-lg);
@@ -31,7 +31,7 @@
             box-shadow: var(--shadow-soft);
         }
 
-        .service-edit-header-row {
+        .service-create-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,28 +39,19 @@
             margin-bottom: 1.5rem;
         }
 
-        .service-edit-title-block {
+        .service-create-title-block {
             text-align: left;
         }
 
-        .service-edit-title-block .section-kicker {
+        .service-create-title-block .section-kicker {
             margin-bottom: 0.25rem;
         }
 
-        .service-edit-title-block h2 {
+        .service-create-title-block h2 {
             margin: 0;
-            display: flex;
-            align-items: baseline;
-            gap: 0.4rem;
         }
 
-        .service-id-badge {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #6b7280;
-        }
-
-        .service-edit-actions {
+        .service-create-actions {
             display: flex;
             gap: 0.6rem;
             align-items: center;
@@ -86,11 +77,6 @@
 
         .back-link-pill:hover {
             background: #f4f4f4;
-        }
-
-        .info-text {
-            color: #6b7280;
-            font-size: 0.85rem;
         }
 
         /* ===== ALERTS ===== */
@@ -241,28 +227,17 @@
 <div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
 <!-- MAIN SCROLLABLE CONTENT -->
-<main class="staff-main service-edit-page">
-    <div class="service-edit-layout-inner">
-        <section class="service-edit-card">
+<main class="staff-main service-create-page">
+    <div class="service-create-layout-inner">
+        <section class="service-create-card">
             <!-- Header -->
-            <div class="service-edit-header-row">
-                <div class="service-edit-title-block section-heading">
+            <div class="service-create-header-row">
+                <div class="service-create-title-block section-heading">
                     <p class="section-kicker">Service Management</p>
-                    <h2>
-                        Edit Service
-                        <span class="service-id-badge">
-                            #<span th:text="${service.id}">1</span>
-                        </span>
-                    </h2>
-                    <p class="info-text">
-                        You can update service information and availability here.
-                    </p>
+                    <h2>Create New Service</h2>
                 </div>
-                <div class="service-edit-actions">
-                    <a href="/staff/service/list" class="back-link-pill">
-                        <span class="icon">←</span>
-                        <span>Back to Service List</span>
-                    </a>
+                <div class="service-create-actions">
+
                 </div>
             </div>
 
@@ -270,19 +245,14 @@
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
             <!-- Form -->
-            <form id="editServiceForm"
+            <form id="createServiceForm"
                   method="post"
-                  th:action="@{/staff/service/edit/{id}(id=${service.id})}"
+                  action="/manager/service/create"
                   class="form-grid">
                 <div>
                     <div class="form-group">
                         <label for="serviceName" class="required">Service Name</label>
-                        <input type="text"
-                               id="serviceName"
-                               name="serviceName"
-                               th:value="${service.serviceName}"
-                               data-original-name="${service.serviceName}"
-                               required>
+                        <input type="text" id="serviceName" name="serviceName" required>
                         <div class="error" id="serviceNameError">Service name is required</div>
                         <div class="warning" id="serviceNameWarning">
                             A service with this name already exists
@@ -295,10 +265,7 @@
                             <option value="">-- Select Category --</option>
                             <option th:each="category : ${categories}"
                                     th:value="${category.id}"
-                                    th:text="${category.name}"
-                                    th:selected="${service.serviceCategory.id == category.id}">
-                                Category
-                            </option>
+                                    th:text="${category.name}">Category</option>
                         </select>
                         <div class="error" id="serviceCategoryIdError">
                             Service category is required
@@ -309,8 +276,8 @@
                         <label for="serviceType" class="required">Service Type</label>
                         <select id="serviceType" name="serviceType" required>
                             <option value="">-- Select Type --</option>
-                            <option value="SINGLE" th:selected="${service.serviceType.name() == 'SINGLE'}">Single</option>
-                            <option value="COMBO" th:selected="${service.serviceType.name() == 'COMBO'}">Combo</option>
+                            <option value="SINGLE">Single</option>
+                            <option value="COMBO">Combo</option>
                         </select>
                         <div class="error" id="serviceTypeError">
                             Service type is required
@@ -319,12 +286,7 @@
 
                     <div class="form-group">
                         <label for="servicePrice" class="required">Service Price (VND)</label>
-                        <input type="number"
-                               id="servicePrice"
-                               name="servicePrice"
-                               min="0"
-                               th:value="${service.servicePrice}"
-                               required>
+                        <input type="number" id="servicePrice" name="servicePrice" min="0" required>
                         <div class="error" id="servicePriceError">
                             Service price is required and must be a positive number
                         </div>
@@ -332,13 +294,7 @@
 
                     <div class="form-group">
                         <label for="durationMinutes" class="required">Duration (minutes)</label>
-                        <input type="number"
-                               id="durationMinutes"
-                               name="durationMinutes"
-                               min="1"
-                               max="32767"
-                               th:value="${service.durationMinutes}"
-                               required>
+                        <input type="number" id="durationMinutes" name="durationMinutes" min="1" max="32767" required>
                         <div class="error" id="durationMinutesError">
                             Duration is required and must be between 1 and 32767 minutes
                         </div>
@@ -346,29 +302,24 @@
 
                     <div class="form-group">
                         <label for="serviceDescription">Service Description</label>
-                        <textarea id="serviceDescription"
-                                  name="serviceDescription"
-                                  th:text="${service.serviceDescription}"></textarea>
+                        <textarea id="serviceDescription" name="serviceDescription"></textarea>
                     </div>
 
                     <div class="form-group">
                         <div class="checkbox-group">
-                            <input type="checkbox"
-                                   id="activeStatus"
-                                   name="activeStatus"
-                                   value="true"
-                                   th:checked="${service.activeStatus}">
+                            <input type="checkbox" id="activeStatus" name="activeStatus" value="true">
                             <label for="activeStatus">Active Status</label>
                         </div>
                     </div>
 
                     <div class="button-group">
                         <button type="submit" class="btn btn-primary">
-                            <span>Update Service</span>
+                            <span>➕</span>
+                            <span>Create Service</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/staff/service/list'">
+                                onclick="window.location.href='/manager/service/list'">
                             <span>✕</span>
                             <span>Cancel</span>
                         </button>
@@ -382,20 +333,10 @@
 <script>
     let serviceNameCheckTimeout;
     let isDuplicateName = false;
-    const originalServiceName = document
-        .getElementById('serviceName')
-        .getAttribute('data-original-name');
 
     // Check for duplicate service name
     function checkDuplicateServiceName(serviceName) {
         if (!serviceName || !serviceName.trim()) {
-            document.getElementById('serviceNameWarning').style.display = 'none';
-            isDuplicateName = false;
-            return;
-        }
-
-        // Don't check if name hasn't changed
-        if (serviceName.trim().toLowerCase() === originalServiceName.toLowerCase()) {
             document.getElementById('serviceNameWarning').style.display = 'none';
             isDuplicateName = false;
             return;
@@ -431,7 +372,7 @@
             });
     }
 
-    document.getElementById('editServiceForm').addEventListener('submit', function(event) {
+    document.getElementById('createServiceForm').addEventListener('submit', function(event) {
         let isValid = true;
 
         // Check for duplicate name

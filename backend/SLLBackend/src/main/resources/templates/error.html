@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Error | Salon Loan Loan</title>
@@ -144,9 +144,20 @@
             </details>
 
             <div class="error-actions">
-                <a th:href="@{/}" class="btn-primary">
+                <!-- When user is admin, manager, or staff -->
+                <a th:href="@{/staff/profile}"
+                   class="btn-primary"
+                   sec:authorize="hasAnyRole('ADMIN', 'MANAGER', 'STAFF')">
                     Return to Home
                 </a>
+
+                <!-- When user is NOT admin, manager, or staff -->
+                <a th:href="@{/}"
+                   class="btn-primary"
+                   sec:authorize="!hasAnyRole('ADMIN', 'MANAGER', 'STAFF')">
+                    Return to Home
+                </a>
+
                 <button type="button"
                         class="btn-outline"
                         onclick="window.history.back()">

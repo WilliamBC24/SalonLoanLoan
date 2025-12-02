@@ -3,27 +3,27 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Manage Services | Salon Loan Loan</title>
+    <title>Manager - Manage Products | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Global styles (sidebar + staff-main scroll behaviour) -->
+    <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 
     <style>
         /* ===== PAGE STRUCTURE ===== */
-        .services-page {
+        .products-page {
             padding: 2.5rem 0 3rem;
             background: var(--bg-light);
             min-height: 100vh;
         }
 
-        .services-layout-inner {
+        .products-layout-inner {
             max-width: 85vw;
             width: 100%;
             margin: 1rem auto;
         }
 
-        .services-card {
+        .products-card {
             background: #ffffff;
             padding: 2.2rem;
             border-radius: var(--radius-lg);
@@ -31,7 +31,7 @@
             box-shadow: var(--shadow-soft);
         }
 
-        .services-header-row {
+        .products-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,19 +39,19 @@
             margin-bottom: 1.5rem;
         }
 
-        .services-title-block {
+        .products-title-block {
             text-align: left;
         }
 
-        .services-title-block .section-kicker {
+        .products-title-block .section-kicker {
             margin-bottom: 0.25rem;
         }
 
-        .services-title-block h2 {
+        .products-title-block h2 {
             margin: 0;
         }
 
-        .services-actions {
+        .products-actions {
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -84,14 +84,31 @@
             padding: 0.6rem 1.3rem;
             font-size: 0.9rem;
             border: none;
-            background: #1643a3;
+            background: #1653a3;
             color: #ffffff;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
-            box-shadow: 0 6px 15px rgba(22, 71, 163, 0.35);
+            box-shadow: 0 6px 15px rgba(22, 78, 163, 0.35);
             cursor: pointer;
+        }
+
+        .edit-link {
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+            text-decoration: none;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #111827;
+            font-size: 0.86rem;
+            font-weight: 500;
+        }
+
+        .edit-link:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
         }
 
         .create-btn-pill span.icon {
@@ -100,7 +117,7 @@
         }
 
         .create-btn-pill:hover {
-            background: #154380;
+            background: #153380;
         }
 
         /* ===== ALERTS ===== */
@@ -252,7 +269,7 @@
         }
 
         /* ===== TABLE ===== */
-        .services-table-wrapper {
+        .products-table-wrapper {
             border-radius: 18px;
             overflow: hidden;
             box-shadow: var(--shadow-soft);
@@ -289,26 +306,16 @@
             background: #f9fafb;
         }
 
-        /* ===== ACTION BUTTON (EDIT LINK STYLE) ===== */
-        .edit-link {
-            border-radius: 999px;
-            padding: 0.35rem 0.9rem;
-            text-decoration: none;
-            border: 1px solid #d1d5db;
-            background: #ffffff;
-            color: #111827;
-            font-size: 0.86rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
+        .stock-low {
+            color: #ea580c;
+            font-weight: 700;
         }
 
-        .edit-link:hover {
-            background: #eff6ff;
-            border-color: #bfdbfe;
-            color: #1d4ed8;
+        .stock-out {
+            color: #dc2626;
+            font-weight: 700;
         }
+
     </style>
 </head>
 <body class="staff-layout">
@@ -317,23 +324,19 @@
 <div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
 <!-- MAIN SCROLLABLE CONTENT -->
-<main class="staff-main services-page">
-    <div class="services-layout-inner">
-        <section class="services-card">
+<main class="staff-main products-page">
+    <div class="products-layout-inner">
+        <section class="products-card">
             <!-- Header -->
-            <div class="services-header-row">
-                <div class="services-title-block section-heading">
-                    <p class="section-kicker">Service Management</p>
-                    <h2>Manage Services</h2>
+            <div class="products-header-row">
+                <div class="products-title-block section-heading">
+                    <p class="section-kicker">Inventory Management</p>
+                    <h2>Manage Products</h2>
                 </div>
-                <div class="services-actions">
-                    <a href="/staff/landing" class="back-link-pill">
-                        <span class="icon">←</span>
-                        <span>Back to Dashboard</span>
-                    </a>
-                    <a href="/staff/service/create" class="create-btn-pill">
+                <div class="products-actions">
+                    <a href="/manager/products/create" class="create-btn-pill">
                         <span class="icon">＋</span>
-                        <span>Create New Service</span>
+                        <span>Create New Product</span>
                     </a>
                 </div>
             </div>
@@ -351,7 +354,7 @@
                     </div>
                 </div>
 
-                <form method="get" action="/staff/service/list">
+                <form method="get" action="/manager/products/list">
                     <div class="search-form">
                         <div class="filter-group">
                             <label for="search-name">Search by Name</label>
@@ -359,42 +362,35 @@
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter service name..." />
+                                   placeholder="Enter product name..." />
                         </div>
 
                         <div class="filter-group">
-                            <label>Service Type</label>
+                            <label>Active Status</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item">
-                                    <input type="checkbox"
-                                           id="type-single"
-                                           name="types"
-                                           value="SINGLE"
-                                           th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
-                                    <label for="type-single">Single</label>
+                                    <input type="radio"
+                                           id="status-all"
+                                           name="activeStatus"
+                                           value=""
+                                           th:checked="${selectedActiveStatus == null}">
+                                    <label for="status-all">All</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox"
-                                           id="type-combo"
-                                           name="types"
-                                           value="COMBO"
-                                           th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
-                                    <label for="type-combo">Combo</label>
+                                    <input type="radio"
+                                           id="status-active"
+                                           name="activeStatus"
+                                           value="true"
+                                           th:checked="${selectedActiveStatus != null and selectedActiveStatus == true}">
+                                    <label for="status-active">Active Only</label>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="filter-group">
-                            <label>Service Category</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item" th:each="category : ${allCategories}">
-                                    <input type="checkbox"
-                                           th:id="'category-' + ${category.id}"
-                                           name="categories"
-                                           th:value="${category.id}"
-                                           th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
-                                    <label th:for="'category-' + ${category.id}"
-                                           th:text="${category.name}">Category</label>
+                                <div class="checkbox-item">
+                                    <input type="radio"
+                                           id="status-inactive"
+                                           name="activeStatus"
+                                           value="false"
+                                           th:checked="${selectedActiveStatus != null and selectedActiveStatus == false}">
+                                    <label for="status-inactive">Inactive Only</label>
                                 </div>
                             </div>
                         </div>
@@ -407,7 +403,7 @@
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/staff/service/list'">
+                                onclick="window.location.href='/manager/products/list'">
                             <span>✕</span>
                             <span>Reset</span>
                         </button>
@@ -415,33 +411,37 @@
                 </form>
             </div>
 
-            <!-- Services Table -->
-            <div class="services-table-wrapper">
+            <!-- Products Table -->
+            <div class="products-table-wrapper">
                 <table>
                     <thead>
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Category</th>
-                        <th>Type</th>
-                        <th>Price</th>
-                        <th>Duration (min)</th>
+                        <th>Price (VND)</th>
+                        <th>Description</th>
+                        <th>Stock</th>
                         <th>Active</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="svc : ${services}">
-                        <td th:text="${svc.id}">1</td>
-                        <td th:text="${svc.serviceName}">Service name</td>
-                        <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
-                        <td th:text="${svc.serviceType}">SINGLE</td>
-                        <td th:text="${svc.servicePrice}">0</td>
-                        <td th:text="${svc.durationMinutes}">0</td>
-                        <td th:text="${svc.activeStatus}">false</td>
+                    <tr th:each="product : ${products}">
+                        <td th:text="${product.id}">1</td>
+                        <td th:text="${product.productName}">Product name</td>
+                        <td th:text="${product.currentPrice}">0</td>
+                        <td th:text="${product.productDescription}">Description</td>
                         <td>
-                            <a th:href="@{/staff/service/edit/{id}(id=${svc.id})}" class="edit-link">
-                                <span>Edit</span>
+                            <span th:text="${stockMap[product.id]}">0</span>
+                            <span th:if="${stockMap[product.id] == 0}"
+                                  class="stock-out"> (Out of Stock)</span>
+                            <span th:if="${stockMap[product.id] > 0 && stockMap[product.id] < 10}"
+                                  class="stock-low"> (Low)</span>
+                        </td>
+                        <td th:text="${product.activeStatus}">false</td>
+                        <td>
+                            <a th:href="@{/manager/products/edit/{id}(id=${product.id})}" class="edit-link">
+                                Edit
                             </a>
                         </td>
                     </tr>

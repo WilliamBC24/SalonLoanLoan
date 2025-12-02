@@ -45,14 +45,14 @@ public class ManagerProviderController {
         model.addAttribute("selectedCategories", categories);
         model.addAttribute("searchName", name);
         
-        return "staff-provider-list";
+        return "manager-provider-list";
     }
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         List<SupplierCategory> categories = supplierCategoryRepo.findAll();
         model.addAttribute("categories", categories);
-        return "staff-provider-create";
+        return "manager-provider-create";
     }
 
     @PostMapping("/create")
@@ -78,10 +78,10 @@ public class ManagerProviderController {
             
             supplierService.createSupplier(supplier);
             redirectAttributes.addFlashAttribute("successMessage", "Provider created successfully!");
-            return "redirect:/staff/supplier/list";
+            return "redirect:/manager/supplier/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating provider: " + e.getMessage());
-            return "redirect:/staff/supplier/create";
+            return "redirect:/manager/supplier/create";
         }
     }
 
@@ -96,7 +96,7 @@ public class ManagerProviderController {
         List<SupplierCategory> categories = supplierCategoryRepo.findAll();
         model.addAttribute("supplier", supplier);
         model.addAttribute("categories", categories);
-        return "staff-provider-edit";
+        return "manager-provider-edit";
     }
 
     @PostMapping("/edit/{id}")
@@ -123,10 +123,10 @@ public class ManagerProviderController {
             
             supplierService.updateSupplier(id, supplier);
             redirectAttributes.addFlashAttribute("successMessage", "Provider updated successfully!");
-            return "redirect:/staff/supplier/list";
+            return "redirect:/manager/supplier/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating provider: " + e.getMessage());
-            return "redirect:/staff/supplier/edit/" + id;
+            return "redirect:/manager/supplier/edit/" + id;
         }
     }
 }

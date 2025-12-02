@@ -31,14 +31,14 @@ public class ManagerPromotionController {
     public String listPromotions(Model model) {
         List<Promotion> promotions = promotionService.getAllPromotions();
         model.addAttribute("promotions", promotions);
-        return "staff-promotion-list";
+        return "manager-promotion-list";
     }
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         List<PromotionStatus> statuses = promotionService.getAllPromotionStatuses();
         model.addAttribute("statuses", statuses);
-        return "staff-promotion-create";
+        return "manager-promotion-create";
     }
 
     @PostMapping("/create")
@@ -71,10 +71,10 @@ public class ManagerPromotionController {
             
             promotionService.createPromotion(promotion);
             redirectAttributes.addFlashAttribute("successMessage", "Promotion created successfully!");
-            return "redirect:/staff/promotion/list";
+            return "redirect:/manager/promotion/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating promotion: " + e.getMessage());
-            return "redirect:/staff/promotion/create";
+            return "redirect:/manager/promotion/create";
         }
     }
 
@@ -88,7 +88,7 @@ public class ManagerPromotionController {
         List<PromotionStatus> statuses = promotionService.getAllPromotionStatuses();
         model.addAttribute("promotion", promotion);
         model.addAttribute("statuses", statuses);
-        return "staff-promotion-edit";
+        return "manager-promotion-edit";
     }
 
     @PostMapping("/edit/{id}")
@@ -122,10 +122,10 @@ public class ManagerPromotionController {
             
             promotionService.updatePromotion(id, promotion);
             redirectAttributes.addFlashAttribute("successMessage", "Promotion updated successfully!");
-            return "redirect:/staff/promotion/list";
+            return "redirect:/manager/promotion/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating promotion: " + e.getMessage());
-            return "redirect:/staff/promotion/edit/" + id;
+            return "redirect:/manager/promotion/edit/" + id;
         }
     }
 }

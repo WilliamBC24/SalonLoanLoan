@@ -6,13 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import service.sllbackend.entity.Appointment;
-import service.sllbackend.entity.AppointmentDetails;
-import service.sllbackend.entity.UserAccount;
+import service.sllbackend.entity.*;
 import service.sllbackend.enumerator.AppointmentStatus;
-import service.sllbackend.service.AppointmentDetailsService;
-import service.sllbackend.service.AppointmentService;
-import service.sllbackend.service.UserAccountService;
+import service.sllbackend.service.*;
 import service.sllbackend.utils.DTOMapper;
 import service.sllbackend.web.dto.AppointmentDetailsEditDTO;
 import service.sllbackend.web.dto.AppointmentDetailsViewDTO;
@@ -28,6 +24,8 @@ public class ManagerRegistrationManagementController {
     private final AppointmentService appointmentService;
     private final AppointmentDetailsService appointmentDetailsService;
     private final UserAccountService userAccountService;
+    private final RequestedServicesService requestedServicesService;
+    private final StaffAccountService staffAccountService;
     private final DTOMapper dtoMapper;
 
     @GetMapping("/list")
@@ -41,25 +39,40 @@ public class ManagerRegistrationManagementController {
         model.addAttribute("registrations", registrations);
         model.addAttribute("allStatuses", AppointmentStatus.values());
 
-        return "staff-registration-list";
+        return "manager-registration-list";
     }
 
     @GetMapping("/view/{id}")
-    public String staffRegistrationView(@PathVariable long id, Model model) {
-        Appointment appointment = appointmentService.findById(id);
+    public String staffRegistrationView(@PathVariable int id, Model model) {
+        Appointment appointment = appointmentService.findById((long) id);
+
         AppointmentDetails appointmentDetails = appointmentDetailsService.findByAppointmentId(id);
-        if (appointmentDetails.getScheduledStart() != null) {
+        AppointmentDetailsViewDTO appointmentDetailsDTO;
+        boolean disableDetails = false;
+
+        if (appointmentDetails != null && appointmentDetails.getScheduledStart() != null) {
             UserAccount user = appointmentDetails.getUser();
-            AppointmentDetailsViewDTO appointmentDetailsDTO = dtoMapper.toAppointmentDetailsViewDTO(appointmentDetails, user);
-            model.addAttribute("appointmentDetails", appointmentDetailsDTO);
+            appointmentDetailsDTO = dtoMapper.toAppointmentDetailsViewDTO(appointmentDetails, user);
         } else {
-            model.addAttribute("appointmentDetails", new AppointmentDetailsViewDTO());
-            model.addAttribute("disableDetails", true);
+            appointmentDetailsDTO = new AppointmentDetailsViewDTO();
+            disableDetails = true;
         }
 
+        List<RequestedService> requestedServices = requestedServicesService.findByAppointmentId(id);
+
+        List<StaffAccount> allStaff = staffAccountService.findAllActive();
+
+        model.addAttribute("allStatuses", AppointmentStatus.values());
+
         model.addAttribute("appointment", appointment);
-        return "staff-registration-edit";
+        model.addAttribute("appointmentDetails", appointmentDetailsDTO);
+        model.addAttribute("disableDetails", disableDetails);
+        model.addAttribute("requestedServices", requestedServices);
+        model.addAttribute("allStaff", allStaff);
+
+        return "manager-registration-edit";
     }
+
 
     @PostMapping("/save/{id}")
     public String staffRegistrationSave(@PathVariable long id,
@@ -67,7 +80,7 @@ public class ManagerRegistrationManagementController {
                                         BindingResult bindingResult,
                                         Model model) {
         if (bindingResult.hasErrors()) {
-            return "redirect:/staff/registration/view/" + id;
+            return "redirect:/manager/registration/view/" + id;
         }
         Appointment appointment = appointmentService.findById(id);
         if (dto.getPhoneNumber() != null && !dto.getPhoneNumber().isEmpty()) appointment.setPhoneNumber(dto.getPhoneNumber());
@@ -84,7 +97,7 @@ public class ManagerRegistrationManagementController {
         }
         appointmentDetailsService.save(details);
 
-        return "redirect:/staff/registration/view/" + id;
+        return "redirect:/manager/registration/view/" + id;
     }
 
     @GetMapping("/user-search")

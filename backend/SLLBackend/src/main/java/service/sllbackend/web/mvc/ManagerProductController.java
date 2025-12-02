@@ -48,12 +48,12 @@ public class ManagerProductController {
         model.addAttribute("searchName", name);
         model.addAttribute("selectedActiveStatus", activeStatus);
         
-        return "staff-product-list";
+        return "manager-product-list";
     }
 
     @GetMapping("/create")
     public String showCreateForm() {
-        return "staff-product-create";
+        return "manager-product-create";
     }
 
     @PostMapping("/create")
@@ -79,18 +79,18 @@ public class ManagerProductController {
             if ("invoice".equals(source)) {
                 redirectAttributes.addFlashAttribute("newProductId", createdProduct.getId());
                 redirectAttributes.addFlashAttribute("newProductName", createdProduct.getProductName());
-                return "redirect:/staff/invoices/create";
+                return "redirect:/manager/invoices/create";
             }
             
             redirectAttributes.addFlashAttribute("successMessage", "Product created successfully!");
-            return "redirect:/staff/products/list";
+            return "redirect:/manager/products/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating product: " + e.getMessage());
             
             if ("invoice".equals(source)) {
-                return "redirect:/staff/invoices/create";
+                return "redirect:/manager/invoices/create";
             }
-            return "redirect:/staff/products/create";
+            return "redirect:/manager/products/create";
         }
     }
 
@@ -105,7 +105,7 @@ public class ManagerProductController {
         
         model.addAttribute("product", product);
         model.addAttribute("availableStock", availableStock);
-        return "staff-product-edit";
+        return "manager-product-edit";
     }
 
     @PostMapping("/edit/{id}")
@@ -127,10 +127,10 @@ public class ManagerProductController {
             
             productsService.updateProduct(id, product);
             redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully!");
-            return "redirect:/staff/products/list";
+            return "redirect:/manager/products/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating product: " + e.getMessage());
-            return "redirect:/staff/products/edit/" + id;
+            return "redirect:/manager/products/edit/" + id;
         }
     }
     

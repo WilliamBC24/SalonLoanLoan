@@ -21,18 +21,18 @@ public class ManagerJobApplicationController {
     public String adminJobApplicationList(Model model){
         List<JobPostingApplication> applications = jobPostingApplicationRepo.findAll();
         model.addAttribute("applications", applications);
-        return "staff-view-application-list";
+        return "manager-view-application-list";
     }
 
     @PostMapping("/accept/{id}")
     public String adminJobApplicationAccept(@PathVariable("id") Long id){
         jobApplicationService.acceptApplication(id);
-        return "redirect:/staff/job/list";
+        return "redirect:/manager/job/list";
     }
 
     @PostMapping("/reject/{id}")
     public String adminJobApplicationReject(@PathVariable("id") Long id){
         jobApplicationService.rejectApplication(id);
-        return "redirect:/staff/job/list";
+        return "redirect:/manager/job/list";
     }
 }

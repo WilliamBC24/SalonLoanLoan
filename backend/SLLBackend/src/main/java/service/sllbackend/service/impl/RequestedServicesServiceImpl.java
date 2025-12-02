@@ -57,4 +57,9 @@ public class RequestedServicesServiceImpl implements RequestedServicesService {
         }
         requestedServiceRepo.saveAll(toSave);
     }
+
+    @Override
+    public List<RequestedService> findByAppointmentId(int appointmentId) {
+        return requestedServiceRepo.findByAppointmentId(appointmentId);
+    }
 }

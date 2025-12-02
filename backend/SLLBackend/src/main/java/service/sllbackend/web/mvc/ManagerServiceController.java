@@ -49,14 +49,14 @@ public class ManagerServiceController {
         model.addAttribute("selectedCategories", categories);
         model.addAttribute("searchName", name);
         
-        return "staff-service-list";
+        return "manager-service-list";
     }
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         List<ServiceCategory> categories = serviceCategoryRepo.findAll();
         model.addAttribute("categories", categories);
-        return "staff-service-create";
+        return "manager-service-create";
     }
 
     @PostMapping("/create")
@@ -74,7 +74,7 @@ public class ManagerServiceController {
             // Check for duplicate service name
             if (serviceRepo.existsByServiceNameIgnoreCase(serviceName)) {
                 redirectAttributes.addFlashAttribute("errorMessage", "A service with the name '" + serviceName + "' already exists");
-                return "redirect:/staff/service/create";
+                return "redirect:/manager/service/create";
             }
 
             ServiceCategory category = serviceCategoryRepo.findById(serviceCategoryId)
@@ -92,10 +92,10 @@ public class ManagerServiceController {
             
             serviceRepo.save(service);
             redirectAttributes.addFlashAttribute("successMessage", "Service created successfully!");
-            return "redirect:/staff/service/list";
+            return "redirect:/manager/service/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating service: " + e.getMessage());
-            return "redirect:/staff/service/create";
+            return "redirect:/manager/service/create";
         }
     }
 
@@ -107,7 +107,7 @@ public class ManagerServiceController {
         List<ServiceCategory> categories = serviceCategoryRepo.findAll();
         model.addAttribute("service", service);
         model.addAttribute("categories", categories);
-        return "staff-service-edit";
+        return "manager-service-edit";
     }
 
     @PostMapping("/edit/{id}")
@@ -126,7 +126,7 @@ public class ManagerServiceController {
             // Check for duplicate service name (excluding current service)
             if (serviceRepo.existsByServiceNameIgnoreCaseAndIdNot(serviceName, id)) {
                 redirectAttributes.addFlashAttribute("errorMessage", "A service with the name '" + serviceName + "' already exists");
-                return "redirect:/staff/service/edit/" + id;
+                return "redirect:/manager/service/edit/" + id;
             }
 
             Service service = serviceRepo.findById(id)
@@ -145,10 +145,10 @@ public class ManagerServiceController {
             
             serviceRepo.save(service);
             redirectAttributes.addFlashAttribute("successMessage", "Service updated successfully!");
-            return "redirect:/staff/service/list";
+            return "redirect:/manager/service/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating service: " + e.getMessage());
-            return "redirect:/staff/service/edit/" + id;
+            return "redirect:/manager/service/edit/" + id;
         }
     }
 }

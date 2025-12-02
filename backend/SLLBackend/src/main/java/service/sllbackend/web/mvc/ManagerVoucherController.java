@@ -48,14 +48,14 @@ public class ManagerVoucherController {
         model.addAttribute("selectedDiscountType", discountType);
         model.addAttribute("selectedStatusId", statusId);
         
-        return "staff-voucher-list";
+        return "manager-voucher-list";
     }
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         List<VoucherStatus> statuses = voucherService.getAllVoucherStatuses();
         model.addAttribute("statuses", statuses);
-        return "staff-voucher-create";
+        return "manager-voucher-create";
     }
 
     @PostMapping("/create")
@@ -93,10 +93,10 @@ public class ManagerVoucherController {
             
             voucherService.createVoucher(voucher);
             redirectAttributes.addFlashAttribute("successMessage", "Voucher created successfully!");
-            return "redirect:/staff/voucher/list";
+            return "redirect:/manager/voucher/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating voucher: " + e.getMessage());
-            return "redirect:/staff/voucher/create";
+            return "redirect:/manager/voucher/create";
         }
     }
 
@@ -110,7 +110,7 @@ public class ManagerVoucherController {
         List<VoucherStatus> statuses = voucherService.getAllVoucherStatuses();
         model.addAttribute("voucher", voucher);
         model.addAttribute("statuses", statuses);
-        return "staff-voucher-edit";
+        return "manager-voucher-edit";
     }
 
     @PostMapping("/edit/{id}")
@@ -148,10 +148,10 @@ public class ManagerVoucherController {
             
             voucherService.updateVoucher(id, voucher);
             redirectAttributes.addFlashAttribute("successMessage", "Voucher updated successfully!");
-            return "redirect:/staff/voucher/list";
+            return "redirect:/manager/voucher/list";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating voucher: " + e.getMessage());
-            return "redirect:/staff/voucher/edit/" + id;
+            return "redirect:/manager/voucher/edit/" + id;
         }
     }
 }

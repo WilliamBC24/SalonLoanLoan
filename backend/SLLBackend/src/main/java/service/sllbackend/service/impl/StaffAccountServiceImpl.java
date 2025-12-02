@@ -40,4 +40,9 @@ public class StaffAccountServiceImpl implements StaffAccountService {
 
         return new org.springframework.security.core.userdetails.User(staff.getUsername(), staff.getPassword(), authorities);
     }
+
+    @Override
+    public List<StaffAccount> findAllActive() {
+        return staffAccountRepo.findByAccountStatus(AccountStatus.ACTIVE);
+    }
 }

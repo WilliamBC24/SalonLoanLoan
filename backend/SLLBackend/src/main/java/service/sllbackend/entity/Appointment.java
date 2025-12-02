@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "appointment")
-@Check(constraints = "scheduled_at IS NULL OR scheduled_at >= registered_at")
 public class Appointment {
 
     @Id

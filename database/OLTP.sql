@@ -191,8 +191,7 @@
         phone_number VARCHAR(20) NOT NULL,
         status TEXT NOT NULL DEFAULT 'PENDING',
         preferred_staff_id INT REFERENCES staff(id),
-        responsible_staff_id INT REFERENCES staff(id),
-        CHECK (scheduled_at IS NULL OR scheduled_at >= registered_at)
+        responsible_staff_id INT REFERENCES staff(id)
     );
 
     CREATE TABLE IF NOT EXISTS appointment_details(

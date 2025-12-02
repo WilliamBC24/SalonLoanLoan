@@ -22,6 +22,6 @@ public class ManagerLoyaltyManagementController {
         List<LoyaltyListViewDTO> loyaltyList;
         loyaltyList = loyaltyService.findByUsernameToDTO(username == null ? username : username.trim());
         model.addAttribute("loyaltyList", loyaltyList);
-        return "staff-loyalty-list";
+        return "manager-loyalty-list";
     }
 }

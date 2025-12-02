@@ -42,6 +42,10 @@ public class Appointment {
     private AppointmentStatus status = AppointmentStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "preferred_staff_id")
+    private Staff preferredStaffId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "responsible_staff_id")
     private Staff responsibleStaffId;
 }

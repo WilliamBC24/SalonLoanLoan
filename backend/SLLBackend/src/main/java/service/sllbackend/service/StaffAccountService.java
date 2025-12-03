@@ -9,4 +9,5 @@ import java.util.List;
 public interface StaffAccountService extends UserDetailsService {
     UserDetails loadUserByUsername(String username);
     List<StaffAccount> findAllActive();
+
 }

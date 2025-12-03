@@ -5,6 +5,7 @@ import service.sllbackend.entity.ServiceCategory;
 import service.sllbackend.entity.ServiceCombo;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ServicesService {
     List<ServiceCategory> getAllCategories();
@@ -16,4 +17,6 @@ public interface ServicesService {
     List<ServiceCombo> getComboServices(Integer comboId);
 
     List<Service> getServices(String query, int page);
+
+    Service getServiceById(Integer id);
 }

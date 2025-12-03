@@ -29,6 +29,18 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Appointment> getByIdAndStatus(int id, List<AppointmentStatus> statuses) {
+        if (statuses == null || statuses.isEmpty()) {
+            return appointmentRepo.findByUserIdIgnoreCaseContaining(id);
+        } else {
+            return appointmentRepo.findByUserIdIgnoreCaseContainingAndStatusIn(
+                    id, statuses
+            );
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Appointment> getByNameAndStatus(String name, List<AppointmentStatus> statuses) {
         if (statuses == null || statuses.isEmpty()) {
             return appointmentRepo.findByNameIgnoreCaseContaining(name != null ? name : "");

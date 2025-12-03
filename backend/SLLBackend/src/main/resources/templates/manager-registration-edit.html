@@ -161,6 +161,22 @@
             cursor: default;
         }
 
+        /* small button */
+        .btn-inline {
+            margin-top: 0.15rem;
+            align-self: flex-start;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            font-size: 0.78rem;
+            padding: 0.25rem 0.7rem;
+            cursor: pointer;
+        }
+
+        .btn-inline:hover {
+            background: #f3f4f6;
+        }
+
         /* ===== USER SEARCH DROPDOWN ===== */
         .user-search-wrapper {
             position: relative;
@@ -196,32 +212,33 @@
             gap: 0.8rem;
         }
 
-        .services-search-block {
-            margin-bottom: 0.5rem;
+        /* Search block like appointment register */
+        .service-search-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 auto;
         }
 
-        .services-search-input {
-            width: 100%;
-        }
-
-        .service-search-results {
-            margin-top: 0.35rem;
-            border-radius: 10px;
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            max-height: 160px;
+        .service-list {
+            margin-top: 0.5rem;
+            background: #fafafa;
+            border-radius: 16px;
+            border: 1px solid #e6e6e6;
+            max-height: 180px;
             overflow-y: auto;
-            display: none;
         }
 
-        .service-search-item {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.88rem;
+        .service-item {
+            padding: 0.75rem 1rem;
             cursor: pointer;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
         }
-
-        .service-search-item:hover {
-            background: #f3f4f6;
+        .service-item:last-child {
+            border-bottom: none;
+        }
+        .service-item:hover {
+            background: #f3f3f3;
         }
 
         .services-list-inner {
@@ -229,10 +246,10 @@
             background: #ffffff;
             border: 1px solid #e5e7eb;
             padding: 0.6rem 0.75rem;
-            /* Take remaining vertical space so card-block matches other columns */
-            flex: 1;
-            min-height: 0;
+            /* fixed height, scroll inside itself */
+            height: 260px;
             overflow-y: auto;
+            margin-top: 0.7rem;
         }
 
         .service-row {
@@ -379,6 +396,12 @@
                 width: 100%;
             }
         }
+
+        .field-note {
+            margin-top: 0.32rem;
+            font-size: 0.82rem;
+            color: #6b7280;
+        }
     </style>
 </head>
 
@@ -403,7 +426,9 @@
             </div>
 
             <!-- FORM -->
-            <form th:action="@{/manager/registration/save/{id}(id=${appointment.id})}" method="post">
+            <form th:action="@{/manager/registration/save/{id}(id=${appointment.id})}"
+                  method="post"
+                  id="edit-form">
 
                 <div class="edit-grid">
 
@@ -432,7 +457,7 @@
 
                             <div class="field">
                                 <label>Status</label>
-                                <select name="status">
+                                <select name="status" id="statusSelect">
                                     <option th:each="s : ${allStatuses}"
                                             th:value="${s}"
                                             th:text="${s}"
@@ -447,11 +472,15 @@
                                 <input type="text"
                                        th:value="${appointment.preferredStaffId != null ? appointment.preferredStaffId.name : 'No preference'}"
                                        readonly />
+                                <!-- hidden id for JS default staff -->
+                                <input type="hidden" id="preferredStaffSelect"
+                                       th:value="${appointment.preferredStaffId != null ? appointment.preferredStaffId.id : ''}" />
                             </div>
 
                             <div class="field">
                                 <label>Registered Start</label>
                                 <input type="datetime-local"
+                                       id="registeredAt"
                                        readonly
                                        th:value="${#temporals.format(appointment.registeredAt,'yyyy-MM-dd''T''HH:mm')}" />
                             </div>
@@ -459,13 +488,24 @@
                             <div class="field">
                                 <label>Scheduled At (Manager Assigned)</label>
                                 <!-- editable, default to existing scheduledAt or registered start -->
-                                <input type="datetime-local" name="scheduledAt"
+                                <input type="datetime-local" name="scheduledAt" id="scheduledAt"
                                        th:value="${appointment.scheduledAt != null ?
                                                  #temporals.format(appointment.scheduledAt,'yyyy-MM-dd''T''HH:mm') :
                                                  #temporals.format(appointmentDetails.scheduledStart,'yyyy-MM-dd''T''HH:mm')}" />
+                                <button type="button" class="btn-inline" id="btnUseRegistered">
+                                    Use Registered Start
+                                </button>
                             </div>
                         </div>
                     </div>
+
+                    <!-- ===== HIDDEN STAFF OPTIONS TEMPLATE FOR JS ===== -->
+                    <select id="staffOptionsTemplate" style="display:none;">
+                        <option th:each="staff : ${allStaff}"
+                                th:value="${staff.id}"
+                                th:text="${staff.staff.name}">
+                        </option>
+                    </select>
 
                     <!-- ===== COLUMN 2: SERVICES & STAFF PER SERVICE ===== -->
                     <div class="edit-col">
@@ -477,17 +517,20 @@
                                 </p>
                             </div>
 
-                            <!-- Search + add services -->
-                            <div class="services-search-block">
-                                <label for="serviceSearch">Add Services</label>
+                            <!-- Search + add services (like appointment register page) -->
+                            <div class="service-search-wrapper">
+                                <label for="service-search" class="form-label">Search Services</label>
                                 <input type="text"
-                                       id="serviceSearch"
-                                       class="services-search-input"
-                                       placeholder="Search services to add...">
-                                <div id="serviceSearchResults" class="service-search-results"></div>
+                                       id="service-search"
+                                       class="form-input"
+                                       placeholder="Type to search services...">
+                                <div class="field-note">
+                                    Type to search and click a service to add it to this appointment.
+                                </div>
+                                <div class="service-list" id="service-list"></div>
                             </div>
 
-                            <!-- Existing + newly added services -->
+                            <!-- Existing + newly added services (selected list) -->
                             <div id="services-list" class="services-list-inner">
                                 <div class="service-row"
                                      th:each="rs, iterStat : ${requestedServices}"
@@ -516,7 +559,6 @@
                                         <select class="rs-staff-select"
                                                 th:name="${'requestedServices[' + iterStat.index + '].responsibleStaffId'}"
                                                 th:disabled="${disableDetails}">
-                                            <option th:value="${null}">Use preferred staff</option>
                                             <option th:each="staff : ${allStaff}"
                                                     th:value="${staff.id}"
                                                     th:text="${staff.staff.name}"
@@ -570,16 +612,30 @@
 
                             <div class="field">
                                 <label>Actual Start</label>
-                                <input type="datetime-local" name="actualStart"
+                                <input type="datetime-local" name="actualStart" id="actualStart"
                                        th:readonly="${disableDetails}"
-                                       th:value="${#temporals.format(appointmentDetails.actualStart,'yyyy-MM-dd''T''HH:mm')}" />
+                                       th:value="${appointmentDetails.actualStart != null ?
+                                                 #temporals.format(appointmentDetails.actualStart,'yyyy-MM-dd''T''HH:mm') : null}" />
+                                <button type="button"
+                                        class="btn-inline"
+                                        id="btnStartNow"
+                                        th:disabled="${disableDetails}">
+                                    Start Now (set & save)
+                                </button>
                             </div>
 
                             <div class="field">
                                 <label>Actual End</label>
-                                <input type="datetime-local" name="actualEnd"
+                                <input type="datetime-local" name="actualEnd" id="actualEnd"
                                        th:readonly="${disableDetails}"
-                                       th:value="${#temporals.format(appointmentDetails.actualEnd,'yyyy-MM-dd''T''HH:mm')}" />
+                                       th:value="${appointmentDetails.actualEnd != null ?
+                                                 #temporals.format(appointmentDetails.actualEnd,'yyyy-MM-dd''T''HH:mm') : null}" />
+                                <button type="button"
+                                        class="btn-inline"
+                                        id="btnCompleteNow"
+                                        th:disabled="${disableDetails or appointmentDetails.actualStart == null}">
+                                    Complete Now (set & save)
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -601,7 +657,18 @@
     $(document).ready(function () {
         let debounceTimer;
 
-        /* ========= USER SEARCH (SAME AS BEFORE) ========= */
+        /* ========= HELPERS ========= */
+        function formatDateForInput(date) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            const MM = pad(date.getMonth() + 1);
+            const dd = pad(date.getDate());
+            const hh = pad(date.getHours());
+            const mm = pad(date.getMinutes());
+            return yyyy + '-' + MM + '-' + dd + 'T' + hh + ':' + mm;
+        }
+
+        /* ========= USER SEARCH ========= */
         $('#userSearch').on('input', function () {
             const query = $(this).val();
 
@@ -643,6 +710,14 @@
             setTimeout(() => $('#userResults').empty(), 200);
         });
 
+        /* ========= SCHEDULED AT: COPY REGISTERED ========= */
+        $('#btnUseRegistered').on('click', function () {
+            const val = $('#registeredAt').val();
+            if (val) {
+                $('#scheduledAt').val(val);
+            }
+        });
+
         /* ========= SERVICES: TOTAL PRICE ========= */
         function updateTotalPriceFromServices() {
             let total = 0;
@@ -657,7 +732,6 @@
         function reindexServiceRows() {
             $('#services-list .service-row').each(function (index) {
                 const $row = $(this);
-                // Hidden fields
                 $row.find('.rs-id')
                     .attr('name', 'requestedServices[' + index + '].id');
                 $row.find('.rs-service-id')
@@ -688,42 +762,39 @@
             updateTotalPriceFromServices();
         });
 
-        /* ========= SERVICES: SEARCH & ADD ========= */
-        $('#serviceSearch').on('input', function () {
+        /* ========= SERVICES: SEARCH (like appointment register) ========= */
+        $('#service-search').on('input', function () {
             const query = $(this).val().trim();
+
+            if (query.length < 2) {
+                $('#service-list').empty();
+                return;
+            }
 
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
-                if (query.length < 2) {
-                    $('#serviceSearchResults').empty().hide();
-                    return;
-                }
-
                 $.ajax({
                     url: '/services/search',
                     method: 'GET',
                     data: { query: query },
                     success: function (data) {
-                        const $results = $('#serviceSearchResults');
-                        $results.empty();
+                        const $list = $('#service-list');
+                        $list.empty();
 
                         if (!data || data.length === 0) {
-                            $results.hide();
                             return;
                         }
 
                         data.forEach(s => {
-                            $results.append(
-                                `<div class="service-search-item"
-                                      data-id="${s.id}"
-                                      data-name="${s.serviceName}"
-                                      data-price="${s.servicePrice}">
+                            $list.append(`
+                                <div class="service-item"
+                                     data-id="${s.id}"
+                                     data-name="${s.serviceName}"
+                                     data-price="${s.servicePrice}">
                                     ${s.serviceName} - ₫${s.servicePrice}
-                                 </div>`
-                            );
+                                </div>
+                            `);
                         });
-
-                        $results.show();
                     },
                     error: function (err) {
                         console.error('Error fetching services', err);
@@ -732,21 +803,22 @@
             }, 300);
         });
 
-        $(document).on('click', '.service-search-item', function () {
+        /* ========= SERVICES: CLICK TO ADD ========= */
+        $(document).on('click', '.service-item', function () {
             const serviceId = $(this).data('id');
             const serviceName = $(this).data('name');
             const servicePrice = parseInt($(this).data('price')) || 0;
 
             // Disallow duplicates
             if (hasService(serviceId)) {
-                $('#serviceSearchResults').empty().hide();
-                $('#serviceSearch').val('');
+                $('#service-list').empty();
+                $('#service-search').val('');
                 return;
             }
 
             const preferredStaffId = $('#preferredStaffSelect').val() || '';
 
-            // Create row (index will be re-indexed after)
+            // Build row
             const $row = $(`
                 <div class="service-row"
                      data-service-id="${serviceId}"
@@ -764,9 +836,7 @@
 
                     <div class="service-assignee">
                         <label>Staff</label>
-                        <select class="rs-staff-select">
-                            <option value="">Use preferred staff</option>
-                        </select>
+                        <select class="rs-staff-select"></select>
                     </div>
 
                     <div class="service-row-footer">
@@ -775,36 +845,59 @@
                 </div>
             `);
 
-            // Populate staff dropdown from existing staff selects (reuse options)
-            const $templateSelect = $('#services-list .rs-staff-select').first();
-            if ($templateSelect.length > 0) {
-                $row.find('.rs-staff-select').html($templateSelect.html());
-                // Set default to preferred staff if any
-                if (preferredStaffId) {
-                    $row.find('.rs-staff-select').val(preferredStaffId);
-                } else {
-                    $row.find('.rs-staff-select').val('');
-                }
+            // Populate staff dropdown from template
+            const $templateOptions = $('#staffOptionsTemplate').html();
+            const $select = $row.find('.rs-staff-select');
+            $select.html($templateOptions);
+
+            if (preferredStaffId) {
+                $select.val(preferredStaffId);
             } else {
-                // Fallback: keep only default option if no template exists
+                // if no preferred staff, default to first option
+                const firstVal = $select.find('option:first').val();
+                $select.val(firstVal);
             }
 
             $('#services-list').append($row);
 
-            // Reindex + recalc
             reindexServiceRows();
             updateTotalPriceFromServices();
 
-            // Clear search UI
-            $('#serviceSearchResults').empty().hide();
-            $('#serviceSearch').val('');
+            $('#service-list').empty();
+            $('#service-search').val('');
         });
 
         // Hide search results when clicking outside
         $(document).on('click', function (e) {
-            if (!$(e.target).closest('#serviceSearch, #serviceSearchResults').length) {
-                $('#serviceSearchResults').empty().hide();
+            if (!$(e.target).closest('#service-search, #service-list').length) {
+                $('#service-list').empty();
             }
+        });
+
+        /* ========= STATUS SHORTCUT BUTTONS ========= */
+
+        $('#btnStartNow').on('click', function () {
+            // if disabled via HTML, don't bother
+            if ($(this).is(':disabled')) return;
+
+            const now = formatDateForInput(new Date());
+            $('#actualStart').val(now);
+            $('#statusSelect').val('STARTED'); // assumes enum name STARTED
+            $('#edit-form')[0].submit();
+        });
+
+        $('#btnCompleteNow').on('click', function () {
+            if ($(this).is(':disabled')) return;
+
+            const currentStart = $('#actualStart').val();
+            if (!currentStart) {
+                // guard in JS just in case
+                return;
+            }
+            const now = formatDateForInput(new Date());
+            $('#actualEnd').val(now);
+            $('#statusSelect').val('COMPLETED'); // assumes enum name COMPLETED
+            $('#edit-form')[0].submit();
         });
 
         /* ========= INIT ========= */

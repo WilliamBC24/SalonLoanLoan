@@ -77,4 +77,9 @@ public class ServicesServiceImpl implements ServicesService {
     public List<Service> getServices(String query, int page) {
         return serviceRepo.findAllServices(query, PageRequest.of(0, page));
     }
+
+    @Override
+    public Service getServiceById(Integer id) {
+        return serviceRepo.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
+    }
 }

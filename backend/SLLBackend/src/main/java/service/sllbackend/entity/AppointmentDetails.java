@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
                 (actual_start IS NULL AND actual_end IS NULL) OR
         (actual_start IS NULL AND actual_end IS NOT NULL) OR
         (actual_start IS NOT NULL AND actual_end IS NULL) OR
-        (actual_start IS NOT NULL AND actual_end > actual_start)
+        (actual_start IS NOT NULL AND actual_end >= actual_start)
         )
 """)
 

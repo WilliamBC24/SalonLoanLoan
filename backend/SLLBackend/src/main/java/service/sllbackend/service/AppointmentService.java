@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface AppointmentService {
+    List<Appointment> getByIdAndStatus(int id,List<AppointmentStatus> status);
     List<Appointment> getByNameAndStatus(String name,List<AppointmentStatus> status);
     Appointment findById(Long id);
     List<RequestedService> getRequestedServices(Integer appointmentId);

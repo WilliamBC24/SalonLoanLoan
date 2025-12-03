@@ -59,7 +59,20 @@ public class RequestedServicesServiceImpl implements RequestedServicesService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RequestedService> findByAppointmentId(int appointmentId) {
         return requestedServiceRepo.findByAppointmentId(appointmentId);
+    }
+
+    @Override
+    @Transactional
+    public void save(RequestedService requestedService) {
+        requestedServiceRepo.save(requestedService);
+    }
+
+    @Override
+    @Transactional
+    public void delete(RequestedService requestedService) {
+        requestedServiceRepo.delete(requestedService);
     }
 }

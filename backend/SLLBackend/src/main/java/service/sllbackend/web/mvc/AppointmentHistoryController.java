@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import service.sllbackend.entity.Appointment;
 import service.sllbackend.enumerator.AppointmentStatus;
 import service.sllbackend.service.AppointmentService;
+import service.sllbackend.service.UserAccountService;
 
 import java.security.Principal;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AppointmentHistoryController {
     private final AppointmentService appointmentService;
+    private final UserAccountService userAccountService;
 
     @GetMapping("")
     public String userAppointmentHistory(
@@ -26,7 +28,8 @@ public class AppointmentHistoryController {
             Model model,
             Principal principal) {
 
-        List<Appointment> appointments = appointmentService.getByNameAndStatus(principal.getName(), statuses);
+        List<Appointment> appointments = appointmentService.getByIdAndStatus(
+                userAccountService.findByUsername(principal.getName()).getId(), statuses);
 
         model.addAttribute("appointments", appointments);
         model.addAttribute("allStatuses", AppointmentStatus.values());

@@ -42,6 +42,7 @@
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         name TEXT NOT NULL,
         phone_number VARCHAR(20) NOT NULL,
+        email VARCHAR(100),
         shipping_address TEXT
     );
 

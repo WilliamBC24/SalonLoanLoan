@@ -3,205 +3,428 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Manage Vouchers</title>
+    <title>Manager - Manage Vouchers | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles (sidebar + main scroll) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        /* ===== PAGE STRUCTURE ===== */
+        .voucher-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
         }
-        .header {
+
+        .voucher-layout-inner {
+            max-width: 90vw;
+            width: 100%;
+            margin: 1rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .voucher-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ROW ===== */
+        .voucher-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .create-btn {
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
+
+        .voucher-title-block {
+            text-align: left;
+        }
+
+        .voucher-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .voucher-title-block h2 {
+            margin: 0;
+        }
+
+        .section-kicker {
+            font-size: 0.8rem;
+            color: #6b7280;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .create-btn-pill {
+            padding: 0.55rem 1.3rem;
+            border-radius: 999px;
+            background: #22c55e;
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 500;
             text-decoration: none;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 8px 18px rgba(34,197,94,0.25);
+            border: 1px solid #4ade80;
         }
-        .create-btn:hover {
-            background: #218838;
+
+        .create-btn-pill:hover {
+            background: #16a34a;
         }
+
+        /* ===== ALERTS ===== */
         .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.2rem;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-left: 6px solid;
         }
+
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            border-left-color: #22c55e;
+            box-shadow: 0 3px 8px rgba(34,197,94,0.18);
         }
+
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-left-color: #f97373;
+            box-shadow: 0 3px 8px rgba(248,113,113,0.18);
         }
-        .search-bar {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
+
+        /* ===== SEARCH BAR / FILTERS ===== */
+        .voucher-search-bar {
+            background: #f9fafb;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 1.3rem 1.4rem;
+            margin-bottom: 1.5rem;
         }
+
+        .filter-grid {
+            display: grid;
+            gap: 1rem 1.4rem;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+
+        @media(max-width:900px) {
+            .filter-grid {
+                grid-template-columns: minmax(0,1fr);
+            }
+        }
+
         .filter-group {
-            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
         }
+
         .filter-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #4b5563;
         }
+
         .filter-group input,
         .filter-group select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 0.6rem 0.75rem;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 0.9rem;
+            background: #ffffff;
         }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100,179,255,0.35);
+        }
+
         .search-buttons {
-            margin-top: 15px;
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
         }
-        .search-buttons button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            cursor: pointer;
+
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 999px;
             border: none;
-            border-radius: 4px;
-        }
-        .search-btn {
-            background: #007bff;
-            color: white;
-        }
-        .search-btn:hover {
-            background: #0056b3;
-        }
-        .reset-btn {
-            background: #6c757d;
-            color: white;
-        }
-        .reset-btn:hover {
-            background: #545b62;
-        }
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-        }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-            text-align: left;
-        }
-        th { 
-            background: #f4f4f4; 
-        }
-        tr:hover {
-            background: #f5f5f5;
-        }
-        .edit-link {
-            color: #007bff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
             text-decoration: none;
-            margin-right: 10px;
         }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(37,99,235,0.24);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== TABLE WRAPPER ===== */
+        .voucher-table-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            box-shadow: var(--shadow-soft);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        th {
+            font-weight: 700;
+            color: #4b5563;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-pill {
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .edit-link {
+            border-radius: 999px;
+            padding: 0.35rem 0.95rem;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: #111827;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
         .edit-link:hover {
-            text-decoration: underline;
+            background: #f3f4f6;
+        }
+
+        .voucher-code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.85rem;
+            background: #f3f4f6;
+            padding: 0.15rem 0.45rem;
+            border-radius: 999px;
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <h1>Staff - Manage Vouchers</h1>
-        <a href="/manager/voucher/create" class="create-btn">+ Create New Voucher</a>
+<body class="staff-layout">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main voucher-page">
+    <div class="voucher-layout-inner">
+        <section class="voucher-card">
+
+            <!-- Header -->
+            <div class="voucher-header-row">
+                <div class="voucher-title-block section-heading">
+                    <p class="section-kicker">Marketing &amp; Offers</p>
+                    <h2>Manage Vouchers</h2>
+                </div>
+                <a href="/manager/voucher/create" class="create-btn-pill">
+                    ✚ <span>Create New Voucher</span>
+                </a>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Search and Filter Bar -->
+            <div class="voucher-search-bar">
+                <form method="get" action="/manager/voucher/list">
+                    <div class="filter-grid">
+                        <div class="filter-group">
+                            <label for="search-code">Search by Code</label>
+                            <input type="text"
+                                   id="search-code"
+                                   name="code"
+                                   th:value="${searchCode}"
+                                   placeholder="Enter voucher code...">
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="search-name">Search by Name</label>
+                            <input type="text"
+                                   id="search-name"
+                                   name="name"
+                                   th:value="${searchName}"
+                                   placeholder="Enter voucher name...">
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="discount-type">Discount Type</label>
+                            <select id="discount-type" name="discountType">
+                                <option value="">All types</option>
+                                <option value="AMOUNT"
+                                        th:selected="${selectedDiscountType == 'AMOUNT'}">
+                                    Amount
+                                </option>
+                                <option value="PERCENTAGE"
+                                        th:selected="${selectedDiscountType == 'PERCENTAGE'}">
+                                    Percentage
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="status">Status</label>
+                            <select id="status" name="statusId">
+                                <option value="">All statuses</option>
+                                <option th:each="status : ${allStatuses}"
+                                        th:value="${status.id}"
+                                        th:text="${status.name}"
+                                        th:selected="${selectedStatusId != null and selectedStatusId == status.id}">
+                                    Status
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="search-buttons">
+                        <button type="submit" class="btn btn-primary">
+                            🔍 <span>Search</span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                onclick="window.location.href='/manager/voucher/list'">
+                            ↺ <span>Reset</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Vouchers Table -->
+            <div class="voucher-table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Discount Type</th>
+                        <th>Discount Amount</th>
+                        <th>Effective From</th>
+                        <th>Effective To</th>
+                        <th>Max Usage</th>
+                        <th>Used Count</th>
+                        <th>Status</th>
+                        <th style="width:1%;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="voucher : ${vouchers}">
+                        <td th:text="${voucher.id}">1</td>
+                        <td>
+                            <span class="voucher-code" th:text="${voucher.voucherCode}">CODE123</span>
+                        </td>
+                        <td th:text="${voucher.voucherName}">Voucher name</td>
+                        <td th:text="${voucher.discountType}">AMOUNT</td>
+                        <td th:text="${voucher.discountAmount}">0</td>
+                        <td th:text="${#temporals.format(voucher.effectiveFrom, 'yyyy-MM-dd HH:mm')}">
+                            2024-01-01 00:00
+                        </td>
+                        <td th:text="${#temporals.format(voucher.effectiveTo, 'yyyy-MM-dd HH:mm')}">
+                            2024-12-31 23:59
+                        </td>
+                        <td th:text="${voucher.maxUsage}">100</td>
+                        <td th:text="${voucher.usedCount}">0</td>
+                        <td>
+                            <span class="status-pill"
+                                  th:class="'status-pill ' + (${voucher.voucherStatus != null and voucher.voucherStatus.name == 'ACTIVE'} ? 'status-active' : 'status-inactive')"
+                                  th:text="${voucher.voucherStatus != null ? voucher.voucherStatus.name : 'N/A'}">
+                                Active
+                            </span>
+                        </td>
+                        <td>
+                            <a th:href="@{/manager/voucher/edit/{id}(id=${voucher.id})}" class="edit-link">
+                                ✎ <span>Edit</span>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
     </div>
-
-    <!-- Success/Error Messages -->
-    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
-
-    <!-- Search and Filter Bar -->
-    <div class="search-bar">
-        <form method="get" action="/manager/voucher/list">
-            <div class="filter-group">
-                <label for="search-code">Search by Code:</label>
-                <input type="text" id="search-code" name="code" 
-                       th:value="${searchCode}" 
-                       placeholder="Enter voucher code...">
-            </div>
-
-            <div class="filter-group">
-                <label for="search-name">Search by Name:</label>
-                <input type="text" id="search-name" name="name" 
-                       th:value="${searchName}" 
-                       placeholder="Enter voucher name...">
-            </div>
-
-            <div class="filter-group">
-                <label for="discount-type">Discount Type:</label>
-                <select id="discount-type" name="discountType">
-                    <option value="">All Types</option>
-                    <option value="AMOUNT" th:selected="${selectedDiscountType == 'AMOUNT'}">Amount</option>
-                    <option value="PERCENTAGE" th:selected="${selectedDiscountType == 'PERCENTAGE'}">Percentage</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="status">Status:</label>
-                <select id="status" name="statusId">
-                    <option value="">All Statuses</option>
-                    <option th:each="status : ${allStatuses}" 
-                            th:value="${status.id}" 
-                            th:text="${status.name}"
-                            th:selected="${selectedStatusId != null and selectedStatusId == status.id}">
-                        Status
-                    </option>
-                </select>
-            </div>
-
-            <div class="search-buttons">
-                <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/manager/voucher/list'">Reset</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Vouchers Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Discount Type</th>
-                <th>Discount Amount</th>
-                <th>Effective From</th>
-                <th>Effective To</th>
-                <th>Max Usage</th>
-                <th>Used Count</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="voucher : ${vouchers}">
-                <td th:text="${voucher.id}">1</td>
-                <td th:text="${voucher.voucherCode}">CODE123</td>
-                <td th:text="${voucher.voucherName}">Voucher name</td>
-                <td th:text="${voucher.discountType}">AMOUNT</td>
-                <td th:text="${voucher.discountAmount}">0</td>
-                <td th:text="${#temporals.format(voucher.effectiveFrom, 'yyyy-MM-dd HH:mm')}">2024-01-01 00:00</td>
-                <td th:text="${#temporals.format(voucher.effectiveTo, 'yyyy-MM-dd HH:mm')}">2024-12-31 23:59</td>
-                <td th:text="${voucher.maxUsage}">100</td>
-                <td th:text="${voucher.usedCount}">0</td>
-                <td th:text="${voucher.voucherStatus != null ? voucher.voucherStatus.name : 'N/A'}">Active</td>
-                <td>
-                    <a th:href="@{/manager/voucher/edit/{id}(id=${voucher.id})}" class="edit-link">Edit</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+</main>
 
 </body>
 </html>

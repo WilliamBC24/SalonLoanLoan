@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import service.sllbackend.config.exceptions.InsufficientStockException;
 import service.sllbackend.entity.Cart;
 import service.sllbackend.service.CartService;
 import java.security.Principal;
@@ -88,7 +89,16 @@ public class CartController {
             return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
         }
         
-        cartService.adjustProductAmount(principal.getName(), productId, amount);
+        try {
+            cartService.adjustProductAmount(principal.getName(), productId, amount);
+        } catch (InsufficientStockException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            errorResponse.put("availableStock", e.getAvailableStock());
+            errorResponse.put("requestedAmount", e.getRequestedAmount());
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
         
         // Recalculate totals
         List<Cart> cartItems = cartService.getCartByUser(principal.getName());

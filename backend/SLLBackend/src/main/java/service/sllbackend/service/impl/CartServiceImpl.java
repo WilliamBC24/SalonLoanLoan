@@ -3,6 +3,7 @@ package service.sllbackend.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import service.sllbackend.config.exceptions.InsufficientStockException;
 import service.sllbackend.entity.Cart;
 import service.sllbackend.entity.Product;
 import service.sllbackend.entity.UserAccount;
@@ -50,7 +51,7 @@ public class CartServiceImpl implements CartService {
         // Check if product has stock
         Integer availableStock = inventoryService.getAvailableStock(productId);
         if (availableStock <= 0) {
-            throw new RuntimeException("Product is out of stock");
+            throw new InsufficientStockException(productId, availableStock, amount);
         }
         
         Optional<Cart> existingCart = cartRepo.findByUserAccountAndProduct_Id(userAccount, productId);
@@ -61,8 +62,7 @@ public class CartServiceImpl implements CartService {
             
             // Check if new amount exceeds available stock
             if (newAmount > availableStock) {
-                throw new RuntimeException("Not enough stock. Available: " + availableStock + 
-                        ", Requested: " + newAmount);
+                throw new InsufficientStockException(productId, availableStock, newAmount);
             }
             
             cart.setAmount(newAmount);
@@ -70,8 +70,7 @@ public class CartServiceImpl implements CartService {
         } else {
             // Check if amount exceeds available stock
             if (amount > availableStock) {
-                throw new RuntimeException("Not enough stock. Available: " + availableStock + 
-                        ", Requested: " + amount);
+                throw new InsufficientStockException(productId, availableStock, amount);
             }
             
             Cart cart = Cart.builder()
@@ -104,8 +103,7 @@ public class CartServiceImpl implements CartService {
         // Check stock availability
         Integer availableStock = inventoryService.getAvailableStock(productId);
         if (amount > availableStock) {
-            throw new RuntimeException("Not enough stock. Available: " + availableStock + 
-                    ", Requested: " + amount);
+            throw new InsufficientStockException(productId, availableStock, amount);
         }
         
         UserAccount userAccount = userAccountRepo.findByUsername(username)

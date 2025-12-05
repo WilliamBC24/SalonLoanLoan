@@ -373,21 +373,21 @@
                     <div class="order-details">
                         <div class="detail-item">
                             <span class="detail-label">Customer Name</span>
-                            <span class="detail-value" th:text="${order.customerInfo?.name ?: 'N/A'}">
+                            <span class="detail-value" th:text="${order.customerInfo.name}">
                                 Customer Name
                             </span>
                         </div>
 
                         <div class="detail-item">
                             <span class="detail-label">Phone Number</span>
-                            <span class="detail-value" th:text="${order.customerInfo?.phoneNumber ?: 'N/A'}">
+                            <span class="detail-value" th:text="${order.customerInfo.phoneNumber}">
                                 0123456789
                             </span>
                         </div>
 
                         <div class="detail-item" th:if="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).DELIVERY}">
                             <span class="detail-label">Shipping Address</span>
-                            <span class="detail-value" th:text="${order.customerInfo?.shippingAddress ?: 'N/A'}">
+                            <span class="detail-value" th:text="${order.customerInfo.shippingAddress ?: 'N/A'}">
                                 Address
                             </span>
                         </div>

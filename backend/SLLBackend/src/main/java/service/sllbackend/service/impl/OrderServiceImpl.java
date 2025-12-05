@@ -57,8 +57,8 @@ public class OrderServiceImpl implements OrderService {
                 .mapToInt(item -> item.getProduct().getCurrentPrice() * item.getAmount())
                 .sum();
         
-        // For in-store pickup, we don't need shipping address, so customer info is optional
-        CustomerInfo customerInfo = null;
+        // Create or find customer info - always required for contact purposes
+        CustomerInfo customerInfo;
         if (fulfillmentType == FulfillmentType.DELIVERY) {
             // For delivery, require shipping address
             if (shippingAddress == null || shippingAddress.trim().isEmpty()) {
@@ -76,7 +76,6 @@ public class OrderServiceImpl implements OrderService {
             customerInfo = customerInfoRepo.save(CustomerInfo.builder()
                     .name(customerName)
                     .phoneNumber(phoneNumber)
-                    .shippingAddress(null)
                     .build());
         }
         

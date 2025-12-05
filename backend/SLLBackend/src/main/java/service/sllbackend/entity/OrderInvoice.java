@@ -29,7 +29,7 @@ public class OrderInvoice {
     private UserAccount userAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_info_id")
+    @JoinColumn(name = "customer_info_id", nullable = false)
     private CustomerInfo customerInfo;
 
     @Column(name = "total_price", nullable = false)

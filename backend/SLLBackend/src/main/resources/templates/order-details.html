@@ -424,19 +424,19 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <span class="info-label">Name</span>
-                            <span class="info-value" th:text="${order.customerInfo?.name ?: 'N/A'}">
+                            <span class="info-value" th:text="${order.customerInfo.name}">
                                 Customer Name
                             </span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Phone Number</span>
-                            <span class="info-value" th:text="${order.customerInfo?.phoneNumber ?: 'N/A'}">
+                            <span class="info-value" th:text="${order.customerInfo.phoneNumber}">
                                 0123456789
                             </span>
                         </div>
                         <div class="info-item full-width" th:if="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).DELIVERY}">
                             <span class="info-label">Shipping Address</span>
-                            <span class="info-value" th:text="${order.customerInfo?.shippingAddress ?: 'N/A'}">
+                            <span class="info-value" th:text="${order.customerInfo.shippingAddress ?: 'N/A'}">
                                 123 Main Street, City
                             </span>
                         </div>

@@ -1,64 +1,126 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Job Application</title>
+    <meta charset="UTF-8" />
+    <title>Apply for Job | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global Styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        .job-apply-page {
+            padding: 2.5rem 0 3rem;
         }
-        form {
-            max-width: 500px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+
+        .job-apply-wrapper {
+            max-width: 540px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2.4rem 2.6rem;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 12px 26px rgba(0,0,0,0.05);
         }
-        label {
+
+        .job-apply-wrapper h2 {
+            margin-bottom: 0.6rem;
+            font-size: 1.7rem;
+            text-align: center;
+        }
+
+        .job-desc {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.4rem;
             display: block;
-            margin-top: 15px;
-            font-weight: bold;
+            font-size: 0.92rem;
+            color: #444;
         }
-        input[type="text"],
-        input[type="date"] {
+
+        .form-input {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            box-sizing: border-box;
-            border-radius: 4px;
+            padding: 0.85rem 1rem;
             border: 1px solid #ccc;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 1.1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #2e86de;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+
+        .form-input:focus {
+            border-color: var(--accent, #ff8400);
+            box-shadow: 0 0 0 3px rgba(255, 132, 0, 0.25);
+            outline: none;
         }
-        button:hover {
-            background-color: #1b4f72;
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 0.6rem;
+        }
+
+        @media (max-width: 600px) {
+            .job-apply-wrapper {
+                padding: 1.8rem 1.4rem;
+                margin: 0 1rem;
+            }
         }
     </style>
 </head>
+
 <body>
-<h1 th:text="'Apply for: ' + ${job.jobPostingName}">Job Name</h1>
-<p th:text="${job.jobPostingDescription}">Job description here...</p>
 
-<form th:action="@{/job/apply/{id}(id=${job.id})}" method="post">
-    <label for="applicantName">Full Name</label>
-    <input type="text" id="applicantName" name="applicantName" required />
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: site-header}"></div>
 
-    <label for="applicantDob">Date of Birth</label>
-    <input type="date" id="applicantDob" name="applicantDob" required />
+<main class="job-apply-page">
+    <div class="container">
 
-    <label for="applicantPhoneNumber">Phone Number</label>
-    <input type="text" id="applicantPhoneNumber" name="applicantPhoneNumber" required />
+        <div class="job-apply-wrapper">
 
-    <button type="submit">Submit Application</button>
-</form>
+            <!-- Title + Job Info -->
+            <h2 th:text="'Apply for: ' + ${job.jobPostingName}">
+                Apply for: Job Name
+            </h2>
+            <p class="job-desc" th:text="${job.jobPostingDescription}">
+                Job description goes here...
+            </p>
+
+            <!-- Form -->
+            <form th:action="@{/job/apply/{id}(id=${job.id})}" method="post">
+
+                <label for="applicantName" class="form-label">Full Name</label>
+                <input class="form-input" type="text" id="applicantName" name="applicantName" required />
+
+                <label for="applicantDob" class="form-label">Date of Birth</label>
+                <input class="form-input" type="date" id="applicantDob" name="applicantDob" required />
+
+                <label for="applicantPhoneNumber" class="form-label">Phone Number</label>
+                <input class="form-input" type="text" id="applicantPhoneNumber" name="applicantPhoneNumber" required />
+
+                <div class="button-row">
+                    <button type="submit" class="btn-primary" style="padding:0.75rem 2rem;">
+                        Submit Application
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
 </body>
 </html>

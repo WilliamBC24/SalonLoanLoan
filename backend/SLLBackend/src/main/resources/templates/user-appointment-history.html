@@ -1,83 +1,277 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>User Appointment History</title>
+    <meta charset="UTF-8"/>
+    <title>User Appointment History | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .search-bar { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
-        .filter-group { margin-bottom: 15px; }
-        .filter-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; }
-        .checkbox-item { display: flex; align-items: center; }
-        .checkbox-item input { margin-right: 5px; }
-        .search-buttons { margin-top: 15px; }
-        .search-buttons button { padding: 8px 16px; margin-right: 10px; cursor: pointer; border: none; border-radius: 4px; }
-        .search-btn { background: #007bff; color: white; }
-        .search-btn:hover { background: #0056b3; }
-        .reset-btn { background: #6c757d; color: white; }
-        .reset-btn:hover { background: #545b62; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #f4f4f4; }
-        tr:hover { background: #f5f5f5; }
-        .view-link { color: #007bff; text-decoration: none; }
-        .view-link:hover { text-decoration: underline; }
+        .appointment-history-page {
+            padding: 2.5rem 0 3rem;
+        }
+
+        .search-bar {
+            background: #f9f9f9;
+            padding: 1.6rem 1.8rem;
+            border-radius: 18px;
+            margin-bottom: 2rem;
+            border: 1px solid #e4e4e4;
+        }
+
+        .filter-group {
+            margin-bottom: 1.1rem;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem 1.2rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.9rem;
+        }
+
+        .search-buttons {
+            margin-top: 0.4rem;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .appointment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .appointment-card {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #e6e6e6;
+            padding: 1.3rem 1.4rem;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+
+        .appointment-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .appointment-phone {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-pill {
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .status-pill.status-completed {
+            background: #e3ffe7;
+            color: #1a7c34;
+            border-color: #bdecc5;
+        }
+
+        .status-pill.status-cancelled {
+            background: #ffe6e6;
+            color: #b00020;
+            border-color: #f2b7b7;
+        }
+
+        .status-pill.status-pending,
+        .status-pill.status-scheduled {
+            background: #fff4df;
+            color: #a45a00;
+            border-color: #f3d49d;
+        }
+
+        .appointment-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.6rem 1.8rem;
+            font-size: 0.88rem;
+            color: #555;
+        }
+
+        .appointment-meta-item span {
+            font-weight: 600;
+            color: #222;
+        }
+
+        .appointment-actions {
+            margin-top: 0.9rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .view-link-btn {
+            font-size: 0.88rem;
+            text-decoration: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #777;
+            font-size: 0.95rem;
+            border-radius: 20px;
+            border: 1px dashed #ddd;
+            background: #fafafa;
+        }
+
+        @media (max-width: 600px) {
+            .appointment-card {
+                padding: 1.1rem 1.1rem;
+            }
+
+            .appointment-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .appointment-actions {
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
-<h1>User Appointment History</h1>
 
-<!-- Search & Filter -->
-<div class="search-bar">
-    <form method="get" action="/user/appointment-history">
+<!-- HEADER -->
+<div th:replace="~{fragments/profile-header :: profile-site-header}"></div>
 
-        <div class="filter-group">
-            <label>Appointment Status:</label>
-            <div class="checkbox-group">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="statusAll" name="statuses" value="" th:checked="${selectedStatuses == null}">
-                    <label for="statusAll">All</label>
-                </div>
-                <div class="checkbox-item" th:each="status : ${allStatuses}">
-                    <input type="checkbox" th:id="${status}" name="statuses" th:value="${status}" th:checked="${selectedStatuses != null and selectedStatuses.contains(status)}"/>
-                    <label th:for="${status}" th:text="${status}">STATUS</label>
-                </div>
-            </div>
+<main class="appointment-history-page">
+    <div class="container">
+
+        <div class="section-heading text-center">
+            <p class="section-kicker">Your Appointments</p>
+            <h2>Appointment History</h2>
         </div>
 
-        <div class="search-buttons">
-            <button type="submit" class="search-btn">Search</button>
-            <button type="button" class="reset-btn" onclick="window.location.href='/user/appointments'">Reset</button>
-        </div>
-    </form>
-</div>
+        <!-- Search & Filter -->
+        <div class="search-bar">
+            <form method="get" th:action="@{/user/appointment-history}">
+                <div class="filter-group">
+                    <label>Appointment Status:</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox"
+                                   id="statusAll"
+                                   name="statuses"
+                                   value=""
+                                   th:checked="${selectedStatuses == null}">
+                            <span>All</span>
+                        </label>
 
-<!-- Appointments Table -->
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Phone Number</th>
-        <th>Registered At</th>
-        <th>Scheduled At</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="appt : ${appointments}">
-        <td th:text="${appt.name}">Name</td>
-        <td th:text="${appt.phoneNumber}">Phone</td>
-        <td th:text="${#temporals.format(appt.registeredAt, 'yyyy-MM-dd HH:mm')}">Registered</td>
-        <td th:text="${#temporals.format(appt.scheduledAt, 'yyyy-MM-dd HH:mm')}">Scheduled</td>
-        <td th:text="${appt.status}">Status</td>
-        <td>
-            <a th:href="@{/user/appointment-history/view/{id}(id=${appt.id})}" class="view-link">View</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+                        <label class="checkbox-item"
+                               th:each="status : ${allStatuses}">
+                            <input type="checkbox"
+                                   th:id="${status}"
+                                   name="statuses"
+                                   th:value="${status}"
+                                   th:checked="${selectedStatuses != null and selectedStatuses.contains(status)}"/>
+                            <span th:text="${status}">STATUS</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="search-buttons">
+                    <button type="submit" class="btn-primary">Search</button>
+                    <button type="button"
+                            class="btn-outline"
+                            onclick="window.location.href='/user/appointment-history'">
+                        Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Appointments List -->
+        <div th:if="${#lists.isEmpty(appointments)}" class="empty-state">
+            You don't have any appointments yet.
+        </div>
+
+        <div class="appointment-list" th:if="${!#lists.isEmpty(appointments)}">
+
+            <article class="appointment-card" th:each="appt : ${appointments}">
+
+                <div class="appointment-header">
+                    <div>
+                        <div class="appointment-name" th:text="${appt.name}">Name</div>
+                        <div class="appointment-phone">
+                            Phone: <span th:text="${appt.phoneNumber}">Phone</span>
+                        </div>
+                    </div>
+
+                    <span class="status-pill"
+                          th:text="${appt.status}"
+                          th:classappend="${
+                                #strings.toLowerCase(appt.status) == 'completed' ? ' status-completed' :
+                                #strings.toLowerCase(appt.status) == 'cancelled' ? ' status-cancelled' :
+                                ' status-pending'
+                          }">
+                        Status
+                    </span>
+                </div>
+
+                <div class="appointment-meta">
+                    <div class="appointment-meta-item">
+                        Registered:
+                        <span th:text="${#temporals.format(appt.registeredAt, 'yyyy-MM-dd HH:mm')}">
+                            2025-01-01 10:00
+                        </span>
+                    </div>
+
+                    <div class="appointment-meta-item">
+                        Scheduled:
+                        <span th:text="${#temporals.format(appt.scheduledAt, 'yyyy-MM-dd HH:mm')}">
+                            2025-01-01 11:00
+                        </span>
+                    </div>
+                </div>
+
+                <div class="appointment-actions">
+                    <a th:href="@{/user/appointment-history/view/{id}(id=${appt.id})}"
+                       class="btn-outline view-link-btn">
+                        View details
+                    </a>
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
 
 </body>
 </html>

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @Builder
@@ -25,8 +26,8 @@ public class ShiftTemplate {
     private Integer id;
 
     @Column(name = "shift_start", nullable = false)
-    private LocalDateTime shiftStart;
+    private LocalTime shiftStart;
 
     @Column(name = "shift_end", nullable = false)
-    private LocalDateTime shiftEnd;
+    private LocalTime shiftEnd;
 }

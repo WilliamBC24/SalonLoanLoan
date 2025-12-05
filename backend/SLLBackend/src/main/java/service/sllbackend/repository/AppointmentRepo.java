@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import service.sllbackend.entity.Appointment;
 import service.sllbackend.enumerator.AppointmentStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AppointmentRepo extends JpaRepository<Appointment, Long> {
@@ -20,4 +21,5 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long> {
 """)
     List<Appointment> findByUserIdIgnoreCaseContaining(int userAccountId);
     List<Appointment> findByNameIgnoreCaseContaining(String name);
+    List<Appointment> findByScheduledAtBetween(LocalDateTime start, LocalDateTime end);
 }

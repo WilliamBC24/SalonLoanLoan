@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manager - Staff Schedule | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles (sidebar + main scroll) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <style>
+        /* ===== PAGE STRUCTURE ===== */
+        .schedule-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .schedule-layout-inner {
+            max-width: 90vw;
+            width: 100%;
+            margin: 1rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .schedule-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ROW ===== */
+        .schedule-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .schedule-title-block {
+            text-align: left;
+        }
+
+        .schedule-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .schedule-title-block h2 {
+            margin: 0;
+        }
+
+        .schedule-subtext {
+            margin: 0.2rem 0 0;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .schedule-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.6rem;
+        }
+
+        .month-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            padding: 0.3rem 0.65rem;
+            background: #f9fafb;
+            font-size: 0.85rem;
+        }
+
+        .month-nav button {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0.1rem 0.25rem;
+            font-size: 1rem;
+        }
+
+        .month-label {
+            font-weight: 600;
+            padding: 0 0.5rem;
+            white-space: nowrap;
+        }
+
+        .view-switch {
+            display: inline-flex;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            overflow: hidden;
+        }
+
+        .view-switch button {
+            padding: 0.35rem 0.8rem;
+            font-size: 0.8rem;
+            border: none;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        .view-switch button.is-active {
+            background: #111827;
+            color: #ffffff;
+        }
+
+        /* ===== LEGEND ===== */
+        .schedule-legend {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-size: 0.82rem;
+            color: #4b5563;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        .legend-dot.low {
+            background: #22c55e;
+        }
+
+        .legend-dot.medium {
+            background: #eab308;
+        }
+
+        .legend-dot.high {
+            background: #ef4444;
+        }
+
+        /* ===== CALENDAR GRID ===== */
+        .calendar-wrapper {
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+        }
+
+        .calendar-header-row {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .calendar-header-cell {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+        }
+
+        .calendar-day {
+            min-height: 120px;
+            border-right: 1px solid #f3f4f6;
+            border-bottom: 1px solid #f3f4f6;
+            padding: 0.55rem 0.6rem 0.45rem;
+            font-size: 0.82rem;
+            background: #ffffff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .calendar-day:nth-child(7n) {
+            border-right: none;
+        }
+
+        .calendar-day.is-outside-month {
+            background: #f9fafb;
+            color: #9ca3af;
+        }
+
+        .calendar-day.is-today {
+            box-shadow: inset 0 0 0 1.5px #2563eb;
+        }
+
+        .calendar-day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calendar-day-number {
+            font-weight: 600;
+        }
+
+        .calendar-appointments-count {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .calendar-shifts {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            margin-top: 0.2rem;
+        }
+
+        .shift-pill {
+            border-radius: 12px;
+            padding: 0.25rem 0.4rem;
+            font-size: 0.75rem;
+            background: #f3f4ff;
+            color: #1f2937;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .shift-name {
+            font-weight: 600;
+        }
+
+        .shift-staff {
+            font-size: 0.74rem;
+            color: #4b5563;
+        }
+
+        .load-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        .load-indicator.medium {
+            background: #eab308;
+        }
+
+        .load-indicator.high {
+            background: #ef4444;
+        }
+
+        .calendar-day-link {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .calendar-day-inner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .calendar-day:hover {
+            background: #f9fafb;
+        }
+
+        /* Small screen tweaks */
+        @media (max-width: 900px) {
+            .calendar-day {
+                min-height: 100px;
+                padding: 0.45rem 0.4rem;
+            }
+
+            .shift-pill {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .schedule-layout-inner {
+                padding: 0;
+            }
+
+            .schedule-card {
+                padding: 1.6rem 1.4rem;
+            }
+
+            .calendar-header-cell {
+                font-size: 0.72rem;
+            }
+
+            .calendar-day {
+                min-height: 90px;
+            }
+
+            .schedule-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .schedule-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main schedule-page">
+    <div class="schedule-layout-inner">
+        <section class="schedule-card">
+
+            <!-- Header -->
+            <div class="schedule-header-row">
+                <div class="schedule-title-block section-heading">
+                    <p class="section-kicker">Staff Scheduling</p>
+                    <h2>Overall Staff Schedule</h2>
+                    <p class="schedule-subtext">
+                        View and manage staff shifts and appointment load by day.
+                    </p>
+                </div>
+
+                <div class="schedule-controls">
+                    <!-- Month navigation -->
+                    <form th:action="@{/manager/schedule}" method="get" class="month-nav">
+                        <button type="submit"
+                                name="monthOffset"
+                                th:value="${monthOffset - 1}"
+                                title="Previous month">
+                            ◀
+                        </button>
+
+                        <span class="month-label"
+                              th:text="${currentMonthLabel}">March 2025</span>
+
+                        <button type="submit"
+                                name="monthOffset"
+                                th:value="${monthOffset + 1}"
+                                title="Next month">
+                            ▶
+                        </button>
+                    </form>
+
+                    <!-- View switch (optional future use: month/week) -->
+                    <div class="view-switch">
+                        <button type="button" class="is-active">Month</button>
+                        <button type="button">Week</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="schedule-legend">
+                <div class="legend-item">
+                    <span class="legend-dot low"></span>
+                    <span>Low appointment load</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot medium"></span>
+                    <span>Medium load</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot high"></span>
+                    <span>High load</span>
+                </div>
+                <div class="legend-item">
+                    <span>AM / PM: <strong>assigned / recommended</strong> staff</span>
+                </div>
+            </div>
+
+            <!-- Calendar -->
+            <div class="calendar-wrapper">
+                <!-- Weekday header -->
+                <div class="calendar-header-row">
+                    <div class="calendar-header-cell">Mon</div>
+                    <div class="calendar-header-cell">Tue</div>
+                    <div class="calendar-header-cell">Wed</div>
+                    <div class="calendar-header-cell">Thu</div>
+                    <div class="calendar-header-cell">Fri</div>
+                    <div class="calendar-header-cell">Sat</div>
+                    <div class="calendar-header-cell">Sun</div>
+                </div>
+
+                <!-- Days -->
+                <div class="calendar-grid">
+                    <!--
+                        Expect something like:
+                        List<CalendarDayView> calendarDays
+                        CalendarDayView: date, inCurrentMonth, isToday,
+                        totalAppointments,
+                        amAssignedStaffCount, amRecommendedStaffCount, amLoadLevel,
+                                                                                                                                        pmAssignedStaffCount, pmRecommendedStaffCount, pmLoadLevel
+                    -->
+                    <div class="calendar-day"
+                         th:each="day : ${calendarDays}"
+                         th:classappend="
+        (!${day.inCurrentMonth} ? ' is-outside-month' : '') +
+        (${day.today} ? ' is-today' : '')
+     ">
+
+                    <!-- Clickable link overlay -->
+                        <a class="calendar-day-link"
+                           th:href="@{/manager/schedule/day(date=${day.date})}"></a>
+
+                        <div class="calendar-day-inner">
+                            <div class="calendar-day-header">
+                                <span class="calendar-day-number"
+                                      th:text="${day.date.dayOfMonth}">1</span>
+                                <span class="calendar-appointments-count"
+                                      th:text="${day.totalAppointments} + ' appts'">
+                                    0 appts
+                                </span>
+                            </div>
+
+                            <div class="calendar-shifts">
+                                <!-- Morning shift -->
+                                <div class="shift-pill"
+                                     th:if="${day.hasMorningShift}">
+                                    <div>
+                                        <span class="shift-name">AM</span>
+                                        <span class="shift-staff"
+                                              th:text="${day.amAssignedStaffCount} + '/' + ${day.amRecommendedStaffCount} + ' staff'">
+                                            0/0 staff
+                                        </span>
+                                    </div>
+                                    <span class="load-indicator"
+                                          th:classappend="' ' + ${day.amLoadLevel}">
+                                    </span>
+                                </div>
+
+                                <!-- Afternoon shift -->
+                                <div class="shift-pill"
+                                     th:if="${day.hasAfternoonShift}">
+                                    <div>
+                                        <span class="shift-name">PM</span>
+                                        <span class="shift-staff"
+                                              th:text="${day.pmAssignedStaffCount} + '/' + ${day.pmRecommendedStaffCount} + ' staff'">
+                                            0/0 staff
+                                        </span>
+                                    </div>
+                                    <span class="load-indicator"
+                                          th:classappend="' ' + ${day.pmLoadLevel}">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- end calendar-day -->
+                </div>
+            </div>
+
+        </section>
+    </div>
+</main>
+
+</body>
+</html>

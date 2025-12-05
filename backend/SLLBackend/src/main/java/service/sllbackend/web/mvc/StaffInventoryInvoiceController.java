@@ -124,13 +124,29 @@ public class StaffInventoryInvoiceController {
             
             // Build DTO
             List<InventoryInvoiceItemDTO> items = new ArrayList<>();
-            if (productIds != null && !productIds.isEmpty()) {
-                for (int i = 0; i < productIds.size(); i++) {
-                    if (quantities.get(i) > 0 && unitPrices.get(i) > 0) {
+            if (productIds != null && !productIds.isEmpty() 
+                    && quantities != null && unitPrices != null) {
+                // Validate that all lists have the same size
+                int size = productIds.size();
+                if (quantities.size() != size || unitPrices.size() != size) {
+                    throw new RuntimeException("Mismatched item data: productIds, quantities, and unitPrices must have the same size");
+                }
+                
+                for (int i = 0; i < size; i++) {
+                    Integer productId = productIds.get(i);
+                    Integer quantity = quantities.get(i);
+                    Integer unitPrice = unitPrices.get(i);
+                    
+                    // Skip items with invalid data
+                    if (productId == null || quantity == null || unitPrice == null) {
+                        continue;
+                    }
+                    
+                    if (quantity > 0 && unitPrice > 0) {
                         InventoryInvoiceItemDTO item = InventoryInvoiceItemDTO.builder()
-                                .productId(productIds.get(i))
-                                .orderedQuantity(quantities.get(i))
-                                .unitPrice(unitPrices.get(i))
+                                .productId(productId)
+                                .orderedQuantity(quantity)
+                                .unitPrice(unitPrice)
                                 .build();
                         items.add(item);
                     }

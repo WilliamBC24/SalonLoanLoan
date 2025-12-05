@@ -1077,5 +1077,16 @@ public class DataLoader implements CommandLineRunner {
 				.scheduledAt(null) // not scheduled yet
 				.status(AppointmentStatus.PENDING)
 				.build());
+
+		// Completed appointment for testing image upload functionality
+		appointmentRepo.save(Appointment.builder()
+				.name("Diana")
+				.phoneNumber("0666444555")
+				.registeredAt(LocalDateTime.now().minusDays(7))
+				.scheduledAt(LocalDateTime.now().minusDays(5))
+				.status(AppointmentStatus.COMPLETED)
+				.build());
+
+		log.info("Successfully loaded 4 appointments (1 REGISTERED, 2 PENDING, 1 COMPLETED)");
 	}
 }

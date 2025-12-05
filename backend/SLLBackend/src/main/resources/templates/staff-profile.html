@@ -16,12 +16,9 @@
         }
 
         .profile-grid-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-            gap: 1.6rem;
-            align-items: start;
-            max-width: 1100px;
-            margin: 0 auto;
+            max-width: 85vw;
+            width: 100%;
+            margin: 1rem;
         }
 
         /* MAIN CARD */
@@ -201,10 +198,10 @@
     </style>
 </head>
 
-<body>
-<div th:replace="~{fragments/staff-header :: staff-site-header}"></div>
+<body class="staff-layout">
 
-<main class="profile-page">
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+<main class="staff-main profile-page">
     <div class="profile-grid-layout">
 
         <!-- LEFT: MAIN STAFF INFO -->
@@ -265,38 +262,7 @@
             </div>
         </section>
 
-        <!-- RIGHT: SIDE PANEL -->
-        <aside class="profile-side">
-            <div class="avatar-block">
-                <div class="avatar">
-                    <span th:text="${staffAccount.name != null && !#strings.isEmpty(staffAccount.name) ? #strings.substring(staffAccount.name, 0, 1) : #strings.substring(staffAccount.username, 0, 1)}">
-                        S
-                    </span>
-                </div>
-                <div class="avatar-meta">
-                    <h4 th:text="${staffAccount.name != null && !#strings.isEmpty(staffAccount.name) ? staffAccount.name : staffAccount.username}">
-                        Staff Name
-                    </h4>
-                    <p th:text="${staffAccount.email ?: '—'}">email@example.com</p>
-                </div>
-            </div>
 
-            <div class="quick-stats">
-                <div class="stat">
-                    <div class="num" th:text="${staffAccount.active ? 'Active' : 'Inactive'}">Active</div>
-                    <div class="label">Account</div>
-                </div>
-                <div class="stat">
-                    <div class="num" th:text="${#temporals.format(staffAccount.dateHired, 'yyyy')}">2025</div>
-                    <div class="label">Since</div>
-                </div>
-            </div>
-
-            <div class="side-note">
-                This staff account can manage appointments, services, and customer bookings. Keep your profile
-                information up to date to ensure smooth operations.
-            </div>
-        </aside>
 
     </div>
 </main>

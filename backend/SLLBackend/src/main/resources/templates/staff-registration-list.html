@@ -1,87 +1,395 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff Registrations</title>
+    <title>Staff - Manage Registrations | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .search-bar { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
-        .filter-group { margin-bottom: 15px; }
-        .filter-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; }
-        .checkbox-item { display: flex; align-items: center; }
-        .checkbox-item input { margin-right: 5px; }
-        .search-buttons { margin-top: 15px; }
-        .search-buttons button { padding: 8px 16px; margin-right: 10px; cursor: pointer; border: none; border-radius: 4px; }
-        .search-btn { background: #007bff; color: white; }
-        .search-btn:hover { background: #0056b3; }
-        .reset-btn { background: #6c757d; color: white; }
-        .reset-btn:hover { background: #545b62; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #f4f4f4; }
-        tr:hover { background: #f5f5f5; }
-        .view-link { color: #007bff; text-decoration: none; }
-        .view-link:hover { text-decoration: underline; }
+        /* ===== PAGE STRUCTURE ===== */
+        .registration-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .registration-layout-inner {
+            max-width: 85vw;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .registration-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .registration-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .registration-title-block {
+            text-align: left;
+        }
+
+        .registration-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .registration-title-block h2 {
+            margin: 0;
+        }
+
+        .registration-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .back-link-pill {
+            font-size: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            padding: 0.4rem 0.9rem;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .back-link-pill span.icon {
+            font-size: 1.05rem;
+            line-height: 1;
+        }
+
+        .back-link-pill:hover {
+            background: #f4f4f4;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        /* ===== SEARCH BAR ===== */
+        .search-panel {
+            background: #ffffff;
+            padding: 1.3rem 1.4rem 1.1rem;
+            border-radius: 18px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 1.6rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.9rem;
+            gap: 0.8rem;
+        }
+
+        .search-header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .search-header-title span.emoji {
+            font-size: 1.2rem;
+        }
+
+        .search-header-title h3 {
+            margin: 0;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr);
+            gap: 1rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .filter-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+            color: #374151;
+        }
+
+        .filter-group input[type="text"] {
+            width: 100%;
+            padding: 0.5rem 0.7rem;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            background: #fafafa;
+            box-sizing: border-box;
+        }
+
+        .filter-group input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100, 179, 255, 0.35);
+            background: #ffffff;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem 1.4rem;
+        }
+
+        .checkbox-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .checkbox-item input {
+            margin: 0;
+        }
+
+        .search-buttons {
+            margin-top: 0.8rem;
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== TABLE ===== */
+        .registrations-table-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        th {
+            font-weight: 700;
+            color: #4b5563;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .view-link {
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+            text-decoration: none;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #111827;
+            font-size: 0.86rem;
+            font-weight: 500;
+        }
+
+        .view-link:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+        }
     </style>
 </head>
-<body>
-<h1>Staff Registrations</h1>
+<body class="staff-layout">
 
-<div class="search-bar">
-    <form method="get" action="/staff/registration/list">
-        <!-- Name search -->
-        <div class="filter-group">
-            <label for="search-name">Search by Name:</label>
-            <input type="text" id="search-name" name="name"
-                   th:value="${searchName}"
-                   placeholder="Enter name..."
-                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-        </div>
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-        <!-- Appointment status checkboxes -->
-        <div class="filter-group">
-            <label>Registration Status:</label>
-            <div class="checkbox-group">
-                <div class="checkbox-item" th:each="status : ${allStatuses}">
-                    <input type="checkbox" th:id="${status.name()}" name="statuses"
-                           th:value="${status.name()}"
-                           th:checked="${selectedStatuses != null and selectedStatuses.contains(status.name())}">
-                    <label th:for="${status.name()}" th:text="${status.name()}">STATUS</label>
+<!-- MAIN SCROLLABLE CONTENT -->
+<main class="staff-main registration-page">
+    <div class="registration-layout-inner">
+        <section class="registration-card">
+            <!-- Header -->
+            <div class="registration-header-row">
+                <div class="registration-title-block section-heading">
+                    <p class="section-kicker">Appointment Management</p>
+                    <h2>Staff Registrations</h2>
+                </div>
+                <div class="registration-actions">
                 </div>
             </div>
 
-        </div>
+            <!-- Optional success/error messages -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-        <div class="search-buttons">
-            <button type="submit" class="search-btn">Search</button>
-            <button type="button" class="reset-btn" onclick="window.location.href='/staff/registration/list'">Reset</button>
-        </div>
-    </form>
-</div>
+            <!-- Search and Filter Bar -->
+            <div class="search-panel">
+                <div class="search-header">
+                    <div class="search-header-title">
+                        <span class="emoji">🔍</span>
+                        <h3>Search &amp; Filters</h3>
+                    </div>
+                </div>
 
-<!-- Registrations table -->
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Registered At</th>
-        <th>Scheduled At</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="appointment : ${registrations}">
-        <td th:text="${appointment.name}">Name</td>
-        <td th:text="${appointment.status}">PENDING</td>
-        <td th:text="${#temporals.format(appointment.registeredAt, 'yyyy-MM-dd HH:mm')}">2025-10-22 07:00</td>
-        <td th:text="${appointment.scheduledAt != null ? #temporals.format(appointment.scheduledAt, 'yyyy-MM-dd HH:mm') : '-'}">-</td>
-        <td>
-            <a th:href="@{/staff/registration/view/{id}(id=${appointment.id})}" class="view-link">View Details</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+                <form method="get" action="/staff/registration/list">
+                    <div class="search-form">
+                        <!-- Name search -->
+                        <div class="filter-group">
+                            <label for="search-name">Search by Name</label>
+                            <input type="text"
+                                   id="search-name"
+                                   name="name"
+                                   th:value="${searchName}"
+                                   placeholder="Enter name..." />
+                        </div>
+
+                        <!-- Appointment status checkboxes -->
+                        <div class="filter-group">
+                            <label>Registration Status</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item" th:each="status : ${allStatuses}">
+                                    <input type="checkbox"
+                                           th:id="${status.name()}"
+                                           name="statuses"
+                                           th:value="${status.name()}"
+                                           th:checked="${selectedStatuses != null and selectedStatuses.contains(status.name())}">
+                                    <label th:for="${status.name()}" th:text="${status.name()}">STATUS</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-buttons">
+                        <button type="submit" class="btn btn-primary">
+                            <span>🔎</span>
+                            <span>Search</span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                onclick="window.location.href='/staff/registration/list'">
+                            <span>✕</span>
+                            <span>Reset</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Registrations Table -->
+            <div class="registrations-table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Registered At</th>
+                        <th>Scheduled At</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="appointment : ${registrations}">
+                        <td th:text="${appointment.name}">Name</td>
+                        <td th:text="${appointment.status}">PENDING</td>
+                        <td th:text="${#temporals.format(appointment.registeredAt, 'yyyy-MM-dd HH:mm')}">
+                            2025-10-22 07:00
+                        </td>
+                        <td th:text="${appointment.scheduledAt != null ? #temporals.format(appointment.scheduledAt, 'yyyy-MM-dd HH:mm') : '-'}">
+                            -
+                        </td>
+                        <td>
+                            <a th:href="@{/staff/registration/view/{id}(id=${appointment.id})}" class="view-link">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
 </body>
 </html>

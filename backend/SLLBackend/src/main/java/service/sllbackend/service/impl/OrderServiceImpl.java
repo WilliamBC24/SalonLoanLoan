@@ -157,6 +157,16 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void updateOrderStatus(Integer orderId, OrderStatus newStatus) {
         OrderInvoice order = getOrderDetails(orderId);
+        
+        // Validate that final statuses cannot be changed
+        OrderStatus currentStatus = order.getOrderStatus();
+        if (currentStatus == OrderStatus.CANCELLED || currentStatus == OrderStatus.DELIVERED) {
+            throw new IllegalStateException(
+                "Cannot change order status from " + currentStatus + 
+                ". This status is final and irreversible."
+            );
+        }
+        
         order.setOrderStatus(newStatus);
         orderInvoiceRepo.save(order);
     }

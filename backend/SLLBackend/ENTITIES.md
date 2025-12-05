@@ -4,7 +4,7 @@ This document provides detailed information about all entity classes and enumera
 
 ## Summary
 
-- **Total Entity Classes**: 66
+- **Total Entity Classes**: 67
 - **Total Enumerator Classes**: 16
 
 ## Enumerators
@@ -345,6 +345,20 @@ Enumerators define fixed sets of values used throughout the application.
 | appointment | Appointment | appointment | 🔗 OneToOne |  |  |  |
 | rating | Short | rating |  | ✓ |  |  |
 | comment | String | comment |  |  |  |  |
+
+#### BeforeAppointmentImage
+
+**Purpose**: Photos taken before service begins (for comparison with after photos)
+
+**Database Table**: `before_appointment_image`
+
+**Attributes**:
+
+| Attribute | Type | Column | Key | Required | Unique | Notes |
+|-----------|------|--------|-----|----------|--------|-------|
+| id | Integer | id | 🔑 PK |  |  |  |
+| appointment | Appointment | appointment | 🔗 ManyToOne |  |  |  |
+| imagePath | String | image_path |  | ✓ |  |  |
 
 #### AfterAppointmentImage
 

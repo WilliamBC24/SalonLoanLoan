@@ -139,10 +139,14 @@ public class AppointmentImageController {
         try {
             appointmentImageService.deleteBeforeImage(imageId);
             return ResponseEntity.noContent().build();
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+            log.warn("Before image not found with id: {}", imageId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(createErrorResponse("Before image not found with id: " + imageId));
         } catch (Exception e) {
-            log.error("Error deleting before image: {}", e.getMessage());
+            log.error("Error deleting before image {}: {}", imageId, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(createErrorResponse("Error deleting image"));
+                    .body(createErrorResponse("Failed to delete before image: " + e.getMessage()));
         }
     }
     
@@ -156,10 +160,14 @@ public class AppointmentImageController {
         try {
             appointmentImageService.deleteAfterImage(imageId);
             return ResponseEntity.noContent().build();
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+            log.warn("After image not found with id: {}", imageId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(createErrorResponse("After image not found with id: " + imageId));
         } catch (Exception e) {
-            log.error("Error deleting after image: {}", e.getMessage());
+            log.error("Error deleting after image {}: {}", imageId, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(createErrorResponse("Error deleting image"));
+                    .body(createErrorResponse("Failed to delete after image: " + e.getMessage()));
         }
     }
     

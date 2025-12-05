@@ -118,6 +118,11 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
             throw new RuntimeException("Cannot change status of a completed invoice");
         }
         
+        // Prevent changing status if already CANCELLED
+        if (invoice.getInvoiceStatus() == InventoryInvoiceStatus.CANCELLED) {
+            throw new RuntimeException("Cannot change status of a cancelled invoice");
+        }
+        
         InventoryInvoiceStatus previousStatus = invoice.getInvoiceStatus();
         invoice.setInvoiceStatus(status);
         inventoryInvoiceRepo.save(invoice);

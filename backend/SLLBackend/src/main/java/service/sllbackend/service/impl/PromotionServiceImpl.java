@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Promotion;
 import service.sllbackend.entity.PromotionStatus;
+import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.repository.PromotionRepo;
 import service.sllbackend.repository.PromotionStatusRepo;
 import service.sllbackend.service.PromotionService;
@@ -39,12 +40,15 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     @Transactional
     public Promotion createPromotion(Promotion promotion) {
+        validateDiscountPercentage(promotion);
         return promotionRepo.save(promotion);
     }
 
     @Override
     @Transactional
     public Promotion updatePromotion(Integer id, Promotion promotion) {
+        validateDiscountPercentage(promotion);
+        
         Promotion existingPromotion = promotionRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Promotion not found with id: " + id));
 
@@ -57,5 +61,13 @@ public class PromotionServiceImpl implements PromotionService {
         existingPromotion.setPromotionStatus(promotion.getPromotionStatus());
 
         return promotionRepo.save(existingPromotion);
+    }
+
+    private void validateDiscountPercentage(Promotion promotion) {
+        if (promotion.getDiscountType() == DiscountType.PERCENTAGE 
+                && promotion.getDiscountAmount() != null 
+                && promotion.getDiscountAmount() > 100) {
+            throw new IllegalArgumentException("Discount percentage cannot exceed 100%");
+        }
     }
 }

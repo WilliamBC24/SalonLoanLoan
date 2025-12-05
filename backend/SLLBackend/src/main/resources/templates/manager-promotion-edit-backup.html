@@ -74,7 +74,7 @@
 <body>
     <h1>Edit Promotion</h1>
     
-    <form id="promotionForm" method="post" th:action="@{/staff/promotion/edit/{id}(id=${promotion.id})}">
+    <form id="promotionForm" method="post" th:action="@{/manager/promotion/edit/{id}(id=${promotion.id})}">
         <div class="form-group">
             <label for="promotionName">Promotion Name: <span style="color: red;">*</span></label>
             <input type="text" id="promotionName" name="promotionName" th:value="${promotion.promotionName}" required />
@@ -130,7 +130,7 @@
 
         <div class="buttons">
             <button type="submit" class="submit-btn">Update Promotion</button>
-            <button type="button" class="cancel-btn" onclick="window.location.href='/staff/promotion/list'">Cancel</button>
+            <button type="button" class="cancel-btn" onclick="window.location.href='/manager/promotion/list'">Cancel</button>
         </div>
     </form>
 

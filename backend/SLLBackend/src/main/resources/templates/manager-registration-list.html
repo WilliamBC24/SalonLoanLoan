@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Manage Products | Salon Loan Loan</title>
+    <title>Manager - Manage Registrations | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -11,19 +11,19 @@
 
     <style>
         /* ===== PAGE STRUCTURE ===== */
-        .products-page {
+        .registration-page {
             padding: 2.5rem 0 3rem;
             background: var(--bg-light);
             min-height: 100vh;
         }
 
-        .products-layout-inner {
+        .registration-layout-inner {
             max-width: 85vw;
             width: 100%;
             margin: 1rem auto;
         }
 
-        .products-card {
+        .registration-card {
             background: #ffffff;
             padding: 2.2rem;
             border-radius: var(--radius-lg);
@@ -31,7 +31,7 @@
             box-shadow: var(--shadow-soft);
         }
 
-        .products-header-row {
+        .registration-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,19 +39,19 @@
             margin-bottom: 1.5rem;
         }
 
-        .products-title-block {
+        .registration-title-block {
             text-align: left;
         }
 
-        .products-title-block .section-kicker {
+        .registration-title-block .section-kicker {
             margin-bottom: 0.25rem;
         }
 
-        .products-title-block h2 {
+        .registration-title-block h2 {
             margin: 0;
         }
 
-        .products-actions {
+        .registration-actions {
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -77,47 +77,6 @@
 
         .back-link-pill:hover {
             background: #f4f4f4;
-        }
-
-        .create-btn-pill {
-            border-radius: 999px;
-            padding: 0.6rem 1.3rem;
-            font-size: 0.9rem;
-            border: none;
-            background: #1653a3;
-            color: #ffffff;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            box-shadow: 0 6px 15px rgba(22, 78, 163, 0.35);
-            cursor: pointer;
-        }
-
-        .edit-link {
-            border-radius: 999px;
-            padding: 0.35rem 0.9rem;
-            text-decoration: none;
-            border: 1px solid #d1d5db;
-            background: #ffffff;
-            color: #111827;
-            font-size: 0.86rem;
-            font-weight: 500;
-        }
-
-        .edit-link:hover {
-            background: #eff6ff;
-            border-color: #bfdbfe;
-            color: #1d4ed8;
-        }
-
-        .create-btn-pill span.icon {
-            font-size: 1.1rem;
-            line-height: 1;
-        }
-
-        .create-btn-pill:hover {
-            background: #153380;
         }
 
         /* ===== ALERTS ===== */
@@ -269,7 +228,7 @@
         }
 
         /* ===== TABLE ===== */
-        .products-table-wrapper {
+        .registrations-table-wrapper {
             border-radius: 18px;
             overflow: hidden;
             box-shadow: var(--shadow-soft);
@@ -306,16 +265,22 @@
             background: #f9fafb;
         }
 
-        .stock-low {
-            color: #ea580c;
-            font-weight: 700;
+        .view-link {
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+            text-decoration: none;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #111827;
+            font-size: 0.86rem;
+            font-weight: 500;
         }
 
-        .stock-out {
-            color: #dc2626;
-            font-weight: 700;
+        .view-link:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
         }
-
     </style>
 </head>
 <body class="staff-layout">
@@ -324,28 +289,20 @@
 <div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
 <!-- MAIN SCROLLABLE CONTENT -->
-<main class="staff-main products-page">
-    <div class="products-layout-inner">
-        <section class="products-card">
+<main class="staff-main registration-page">
+    <div class="registration-layout-inner">
+        <section class="registration-card">
             <!-- Header -->
-            <div class="products-header-row">
-                <div class="products-title-block section-heading">
-                    <p class="section-kicker">Inventory Management</p>
-                    <h2>Manage Products</h2>
+            <div class="registration-header-row">
+                <div class="registration-title-block section-heading">
+                    <p class="section-kicker">Appointment Management</p>
+                    <h2>Staff Registrations</h2>
                 </div>
-                <div class="products-actions">
-                    <a href="/staff/landing" class="back-link-pill">
-                        <span class="icon">←</span>
-                        <span>Back to Dashboard</span>
-                    </a>
-                    <a href="/staff/products/create" class="create-btn-pill">
-                        <span class="icon">＋</span>
-                        <span>Create New Product</span>
-                    </a>
+                <div class="registration-actions">
                 </div>
             </div>
 
-            <!-- Success/Error Messages -->
+            <!-- Optional success/error messages -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
@@ -358,43 +315,29 @@
                     </div>
                 </div>
 
-                <form method="get" action="/staff/products/list">
+                <form method="get" action="/manager/registration/list">
                     <div class="search-form">
+                        <!-- Name search -->
                         <div class="filter-group">
                             <label for="search-name">Search by Name</label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter product name..." />
+                                   placeholder="Enter name..." />
                         </div>
 
+                        <!-- Appointment status checkboxes -->
                         <div class="filter-group">
-                            <label>Active Status</label>
+                            <label>Registration Status</label>
                             <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="radio"
-                                           id="status-all"
-                                           name="activeStatus"
-                                           value=""
-                                           th:checked="${selectedActiveStatus == null}">
-                                    <label for="status-all">All</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="radio"
-                                           id="status-active"
-                                           name="activeStatus"
-                                           value="true"
-                                           th:checked="${selectedActiveStatus != null and selectedActiveStatus == true}">
-                                    <label for="status-active">Active Only</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="radio"
-                                           id="status-inactive"
-                                           name="activeStatus"
-                                           value="false"
-                                           th:checked="${selectedActiveStatus != null and selectedActiveStatus == false}">
-                                    <label for="status-inactive">Inactive Only</label>
+                                <div class="checkbox-item" th:each="status : ${allStatuses}">
+                                    <input type="checkbox"
+                                           th:id="${status.name()}"
+                                           name="statuses"
+                                           th:value="${status.name()}"
+                                           th:checked="${selectedStatuses != null and selectedStatuses.contains(status.name())}">
+                                    <label th:for="${status.name()}" th:text="${status.name()}">STATUS</label>
                                 </div>
                             </div>
                         </div>
@@ -407,7 +350,7 @@
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/staff/products/list'">
+                                onclick="window.location.href='/manager/registration/list'">
                             <span>✕</span>
                             <span>Reset</span>
                         </button>
@@ -415,37 +358,31 @@
                 </form>
             </div>
 
-            <!-- Products Table -->
-            <div class="products-table-wrapper">
+            <!-- Registrations Table -->
+            <div class="registrations-table-wrapper">
                 <table>
                     <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Name</th>
-                        <th>Price (VND)</th>
-                        <th>Description</th>
-                        <th>Stock</th>
-                        <th>Active</th>
+                        <th>Status</th>
+                        <th>Registered At</th>
+                        <th>Scheduled At</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="product : ${products}">
-                        <td th:text="${product.id}">1</td>
-                        <td th:text="${product.productName}">Product name</td>
-                        <td th:text="${product.currentPrice}">0</td>
-                        <td th:text="${product.productDescription}">Description</td>
-                        <td>
-                            <span th:text="${stockMap[product.id]}">0</span>
-                            <span th:if="${stockMap[product.id] == 0}"
-                                  class="stock-out"> (Out of Stock)</span>
-                            <span th:if="${stockMap[product.id] > 0 && stockMap[product.id] < 10}"
-                                  class="stock-low"> (Low)</span>
+                    <tr th:each="appointment : ${registrations}">
+                        <td th:text="${appointment.name}">Name</td>
+                        <td th:text="${appointment.status}">PENDING</td>
+                        <td th:text="${#temporals.format(appointment.registeredAt, 'yyyy-MM-dd HH:mm')}">
+                            2025-10-22 07:00
                         </td>
-                        <td th:text="${product.activeStatus}">false</td>
+                        <td th:text="${appointment.scheduledAt != null ? #temporals.format(appointment.scheduledAt, 'yyyy-MM-dd HH:mm') : '-'}">
+                            -
+                        </td>
                         <td>
-                            <a th:href="@{/staff/products/edit/{id}(id=${product.id})}" class="edit-link">
-                                Edit
+                            <a th:href="@{/manager/registration/view/{id}(id=${appointment.id})}" class="view-link">
+                                View Details
                             </a>
                         </td>
                     </tr>

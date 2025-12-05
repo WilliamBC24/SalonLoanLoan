@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Edit Product | Salon Loan Loan</title>
+    <title>Manager - Create Product | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -11,19 +11,19 @@
 
     <style>
         /* ===== PAGE STRUCTURE ===== */
-        .product-edit-page {
+        .product-create-page {
             padding: 2.5rem 0 3rem;
             background: var(--bg-light);
             min-height: 100vh;
         }
 
-        .product-edit-layout-inner {
+        .product-create-layout-inner {
             max-width: 70vw;
             width: 100%;
             margin: 1rem auto;
         }
 
-        .product-edit-card {
+        .product-create-card {
             background: #ffffff;
             padding: 2.2rem;
             border-radius: var(--radius-lg);
@@ -31,7 +31,7 @@
             box-shadow: var(--shadow-soft);
         }
 
-        .product-edit-header-row {
+        .product-create-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,28 +39,19 @@
             margin-bottom: 1.5rem;
         }
 
-        .product-edit-title-block {
+        .product-create-title-block {
             text-align: left;
         }
 
-        .product-edit-title-block .section-kicker {
+        .product-create-title-block .section-kicker {
             margin-bottom: 0.25rem;
         }
 
-        .product-edit-title-block h2 {
+        .product-create-title-block h2 {
             margin: 0;
-            display: flex;
-            align-items: baseline;
-            gap: 0.4rem;
         }
 
-        .product-id-badge {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #6b7280;
-        }
-
-        .product-edit-actions {
+        .product-create-actions {
             display: flex;
             gap: 0.6rem;
             align-items: center;
@@ -88,11 +79,6 @@
             background: #f4f4f4;
         }
 
-        .info-text {
-            color: #6b7280;
-            font-size: 0.85rem;
-        }
-
         /* ===== ALERTS ===== */
         .alert {
             padding: 0.7rem 0.9rem;
@@ -112,7 +98,6 @@
             display: grid;
             grid-template-columns: minmax(0, 1.1fr);
             gap: 1.2rem;
-            margin-top: 0.4rem;
         }
 
         .form-group {
@@ -192,16 +177,6 @@
             width: auto;
         }
 
-        /* Stock info */
-        .stock-info-block {
-            margin-top: 0.2rem;
-        }
-
-        .stock-info-block .info-text span[style*="red"],
-        .stock-info-block .info-text span[style*="orange"] {
-            font-size: 0.9rem;
-        }
-
         /* ===== BUTTONS ===== */
         .button-group {
             display: flex;
@@ -248,25 +223,17 @@
 <div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
 <!-- MAIN SCROLLABLE CONTENT -->
-<main class="staff-main product-edit-page">
-    <div class="product-edit-layout-inner">
-        <section class="product-edit-card">
+<main class="staff-main product-create-page">
+    <div class="product-create-layout-inner">
+        <section class="product-create-card">
             <!-- Header -->
-            <div class="product-edit-header-row">
-                <div class="product-edit-title-block section-heading">
+            <div class="product-create-header-row">
+                <div class="product-create-title-block section-heading">
                     <p class="section-kicker">Inventory Management</p>
-                    <h2>
-                        Edit Product
-                        <span class="product-id-badge">
-                            #<span th:text="${product.id}">1</span>
-                        </span>
-                    </h2>
+                    <h2>Create New Product</h2>
                 </div>
-                <div class="product-edit-actions">
-                    <a href="/staff/products/list" class="back-link-pill">
-                        <span class="icon">←</span>
-                        <span>Back to Product List</span>
-                    </a>
+                <div class="product-create-actions">
+
                 </div>
             </div>
 
@@ -274,81 +241,42 @@
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
             <!-- Form -->
-            <form id="editProductForm"
-                  method="post"
-                  th:action="@{/staff/products/edit/{id}(id=${product.id})}"
-                  class="form-grid">
+            <form id="createProductForm" method="post" action="/manager/products/create" class="form-grid">
                 <div>
                     <div class="form-group">
                         <label for="productName" class="required">Product Name</label>
-                        <input type="text"
-                               id="productName"
-                               name="productName"
-                               th:value="${product.productName}"
-                               data-original-name="${product.productName}"
-                               required>
+                        <input type="text" id="productName" name="productName" required>
                         <div class="error" id="productNameError">Product name is required</div>
-                        <div class="warning" id="productNameWarning">
-                            A product with this name already exists
-                        </div>
+                        <div class="warning" id="productNameWarning">A product with this name already exists</div>
                     </div>
 
                     <div class="form-group">
                         <label for="currentPrice" class="required">Current Price (VND)</label>
-                        <input type="number"
-                               id="currentPrice"
-                               name="currentPrice"
-                               min="0"
-                               th:value="${product.currentPrice}"
-                               required>
-                        <div class="error" id="currentPriceError">
-                            Current price must be a positive number
-                        </div>
+                        <input type="number" id="currentPrice" name="currentPrice" min="0" required>
+                        <div class="error" id="currentPriceError">Current price must be a positive number</div>
                     </div>
 
                     <div class="form-group">
                         <label for="productDescription" class="required">Product Description</label>
-                        <textarea id="productDescription"
-                                  name="productDescription"
-                                  required
-                                  th:text="${product.productDescription}"></textarea>
-                        <div class="error" id="productDescriptionError">
-                            Product description is required
-                        </div>
-                    </div>
-
-                    <div class="form-group stock-info-block">
-                        <label>Available Stock</label>
-                        <div class="info-text">
-                            <span th:text="${availableStock}">0</span> units available
-                            <span th:if="${availableStock == 0}"
-                                  style="color: red; font-weight: bold;"> (Out of Stock)</span>
-                            <span th:if="${availableStock > 0 && availableStock < 10}"
-                                  style="color: orange; font-weight: bold;"> (Low Stock)</span>
-                        </div>
-                        <div class="info-text" style="margin-top: 5px;">
-                            Stock is managed through inventory system
-                        </div>
+                        <textarea id="productDescription" name="productDescription" required></textarea>
+                        <div class="error" id="productDescriptionError">Product description is required</div>
                     </div>
 
                     <div class="form-group">
                         <label class="checkbox-label">
-                            <input type="checkbox"
-                                   id="activeStatus"
-                                   name="activeStatus"
-                                   value="true"
-                                   th:checked="${product.activeStatus}">
+                            <input type="checkbox" id="activeStatus" name="activeStatus" value="true">
                             <span>Active Status</span>
                         </label>
                     </div>
 
                     <div class="button-group">
                         <button type="submit" class="btn btn-primary">
-                            <span>Update Product</span>
+                            <span>➕</span>
+                            <span>Create Product</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/staff/products/list'">
+                                onclick="window.location.href='/manager/products/list'">
                             <span>✕</span>
                             <span>Cancel</span>
                         </button>
@@ -362,18 +290,10 @@
 <script>
     let productNameCheckTimeout;
     let isDuplicateName = false;
-    const originalProductName = document.getElementById('productName').getAttribute('data-original-name');
 
     // Check for duplicate product name
     function checkDuplicateProductName(productName) {
         if (!productName || !productName.trim()) {
-            document.getElementById('productNameWarning').style.display = 'none';
-            isDuplicateName = false;
-            return;
-        }
-
-        // Don't check if name hasn't changed
-        if (productName.trim().toLowerCase() === originalProductName.toLowerCase()) {
             document.getElementById('productNameWarning').style.display = 'none';
             isDuplicateName = false;
             return;
@@ -409,7 +329,7 @@
             });
     }
 
-    document.getElementById('editProductForm').addEventListener('submit', function(event) {
+    document.getElementById('createProductForm').addEventListener('submit', function(event) {
         let isValid = true;
 
         // Check for duplicate name

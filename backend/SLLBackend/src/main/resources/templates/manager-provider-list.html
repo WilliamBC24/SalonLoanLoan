@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Manage Providers | Salon Loan Loan</title>
+    <title>Manager - Manage Providers | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -331,11 +331,7 @@
                     <h2>Manage Providers</h2>
                 </div>
                 <div class="providers-actions">
-                    <a href="/staff/landing" class="back-link-pill">
-                        <span class="icon">←</span>
-                        <span>Back to Dashboard</span>
-                    </a>
-                    <a href="/staff/supplier/create" class="create-btn-pill">
+                    <a href="/manager/supplier/create" class="create-btn-pill">
                         <span class="icon">＋</span>
                         <span>New Provider</span>
                     </a>
@@ -355,7 +351,7 @@
                     </div>
                 </div>
 
-                <form method="get" action="/staff/supplier/list">
+                <form method="get" action="/manager/supplier/list">
                     <div class="search-form">
                         <div class="filter-group">
                             <label for="search-name">Search by Name</label>
@@ -389,7 +385,7 @@
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/staff/supplier/list'">
+                                onclick="window.location.href='/manager/supplier/list'">
                             <span>✕</span>
                             <span>Reset</span>
                         </button>
@@ -420,7 +416,7 @@
                         <td th:text="${supplier.email}">Email</td>
                         <td th:text="${supplier.note}">Note</td>
                         <td>
-                            <a th:href="@{/staff/supplier/edit/{id}(id=${supplier.id})}" class="edit-link">
+                            <a th:href="@{/manager/supplier/edit/{id}(id=${supplier.id})}" class="edit-link">
                                 <span>Edit</span>
                             </a>
                         </td>

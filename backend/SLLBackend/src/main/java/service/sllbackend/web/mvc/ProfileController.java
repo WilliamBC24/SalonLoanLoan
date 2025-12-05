@@ -15,6 +15,7 @@ import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
 import service.sllbackend.service.*;
 import service.sllbackend.utils.DTOMapper;
+import service.sllbackend.utils.EncryptSSN;
 import service.sllbackend.web.dto.*;
 
 import java.security.Principal;
@@ -114,17 +115,23 @@ public class ProfileController {
     }
 
     @GetMapping("/staff/profile")
-    public String staffProfile(Model model, Principal principal) {
+    public String staffProfile(Model model, Principal principal) throws Exception {
         StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
         StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
+        if (staffAccount.getStaff().getSocialSecurityNum() != null) {
+            staffProfileViewDTO.setSocialSecurityNum(EncryptSSN.decrypt(staffAccount.getStaff().getSocialSecurityNum()));
+        }
         model.addAttribute("staffAccount", staffProfileViewDTO);
         return "staff-profile";
     }
 
     @GetMapping("/staff/profile/edit")
-    public String editStaffProfile(Model model, Principal principal) {
+    public String editStaffProfile(Model model, Principal principal) throws Exception {
         StaffAccount staffAccount = profileService.getCurrentStaff(principal.getName());
         StaffProfileViewDTO staffProfileViewDTO = DTOMapper.toStaffProfileViewDTO(staffAccount);
+        if (staffAccount.getStaff().getSocialSecurityNum() != null) {
+            staffProfileViewDTO.setSocialSecurityNum(EncryptSSN.decrypt(staffAccount.getStaff().getSocialSecurityNum()));
+        }
         model.addAttribute("staffAccount", staffProfileViewDTO);
         return "staff-profile-edit";
     }

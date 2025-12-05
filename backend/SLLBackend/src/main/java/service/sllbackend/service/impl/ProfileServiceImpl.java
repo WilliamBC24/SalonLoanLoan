@@ -211,6 +211,23 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
+    @Override
+    @Transactional
+    public void adminCreateStaff(AdminCreateStaffDTO dto) throws Exception {
+        Staff staff = new Staff();
+
+        staff.setName(dto.getName().trim());
+        staff.setBirthDate(dto.getBirthDate());
+        staff.setEmail(dto.getEmail());
+
+        if (org.springframework.util.StringUtils.hasText(dto.getSocialSecurityNum())) {
+            String encrypted = EncryptSSN.encrypt(dto.getSocialSecurityNum().trim());
+            staff.setSocialSecurityNum(encrypted);
+        }
+
+        staffRepo.save(staff);
+    }
+
 
     @Override
     @Transactional(readOnly = true)

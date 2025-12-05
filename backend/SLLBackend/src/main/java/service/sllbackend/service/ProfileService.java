@@ -19,4 +19,5 @@ public interface ProfileService {
     List<UserAccount> getUserAccount(String username, AccountStatus activeStatus);
     void adminUpdateUserAccount(Long id, AdminUserProfileDTO adminUserProfileDTO);
     void adminUpdateStaffAccount(Long id, AdminStaffProfileDTO adminStaffProfileDTO) throws Exception;
+    void adminCreateStaff(AdminCreateStaffDTO adminCreateStaffDTO) throws Exception;
 }

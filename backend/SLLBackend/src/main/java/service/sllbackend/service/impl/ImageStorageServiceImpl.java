@@ -72,7 +72,7 @@ public class ImageStorageServiceImpl implements ImageStorageService {
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         }
         
-        // Return relative path for storage in database
+        // Return relative path for storage in database (use forward slash for web URLs)
         String relativePath = subDirectory + "/" + uniqueFilename;
         log.info("Stored image: {}", relativePath);
         

@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.entity.OrderInvoiceDetails;
+import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.service.OrderService;
 import service.sllbackend.service.VietQrService;
@@ -49,20 +50,23 @@ public class OrderController {
     public String placeOrder(
             @RequestParam String customerName,
             @RequestParam String phoneNumber,
-            @RequestParam String shippingAddress,
+            @RequestParam(required = false) String shippingAddress,
             @RequestParam String paymentMethod,
+            @RequestParam String fulfillmentType,
             Principal principal) {
         if (principal == null) {
             return "redirect:/auth/user/login";
         }
         
         try {
+            FulfillmentType fulfillment = FulfillmentType.valueOf(fulfillmentType);
             OrderInvoice order = orderService.placeOrder(
                     principal.getName(),
                     customerName,
                     phoneNumber,
                     shippingAddress,
-                    paymentMethod
+                    paymentMethod,
+                    fulfillment
             );
             
             return "redirect:/order/details?orderId=" + order.getId();

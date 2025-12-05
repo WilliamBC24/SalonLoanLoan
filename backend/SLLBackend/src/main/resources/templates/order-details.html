@@ -145,13 +145,37 @@
             color: #1d4ed8;
         }
         .status-shipped,
-        .status-delivered {
+        .status-delivered,
+        .status-picked_up {
             background: #dcfce7;
             color: #166534;
+        }
+        .status-ready_for_pickup {
+            background: #e0f2fe;
+            color: #075985;
         }
         .status-cancelled {
             background: #fee2e2;
             color: #b91c1c;
+        }
+
+        .fulfillment-badge {
+            padding: 0.2rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .fulfillment-delivery {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .fulfillment-in_store_pickup {
+            background: #f0fdf4;
+            color: #166534;
         }
 
         /* Items table */
@@ -235,6 +259,27 @@
             border: 2px solid #e5e7eb;
             background: #ffffff;
             padding: 0.6rem;
+        }
+
+        .pickup-info-box {
+            margin-top: 1.5rem;
+            text-align: center;
+            padding: 1.1rem 1rem 1.3rem;
+            border-radius: 18px;
+            border: 2px solid #bbf7d0;
+            background: #f0fdf4;
+        }
+
+        .pickup-info-box h3 {
+            margin: 0 0 0.4rem;
+            font-size: 1rem;
+            color: #166534;
+        }
+
+        .pickup-info-box p {
+            margin: 0.2rem 0;
+            font-size: 0.85rem;
+            color: #166534;
         }
 
         .order-actions {
@@ -363,6 +408,13 @@
                                 BANK_TRANSFER
                             </span>
                         </div>
+                        <div class="info-item">
+                            <span class="info-label">Fulfillment Type</span>
+                            <span th:class="'fulfillment-badge fulfillment-' + ${#strings.toLowerCase(order.fulfillmentType)}"
+                                  th:text="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).IN_STORE_PICKUP ? '🏪 In-Store Pickup' : '🚚 Delivery'}">
+                                Delivery
+                            </span>
+                        </div>
                     </div>
                 </section>
 
@@ -372,21 +424,25 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <span class="info-label">Name</span>
-                            <span class="info-value" th:text="${order.customerInfo.name}">
+                            <span class="info-value" th:text="${order.customerInfo?.name ?: 'N/A'}">
                                 Customer Name
                             </span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Phone Number</span>
-                            <span class="info-value" th:text="${order.customerInfo.phoneNumber}">
+                            <span class="info-value" th:text="${order.customerInfo?.phoneNumber ?: 'N/A'}">
                                 0123456789
                             </span>
                         </div>
-                        <div class="info-item full-width">
+                        <div class="info-item full-width" th:if="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).DELIVERY}">
                             <span class="info-label">Shipping Address</span>
-                            <span class="info-value" th:text="${order.customerInfo.shippingAddress}">
+                            <span class="info-value" th:text="${order.customerInfo?.shippingAddress ?: 'N/A'}">
                                 123 Main Street, City
                             </span>
+                        </div>
+                        <div class="info-item full-width" th:if="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).IN_STORE_PICKUP}">
+                            <span class="info-label">Pickup Location</span>
+                            <span class="info-value">Salon Loan Loan</span>
                         </div>
                     </div>
                 </section>
@@ -449,6 +505,14 @@
                         <p>⚠️ Please complete the payment to confirm your order.</p>
                         <img th:src="${paymentQrUrl}" alt="Payment QR Code" />
                         <p>Scan this QR code to complete your payment.</p>
+                    </div>
+
+                    <!-- In-Store Pickup Info Box -->
+                    <div th:if="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).IN_STORE_PICKUP and (order.orderStatus.name() == 'READY_FOR_PICKUP' or order.orderStatus.name() == 'CONFIRMED')}"
+                         class="pickup-info-box">
+                        <h3>🏪 Ready for Pickup</h3>
+                        <p>Your order is ready! Please visit our salon to pick it up.</p>
+                        <p style="margin-top: 0.5rem;"><strong>Location:</strong> Salon Loan Loan</p>
                     </div>
 
                     <!-- Actions -->

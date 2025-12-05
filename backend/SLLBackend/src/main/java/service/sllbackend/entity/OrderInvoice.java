@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
 import org.hibernate.annotations.Check;
 
@@ -28,7 +29,7 @@ public class OrderInvoice {
     private UserAccount userAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_info_id", nullable = false)
+    @JoinColumn(name = "customer_info_id")
     private CustomerInfo customerInfo;
 
     @Column(name = "total_price", nullable = false)
@@ -36,6 +37,11 @@ public class OrderInvoice {
 
     @Column(name = "payment_method", nullable = false, columnDefinition = "TEXT")
     private String paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fulfillment_type", nullable = false, columnDefinition = "TEXT")
+    @Builder.Default
+    private FulfillmentType fulfillmentType = FulfillmentType.DELIVERY;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false, columnDefinition = "TEXT")

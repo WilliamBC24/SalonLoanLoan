@@ -1,286 +1,439 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Edit Order Status</title>
+    <title>Staff - Edit Order Status | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles (sidebar + staff-main behaviour) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
-            background: #f5f5f5;
+        /* ===== PAGE STRUCTURE ===== */
+        .orders-edit-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
         }
-        .header {
+
+        .orders-edit-layout-inner {
+            max-width: 60rem;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .orders-edit-card {
+            background: #ffffff;
+            padding: 2.1rem 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ===== */
+        .orders-edit-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 1rem;
+            margin-bottom: 1.4rem;
         }
-        .back-link {
-            display: inline-block;
-            color: #007bff;
+
+        .orders-edit-title-block.section-heading {
+            text-align: left;
+        }
+
+        .orders-edit-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .orders-edit-title-block h2 {
+            margin: 0;
+        }
+
+        .orders-edit-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .back-link-pill {
+            font-size: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            padding: 0.4rem 0.9rem;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
             text-decoration: none;
+            color: var(--text-main);
         }
-        .back-link:hover {
-            text-decoration: underline;
+
+        .back-link-pill span.icon {
+            font-size: 1.05rem;
+            line-height: 1;
         }
-        h1 {
-            color: #333;
+
+        .back-link-pill:hover {
+            background: #f4f4f4;
         }
+
+        /* ===== ALERTS ===== */
         .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
         }
+
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
         }
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+
+        /* ===== SECTIONS ===== */
         .form-section {
-            margin-bottom: 25px;
+            margin-bottom: 1.7rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px dashed #e5e7eb;
         }
-        .form-section h2 {
-            color: #333;
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #007bff;
+
+        .form-section:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0;
         }
+
+        .form-section h3 {
+            color: #111827;
+            font-size: 1rem;
+            margin: 0 0 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .form-section h3 span.icon {
+            font-size: 1.1rem;
+        }
+
+        /* ===== INFO GRID ===== */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.9rem 1.3rem;
+            margin-top: 0.2rem;
         }
+
         .info-item {
             display: flex;
             flex-direction: column;
+            gap: 0.18rem;
         }
+
         .info-label {
-            color: #666;
-            font-size: 12px;
-            margin-bottom: 5px;
+            color: #6b7280;
+            font-size: 0.75rem;
+            margin-bottom: 0;
             text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 600;
         }
+
         .info-value {
-            color: #333;
-            font-size: 14px;
+            color: #111827;
+            font-size: 0.92rem;
             font-weight: 500;
         }
+
+        /* ===== STATUS BADGE (MATCH LIST PAGE) ===== */
         .order-status {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
+            padding: 0.25rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.065em;
+            border: 1px solid transparent;
             display: inline-block;
         }
+
         .status-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: #fef9c3;
+            color: #854d0e;
+            border-color: #facc15;
         }
+
         .status-confirmed {
-            background: #d1ecf1;
-            color: #0c5460;
+            background: #cffafe;
+            color: #155e75;
+            border-color: #22d3ee;
         }
+
         .status-processing {
-            background: #cce5ff;
-            color: #004085;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-color: #60a5fa;
         }
+
         .status-shipped {
-            background: #d4edda;
-            color: #155724;
+            background: #e0f2fe;
+            color: #075985;
+            border-color: #38bdf8;
         }
+
         .status-delivered {
-            background: #d4edda;
-            color: #155724;
+            background: #dcfce7;
+            color: #166534;
+            border-color: #4ade80;
         }
+
         .status-cancelled {
-            background: #f8d7da;
-            color: #721c24;
+            background: #fee2e2;
+            color: #b91c1c;
+            border-color: #f87171;
         }
+
+        /* ===== FORM ===== */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
         }
-        label {
+
+        .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: bold;
+            margin-bottom: 0.4rem;
+            color: #111827;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
-        select {
+
+        .form-group select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
+            padding: 0.55rem 0.7rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: #ffffff;
             box-sizing: border-box;
-            background: white;
         }
-        select:focus {
+
+        .form-group select:focus {
             outline: none;
-            border-color: #007bff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.45);
         }
+
+        .help-text {
+            color: #6b7280;
+            font-size: 0.78rem;
+            margin-top: 0.25rem;
+        }
+
         .error {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 5px;
+            color: #b91c1c;
+            font-size: 0.78rem;
+            margin-top: 0.25rem;
             display: none;
         }
+
+        /* ===== ACTION BUTTONS ===== */
         .actions {
             display: flex;
-            gap: 10px;
-            margin-top: 30px;
+            gap: 0.6rem;
+            margin-top: 1.4rem;
         }
-        .btn {
-            padding: 12px 24px;
+
+        .btn-pill-primary,
+        .btn-pill-secondary {
+            border-radius: 999px;
+            padding: 0.5rem 1.3rem;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
             text-decoration: none;
-            display: inline-block;
         }
-        .btn-primary {
-            background: #007bff;
-            color: white;
+
+        .btn-pill-primary {
+            background: #2563eb;
+            color: #ffffff;
         }
-        .btn-primary:hover:not(:disabled) {
-            background: #0056b3;
+
+        .btn-pill-primary:hover:not(:disabled) {
+            background: #1d4ed8;
         }
-        .btn-primary:disabled {
-            background: #6c757d;
+
+        .btn-pill-primary:disabled {
+            background: #9ca3af;
             cursor: not-allowed;
         }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
+
+        .btn-pill-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
         }
-        .btn-secondary:hover {
-            background: #5a6268;
+
+        .btn-pill-secondary:hover {
+            background: #f3f4f6;
         }
-        .help-text {
-            color: #666;
-            font-size: 12px;
-            margin-top: 5px;
-        }
+
         @media (max-width: 768px) {
             .info-grid {
                 grid-template-columns: 1fr;
             }
+
+            .orders-edit-card {
+                padding: 1.4rem 1.5rem;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <h1>Staff - Edit Order Status</h1>
-        <a th:href="@{/staff/order/list(orderId=${order.id})}" class="back-link">← Back to Order List</a>
-    </div>
+<body class="staff-layout">
 
-    <div th:if="${param.error}" class="alert alert-error">
-        <span th:text="${param.error}">Error message</span>
-    </div>
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-    <div class="card">
-        <!-- Current Order Information -->
-        <div class="form-section">
-            <h2>Order Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Order ID</span>
-                    <span class="info-value" th:text="${order.id}">123</span>
+<!-- MAIN SCROLLABLE CONTENT -->
+<main class="staff-main orders-edit-page">
+    <div class="orders-edit-layout-inner">
+        <section class="orders-edit-card">
+            <!-- Header -->
+            <div class="orders-edit-header-row">
+                <div class="orders-edit-title-block section-heading">
+                    <p class="section-kicker">Online Orders</p>
+                    <h2>Edit Order Status</h2>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Order Date</span>
-                    <span class="info-value" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
-                        01 Jan 2024 10:00
-                    </span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Customer</span>
-                    <span class="info-value" th:text="${order.customerInfo.name}">Customer Name</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Current Status</span>
-                    <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
-                          th:text="${order.orderStatus}">
-                        PENDING
-                    </span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Total Amount</span>
-                    <span class="info-value" th:text="${order.totalPrice} + ' VND'">0 VND</span>
+                <div class="orders-edit-actions">
+                    <a th:href="@{/staff/order/list(orderId=${order.id})}" class="back-link-pill">
+                        <span class="icon">←</span>
+                        <span>Back to Order List</span>
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Edit Status Form -->
-        <form id="editStatusForm" action="/staff/order/edit" method="post" onsubmit="return validateForm()">
-            <input type="hidden" name="orderId" th:value="${order.id}" />
-            
+            <!-- Error Alert -->
+            <div th:if="${param.error}" class="alert alert-error">
+                <span th:text="${param.error}">Error message</span>
+            </div>
+
+            <!-- Order Information -->
             <div class="form-section">
-                <h2>Update Order Status</h2>
-                <div class="form-group">
-                    <label for="orderStatus">New Status *</label>
-                    <select id="orderStatus" name="orderStatus" required>
-                        <option value="">-- Select New Status --</option>
-                        <option th:each="status : ${orderStatuses}" 
-                                th:value="${status}" 
-                                th:text="${status}"
-                                th:selected="${status == order.orderStatus}">
+                <h3>
+                    <span class="icon">📦</span>
+                    <span>Order Information</span>
+                </h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Order ID</span>
+                        <span class="info-value" th:text="${order.id}">123</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Order Date</span>
+                        <span class="info-value"
+                              th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
+                            01 Jan 2024 10:00
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Customer</span>
+                        <span class="info-value" th:text="${order.customerInfo.name}">
+                            Customer Name
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Current Status</span>
+                        <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
+                              th:text="${order.orderStatus}">
                             PENDING
-                        </option>
-                    </select>
-                    <span class="help-text">Select the new status for this order</span>
-                    <span class="error" id="statusError">Please select a status</span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Total Amount</span>
+                        <span class="info-value" th:text="${order.totalPrice} + ' VND'">
+                            0 VND
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <div class="actions">
-                <button type="submit" class="btn btn-primary">Update Status</button>
-                <a th:href="@{/staff/order/list(orderId=${order.id})}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+            <!-- Edit Status Form -->
+            <form id="editStatusForm"
+                  action="/staff/order/edit"
+                  method="post"
+                  onsubmit="return validateForm()">
+
+                <input type="hidden" name="orderId" th:value="${order.id}" />
+
+                <div class="form-section">
+                    <h3>
+                        <span>Update Order Status</span>
+                    </h3>
+
+                    <div class="form-group">
+                        <label for="orderStatus">New Status *</label>
+                        <select id="orderStatus" name="orderStatus" required>
+                            <option value="">-- Select New Status --</option>
+                            <option th:each="status : ${orderStatuses}"
+                                    th:value="${status}"
+                                    th:text="${status}"
+                                    th:selected="${status == order.orderStatus}">
+                                PENDING
+                            </option>
+                        </select>
+                        <p class="help-text">Select a different status to update this order.</p>
+                        <span class="error" id="statusError">Please select a status</span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn-pill-primary">
+                        <span>Update Status</span>
+                    </button>
+                    <a th:href="@{/staff/order/list(orderId=${order.id})}"
+                       class="btn-pill-secondary">
+                        <span>Cancel</span>
+                    </a>
+                </div>
+            </form>
+        </section>
     </div>
+</main>
 
-    <script>
-        function validateForm() {
-            let isValid = true;
+<script>
+    function validateForm() {
+        let isValid = true;
 
-            // Reset errors
-            document.querySelectorAll('.error').forEach(err => err.style.display = 'none');
+        // Reset errors
+        document.getElementById('statusError').style.display = 'none';
 
-            // Validate status selection
-            const status = document.getElementById('orderStatus').value;
-            if (!status) {
-                document.getElementById('statusError').style.display = 'block';
-                isValid = false;
-            }
-
-            // Check if status has changed
-            const currentStatus = '[[${order.orderStatus}]]';
-            if (status === currentStatus) {
-                alert('Please select a different status to update');
-                return false;
-            }
-
-            return isValid;
+        // Validate status selection
+        const status = document.getElementById('orderStatus').value;
+        if (!status) {
+            document.getElementById('statusError').style.display = 'block';
+            isValid = false;
         }
 
-        // Add real-time validation
-        document.getElementById('orderStatus').addEventListener('change', function() {
-            if (this.value) {
-                document.getElementById('statusError').style.display = 'none';
-            }
-        });
-    </script>
+        // Check if status has changed
+        const currentStatus = '[[${order.orderStatus}]]';
+        if (isValid && status === currentStatus) {
+            alert('Please select a different status to update.');
+            return false;
+        }
+
+        return isValid;
+    }
+
+    // Real-time validation
+    document.getElementById('orderStatus').addEventListener('change', function () {
+        if (this.value) {
+            document.getElementById('statusError').style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>

@@ -269,6 +269,21 @@
                 align-items: stretch;
             }
         }
+
+        .message {
+            margin-top: 1.6rem;
+            padding: 1rem 1.3rem;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .message.error {
+            background: #ffecec;
+            border: 1px solid #ffb3b3;
+            color: #b30000;
+        }
     </style>
 </head>
 
@@ -287,9 +302,13 @@
                     <h2>Edit Profile</h2>
                     <p class="edit-sub">Update your information below.</p>
                 </div>
+
                 <a th:href="@{/user/profile}" class="btn-outline" style="padding:.45rem 1rem;">
                     Back
                 </a>
+            </div>
+            <div th:if="${param.error}" class="message error">
+                Invalid input
             </div>
 
             <form th:action="@{/user/profile/update}" method="post">

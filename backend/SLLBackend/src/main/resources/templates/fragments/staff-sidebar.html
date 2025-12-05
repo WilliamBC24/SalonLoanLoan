@@ -1,0 +1,92 @@
+<aside class="staff-sidebar" th:fragment="staff-site-header">
+    <div class="staff-sidebar-inner">
+        <!-- Logo / brand -->
+        <div class="staff-logo-block">
+            <div class="staff-logo-icon">✂</div>
+            <div class="staff-logo-text">
+                <span class="brand-name">Salon Loan Loan</span>
+                <span class="brand-tagline">Staff Console</span>
+            </div>
+        </div>
+
+        <!-- Nav -->
+        <nav class="staff-nav">
+
+            <a th:href="@{/staff/profile}" class="staff-nav-link">Profile</a>
+            <a th:href="@{/staff/password}" class="staff-nav-link">Change Password</a>
+
+            <!-- Inventory Management -->
+            <div class="staff-nav-group">
+                <div class="staff-nav-parent">
+                    Inventory Management
+                    <span class="caret">▾</span>
+                </div>
+                <div class="staff-nav-children">
+                    <a th:href="@{/staff/invoices/create}" class="staff-nav-sublink">Create Invoice</a>
+                    <a th:href="@{/staff/invoices/list}" class="staff-nav-sublink">Invoice List</a>
+                </div>
+            </div>
+
+            <a th:href="@{/staff/loyalty/list}" class="staff-nav-link">Loyalty Management</a>
+
+            <!-- Product Management -->
+            <div class="staff-nav-group">
+                <div class="staff-nav-parent">
+                    Product Management
+                    <span class="caret">▾</span>
+                </div>
+                <div class="staff-nav-children">
+                    <a th:href="@{/staff/products/create}" class="staff-nav-sublink">Create Product</a>
+                    <a th:href="@{/staff/products/list}" class="staff-nav-sublink">Product List</a>
+                </div>
+            </div>
+
+            <!-- Service Management -->
+            <div class="staff-nav-group">
+                <div class="staff-nav-parent">
+                    Service Management
+                    <span class="caret">▾</span>
+                </div>
+                <div class="staff-nav-children">
+                    <a th:href="@{/staff/service/create}" class="staff-nav-sublink">Create Service</a>
+                    <a th:href="@{/staff/service/list}" class="staff-nav-sublink">Service List</a>
+                </div>
+            </div>
+
+            <!-- Provider Management -->
+            <div class="staff-nav-group">
+                <div class="staff-nav-parent">
+                    Provider Management
+                    <span class="caret">▾</span>
+                </div>
+                <div class="staff-nav-children">
+                    <a th:href="@{/staff/supplier/create}" class="staff-nav-sublink">Create Provider</a>
+                    <a th:href="@{/staff/supplier/list}" class="staff-nav-sublink">Provider List</a>
+                </div>
+            </div>
+
+            <a th:href="@{/staff/registration/list}" class="staff-nav-link">Appointment Management</a>
+            <a th:href="@{/staff/order/list}" class="staff-nav-link">Order Management</a>
+            <a th:href="@{/staff/job/list}" class="staff-nav-link">Application Management</a>
+
+        </nav>
+
+
+
+        <!-- Account / logout -->
+        <div class="staff-account">
+            <div class="staff-username" th:if="${username != null}">
+                <span class="staff-avatar-pill">
+                    <span th:text="${#strings.substring(username,0,1)}">S</span>
+                </span>
+                <span class="staff-username-text" th:text="${username}">Staff</span>
+            </div>
+
+            <form th:action="@{/logout}" method="post" class="staff-logout-form">
+                <button type="submit" class="btn-outline staff-logout-btn">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</aside>

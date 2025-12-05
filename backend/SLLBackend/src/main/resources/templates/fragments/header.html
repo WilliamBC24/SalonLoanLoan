@@ -17,13 +17,14 @@
 
         <div class="header-actions">
             <!-- Cart -->
+            <div th:if="${username != null}">
             <a th:href="@{/cart}" style="text-decoration:none;">
                 <button class="icon-button" aria-label="Cart">
                     Cart
                     <span class="cart-count" th:text="${cartCount} ?: 0">0</span>
                 </button>
             </a>
-
+            </div>
 
             <!-- When NOT logged in -->
             <a th:if="${username == null}"

@@ -19,9 +19,9 @@
         }
 
         .edit-staff-wrapper {
+            max-width: 85vw;
             width: 100%;
-            max-width: 720px;
-            padding: 0 1.5rem;
+            margin: 1rem;
         }
 
         .edit-card {
@@ -112,13 +112,28 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .message {
+            margin-top: 1.6rem;
+            padding: 1rem 1.3rem;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .message.error {
+            background: #ffecec;
+            border: 1px solid #ffb3b3;
+            color: #b30000;
+        }
     </style>
 </head>
 
-<body>
-<div th:replace="~{fragments/staff-header :: staff-site-header}"></div>
+<body class="staff-layout">
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-<main class="edit-staff-page">
+<main class="staff-main edit-staff-page">
     <div class="edit-staff-wrapper">
 
         <section class="edit-card">
@@ -126,6 +141,10 @@
                 <h2>Edit Staff Profile</h2>
                 <p>Update staff details below.</p>
             </div>
+            <div th:if="${param.error}" class="message error">
+                Invalid inputs
+            </div>
+
 
             <form th:action="@{/staff/profile/update}" method="post">
 
@@ -165,8 +184,7 @@
                         <input type="email"
                                name="email"
                                class="form-input"
-                               th:value="${staffAccount.email}"
-                               readonly>
+                               th:value="${staffAccount.email}">
                     </div>
 
                     <div class="form-field">

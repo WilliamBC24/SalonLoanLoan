@@ -43,6 +43,7 @@
         name TEXT NOT NULL,
         phone_number VARCHAR(20) NOT NULL,
         email VARCHAR(100),
+        city TEXT,
         shipping_address TEXT
     );
 
@@ -473,6 +474,7 @@
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         user_account_id INT REFERENCES user_account(id),
         customer_info_id INT REFERENCES customer_info(id),
+        shipping_fee INT NOT NULL DEFAULT 0 CHECK (shipping_fee >= 0),
         total_price INT NOT NULL CHECK (total_price > 0),
         payment_method TEXT NOT NULL,
         order_status TEXT NOT NULL DEFAULT 'PENDING',

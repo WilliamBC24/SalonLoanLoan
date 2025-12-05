@@ -17,6 +17,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     
+    private static final int HANOI_SHIPPING_FEE = 30000;
+    private static final int OTHER_CITY_SHIPPING_FEE = 70000;
+    
     private final OrderInvoiceRepo orderInvoiceRepo;
     private final OrderInvoiceDetailsRepo orderInvoiceDetailsRepo;
     private final CustomerInfoRepo customerInfoRepo;
@@ -25,9 +28,22 @@ public class OrderServiceImpl implements OrderService {
     private final InventoryService inventoryService;
 
     @Override
+    public int calculateShippingFee(String city) {
+        if (city == null || city.trim().isEmpty()) {
+            return OTHER_CITY_SHIPPING_FEE;
+        }
+        String normalizedCity = city.trim().toLowerCase();
+        if (normalizedCity.equals("hanoi") || normalizedCity.equals("hà nội") 
+            || normalizedCity.equals("ha noi")) {
+            return HANOI_SHIPPING_FEE;
+        }
+        return OTHER_CITY_SHIPPING_FEE;
+    }
+
+    @Override
     @Transactional
-    public OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
-                                  String shippingAddress, String paymentTypeName) {
+    public OrderInvoice placeOrder(String username, String customerName, String phoneNumber,
+                                  String city, String shippingAddress, String paymentTypeName) {
         // Get user account
         UserAccount userAccount = userAccountRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -51,17 +67,32 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         
-        // Calculate total price
-        int totalPrice = cartItems.stream()
+        // Calculate subtotal (cart items)
+        int subtotal = cartItems.stream()
                 .mapToInt(item -> item.getProduct().getCurrentPrice() * item.getAmount())
                 .sum();
         
-        // Get or create customer info
+        // Calculate shipping fee based on city
+        int shippingFee = calculateShippingFee(city);
+        
+        // Calculate total price (subtotal + shipping fee)
+        int totalPrice = subtotal + shippingFee;
+        
+        // Get or create customer info (now includes city)
         CustomerInfo customerInfo = customerInfoRepo
                 .findByPhoneNumberAndShippingAddress(phoneNumber, shippingAddress)
+                .map(existing -> {
+                    // Update city if needed
+                    if (city != null && !city.equals(existing.getCity())) {
+                        existing.setCity(city);
+                        return customerInfoRepo.save(existing);
+                    }
+                    return existing;
+                })
                 .orElseGet(() -> customerInfoRepo.save(CustomerInfo.builder()
                         .name(customerName)
                         .phoneNumber(phoneNumber)
+                        .city(city)
                         .shippingAddress(shippingAddress)
                         .build()));
         
@@ -74,6 +105,7 @@ public class OrderServiceImpl implements OrderService {
         OrderInvoice orderInvoice = OrderInvoice.builder()
                 .userAccount(userAccount)
                 .customerInfo(customerInfo)
+                .shippingFee(shippingFee)
                 .totalPrice(totalPrice)
                 .paymentMethod(paymentTypeName)
                 .orderStatus(OrderStatus.PENDING)

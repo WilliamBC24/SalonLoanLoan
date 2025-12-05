@@ -11,16 +11,24 @@ import java.util.Map;
 public interface OrderService {
     
     /**
+     * Calculate shipping fee based on city
+     * @param city The city name (Vietnam cities)
+     * @return Shipping fee: 30,000 for Hanoi, 70,000 for all other cities
+     */
+    int calculateShippingFee(String city);
+    
+    /**
      * Place an order from user's cart
      * @param username User's username
      * @param customerName Customer's name
      * @param phoneNumber Delivery phone number
+     * @param city Delivery city (Vietnam cities)
      * @param shippingAddress Delivery address
      * @param paymentTypeName Payment method name (e.g., "BANK_TRANSFER", "COD")
      * @return Created order invoice
      */
-    OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
-                           String shippingAddress, String paymentTypeName);
+    OrderInvoice placeOrder(String username, String customerName, String phoneNumber,
+                           String city, String shippingAddress, String paymentTypeName);
     
     /**
      * Get order history for a user

@@ -32,11 +32,23 @@
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
             gap: 1.75rem;
             margin-top: 1.7rem;
+            align-items: stretch; /* make columns same height */
         }
 
         .appointment-col {
             display: flex;
             flex-direction: column;
+        }
+
+        /* Card inside each column so all three line up */
+        .appointment-card {
+            background: #f9fafb;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 1.2rem 1.3rem 1.4rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         @media (max-width: 1100px) {
@@ -146,15 +158,17 @@
             }
         }
 
-        /* ===== Staff selector (column 2 top) ===== */
+        /* ===== Staff selector (column 2) ===== */
         .staff-select-wrapper {
-            margin-top: 0.2rem;
+            margin-top: 1.2rem;
         }
 
-        /* ===== Service search ===== */
+        /* ===== Service search (column 2) ===== */
         .service-search-wrapper {
             display: flex;
             flex-direction: column;
+            flex: 1;          /* fill card height */
+            min-height: 0;    /* allow inner scroll */
         }
 
         .service-list {
@@ -162,8 +176,9 @@
             background: #fafafa;
             border-radius: 16px;
             border: 1px solid #e6e6e6;
-            /* fixed height area that scrolls inside itself */
-            height: 190px;
+            /* take remaining vertical space and scroll inside */
+            flex: 1;
+            min-height: 0;
             overflow-y: auto;
         }
 
@@ -189,8 +204,9 @@
             margin-top: 0.3rem;
             display: flex;
             flex-direction: column;
-            /* fixed height area that scrolls inside itself */
-            height: 220px;
+            /* make it expand to fill column height */
+            flex: 1;
+            min-height: 0;
         }
 
         .selected-services-header {
@@ -289,103 +305,107 @@
             <div class="appointment-grid">
                 <!-- ===== Column 1: basic info + date/time ===== -->
                 <div class="appointment-col">
+                    <div class="appointment-card">
+                        <!-- Full name (required) -->
+                        <label for="customer-name" class="form-label">Full Name *</label>
+                        <input type="text"
+                               id="customer-name"
+                               name="name"
+                               class="form-input"
+                               th:value="${username != null ? username : ''}"
+                               th:readonly="${username != null}"
+                               placeholder="Enter your name"
+                               required>
 
-                    <!-- Full name (required) -->
-                    <label for="customer-name" class="form-label">Full Name *</label>
-                    <input type="text"
-                           id="customer-name"
-                           name="name"
-                           class="form-input"
-                           th:value="${username != null ? username : ''}"
-                           th:readonly="${username != null}"
-                           placeholder="Enter your name"
-                           required>
+                        <!-- Phone number (required) -->
+                        <label for="phone-number" class="form-label">Phone Number *</label>
+                        <input type="tel"
+                               id="phone-number"
+                               name="phoneNumber"
+                               class="form-input"
+                               th:value="${userPhoneNumber != null ? userPhoneNumber : ''}"
+                               th:readonly="${userPhoneNumber != null}"
+                               placeholder="Enter your phone number"
+                               required>
+                        <div id="phone-warning" class="field-note"></div>
 
-                    <!-- Phone number (required) -->
-                    <label for="phone-number" class="form-label">Phone Number *</label>
-                    <input type="tel"
-                           id="phone-number"
-                           name="phoneNumber"
-                           class="form-input"
-                           th:value="${userPhoneNumber != null ? userPhoneNumber : ''}"
-                           th:readonly="${userPhoneNumber != null}"
-                           placeholder="Enter your phone number"
-                           required>
-                    <div id="phone-warning" class="field-note"></div>
+                        <!-- Date (required) -->
+                        <label for="appointment-date" class="form-label">Date *</label>
+                        <input type="date"
+                               id="appointment-date"
+                               name="appointmentDate"
+                               class="form-input"
+                               th:value="${appointmentDate}"
+                               required>
+                        <div id="date-warning" class="field-note"></div>
 
-                    <!-- Date (required) -->
-                    <label for="appointment-date" class="form-label">Date *</label>
-                    <input type="date"
-                           id="appointment-date"
-                           name="appointmentDate"
-                           class="form-input"
-                           th:value="${appointmentDate}"
-                           required>
-                    <div id="date-warning" class="field-note"></div>
-
-                    <!-- Time slot picker (required) -->
-                    <label class="form-label">Time Slot *</label>
-                    <div id="time-slot-grid" class="time-slot-grid"></div>
-                    <!-- Hidden input to keep existing backend DTO contract -->
-                    <input type="hidden"
-                           id="appointment-time"
-                           name="appointmentTime"
-                           th:value="${appointmentTime}">
-                    <div id="time-warning" class="field-note"></div>
+                        <!-- Time slot picker (required) -->
+                        <label class="form-label">Time Slot *</label>
+                        <div id="time-slot-grid" class="time-slot-grid"></div>
+                        <!-- Hidden input to keep existing backend DTO contract -->
+                        <input type="hidden"
+                               id="appointment-time"
+                               name="appointmentTime"
+                               th:value="${appointmentTime}">
+                        <div id="time-warning" class="field-note"></div>
+                    </div>
                 </div>
 
                 <!-- ===== Column 2: staff + services search ===== -->
                 <div class="appointment-col">
-                    <!-- Service search + fixed result area -->
-                    <div class="service-search-wrapper">
-                        <label for="service-search" class="form-label">Search Services *</label>
-                        <input type="text"
-                               id="service-search"
-                               class="form-input"
-                               placeholder="Type to search services...">
-                        <!-- EXPLANATION LINE UNDER SERVICE SEARCH -->
-                        <div class="field-note">
-                            Time slots update automatically based on your selected services so that all appointments finish by 22:00.
+                    <div class="appointment-card">
+                        <!-- Service search + scroll list -->
+                        <div class="service-search-wrapper">
+                            <label for="service-search" class="form-label">Search Services *</label>
+                            <input type="text"
+                                   id="service-search"
+                                   class="form-input"
+                                   placeholder="Type to search services...">
+                            <!-- EXPLANATION LINE UNDER SERVICE SEARCH -->
+                            <div class="field-note">
+                                Time slots update automatically based on your selected services so that all appointments finish by 22:00.
+                            </div>
+                            <div class="service-list" id="service-list"></div>
                         </div>
-                        <div class="service-list" id="service-list"></div>
-                    </div>
-                    <!-- Staff selection (optional) -->
-                    <div class="staff-select-wrapper">
-                        <label for="staff-select" class="form-label">Choose Staff (optional)</label>
-                        <select id="staff-select" name="staffId" class="form-input">
-                            <option value="">Assign automatically</option>
-                        </select>
-                        <div id="staff-warning" class="field-note"></div>
+
+                        <!-- Staff selection (optional) -->
+                        <div class="staff-select-wrapper">
+                            <label for="staff-select" class="form-label">Choose Staff (optional)</label>
+                            <select id="staff-select" name="staffId" class="form-input">
+                                <option value="">Assign automatically</option>
+                            </select>
+                            <div id="staff-warning" class="field-note"></div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- ===== Column 3: selected services + summary ===== -->
                 <div class="appointment-col">
-
-                    <!-- Selected services (scrolls inside itself) -->
-                    <label class="form-label">Selected Services *</label>
-                    <div class="selected-services">
-                        <div class="selected-services-header">Selected Services:</div>
-                        <div class="selected-services-inner">
-                            <ul id="selected-services-list"></ul>
+                    <div class="appointment-card">
+                        <!-- Selected services (scrolls inside itself) -->
+                        <label class="form-label">Selected Services *</label>
+                        <div class="selected-services">
+                            <div class="selected-services-header">Selected Services:</div>
+                            <div class="selected-services-inner">
+                                <ul id="selected-services-list"></ul>
+                            </div>
+                            <input type="hidden" id="selected-services-input" name="selectedServices">
                         </div>
-                        <input type="hidden" id="selected-services-input" name="selectedServices">
+                        <div id="service-warning" class="field-note"></div>
+
+                        <!-- Summary -->
+                        <div class="summary">
+                            <p>Estimated Duration: <strong><span id="total-duration">0</span> min</strong></p>
+                            <input type="hidden" id="total-duration-input" name="totalDuration" th:value="${totalDuration}">
+
+                            <p>Estimated Price: <strong>₫<span id="total-price">0</span></strong></p>
+                            <input type="hidden" id="total-price-input" name="totalPrice" th:value="${totalPrice}">
+
+                            <p>End Time: <strong><span id="end-time">--:--</span></strong></p>
+                            <input type="hidden" id="end-time-input" name="endTime" th:value="${endTime}">
+                            <div id="end-time-warning" class="field-note"></div>
+                        </div>
                     </div>
-                    <div id="service-warning" class="field-note"></div>
-
-                    <!-- Summary -->
-                    <div class="summary">
-                        <p>Estimated Duration: <strong><span id="total-duration">0</span> min</strong></p>
-                        <input type="hidden" id="total-duration-input" name="totalDuration" th:value="${totalDuration}">
-
-                        <p>Estimated Price: <strong>₫<span id="total-price">0</span></strong></p>
-                        <input type="hidden" id="total-price-input" name="totalPrice" th:value="${totalPrice}">
-
-                        <p>End Time: <strong><span id="end-time">--:--</span></strong></p>
-                        <input type="hidden" id="end-time-input" name="endTime" th:value="${endTime}">
-                        <div id="end-time-warning" class="field-note"></div>
-                    </div>
-
                 </div>
             </div>
 

@@ -13,7 +13,9 @@ import service.sllbackend.web.dto.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,9 +53,11 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
         
         invoice = inventoryInvoiceRepo.save(invoice);
         
-        // Create invoice details
+        // Create invoice details - merge duplicates with same productId and unitPrice
         if (dto.getItems() != null && !dto.getItems().isEmpty()) {
-            for (InventoryInvoiceItemDTO itemDTO : dto.getItems()) {
+            List<InventoryInvoiceItemDTO> mergedItems = mergeInvoiceItems(dto.getItems());
+            
+            for (InventoryInvoiceItemDTO itemDTO : mergedItems) {
                 Product product = productRepo.findById(itemDTO.getProductId())
                         .orElseThrow(() -> new RuntimeException("Product not found with id: " + itemDTO.getProductId()));
                 
@@ -70,6 +74,39 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
         
         log.info("Created invoice request with id: {}", invoice.getId());
         return invoice;
+    }
+    
+    /**
+     * Merges invoice items with the same productId and unitPrice by summing their quantities.
+     * @param items the list of invoice items to merge
+     * @return a list of merged invoice items
+     */
+    private List<InventoryInvoiceItemDTO> mergeInvoiceItems(List<InventoryInvoiceItemDTO> items) {
+        // Use a map with composite key (productId, unitPrice) to merge duplicates
+        // Using a record as key ensures proper equals/hashCode behavior
+        record ProductPriceKey(Integer productId, Integer unitPrice) {}
+        
+        Map<ProductPriceKey, InventoryInvoiceItemDTO> mergedMap = new HashMap<>();
+        
+        for (InventoryInvoiceItemDTO item : items) {
+            ProductPriceKey key = new ProductPriceKey(item.getProductId(), item.getUnitPrice());
+            
+            if (mergedMap.containsKey(key)) {
+                // Merge by adding quantities
+                InventoryInvoiceItemDTO existingItem = mergedMap.get(key);
+                existingItem.setOrderedQuantity(existingItem.getOrderedQuantity() + item.getOrderedQuantity());
+            } else {
+                // Create a copy to avoid modifying the original DTO
+                InventoryInvoiceItemDTO copy = InventoryInvoiceItemDTO.builder()
+                        .productId(item.getProductId())
+                        .orderedQuantity(item.getOrderedQuantity())
+                        .unitPrice(item.getUnitPrice())
+                        .build();
+                mergedMap.put(key, copy);
+            }
+        }
+        
+        return new ArrayList<>(mergedMap.values());
     }
     
     @Override

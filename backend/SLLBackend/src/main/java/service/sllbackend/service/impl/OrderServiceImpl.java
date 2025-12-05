@@ -12,6 +12,7 @@ import service.sllbackend.service.OrderService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -82,8 +83,8 @@ public class OrderServiceImpl implements OrderService {
         CustomerInfo customerInfo = customerInfoRepo
                 .findByPhoneNumberAndShippingAddress(phoneNumber, shippingAddress)
                 .map(existing -> {
-                    // Update city if needed
-                    if (city != null && !city.equals(existing.getCity())) {
+                    // Update city if needed (null-safe comparison)
+                    if (!Objects.equals(city, existing.getCity())) {
                         existing.setCity(city);
                         return customerInfoRepo.save(existing);
                     }

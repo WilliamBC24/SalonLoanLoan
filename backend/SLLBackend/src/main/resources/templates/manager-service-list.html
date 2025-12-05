@@ -3,27 +3,27 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Manage Registrations | Salon Loan Loan</title>
+    <title>Manager - Manage Services | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
+    <!-- Global styles (sidebar + staff-main scroll behaviour) -->
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 
     <style>
         /* ===== PAGE STRUCTURE ===== */
-        .registration-page {
+        .services-page {
             padding: 2.5rem 0 3rem;
             background: var(--bg-light);
             min-height: 100vh;
         }
 
-        .registration-layout-inner {
+        .services-layout-inner {
             max-width: 85vw;
             width: 100%;
             margin: 1rem auto;
         }
 
-        .registration-card {
+        .services-card {
             background: #ffffff;
             padding: 2.2rem;
             border-radius: var(--radius-lg);
@@ -31,7 +31,7 @@
             box-shadow: var(--shadow-soft);
         }
 
-        .registration-header-row {
+        .services-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,19 +39,19 @@
             margin-bottom: 1.5rem;
         }
 
-        .registration-title-block {
+        .services-title-block {
             text-align: left;
         }
 
-        .registration-title-block .section-kicker {
+        .services-title-block .section-kicker {
             margin-bottom: 0.25rem;
         }
 
-        .registration-title-block h2 {
+        .services-title-block h2 {
             margin: 0;
         }
 
-        .registration-actions {
+        .services-actions {
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -77,6 +77,30 @@
 
         .back-link-pill:hover {
             background: #f4f4f4;
+        }
+
+        .create-btn-pill {
+            border-radius: 999px;
+            padding: 0.6rem 1.3rem;
+            font-size: 0.9rem;
+            border: none;
+            background: #1643a3;
+            color: #ffffff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 6px 15px rgba(22, 71, 163, 0.35);
+            cursor: pointer;
+        }
+
+        .create-btn-pill span.icon {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .create-btn-pill:hover {
+            background: #154380;
         }
 
         /* ===== ALERTS ===== */
@@ -228,7 +252,7 @@
         }
 
         /* ===== TABLE ===== */
-        .registrations-table-wrapper {
+        .services-table-wrapper {
             border-radius: 18px;
             overflow: hidden;
             box-shadow: var(--shadow-soft);
@@ -265,7 +289,8 @@
             background: #f9fafb;
         }
 
-        .view-link {
+        /* ===== ACTION BUTTON (EDIT LINK STYLE) ===== */
+        .edit-link {
             border-radius: 999px;
             padding: 0.35rem 0.9rem;
             text-decoration: none;
@@ -274,9 +299,12 @@
             color: #111827;
             font-size: 0.86rem;
             font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
-        .view-link:hover {
+        .edit-link:hover {
             background: #eff6ff;
             border-color: #bfdbfe;
             color: #1d4ed8;
@@ -289,20 +317,24 @@
 <div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
 <!-- MAIN SCROLLABLE CONTENT -->
-<main class="staff-main registration-page">
-    <div class="registration-layout-inner">
-        <section class="registration-card">
+<main class="staff-main services-page">
+    <div class="services-layout-inner">
+        <section class="services-card">
             <!-- Header -->
-            <div class="registration-header-row">
-                <div class="registration-title-block section-heading">
-                    <p class="section-kicker">Appointment Management</p>
-                    <h2>Staff Registrations</h2>
+            <div class="services-header-row">
+                <div class="services-title-block section-heading">
+                    <p class="section-kicker">Service Management</p>
+                    <h2>Manage Services</h2>
                 </div>
-                <div class="registration-actions">
+                <div class="services-actions">
+                    <a href="/manager/service/create" class="create-btn-pill">
+                        <span class="icon">＋</span>
+                        <span>Create New Service</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Optional success/error messages -->
+            <!-- Success/Error Messages -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
@@ -315,29 +347,50 @@
                     </div>
                 </div>
 
-                <form method="get" action="/staff/registration/list">
+                <form method="get" action="/manager/service/list">
                     <div class="search-form">
-                        <!-- Name search -->
                         <div class="filter-group">
                             <label for="search-name">Search by Name</label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter name..." />
+                                   placeholder="Enter service name..." />
                         </div>
 
-                        <!-- Appointment status checkboxes -->
                         <div class="filter-group">
-                            <label>Registration Status</label>
+                            <label>Service Type</label>
                             <div class="checkbox-group">
-                                <div class="checkbox-item" th:each="status : ${allStatuses}">
+                                <div class="checkbox-item">
                                     <input type="checkbox"
-                                           th:id="${status.name()}"
-                                           name="statuses"
-                                           th:value="${status.name()}"
-                                           th:checked="${selectedStatuses != null and selectedStatuses.contains(status.name())}">
-                                    <label th:for="${status.name()}" th:text="${status.name()}">STATUS</label>
+                                           id="type-single"
+                                           name="types"
+                                           value="SINGLE"
+                                           th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
+                                    <label for="type-single">Single</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox"
+                                           id="type-combo"
+                                           name="types"
+                                           value="COMBO"
+                                           th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
+                                    <label for="type-combo">Combo</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Service Category</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item" th:each="category : ${allCategories}">
+                                    <input type="checkbox"
+                                           th:id="'category-' + ${category.id}"
+                                           name="categories"
+                                           th:value="${category.id}"
+                                           th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
+                                    <label th:for="'category-' + ${category.id}"
+                                           th:text="${category.name}">Category</label>
                                 </div>
                             </div>
                         </div>
@@ -350,7 +403,7 @@
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/staff/registration/list'">
+                                onclick="window.location.href='/manager/service/list'">
                             <span>✕</span>
                             <span>Reset</span>
                         </button>
@@ -358,31 +411,33 @@
                 </form>
             </div>
 
-            <!-- Registrations Table -->
-            <div class="registrations-table-wrapper">
+            <!-- Services Table -->
+            <div class="services-table-wrapper">
                 <table>
                     <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Name</th>
-                        <th>Status</th>
-                        <th>Registered At</th>
-                        <th>Scheduled At</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Price</th>
+                        <th>Duration (min)</th>
+                        <th>Active</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="appointment : ${registrations}">
-                        <td th:text="${appointment.name}">Name</td>
-                        <td th:text="${appointment.status}">PENDING</td>
-                        <td th:text="${#temporals.format(appointment.registeredAt, 'yyyy-MM-dd HH:mm')}">
-                            2025-10-22 07:00
-                        </td>
-                        <td th:text="${appointment.scheduledAt != null ? #temporals.format(appointment.scheduledAt, 'yyyy-MM-dd HH:mm') : '-'}">
-                            -
-                        </td>
+                    <tr th:each="svc : ${services}">
+                        <td th:text="${svc.id}">1</td>
+                        <td th:text="${svc.serviceName}">Service name</td>
+                        <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
+                        <td th:text="${svc.serviceType}">SINGLE</td>
+                        <td th:text="${svc.servicePrice}">0</td>
+                        <td th:text="${svc.durationMinutes}">0</td>
+                        <td th:text="${svc.activeStatus}">false</td>
                         <td>
-                            <a th:href="@{/staff/registration/view/{id}(id=${appointment.id})}" class="view-link">
-                                View Details
+                            <a th:href="@{/manager/service/edit/{id}(id=${svc.id})}" class="edit-link">
+                                <span>Edit</span>
                             </a>
                         </td>
                     </tr>

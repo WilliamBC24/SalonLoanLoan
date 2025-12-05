@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Edit Voucher</title>
+    <title>Staff - Create Voucher</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,10 +44,6 @@
         .form-group select.invalid,
         .form-group textarea.invalid {
             border-color: #dc3545;
-        }
-        .form-group input:disabled {
-            background-color: #e9ecef;
-            cursor: not-allowed;
         }
         .button-group {
             margin-top: 30px;
@@ -92,27 +88,27 @@
     </style>
 </head>
 <body>
-    <h1>Edit Voucher</h1>
+    <h1>Create New Voucher</h1>
 
     <!-- Error Messages -->
     <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-    <form id="voucherForm" method="post" th:action="@{/staff/voucher/edit/{id}(id=${voucher.id})}">
+    <form id="voucherForm" method="post" action="/manager/voucher/create">
         <div class="form-group">
             <label for="voucherName" class="required">Voucher Name</label>
-            <input type="text" id="voucherName" name="voucherName" th:value="${voucher.voucherName}" required>
+            <input type="text" id="voucherName" name="voucherName" required>
             <div class="error" id="voucherNameError">Voucher name is required.</div>
         </div>
 
         <div class="form-group">
             <label for="voucherDescription" class="required">Voucher Description</label>
-            <textarea id="voucherDescription" name="voucherDescription" required th:text="${voucher.voucherDescription}"></textarea>
+            <textarea id="voucherDescription" name="voucherDescription" required></textarea>
             <div class="error" id="voucherDescriptionError">Voucher description is required.</div>
         </div>
 
         <div class="form-group">
             <label for="voucherCode" class="required">Voucher Code</label>
-            <input type="text" id="voucherCode" name="voucherCode" th:value="${voucher.voucherCode}" required>
+            <input type="text" id="voucherCode" name="voucherCode" required>
             <div class="error" id="voucherCodeError">Voucher code is required.</div>
         </div>
 
@@ -120,60 +116,48 @@
             <label for="discountType" class="required">Discount Type</label>
             <select id="discountType" name="discountType" required>
                 <option value="">Select Discount Type</option>
-                <option value="AMOUNT" th:selected="${voucher.discountType.toString() == 'AMOUNT'}">Amount</option>
-                <option value="PERCENTAGE" th:selected="${voucher.discountType.toString() == 'PERCENTAGE'}">Percentage</option>
+                <option value="AMOUNT">Amount</option>
+                <option value="PERCENTAGE">Percentage</option>
             </select>
             <div class="error" id="discountTypeError">Please select a discount type.</div>
         </div>
 
         <div class="form-group">
             <label for="discountAmount" class="required">Discount Amount</label>
-            <input type="number" id="discountAmount" name="discountAmount" th:value="${voucher.discountAmount}" min="1" required>
+            <input type="number" id="discountAmount" name="discountAmount" min="1" required>
             <div class="error" id="discountAmountError">Discount amount must be greater than 0.</div>
         </div>
 
         <div class="form-group">
             <label for="effectiveFrom" class="required">Effective From</label>
-            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" 
-                th:value="${voucher.effectiveFrom != null ? #temporals.format(voucher.effectiveFrom, 'yyyy-MM-dd''T''HH:mm') : ''}" required>
+            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" required>
             <div class="error" id="effectiveFromError">Effective from date is required.</div>
         </div>
 
         <div class="form-group">
             <label for="effectiveTo" class="required">Effective To</label>
-            <input type="datetime-local" id="effectiveTo" name="effectiveTo" 
-                th:value="${voucher.effectiveTo != null ? #temporals.format(voucher.effectiveTo, 'yyyy-MM-dd''T''HH:mm') : ''}" required>
+            <input type="datetime-local" id="effectiveTo" name="effectiveTo" required>
             <div class="error" id="effectiveToError">Effective to date is required and must be after effective from date.</div>
         </div>
 
         <div class="form-group">
             <label for="maxUsage" class="required">Max Usage</label>
-            <input type="number" id="maxUsage" name="maxUsage" th:value="${voucher.maxUsage}" min="1" required>
+            <input type="number" id="maxUsage" name="maxUsage" min="1" required>
             <div class="error" id="maxUsageError">Max usage must be greater than 0.</div>
-        </div>
-
-        <div class="form-group">
-            <label>Used Count</label>
-            <input type="number" th:value="${voucher.usedCount}" disabled>
         </div>
 
         <div class="form-group">
             <label for="voucherStatusId" class="required">Voucher Status</label>
             <select id="voucherStatusId" name="voucherStatusId" required>
                 <option value="">Select Status</option>
-                <option th:each="status : ${statuses}" 
-                        th:value="${status.id}" 
-                        th:text="${status.name}"
-                        th:selected="${voucher.voucherStatus.id == status.id}">
-                    Status
-                </option>
+                <option th:each="status : ${statuses}" th:value="${status.id}" th:text="${status.name}">Status</option>
             </select>
             <div class="error" id="voucherStatusIdError">Please select a voucher status.</div>
         </div>
 
         <div class="button-group">
-            <button type="submit" class="btn btn-primary">Update Voucher</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/staff/voucher/list'">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create Voucher</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/manager/voucher/list'">Cancel</button>
         </div>
     </form>
 

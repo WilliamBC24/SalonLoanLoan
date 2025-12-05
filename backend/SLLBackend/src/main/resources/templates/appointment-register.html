@@ -133,11 +133,6 @@
             transform: translateY(-1px);
         }
 
-        .time-slot-btn.early {
-            border-color: #f59e0b;
-            /*background: #fffbeb;*/
-        }
-
         .time-slot-btn.disabled {
             background-color: #f3f3f3;
             color: #a3a3a3;
@@ -348,6 +343,10 @@
                                id="service-search"
                                class="form-input"
                                placeholder="Type to search services...">
+                        <!-- EXPLANATION LINE UNDER SERVICE SEARCH -->
+                        <div class="field-note">
+                            Time slots update automatically based on your selected services so that all appointments finish by 22:00.
+                        </div>
                         <div class="service-list" id="service-list"></div>
                     </div>
                     <!-- Staff selection (optional) -->
@@ -410,6 +409,7 @@
         let selectedServicesId = [];
         let submitBlocked = false;
         let crossesNextDay = false;
+        let currentTotalDuration = 0;
 
         const $submitBtn = $("#submit-btn");
 
@@ -417,20 +417,19 @@
             $submitBtn.prop("disabled", submitBlocked);
         }
 
-        /* ====== TIME SLOT GENERATION (05:30 - 19:00 in 30min steps) ====== */
-        function generateTimeSlots() {
+        /* ====== TIME SLOT GENERATION (07:30 - 19:00) ====== */
+        function generateTimeSlots(totalDurationMinutes = 0, preserveTime = null) {
             const $grid = $("#time-slot-grid");
             $grid.empty();
 
-            const openMinutes = 5 * 60 + 30;   // 05:30
-            const closeMinutes = 19 * 60;      // 19:00 (last start: 18:30)
-            const earlyLimit = 7 * 60 + 30;    // 07:30
+            const openMinutes = 7 * 60 + 30;    // 07:30
+            const visibleCloseMinutes = 19 * 60; // 19:00 (last start slot shown)
 
-            for (let minutes = openMinutes; minutes < closeMinutes; minutes += 30) {
+            // Create all visible slots from 07:30 to 19:00
+            for (let minutes = openMinutes; minutes <= visibleCloseMinutes; minutes += 30) {
                 const h = Math.floor(minutes / 60).toString().padStart(2, "0");
                 const m = (minutes % 60).toString().padStart(2, "0");
                 const timeStr = `${h}:${m}`;
-                const isEarly = minutes < earlyLimit;
 
                 const btn = $("<button></button>")
                     .addClass("time-slot-btn")
@@ -438,18 +437,80 @@
                     .attr("data-time", timeStr)
                     .text(timeStr);
 
-                if (isEarly) {
-                    btn.addClass("early");
-                }
-
                 $grid.append(btn);
+            }
+
+            // After creating them, disable the ones that would end after 22:00
+            applyDurationConstraints(totalDurationMinutes);
+
+            // Try to restore previous selection if still valid (and not disabled)
+            if (preserveTime) {
+                const btnToSelect = $grid.find(`.time-slot-btn[data-time='${preserveTime}']`);
+                if (btnToSelect.length && !btnToSelect.hasClass("disabled")) {
+                    btnToSelect.addClass("selected");
+                } else {
+                    // The previous time is now invalid -> clear hidden field
+                    $("#appointment-time").val("");
+                }
             }
         }
 
-        generateTimeSlots();
+        // Disable slots that would end past 22:00 based on total duration
+        function applyDurationConstraints(totalDurationMinutes) {
+            const hardCloseMinutes = 22 * 60; // 22:00 hard end
+            const $slots = $("#time-slot-grid .time-slot-btn");
 
-        // Restore pre-selected time if exists (e.g., after validation error)
+            $("#time-warning").text("").removeClass("error");
+
+            if (!totalDurationMinutes || totalDurationMinutes <= 0) {
+                // No services selected -> no need to disable by duration
+                $slots.removeClass("disabled");
+                submitBlocked = false;
+                updateSubmitState();
+                return;
+            }
+
+            let enabledCount = 0;
+
+            $slots.each(function() {
+                const timeStr = $(this).data("time");
+                const [h, m] = timeStr.split(":").map(Number);
+                const startMinutes = h * 60 + m;
+                const endMinutes = startMinutes + totalDurationMinutes;
+
+                if (endMinutes > hardCloseMinutes) {
+                    $(this).addClass("disabled");
+                } else {
+                    $(this).removeClass("disabled");
+                    enabledCount++;
+                }
+            });
+
+            // If currently-selected time is now disabled, clear it
+            const $selected = $("#time-slot-grid .time-slot-btn.selected");
+            if ($selected.length && $selected.hasClass("disabled")) {
+                $selected.removeClass("selected");
+                $("#appointment-time").val("");
+                $("#end-time").text("--:--");
+                $("#end-time-input").val("");
+            }
+
+            // If no enabled slots at all, show a message & block submit
+            if (enabledCount === 0) {
+                $("#time-warning")
+                    .text("Selected services are too long to finish by 22:00. Please remove some services.")
+                    .addClass("error");
+                submitBlocked = true;
+            } else {
+                submitBlocked = false;
+            }
+            updateSubmitState();
+        }
+
+        // Initial slot generation
         const initialTime = $("#appointment-time").val();
+        generateTimeSlots(0, initialTime);
+
         if (initialTime) {
             $(`.time-slot-btn[data-time='${initialTime}']`).addClass("selected");
         }
@@ -466,11 +527,10 @@
             updateEndTime(false);
         });
 
-        /* ====== SERVICE SEARCH ====== */
+        /* ====== SERVICE SEARCH (unchanged) ====== */
         $("#service-search").on("input", function() {
             const query = $(this).val().trim();
 
-            // Only search if 2+ characters
             if (query.length < 2) {
                 $("#service-list").empty();
                 return;
@@ -483,14 +543,13 @@
                     method: "GET",
                     data: { query: query },
                     success: function(data) {
-                        // Assume data is an array of services: [{id, serviceName, servicePrice, durationMinutes}, ...]
                         renderServices(data);
                     },
                     error: function(err) {
                         console.error("Error fetching services", err);
                     }
                 });
-            }, 300); // 300ms debounce
+            }, 300);
         });
 
         function renderServices(list) {
@@ -514,7 +573,6 @@
             const price = parseFloat($(this).data("price"));
             const duration = parseInt($(this).data("duration"));
 
-            // prevent duplicates by checking id
             if (!selectedServices.some(s => s.id === id)) {
                 const service = { id, name, price, duration };
                 selectedServices.push(service);
@@ -545,17 +603,21 @@
             const totalDuration = selectedServices.reduce((sum, s) => sum + s.duration, 0);
             const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
 
+            currentTotalDuration = totalDuration;
+
             $("#total-duration").text(totalDuration);
             $("#total-price").text(totalPrice);
             $("#total-duration-input").val(totalDuration);
             $("#total-price-input").val(totalPrice);
 
-            // Clear previous warning if services exist
             if (selectedServices.length > 0) {
                 $("#service-warning").text("").removeClass("error");
             }
 
-            // When triggered by services, don't show date/time "required" warnings yet
+            // Re-apply duration constraints to the 07:30–19:00 slots
+            applyDurationConstraints(currentTotalDuration);
+
+            // Recalculate end time based on any existing start time
             updateEndTime(true);
         }
 
@@ -578,16 +640,11 @@
             let date = new Date();
             date.setHours(hours, minutes, 0, 0);
 
-            // ➜ REMEMBER THE DAY BEFORE ADDING MINUTES
-            const startDay = date.getDate();   // <<-- THIS LINE PREVENTS THE ERROR
-
-            // ➜ ADD SERVICE DURATION
+            const startDay = date.getDate();
             date.setMinutes(date.getMinutes() + totalMinutes);
 
-            // ➜ DETECT IF DAY HAS CHANGED
             crossesNextDay = date.getDate() !== startDay;
 
-            // FORMAT END TIME
             const endHours = date.getHours().toString().padStart(2, "0");
             const endMinutes = date.getMinutes().toString().padStart(2, "0");
             const endTimeStr = `${endHours}:${endMinutes}`;
@@ -607,8 +664,10 @@
             $("#staff-warning").text("").removeClass("error");
 
             const startTime = $("#appointment-time").val();
+            const openMinutes = 7 * 60 + 30;    // 07:30
+            const visibleCloseMinutes = 19 * 60; // 19:00
+            const hardCloseMinutes = 22 * 60;    // 22:00 (end time limit)
 
-            // Only show "select time" warning if NOT called from a service interaction
             if (!startTime && !fromService) {
                 $("#time-warning")
                     .text("Please choose a time slot.")
@@ -617,17 +676,12 @@
             } else if (startTime) {
                 const [h, m] = startTime.split(":").map(Number);
                 const minutesFromMidnight = h * 60 + m;
-                const fiveThirty = 5 * 60 + 30;   // 05:30
-                const sevenThirty = 7 * 60 + 30;  // 07:30
 
-                if (minutesFromMidnight < fiveThirty) {
+                if (minutesFromMidnight < openMinutes || minutesFromMidnight > visibleCloseMinutes) {
                     $("#time-warning")
-                        .text("Appointments before 05:30 cannot be booked.")
+                        .text("Appointments can only start between 07:30 and 19:00.")
                         .addClass("error");
                     submitBlocked = true;
-                } else if (minutesFromMidnight < sevenThirty) {
-                    $("#time-warning")
-                        .text("Appointments before 07:30 will incur an overcharge.");
                 }
             }
 
@@ -635,23 +689,14 @@
             if (endTimeStr) {
                 const [eh, em] = endTimeStr.split(":").map(Number);
                 const endMinutes = eh * 60 + em;
-                const closingMinutes = 19 * 60;        // 19:00
-                const lastLegalMinutes = 23 * 60 + 59; // 23:59
 
-                if (crossesNextDay) {
+                if (crossesNextDay || endMinutes > hardCloseMinutes) {
                     $("#end-time-warning")
-                        .text("Appointments ending after 19:00 will incur an overcharge.");
-                } else if (endMinutes > lastLegalMinutes) {
-                    $("#end-time-warning")
-                        .text("Appointments ending after 23:59 cannot be booked.")
+                        .text("Appointments must end by 22:00. Please adjust your time or remove some services.")
                         .addClass("error");
                     submitBlocked = true;
-                } else if (endMinutes > closingMinutes) {
-                    $("#end-time-warning")
-                        .text("Appointments ending after 19:00 will incur an overcharge.");
                 }
             }
-
 
             const dateStr = $("#appointment-date").val();
             if (dateStr) {
@@ -679,7 +724,6 @@
             updateEndTime(false);
         });
 
-        // Keep for hidden field changes triggered by slot selection
         $("#appointment-time").on("change", function() {
             updateEndTime(false);
         });
@@ -688,14 +732,13 @@
             $("#selected-services-input").val(selectedServicesId.join(","));
         }
 
-        /* ====== STAFF AVAILABILITY FETCH ====== */
+        /* ====== STAFF AVAILABILITY FETCH (unchanged) ====== */
         function fetchAvailableStaff() {
             const date = $("#appointment-date").val();
             const startTime = $("#appointment-time").val();
             const duration = parseInt($("#total-duration-input").val()) || 0;
 
             if (!date || !startTime || duration <= 0) {
-                // Clear list but don't block submit; auto-assign or wait until valid
                 $("#staff-select").empty().append('<option value="">Assign automatically</option>');
                 $("#staff-warning").text("").removeClass("error");
                 updateSubmitState();
@@ -717,7 +760,6 @@
                     console.error("Error fetching available staff", err);
                     $("#staff-warning")
                         .text("Could not load staff availability. You can still continue and staff will be assigned automatically.");
-                    // Keep submit allowed; fallback to automatic assignment
                     submitBlocked = false;
                     updateSubmitState();
                 }
@@ -750,12 +792,9 @@
             updateSubmitState();
         }
 
-        // Final guard on submit: ensure required logical fields
         $("#appointment-form").on("submit", function(e) {
-            // Full validation (not from service)
             validateTimes(false);
 
-            // Require at least one service
             if (selectedServices.length === 0) {
                 $("#service-warning")
                     .text("Please select at least one service.")
@@ -763,7 +802,6 @@
                 submitBlocked = true;
             }
 
-            // Basic browser 'required' handles full name + phone, but we can add a small custom check for phone format if needed
             const phoneVal = $("#phone-number").val().trim();
             if (!phoneVal) {
                 $("#phone-warning")
@@ -782,6 +820,7 @@
         });
     });
 </script>
+
 
 </body>
 </html>

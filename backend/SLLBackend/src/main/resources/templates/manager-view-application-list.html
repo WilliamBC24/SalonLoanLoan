@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Job Applications | Salon Loan Loan</title>
+    <title>Manager - Job Applications | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -296,7 +296,7 @@
                         <td>
                             <div class="actions-cell">
                                 <!-- Accept Form -->
-                                <form th:action="@{/staff/job/accept/{id}(id=${app.id})}"
+                                <form th:action="@{/manager/job/accept/{id}(id=${app.id})}"
                                       method="post"
                                       class="inline-form">
                                     <button type="submit" class="action-btn btn-accept">
@@ -305,7 +305,7 @@
                                 </form>
 
                                 <!-- Reject Form -->
-                                <form th:action="@{/staff/job/reject/{id}(id=${app.id})}"
+                                <form th:action="@{/manager/job/reject/{id}(id=${app.id})}"
                                       method="post"
                                       class="inline-form">
                                     <button type="submit" class="action-btn btn-reject">

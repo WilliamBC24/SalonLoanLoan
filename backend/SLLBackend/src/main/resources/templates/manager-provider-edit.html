@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Edit Provider | Salon Loan Loan</title>
+    <title>Manager - Edit Provider | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (sidebar + layout) -->
@@ -226,7 +226,7 @@
                     </p>
                 </div>
                 <div class="provider-actions">
-                    <a href="/staff/supplier/list" class="back-link-pill">
+                    <a href="/manager/supplier/list" class="back-link-pill">
                         <span class="icon">←</span>
                         <span>Back to Provider List</span>
                     </a>
@@ -239,7 +239,7 @@
             <!-- Form -->
             <form id="editProviderForm"
                   method="post"
-                  th:action="@{/staff/supplier/edit/{id}(id=${supplier.id})}"
+                  th:action="@{/manager/supplier/edit/{id}(id=${supplier.id})}"
                   class="form-grid">
                 <div>
                     <div class="form-group">
@@ -308,7 +308,7 @@
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/staff/supplier/list'">
+                                onclick="window.location.href='/manager/supplier/list'">
                             <span>✕</span>
                             <span>Cancel</span>
                         </button>

@@ -114,7 +114,7 @@
 <body>
     <div class="header">
         <h1>Staff - Manage Vouchers</h1>
-        <a href="/staff/voucher/create" class="create-btn">+ Create New Voucher</a>
+        <a href="/manager/voucher/create" class="create-btn">+ Create New Voucher</a>
     </div>
 
     <!-- Success/Error Messages -->
@@ -123,7 +123,7 @@
 
     <!-- Search and Filter Bar -->
     <div class="search-bar">
-        <form method="get" action="/staff/voucher/list">
+        <form method="get" action="/manager/voucher/list">
             <div class="filter-group">
                 <label for="search-code">Search by Code:</label>
                 <input type="text" id="search-code" name="code" 
@@ -162,7 +162,7 @@
 
             <div class="search-buttons">
                 <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/staff/voucher/list'">Reset</button>
+                <button type="button" class="reset-btn" onclick="window.location.href='/manager/voucher/list'">Reset</button>
             </div>
         </form>
     </div>
@@ -197,7 +197,7 @@
                 <td th:text="${voucher.usedCount}">0</td>
                 <td th:text="${voucher.voucherStatus != null ? voucher.voucherStatus.name : 'N/A'}">Active</td>
                 <td>
-                    <a th:href="@{/staff/voucher/edit/{id}(id=${voucher.id})}" class="edit-link">Edit</a>
+                    <a th:href="@{/manager/voucher/edit/{id}(id=${voucher.id})}" class="edit-link">Edit</a>
                 </td>
             </tr>
         </tbody>

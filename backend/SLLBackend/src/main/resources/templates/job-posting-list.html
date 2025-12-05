@@ -1,54 +1,131 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Job Application List</title>
+    <title>Job Openings | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        .jobs-page {
+            padding: 2.5rem 0 3rem;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+
+        .job-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+            max-width: 840px;
+            margin: 0 auto;
         }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
+
+        .job-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.7rem 2rem;
+            border: 1px solid #e4e4e4;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
-        th {
-            background-color: #f2f2f2;
+
+        .job-card h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
         }
-        tr:hover {background-color: #f9f9f9;}
+
+        .job-card p {
+            margin: 0;
+            color: #666;
+            line-height: 1.45;
+            font-size: 0.95rem;
+        }
+
+        .job-meta {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .job-meta span {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .job-card .btn-primary {
+            margin-top: 0.8rem;
+            padding: 0.55rem 1.4rem;
+            align-self: flex-start;
+        }
+
+        .job-empty {
+            text-align: center;
+            padding: 2.5rem 1.2rem;
+            border-radius: 24px;
+            border: 1px dashed #ddd;
+            background: #fafafa;
+            color: #777;
+            font-size: 0.95rem;
+            max-width: 640px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
-<h1>Active Job Postings</h1>
 
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Effective From</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="job : ${jobPostingList}">
-        <td th:text="${job.jobPostingName}">Job Name</td>
-        <td th:text="${job.jobPostingDescription}">Job Description</td>
-        <td th:text="${job.effectiveFrom}">2025-10-15</td>
-        <td>
-            <a th:href="@{/job/details/{id}(id=${job.id})}">Apply</a>
-        </td>
-    </tr>
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: site-header}"></div>
 
-    <tr th:if="${#lists.isEmpty(jobPostingList)}">
-        <td colspan="3">No active job postings available.</td>
-    </tr>
-    </tbody>
-</table>
+<main class="jobs-page">
+    <div class="container">
+
+        <section id="jobs">
+            <div class="section-heading text-center">
+                <p class="section-kicker">Careers</p>
+                <h2>Active Job Postings</h2>
+            </div>
+
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(jobPostingList)}" class="job-empty">
+                No active job postings available at the moment.
+                Please check back later.
+            </div>
+
+            <!-- One job per line -->
+            <div class="job-list" th:if="${!#lists.isEmpty(jobPostingList)}">
+                <div class="job-card" th:each="job : ${jobPostingList}">
+                    <h3 th:text="${job.jobPostingName}">Job Name</h3>
+
+                    <p th:text="${job.jobPostingDescription}">
+                        Job description goes here.
+                    </p>
+
+                    <p class="job-meta">
+                        Effective from:
+                        <span th:text="${job.effectiveFrom}">
+                            2025-10-15
+                        </span>
+                    </p>
+
+                    <a th:href="@{/job/details/{id}(id=${job.id})}">
+                        <button class="btn-primary" type="button">
+                            View &amp; Apply
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
 </body>
 </html>

@@ -214,19 +214,21 @@ END;
     $$ LANGUAGE plpgsql;
 
        CREATE OR REPLACE FUNCTION create_appointment_detail()
-    RETURNS trigger AS $$
-    DECLARE
-        time_displacement INT;
+RETURNS trigger AS $$
+DECLARE
+time_displacement INT;
 BEGIN
+
 SELECT COALESCE(SUM(s.duration_minutes), 0)
 INTO time_displacement
 FROM requested_service rs
          JOIN service s ON s.id = rs.service_id
 WHERE rs.appointment_id = NEW.id;
 
-INSERT INTO appointment_details(appointment_id, scheduled_start, scheduled_end)
-VALUES (NEW.id, NEW.scheduled_at, NEW.scheduled_at + COALESCE(time_displacement, 0) * INTERVAL '1 minute');
-
+UPDATE appointment_details
+SET scheduled_start = NEW.scheduled_at,
+    scheduled_end   = NEW.scheduled_at + COALESCE(time_displacement, 0) * INTERVAL '1 minute'
+WHERE appointment_id = NEW.id;
 RETURN NULL;
 END;
     $$ LANGUAGE plpgsql;
@@ -377,7 +379,7 @@ CREATE TRIGGER credit_loyalty_point_trigger
     EXECUTE FUNCTION credit_loyalty_point();
 
 CREATE TRIGGER create_appointment_detail_trigger
-    AFTER INSERT OR UPDATE OF scheduled_at ON appointment
+    AFTER UPDATE OF scheduled_at ON appointment
     FOR EACH ROW
     WHEN (NEW.scheduled_at IS NOT NULL)
     EXECUTE FUNCTION create_appointment_detail();

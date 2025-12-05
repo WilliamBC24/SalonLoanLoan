@@ -1,128 +1,203 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Service Details</title>
+    <title>Service Details | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
+        .service-detail-page {
+            padding: 2.5rem 0 3rem;
         }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #007bff;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        .details-card {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .detail-row {
+
+        .service-detail-header {
             display: flex;
-            padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
         }
-        .detail-row:last-child {
-            border-bottom: none;
+
+        .service-detail-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
         }
-        .detail-label {
-            font-weight: bold;
-            width: 200px;
+
+        .badge-status,
+        .badge-type {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .badge-type {
+            background: #dbe8ff;
+            color: #0046a6;
+            border-color: #bdd3ff;
+        }
+
+        .badge-active {
+            background: #e3ffe7;
+            color: #1a7c34;
+            border-color: #bdecc5;
+        }
+
+        .badge-inactive {
+            background: #ffe6e6;
+            color: #b00020;
+            border-color: #f2b7b7;
+        }
+
+        .service-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr);
+            gap: 2rem;
+            margin-top: 1.7rem;
+            align-items: flex-start;
+        }
+
+        .service-media-card,
+        .service-info-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+            padding: 1.6rem 1.8rem;
+        }
+
+        .service-image-wrapper {
+            border-radius: 20px;
+            overflow: hidden;
+            background: #f6f6f8;
+        }
+
+        .service-image-wrapper img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .service-meta {
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
             color: #555;
         }
-        .detail-value {
-            flex: 1;
-            color: #333;
+
+        .service-meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.35rem;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
+
+        .service-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a7c34;
+            margin-top: 0.5rem;
         }
-        .service-type {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #007bff;
-            color: white;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-left: 10px;
+
+        .service-description {
+            margin: 1rem 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #444;
         }
-        .active-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-left: 10px;
+
+        @media (max-width: 900px) {
+            .service-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
         }
-        .active-true {
-            background: #28a745;
-            color: white;
-        }
-        .active-false {
-            background: #dc3545;
-            color: white;
+
+        @media (max-width: 600px) {
+            .service-media-card,
+            .service-info-card {
+                padding: 1.3rem 1.3rem;
+            }
+            .service-detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
-<body>
-    <a href="/services" class="back-link">← Back to Services</a>
-    
-    <h1>
-        <span th:text="${service.serviceName}">Service Name</span>
-        <span class="service-type" th:text="${service.serviceType}">SINGLE</span>
-        <span class="active-badge" 
-              th:classappend="${service.activeStatus} ? 'active-true' : 'active-false'"
-              th:text="${service.activeStatus} ? 'Active' : 'Inactive'">Active</span>
-    </h1>
 
-    <div class="details-card">
-        <div class="detail-row">
-            <div class="detail-label">Service ID:</div>
-            <div class="detail-value" th:text="${service.id}">1</div>
+<body>
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: site-header}"></div>
+
+<main class="service-detail-page">
+    <div class="container">
+
+        <div class="service-detail-header">
+            <div>
+                <h1 th:text="${service.serviceName}">Service Name</h1>
+            </div>
+
+            <div style="display:flex; gap:0.6rem;">
+                <span class="badge-type" th:text="${service.serviceType}">SINGLE</span>
+            </div>
         </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Service Name:</div>
-            <div class="detail-value" th:text="${service.serviceName}">Service Name</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Category:</div>
-            <div class="detail-value" th:text="${service.serviceCategory != null ? service.serviceCategory.name : 'N/A'}">Category</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Type:</div>
-            <div class="detail-value" th:text="${service.serviceType}">SINGLE</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Price:</div>
-            <div class="detail-value" th:text="${service.servicePrice} + ' VND'">0 VND</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Duration:</div>
-            <div class="detail-value" th:text="${service.durationMinutes} + ' minutes'">0 minutes</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Description:</div>
-            <div class="detail-value" th:text="${service.serviceDescription != null ? service.serviceDescription : 'No description available'}">Description</div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-label">Status:</div>
-            <div class="detail-value" th:text="${service.activeStatus} ? 'Active' : 'Inactive'">Active</div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="service-layout">
+
+            <!-- LEFT: IMAGE -->
+            <section class="service-media-card">
+                <div class="service-image-wrapper">
+                    <img src="https://via.placeholder.com/600x450.png?text=Service+Image"
+                         alt="Service Image">
+                </div>
+
+                <div class="service-meta">
+                    <div class="service-meta-row">
+                        <span>Service ID:</span>
+                        <span th:text="${service.id}">1</span>
+                    </div>
+                    <div class="service-meta-row">
+                        <span>Category:</span>
+                        <span th:text="${service.serviceCategory != null ? service.serviceCategory.name : 'N/A'}">
+                            Category
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT: INFORMATION -->
+            <section class="service-info-card">
+                <h2 th:text="${service.serviceName}">Service Name</h2>
+
+                <p class="service-price"
+                   th:text="${service.servicePrice} + ' VND'">0 VND</p>
+
+                <p class="service-description"
+                   th:text="${service.serviceDescription != null ? service.serviceDescription : 'No description available'}">
+                </p>
+
+                <div style="font-size:0.95rem; margin-top:1.2rem;">
+                    <strong>Duration:</strong>
+                    <span th:text="${service.durationMinutes} + ' minutes'"></span>
+                </div>
+
+                <div style="font-size:0.95rem; margin-top:0.4rem;">
+                    <strong>Status:</strong>
+                    <span th:text="${service.activeStatus} ? 'Active' : 'Inactive'"></span>
+                </div>
+
+            </section>
         </div>
     </div>
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
 
 </body>
 </html>

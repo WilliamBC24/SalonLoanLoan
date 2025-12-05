@@ -1,0 +1,56 @@
+<header class="site-header" th:fragment="site-header">
+    <div class="container header-inner">
+        <div class="logo">
+            <span class="logo-icon">✂</span>
+            <a th:href="@{/}" class="logo-text" style="text-decoration: none; color: inherit;">
+                Salon Loan Loan
+            </a>
+        </div>
+
+        <nav class="main-nav">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/products}">Shop</a>
+            <a th:href="@{/services}">Services</a>
+            <a th:href="@{/appointment}">Book Appointment</a>
+            <a th:href="@{/job/list}">Job List</a>
+        </nav>
+
+        <div class="header-actions">
+            <!-- Cart -->
+            <a th:href="@{/cart}" style="text-decoration:none;">
+                <button class="icon-button" aria-label="Cart">
+                    Cart
+                    <span class="cart-count" th:text="${cartCount} ?: 0">0</span>
+                </button>
+            </a>
+
+
+            <!-- When NOT logged in -->
+            <a th:if="${username == null}"
+               th:href="@{/auth/user/login}"
+               class="btn-outline"
+               style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.85rem;">
+                Login
+            </a>
+
+            <!-- When logged in -->
+            <div th:if="${username != null}" style="display: flex; align-items: center; gap: 0.6rem;">
+                <a th:href="@{/user/profile}" style="font-size:0.9rem; text-decoration:none; color:inherit;">
+                    <strong th:text="${username}">User</strong>
+                </a>
+
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit"
+                            class="btn-outline"
+                            style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.8rem;">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <button class="mobile-menu-toggle" aria-label="Toggle navigation">
+            ☰
+        </button>
+    </div>
+</header>

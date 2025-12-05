@@ -1,45 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>User Register | Salon Loan Loan</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global site styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Soft background for this page only */
+        .register-page-bg {
             background: linear-gradient(135deg, #f7f0ff, #fff0f6);
-            color: #333;
+        }
+
+        /* Center card between header and footer */
+        .register-main {
+            min-height: calc(100vh - 120px); /* leaves space for header+footer */
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
         }
 
-        .register-container {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 420px;
+        .register-wrapper {
+            max-width: 480px;
+            margin: 1.5rem auto;
+        }
+
+        .register-card {
+            background-color: #ffffff;
+            padding: 2.2rem 2.4rem;
+            border-radius: 24px;
+            border: 1px solid #e5e5ef;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        .register-title {
             text-align: center;
+            margin-bottom: 1.6rem;
         }
 
-        h2 {
-            color: #a26bdb;
-            margin-bottom: 1.5rem;
+        .register-title h2 {
+            margin: 0;
+            font-size: 1.6rem;
         }
 
-        form div {
+        .register-title p {
+            margin: 0.4rem 0 0;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        form .form-group {
             margin-bottom: 1rem;
             text-align: left;
         }
 
-        label {
+        .form-label {
             display: block;
-            text-align: left;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.35rem;
             font-weight: 600;
+            font-size: 0.9rem;
             color: #444;
         }
 
@@ -48,134 +68,157 @@
             margin-left: 4px;
         }
 
-        input[type="text"],
-        input[type="password"],
-        input[type="email"],
-        input[type="date"],
-        select {
+        .form-input,
+        .form-select {
             width: 100%;
-            padding: 0.8rem;
+            padding: 0.8rem 1rem;
+            border-radius: 999px;
             border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        input:focus, select:focus {
+        .form-input:focus,
+        .form-select:focus {
             outline: none;
-            border-color: #a26bdb;
-            box-shadow: 0 0 0 2px rgba(162, 107, 219, 0.2);
+            border-color: var(--accent, #ff8400);
+            box-shadow: 0 0 0 3px rgba(255, 132, 0, 0.2);
         }
 
-        button {
-            background-color: #a26bdb;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
+        .register-button {
             width: 100%;
-        }
-
-        button:hover {
-            background-color: #8b57c8;
+            margin-top: 0.5rem;
         }
 
         .message {
-            margin-top: 1rem;
+            margin-top: 0.9rem;
             font-size: 0.9rem;
-            color: #dc3545;
             text-align: center;
+            color: #dc3545;
         }
 
         .success-message {
-            color: #28a745;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 0.85rem;
-            color: #777;
+            color: #1c7c1c;
         }
 
         .login-link {
             display: block;
-            margin-top: 1rem;
+            margin-top: 1.1rem;
             font-size: 0.9rem;
-            color: #6a42a1;
+            text-align: center;
+            color: var(--accent, #ff8400);
             text-decoration: none;
+            font-weight: 600;
         }
 
         .login-link:hover {
             text-decoration: underline;
         }
+
+        @media (max-width: 600px) {
+            .register-wrapper {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+            .register-card {
+                padding: 1.8rem 1.6rem;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="register-page-bg">
 
-<div class="register-container">
-    <h2>Create Account</h2>
+<!-- Shared header -->
+<div th:replace="~{fragments/header :: site-header}"></div>
 
-    <form th:action="@{/auth/user/register/create}" method="post">
-        <div>
-            <label for="username">Username<span class="required-star">*</span>:</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+<main class="register-main">
+    <div class="container register-wrapper">
+        <div class="register-card">
+            <div class="register-title">
+                <h2>Create Account</h2>
+                <p>Sign up to book appointments and manage your profile.</p>
+            </div>
+
+            <form th:action="@{/auth/user/register/create}" method="post">
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                        Username<span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="username" name="username"
+                           class="form-input"
+                           placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        Password<span class="required-star">*</span>
+                    </label>
+                    <input type="password" id="password" name="password"
+                           class="form-input"
+                           placeholder="At least 8 characters, 1 uppercase, 1 lowercase, 1 number"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="gender">
+                        Gender<span class="required-star">*</span>
+                    </label>
+                    <select id="gender" name="gender" class="form-select" required>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="birthDate">Birth Date</label>
+                    <input type="date" id="birthDate" name="birthDate"
+                           class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="phoneNumber">
+                        Phone Number<span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="phoneNumber" name="phoneNumber"
+                           class="form-input"
+                           placeholder="Enter your phone number" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email (optional)</label>
+                    <input type="email" id="email" name="email"
+                           class="form-input"
+                           placeholder="Enter your email">
+                </div>
+
+                <button type="submit" class="btn-primary register-button">
+                    Register
+                </button>
+
+                <div th:if="${error}" class="message">
+                    Registration failed. Please check your inputs.
+                </div>
+
+                <div th:if="${success}" class="message success-message">
+                    Registration successful! You can now log in.<br>
+                    Redirecting to login page...
+                    <script>
+                        setTimeout(() => {
+                            window.location.href = '/auth/user/login';
+                        }, 3000);
+                    </script>
+                </div>
+            </form>
+
+            <a th:href="@{/auth/user/login}" class="login-link">
+                Already have an account? Login here
+            </a>
         </div>
+    </div>
+</main>
 
-        <div>
-            <label for="password">Password<span class="required-star">*</span>:</label>
-            <input type="password" id="password" name="password"
-                   placeholder="At least 8 characters long, with at least one uppercase character,
-                    one lowercase character and one number" required>
-        </div>
-
-        <div>
-            <label for="gender">Gender<span class="required-star">*</span>:</label>
-            <select id="gender" name="gender" required>
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-            </select>
-        </div>
-
-        <div>
-            <label for="birthDate">Birth Date:</label>
-            <input type="date" id="birthDate" name="birthDate">
-        </div>
-
-        <div>
-            <label for="phoneNumber">Phone Number<span class="required-star">*</span>:</label>
-            <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" required>
-        </div>
-
-        <div>
-            <label for="email">Email (optional):</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email">
-        </div>
-
-        <div>
-            <button type="submit">Register</button>
-        </div>
-
-        <div th:if="${error}" class="message">
-            Registration failed. Please check your inputs.
-        </div>
-
-        <div th:if="${success}" class="message success-message">
-            Registration successful! You can now log in.<br>
-            Redirecting to login page...
-            <script>
-                setTimeout(() => {
-                    window.location.href ='/auth/user/login';
-                }, 3000);
-            </script>
-        </div>
-
-    </form>
-
-    <a th:href="@{/auth/user/login}" class="login-link">Already have an account? Login here</a>
-</div>
+<!-- Shared footer -->
+<div th:replace="~{fragments/footer :: site-footer}"></div>
 
 </body>
 </html>

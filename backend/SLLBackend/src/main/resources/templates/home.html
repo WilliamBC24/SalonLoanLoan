@@ -1,64 +1,135 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Salon Loan Loan | Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Main site styles -->
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- Leaflet for map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
 
-<header>
-    <h1>Welcome to Salon Loan Loan</h1>
-    <nav>
-        <a th:href="@{/}">Home</a> |
-        <a th:href="@{/products}">Products</a> |
-        <a th:href="@{/services}">Services</a> |
-        <a th:href="@{/auth/user/login}">User Login</a> |
-        <a th:href="@{/auth/staff/login}">Staff Login</a>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="button logout-btn">Logout</button>
-        </form>
-    </nav>
-</header>
+<div th:replace="~{fragments/header :: site-header}"></div>
 
-<hr>
+<main>
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-inner container">
+            <div class="hero-text">
+                <p class="hero-kicker">Beauty &amp; Style</p>
+                <h1>Welcome to<br/>Salon Loan Loan</h1>
+                <p class="hero-sub">
+                    Professional hair styling, coloring and spa services to keep you confident
+                    every day.
+                </p>
+                <a href="/services">
+                    <button class="btn-primary" type="button">View Our Services</button>
+                </a>
+            </div>
 
-<section>
-    <h2>Our Services</h2>
-    <div th:if="${#lists.isEmpty(services)}">
-        <p>No services available at the moment.</p>
-    </div>
-    <div th:each="service : ${services}">
-        <div class="service-card">
-            <h3 th:text="${service.serviceName}">Service Name</h3>
-            <p th:text="${service.serviceDescription}">Description</p>
-            <p><strong>Price:</strong> ₫<span th:text="${service.servicePrice}">0</span></p>
+            <div class="hero-image-wrapper">
+                <div class="hero-image-circle">
+                    <img
+                            src="https://images.pexels.com/photos/3993446/pexels-photo-3993446.jpeg?auto=compress&cs=tinysrgb&w=800"
+                            alt="Customer at Salon Loan Loan"/>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<hr>
+    <!-- SERVICES -->
+    <section class="products" id="services">
+        <div class="container">
+            <div class="section-heading text-center">
+                <p class="section-kicker">What We Offer</p>
+                <h2>Our Services</h2>
+            </div>
 
-<section>
-    <h2>Our Products</h2>
-    <div th:if="${#lists.isEmpty(products)}">
-        <p>No products available at the moment.</p>
-    </div>
-    <div th:each="product : ${products}">
-        <div class="product-card">
-            <h3 th:text="${product.productName}">Product Name</h3>
-            <p th:text="${product.productDescription}">Description</p>
-            <p><strong>Price:</strong> ₫<span th:text="${product.currentPrice}">0</span></p>
+            <div th:if="${#lists.isEmpty(services)}" class="text-center">
+                <p>No services available at the moment.</p>
+            </div>
+
+            <div class="product-grid" th:if="${!#lists.isEmpty(services)}">
+                <article class="product-card" th:each="service : ${services}">
+                    <a th:href="@{/services/{id}(id=${service.id})}">
+                    <div class="product-image">
+                        <!-- Placeholder image for services -->
+                        <img src="https://via.placeholder.com/400x260.png?text=Service"
+                             alt="Service Image">
+                    </div>
+                    <div class="product-body">
+                        <h3 th:text="${service.serviceName}">Service Name</h3>
+                        <p class="product-desc"
+                           th:text="${service.serviceDescription}">
+                            Service description goes here.
+                        </p>
+                        <p class="price">
+                            <span th:text="'₫' + ${service.servicePrice}">₫0</span>
+                        </p>
+                    </div>
+                    </a>
+                </article>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<hr>
-<div id="map" style="height: 400px;"></div>
+    <!-- PRODUCTS -->
+    <section class="products" id="products">
+        <div class="container">
+            <div class="section-heading text-center">
+                <p class="section-kicker">Best Sellers</p>
+                <h2>Our Products</h2>
+            </div>
 
+            <div th:if="${#lists.isEmpty(products)}" class="text-center">
+                <p>No products available at the moment.</p>
+            </div>
+
+            <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
+                <article class="product-card" th:each="product : ${products}">
+                    <a th:href="@{/products/{id}(id=${product.id})}" style="display:block; color:inherit;">
+                    <div class="product-image">
+                        <!-- Placeholder image for products -->
+                        <img src="https://via.placeholder.com/400x400.png?text=Product"
+                             alt="Product Image">
+                    </div>
+
+                    <div class="product-body">
+                        <h3 th:text="${product.productName}">Product Name</h3>
+                        <p class="product-desc"
+                           th:text="${product.productDescription}">
+                            Product description goes here.
+                        </p>
+                        <p class="price">
+                            <span th:text="'₫' + ${product.currentPrice}">₫0</span>
+                        </p>
+                    </div>
+                    </a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAP / LOCATION -->
+    <section class="news" id="location">
+        <div class="container">
+            <div class="section-heading text-center">
+                <p class="section-kicker">Find Us</p>
+                <h2>Our Location</h2>
+            </div>
+            <div id="map" style="height: 400px; border-radius: 24px; overflow: hidden;"></div>
+        </div>
+    </section>
+</main>
+
+<!-- MAP SCRIPT -->
 <script th:inline="javascript">
+    /*<![CDATA[*/
     var lat = [[${lat}]];
     var lng = [[${lng}]];
 
@@ -69,14 +140,11 @@
     }).addTo(map);
 
     L.marker([lat, lng]).addTo(map)
-        .bindPopup('Here is the address!')
+        .bindPopup('Here is Salon Loan Loan!')
         .openPopup();
+    /*]]>*/
 </script>
 
-
-<footer>
-    <p>&copy; 2025 Salon Loan Loan. All rights reserved.</p>
-</footer>
-
+<div th:replace="~{fragments/footer :: site-footer}"></div>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package service.sllbackend.web.mvc;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -9,21 +10,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import service.sllbackend.entity.Service;
 import service.sllbackend.entity.ServiceCategory;
+import service.sllbackend.entity.ServiceImage;
 import service.sllbackend.enumerator.ServiceType;
 import service.sllbackend.repository.ServiceCategoryRepo;
+import service.sllbackend.repository.ServiceImageRepo;
 import service.sllbackend.repository.ServiceRepo;
+import service.sllbackend.service.ImageStorageService;
 
 @Controller
 @RequestMapping("/manager/service")
 @RequiredArgsConstructor
+@Slf4j
 public class ManagerServiceController {
 
     private final ServiceRepo serviceRepo;
     private final ServiceCategoryRepo serviceCategoryRepo;
+    private final ImageStorageService imageStorageService;
+    private final ServiceImageRepo serviceImageRepo;
 
     @GetMapping("/list")
     public String listServices(
@@ -68,6 +77,7 @@ public class ManagerServiceController {
             @RequestParam Short durationMinutes,
             @RequestParam(required = false) String serviceDescription,
             @RequestParam(required = false, defaultValue = "false") Boolean activeStatus,
+            @RequestParam(required = false) List<MultipartFile> images,
             RedirectAttributes redirectAttributes) {
         
         try {
@@ -90,7 +100,27 @@ public class ManagerServiceController {
                 .activeStatus(activeStatus)
                 .build();
             
-            serviceRepo.save(service);
+            Service createdService = serviceRepo.save(service);
+            
+            // Handle image uploads
+            if (images != null && !images.isEmpty()) {
+                for (MultipartFile image : images) {
+                    if (image != null && !image.isEmpty()) {
+                        try {
+                            String imagePath = imageStorageService.storeImage(image, "services");
+                            ServiceImage serviceImage = ServiceImage.builder()
+                                .service(createdService)
+                                .imagePath(imagePath)
+                                .build();
+                            serviceImageRepo.save(serviceImage);
+                            log.info("Saved service image: {} for service: {}", imagePath, createdService.getId());
+                        } catch (IOException e) {
+                            log.error("Failed to store image for service: {}", createdService.getId(), e);
+                        }
+                    }
+                }
+            }
+            
             redirectAttributes.addFlashAttribute("successMessage", "Service created successfully!");
             return "redirect:/manager/service/list";
         } catch (Exception e) {
@@ -105,8 +135,11 @@ public class ManagerServiceController {
             .orElseThrow(() -> new RuntimeException("Service not found"));
         
         List<ServiceCategory> categories = serviceCategoryRepo.findAll();
+        List<ServiceImage> existingImages = serviceImageRepo.findByServiceId(id);
+        
         model.addAttribute("service", service);
         model.addAttribute("categories", categories);
+        model.addAttribute("existingImages", existingImages);
         return "manager-service-edit";
     }
 
@@ -120,6 +153,8 @@ public class ManagerServiceController {
             @RequestParam Short durationMinutes,
             @RequestParam(required = false) String serviceDescription,
             @RequestParam(required = false, defaultValue = "false") Boolean activeStatus,
+            @RequestParam(required = false) List<MultipartFile> images,
+            @RequestParam(required = false) List<Integer> deleteImageIds,
             RedirectAttributes redirectAttributes) {
         
         try {
@@ -143,7 +178,39 @@ public class ManagerServiceController {
             service.setServiceDescription(serviceDescription);
             service.setActiveStatus(activeStatus);
             
-            serviceRepo.save(service);
+            Service updatedService = serviceRepo.save(service);
+            
+            // Delete selected images
+            if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
+                for (Integer imageId : deleteImageIds) {
+                    ServiceImage existingImage = serviceImageRepo.findById(imageId).orElse(null);
+                    if (existingImage != null && existingImage.getService().getId().equals(id)) {
+                        imageStorageService.deleteImage(existingImage.getImagePath());
+                        serviceImageRepo.delete(existingImage);
+                        log.info("Deleted service image: {} for service: {}", existingImage.getImagePath(), id);
+                    }
+                }
+            }
+            
+            // Handle new image uploads
+            if (images != null && !images.isEmpty()) {
+                for (MultipartFile image : images) {
+                    if (image != null && !image.isEmpty()) {
+                        try {
+                            String imagePath = imageStorageService.storeImage(image, "services");
+                            ServiceImage serviceImage = ServiceImage.builder()
+                                .service(updatedService)
+                                .imagePath(imagePath)
+                                .build();
+                            serviceImageRepo.save(serviceImage);
+                            log.info("Saved service image: {} for service: {}", imagePath, id);
+                        } catch (IOException e) {
+                            log.error("Failed to store image for service: {}", id, e);
+                        }
+                    }
+                }
+            }
+            
             redirectAttributes.addFlashAttribute("successMessage", "Service updated successfully!");
             return "redirect:/manager/service/list";
         } catch (Exception e) {

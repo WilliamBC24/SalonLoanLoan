@@ -44,7 +44,7 @@ public class SecurityConfig {
 	@Order(0)
 	public SecurityFilterChain staticResourcesSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/css/**", "/js/**", "/api/**", "/services/search")
+				.securityMatcher("/css/**", "/js/**", "/api/**", "/services/search", "/images/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
 				.build();

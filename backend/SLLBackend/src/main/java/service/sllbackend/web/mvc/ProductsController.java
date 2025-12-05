@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import service.sllbackend.entity.Product;
 import service.sllbackend.entity.ProductFeedback;
+import service.sllbackend.entity.ProductImage;
+import service.sllbackend.repository.ProductImageRepo;
 import service.sllbackend.service.ProductFeedbackService;
 import service.sllbackend.service.ProductsService;
 
@@ -22,6 +24,7 @@ import service.sllbackend.service.ProductsService;
 public class ProductsController {
     private final ProductsService productsService;
     private final ProductFeedbackService productFeedbackService;
+    private final ProductImageRepo productImageRepo;
 
     @GetMapping
     public String listProducts(
@@ -39,9 +42,11 @@ public class ProductsController {
     public String viewProductDetails(@PathVariable Integer id, Model model, Principal principal) {
         Product product = productsService.getProductById(id);
         Integer availableStock = productsService.getProductStock(id);
+        List<ProductImage> productImages = productImageRepo.findByProductId(id);
 
         model.addAttribute("product", product);
         model.addAttribute("availableStock", availableStock);
+        model.addAttribute("productImages", productImages);
         
         // Get all product feedback
         List<ProductFeedback> feedbackList = productFeedbackService.getProductFeedback(id);

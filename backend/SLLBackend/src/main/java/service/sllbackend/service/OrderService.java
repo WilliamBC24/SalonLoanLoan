@@ -54,6 +54,7 @@ public interface OrderService {
      * Update order status (admin/staff only)
      * @param orderId Order ID
      * @param newStatus New order status
+     * @throws IllegalStateException if current status is CANCELLED or DELIVERED (final statuses)
      */
     void updateOrderStatus(Integer orderId, OrderStatus newStatus);
     

@@ -49,6 +49,7 @@ public class OrderController {
     public String placeOrder(
             @RequestParam String customerName,
             @RequestParam String phoneNumber,
+            @RequestParam String city,
             @RequestParam String shippingAddress,
             @RequestParam String paymentMethod,
             Principal principal) {
@@ -61,6 +62,7 @@ public class OrderController {
                     principal.getName(),
                     customerName,
                     phoneNumber,
+                    city,
                     shippingAddress,
                     paymentMethod
             );
@@ -69,6 +71,15 @@ public class OrderController {
         } catch (Exception e) {
             return "redirect:/order/checkout?error=" + e.getMessage();
         }
+    }
+    
+    @GetMapping("/api/shipping-fee")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getShippingFee(@RequestParam String city) {
+        int shippingFee = orderService.calculateShippingFee(city);
+        Map<String, Object> response = new HashMap<>();
+        response.put("shippingFee", shippingFee);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/history")

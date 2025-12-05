@@ -31,6 +31,10 @@ public class OrderInvoice {
     @JoinColumn(name = "customer_info_id", nullable = false)
     private CustomerInfo customerInfo;
 
+    @Column(name = "shipping_fee", nullable = false)
+    @Builder.Default
+    private Integer shippingFee = 0;
+
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 

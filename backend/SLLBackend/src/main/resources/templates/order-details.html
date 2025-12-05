@@ -382,6 +382,12 @@
                                 0123456789
                             </span>
                         </div>
+                        <div class="info-item">
+                            <span class="info-label">City/Province</span>
+                            <span class="info-value" th:text="${order.customerInfo.city}">
+                                Hà Nội
+                            </span>
+                        </div>
                         <div class="info-item full-width">
                             <span class="info-label">Shipping Address</span>
                             <span class="info-value" th:text="${order.customerInfo.shippingAddress}">
@@ -436,6 +442,16 @@
             <aside>
                 <section class="order-summary-card">
                     <h2>Order Summary</h2>
+
+                    <div class="summary-item" style="display: flex; justify-content: space-between; padding: 0.45rem 0; font-size: 0.95rem; border-bottom: 1px solid #f1f1f1;">
+                        <span>Subtotal</span>
+                        <span th:text="${order.totalPrice - order.shippingFee} + ' VND'">0 VND</span>
+                    </div>
+
+                    <div class="summary-item" style="display: flex; justify-content: space-between; padding: 0.45rem 0; font-size: 0.95rem; border-bottom: 1px solid #f1f1f1;">
+                        <span>Shipping Fee</span>
+                        <span th:text="${order.shippingFee} + ' VND'">0 VND</span>
+                    </div>
 
                     <div class="summary-total">
                         <span>Total</span>

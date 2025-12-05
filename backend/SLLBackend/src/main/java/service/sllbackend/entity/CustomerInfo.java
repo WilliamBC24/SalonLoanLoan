@@ -27,6 +27,9 @@ public class CustomerInfo {
     @Column(name = "email", length = 100)
     private String email;
 
+    @Column(name = "city", columnDefinition = "TEXT")
+    private String city;
+
     @Column(name = "shipping_address", columnDefinition = "TEXT")
     private String shippingAddress;
 }

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,10 +83,13 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
      */
     private List<InventoryInvoiceItemDTO> mergeInvoiceItems(List<InventoryInvoiceItemDTO> items) {
         // Use a map with composite key (productId, unitPrice) to merge duplicates
-        Map<String, InventoryInvoiceItemDTO> mergedMap = new HashMap<>();
+        // Using a record as key ensures proper equals/hashCode behavior
+        record ProductPriceKey(Integer productId, Integer unitPrice) {}
+        
+        Map<ProductPriceKey, InventoryInvoiceItemDTO> mergedMap = new HashMap<>();
         
         for (InventoryInvoiceItemDTO item : items) {
-            String key = item.getProductId() + "_" + item.getUnitPrice();
+            ProductPriceKey key = new ProductPriceKey(item.getProductId(), item.getUnitPrice());
             
             if (mergedMap.containsKey(key)) {
                 // Merge by adding quantities

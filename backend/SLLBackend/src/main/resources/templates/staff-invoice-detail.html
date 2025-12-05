@@ -399,7 +399,7 @@
                 <form method="post"
                       th:action="@{/staff/invoices/edit-status/{id}(id=${invoice.id})}"
                       class="status-form"
-                      th:if="${invoice.invoiceStatus.name() != 'COMPLETE'}">
+                      th:if="${invoice.invoiceStatus.name() != 'COMPLETE' and invoice.invoiceStatus.name() != 'CANCELLED'}">
                     <label for="status">Change Status:</label>
                     <select id="status" name="status" required>
                         <option value="AWAITING"
@@ -418,6 +418,13 @@
                     <strong>✓ Invoice Completed</strong>
                     <span>
                         This invoice is marked as complete and inventory has been updated.
+                        Status can no longer be changed.
+                    </span>
+                </div>
+                <div th:if="${invoice.invoiceStatus.name() == 'CANCELLED'}" class="complete-note">
+                    <strong>X Invoice Cancelled</strong>
+                    <span>
+                        This invoice is marked as cancelled.
                         Status can no longer be changed.
                     </span>
                 </div>

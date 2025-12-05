@@ -101,7 +101,7 @@
                 <td th:text="${#temporals.format(promotion.effectiveTo, 'yyyy-MM-dd HH:mm')}">2024-12-31 23:59</td>
                 <td th:text="${promotion.promotionStatus != null ? promotion.promotionStatus.name : 'N/A'}">Active</td>
                 <td>
-                    <a th:href="@{/staff/promotion/edit/{id}(id=${promotion.id})}" class="edit-link">Edit</a>
+                    <a th:href="@{/manager/promotion/edit/{id}(id=${promotion.id})}" class="edit-link">Edit</a>
                 </td>
             </tr>
         </tbody>

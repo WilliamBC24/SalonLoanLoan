@@ -292,6 +292,20 @@
                 padding: 1.4rem 1.5rem;
             }
         }
+
+        .complete-note {
+            padding: 0.6rem 0.9rem;
+            background: #ecfdf3;
+            color: #166534;
+            border-radius: 12px;
+            border: 1px solid #bbf7d0;
+            font-size: 0.86rem;
+        }
+
+        .complete-note strong {
+            display: block;
+            margin-bottom: 0.1rem;
+        }
     </style>
 </head>
 <body class="staff-layout">
@@ -377,7 +391,10 @@
 
                     <div class="form-group">
                         <label for="orderStatus">New Status *</label>
-                        <select id="orderStatus" name="orderStatus" required>
+                        <select id="orderStatus"
+                                name="orderStatus"
+                                th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'CANCELLED'}"
+                                required>
                             <option value="">-- Select New Status --</option>
                             <option th:each="status : ${orderStatuses}"
                                     th:value="${status}"
@@ -391,7 +408,7 @@
                     </div>
                 </div>
 
-                <div class="actions">
+                <div class="actions"  th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'CANCELLED'}">
                     <button type="submit" class="btn-pill-primary">
                         <span>Update Status</span>
                     </button>
@@ -401,6 +418,20 @@
                     </a>
                 </div>
             </form>
+            <div th:if="${order.orderStatus.name() == 'DELIVERED'}" class="complete-note">
+                <strong>✓ Order Delivered</strong>
+                <span>
+                        This order is marked as delivered.
+                        Status can no longer be changed.
+                    </span>
+            </div>
+            <div th:if="${order.orderStatus.name() == 'CANCELLED'}" class="complete-note">
+                <strong>X Order Cancelled</strong>
+                <span>
+                        This order is marked as cancelled.
+                        Status can no longer be changed.
+                    </span>
+            </div>
         </section>
     </div>
 </main>

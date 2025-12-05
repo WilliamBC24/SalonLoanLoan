@@ -96,30 +96,6 @@
                                placeholder="Enter product name...">
                     </div>
 
-                    <!-- ACTIVE STATUS FILTER -->
-                    <div class="filter-group">
-                        <label>Active Status</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-item">
-                                <input type="radio" name="activeStatus" value=""
-                                       th:checked="${selectedActiveStatus == null}">
-                                All
-                            </label>
-
-                            <label class="checkbox-item">
-                                <input type="radio" name="activeStatus" value="true"
-                                       th:checked="${selectedActiveStatus != null and selectedActiveStatus == true}">
-                                Active only
-                            </label>
-
-                            <label class="checkbox-item">
-                                <input type="radio" name="activeStatus" value="false"
-                                       th:checked="${selectedActiveStatus != null and selectedActiveStatus == false}">
-                                Inactive only
-                            </label>
-                        </div>
-                    </div>
-
                     <!-- BUTTONS -->
                     <div class="search-buttons">
                         <button type="submit" class="btn-primary">Search</button>

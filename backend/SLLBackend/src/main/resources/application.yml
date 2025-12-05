@@ -33,6 +33,12 @@ spring:
   servlet:
     multipart:
       enabled: true
+      max-file-size: 5MB
+      max-request-size: 25MB
+
+image:
+  upload:
+    directory: ${IMAGE_UPLOAD_DIR:uploads/images}
 
 server:
   port: 8080

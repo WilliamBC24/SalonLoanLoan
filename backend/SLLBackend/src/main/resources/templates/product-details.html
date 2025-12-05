@@ -374,10 +374,29 @@
 
             <!-- LEFT: MEDIA -->
             <section class="product-media-card">
-                <div class="product-image-wrapper">
-                    <!-- Placeholder image (replace with real image if available later) -->
+                <div class="product-image-wrapper" th:if="${productImages != null && !productImages.isEmpty()}">
+                    <!-- Show first product image -->
+                    <img th:src="@{'/images/' + ${productImages[0].imagePath}}"
+                         alt="Product image"
+                         onerror="this.src='https://via.placeholder.com/600x450.png?text=Product+Image'">
+                </div>
+                <div class="product-image-wrapper" th:if="${productImages == null || productImages.isEmpty()}">
+                    <!-- Placeholder image when no images available -->
                     <img src="https://via.placeholder.com/600x450.png?text=Product+Image"
                          alt="Product image">
+                </div>
+                
+                <!-- Additional images gallery -->
+                <div th:if="${productImages != null && productImages.size() > 1}" 
+                     style="display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;">
+                    <div th:each="image, stat : ${productImages}" 
+                         th:if="${stat.index > 0}"
+                         style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; cursor: pointer;">
+                        <img th:src="@{'/images/' + ${image.imagePath}}"
+                             alt="Product image"
+                             style="width: 100%; height: 100%; object-fit: cover;"
+                             onerror="this.parentElement.style.display='none'">
+                    </div>
                 </div>
 
                 <div class="product-meta">
@@ -482,7 +501,7 @@
                     Write a Review
                 </h3>
 
-                <form th:action="@{/products/rate}" method="post">
+                <form th:action="@{/products/rate}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="productId" th:value="${product.id}"/>
 
                     <div>
@@ -517,6 +536,15 @@
                                   class="comment-input"
                                   placeholder="Share your thoughts about this product..."
                                   th:text="${userFeedback?.comment}"></textarea>
+                    </div>
+
+                    <div style="margin-top: 0.8rem;">
+                        <label for="reviewImages" style="font-size:0.9rem;">Add Photos (optional):</label>
+                        <input type="file" id="reviewImages" name="images" multiple accept="image/jpeg,image/png,image/gif,image/webp" style="margin-top: 0.3rem;">
+                        <div style="font-size: 0.75rem; color: #666; margin-top: 0.2rem;">
+                            Max 5MB per image. Allowed formats: JPEG, PNG, GIF, WEBP
+                        </div>
+                        <div id="reviewImagePreview" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;"></div>
                     </div>
 
                     <button type="submit"
@@ -560,6 +588,17 @@
                          th:text="${feedback.comment}">
                         Great product!
                     </div>
+                    <!-- Review images -->
+                    <div th:if="${feedback.images != null && !feedback.images.isEmpty()}" 
+                         style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div th:each="image : ${feedback.images}"
+                             style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;">
+                            <img th:src="@{'/images/' + ${image.imagePath}}"
+                                 alt="Review image"
+                                 style="width: 100%; height: 100%; object-fit: cover;"
+                                 onerror="this.parentElement.style.display='none'">
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -569,6 +608,37 @@
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>
+
+<script>
+    // Image preview for review form
+    const reviewImagesInput = document.getElementById('reviewImages');
+    if (reviewImagesInput) {
+        reviewImagesInput.addEventListener('change', function(event) {
+            const previewContainer = document.getElementById('reviewImagePreview');
+            previewContainer.innerHTML = '';
+            
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imgWrapper = document.createElement('div');
+                        imgWrapper.style.cssText = 'position: relative; width: 60px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                        
+                        imgWrapper.appendChild(img);
+                        previewContainer.appendChild(imgWrapper);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

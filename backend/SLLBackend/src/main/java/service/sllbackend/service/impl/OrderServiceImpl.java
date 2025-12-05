@@ -157,6 +157,18 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void updateOrderStatus(Integer orderId, OrderStatus newStatus) {
         OrderInvoice order = getOrderDetails(orderId);
+        
+        // Business Rule: CANCELLED and DELIVERED are terminal states and cannot be changed.
+        // This prevents accidental reversals and maintains order history integrity.
+        // Users must create a new order if they need to re-order after cancellation.
+        OrderStatus currentStatus = order.getOrderStatus();
+        if (currentStatus == OrderStatus.CANCELLED || currentStatus == OrderStatus.DELIVERED) {
+            throw new IllegalStateException(
+                "Cannot change order status from " + currentStatus + 
+                ". This status is final and irreversible."
+            );
+        }
+        
         order.setOrderStatus(newStatus);
         orderInvoiceRepo.save(order);
     }

@@ -53,7 +53,7 @@ public class AdminInventoryInvoiceController {
                     "Error approving invoice: " + e.getMessage());
         }
         
-        return "redirect:/admin/invoices/pending";
+        return "redirect:/staff/invoices/detail/" + id;
     }
     
     /**
@@ -74,6 +74,6 @@ public class AdminInventoryInvoiceController {
                     "Error rejecting invoice: " + e.getMessage());
         }
         
-        return "redirect:/admin/invoices/pending";
+        return "redirect:/staff/invoices/detail/" + id;
     }
 }

@@ -6,12 +6,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import service.sllbackend.entity.StaffAccount;
 import service.sllbackend.entity.UserAccount;
 import service.sllbackend.enumerator.AccountStatus;
 import service.sllbackend.repository.StaffAccountRepo;
 import service.sllbackend.repository.UserAccountRepo;
 import service.sllbackend.service.ProfileService;
+import service.sllbackend.utils.EncryptSSN;
+import service.sllbackend.web.dto.AdminCreateStaffDTO;
 import service.sllbackend.web.dto.AdminStaffProfileDTO;
 import service.sllbackend.web.dto.AdminUserProfileDTO;
 
@@ -69,9 +72,13 @@ public class AdminAccountManagementController {
     }
 
     @GetMapping("/staff/edit/{id}")
-    public String editStaffAccount(@PathVariable String id, Model model) {
+    public String editStaffAccount(@PathVariable String id, Model model) throws Exception {
         StaffAccount staffAccount = staffAccountRepo.findById(Long.valueOf(id))
                 .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
+        if (staffAccount.getStaff().getSocialSecurityNum() != null) {
+            String decrypted = EncryptSSN.decrypt(staffAccount.getStaff().getSocialSecurityNum());
+            staffAccount.getStaff().setSocialSecurityNum(decrypted);
+        }
         model.addAttribute("staffAccount", staffAccount);
         return "admin-staff-edit";
     }
@@ -97,4 +104,25 @@ public class AdminAccountManagementController {
     public String createStaffAccount() {
         return "admin-create-account";
     }
+
+    @PostMapping("/save-staff")
+    public String saveStaff(@Valid @ModelAttribute("staffForm") AdminCreateStaffDTO adminCreateStaffDTO,
+                            BindingResult bindingResult,
+                            Model model, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Check your inputs");
+            return "redirect:/admin/profiles/create-account";
+        }
+
+        try {
+            profileService.adminCreateStaff(adminCreateStaffDTO);
+            redirectAttributes.addFlashAttribute("successMessage", "Created successfully");
+            return "redirect:/admin/profiles/create-account";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Check your inputs");
+            return "redirect:/admin/profiles/create-account";
+        }
+    }
+
 }

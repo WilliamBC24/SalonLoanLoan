@@ -220,6 +220,70 @@
             color: #991b1b;
         }
 
+        .hidden {
+            display: none !important;
+        }
+
+        .fulfillment-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+
+        .fulfillment-option {
+            flex: 1;
+            min-width: 220px;
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            border: 2px solid #e1e1e1;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            background: #fafafa;
+        }
+
+        .fulfillment-option input[type="radio"] {
+            margin-top: 0.2rem;
+        }
+
+        .fulfillment-option:hover {
+            border-color: var(--accent, #ff8400);
+        }
+
+        .fulfillment-option.selected {
+            border-color: var(--accent, #ff8400);
+            background: #fff7ec;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+        }
+
+        .fulfillment-option-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .fulfillment-option-desc {
+            margin: 0.15rem 0 0;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .pickup-info {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .pickup-info p {
+            margin: 0;
+            color: #166534;
+            font-size: 0.9rem;
+        }
         @media (max-width: 900px) {
             .checkout-layout {
                 grid-template-columns: 1fr;
@@ -263,9 +327,36 @@
                       method="post"
                       onsubmit="return validateForm()">
 
+                    <!-- Fulfillment Type Selection -->
+                    <div class="form-section">
+                        <h2>1. How would you like to receive your order?</h2>
+
+                        <div class="fulfillment-options">
+                            <label class="fulfillment-option selected" onclick="selectFulfillment(this)">
+                                <input type="radio" name="fulfillmentType" value="DELIVERY" checked required />
+                                <div>
+                                    <div class="fulfillment-option-title">🚚 Delivery</div>
+                                    <p class="fulfillment-option-desc">
+                                        Have your order delivered to your address.
+                                    </p>
+                                </div>
+                            </label>
+
+                            <label class="fulfillment-option" onclick="selectFulfillment(this)">
+                                <input type="radio" name="fulfillmentType" value="IN_STORE_PICKUP" required />
+                                <div>
+                                    <div class="fulfillment-option-title">🏪 In-Store Pickup</div>
+                                    <p class="fulfillment-option-desc">
+                                        Pick up your order at our salon. No shipping fees!
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- Customer Information -->
                     <div class="form-section">
-                        <h2>1. Customer Information</h2>
+                        <h2>2. Customer Information</h2>
 
                         <div class="form-group">
                             <label class="form-label" for="customerName">Full Name *</label>
@@ -282,26 +373,34 @@
                     </div>
 
                     <!-- Delivery Information -->
-                    <div class="form-section">
-                        <h2>2. Delivery Address</h2>
+                    <div class="form-section" id="deliverySection">
+                        <h2>3. Delivery Address</h2>
 
                         <div class="form-group">
                             <label class="form-label" for="shippingAddress">Shipping Address *</label>
                             <textarea class="form-textarea"
                                       id="shippingAddress"
                                       name="shippingAddress"
-                                      placeholder="Enter your complete address"
-                                      required></textarea>
+                                      placeholder="Enter your complete address"></textarea>
                             <span class="error" id="addressError">Please enter your shipping address</span>
+                        </div>
+                    </div>
+
+                    <!-- Pickup Information (shown only for in-store pickup) -->
+                    <div class="form-section hidden" id="pickupSection">
+                        <h2>3. Pickup Information</h2>
+                        <div class="pickup-info">
+                            <p><strong>📍 Pickup Location:</strong> Salon Loan Loan</p>
+                            <p style="margin-top: 0.5rem;">We will notify you when your order is ready for pickup.</p>
                         </div>
                     </div>
 
                     <!-- Payment Method -->
                     <div class="form-section">
-                        <h2>3. Payment Method</h2>
+                        <h2 id="paymentSectionTitle">4. Payment Method</h2>
 
-                        <div class="payment-options">
-                            <label class="payment-option" onclick="selectPayment(this)">
+                        <div class="payment-options" id="paymentOptions">
+                            <label class="payment-option" id="bankTransferOption" onclick="selectPayment(this)">
                                 <input type="radio" name="paymentMethod" value="BANK_TRANSFER" required />
                                 <div>
                                     <div class="payment-option-title">Bank Transfer</div>
@@ -311,12 +410,22 @@
                                 </div>
                             </label>
 
-                            <label class="payment-option" onclick="selectPayment(this)">
+                            <label class="payment-option" id="codOption" onclick="selectPayment(this)">
                                 <input type="radio" name="paymentMethod" value="COD" required />
                                 <div>
                                     <div class="payment-option-title">Cash on Delivery</div>
                                     <p class="payment-option-desc">
                                         Pay in cash when your order is delivered.
+                                    </p>
+                                </div>
+                            </label>
+
+                            <label class="payment-option hidden" id="inStoreOption" onclick="selectPayment(this)">
+                                <input type="radio" name="paymentMethod" value="IN_STORE" />
+                                <div>
+                                    <div class="payment-option-title">Pay at Pickup</div>
+                                    <p class="payment-option-desc">
+                                        Pay in cash or card when you pick up your order.
                                     </p>
                                 </div>
                             </label>
@@ -359,6 +468,51 @@
 <div th:replace="~{fragments/footer :: site-footer}"></div>
 
 <script>
+    function selectFulfillment(element) {
+        document.querySelectorAll('.fulfillment-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        const radio = element.querySelector('input[type="radio"]');
+        if (radio) {
+            radio.checked = true;
+        }
+
+        // Update form sections based on fulfillment type
+        const isPickup = radio.value === 'IN_STORE_PICKUP';
+        const deliverySection = document.getElementById('deliverySection');
+        const pickupSection = document.getElementById('pickupSection');
+        const shippingAddress = document.getElementById('shippingAddress');
+        const codOption = document.getElementById('codOption');
+        const inStoreOption = document.getElementById('inStoreOption');
+
+        if (isPickup) {
+            deliverySection.classList.add('hidden');
+            pickupSection.classList.remove('hidden');
+            shippingAddress.removeAttribute('required');
+            codOption.classList.add('hidden');
+            inStoreOption.classList.remove('hidden');
+            // Uncheck COD if it was selected
+            const codRadio = codOption.querySelector('input[type="radio"]');
+            if (codRadio.checked) {
+                codRadio.checked = false;
+                codOption.classList.remove('selected');
+            }
+        } else {
+            deliverySection.classList.remove('hidden');
+            pickupSection.classList.add('hidden');
+            shippingAddress.setAttribute('required', '');
+            codOption.classList.remove('hidden');
+            inStoreOption.classList.add('hidden');
+            // Uncheck IN_STORE if it was selected
+            const inStoreRadio = inStoreOption.querySelector('input[type="radio"]');
+            if (inStoreRadio.checked) {
+                inStoreRadio.checked = false;
+                inStoreOption.classList.remove('selected');
+            }
+        }
+    }
+
     function selectPayment(element) {
         document.querySelectorAll('.payment-option').forEach(opt => {
             opt.classList.remove('selected');
@@ -388,10 +542,14 @@
             isValid = false;
         }
 
-        const address = document.getElementById('shippingAddress').value.trim();
-        if (address.length < 10) {
-            document.getElementById('addressError').style.display = 'block';
-            isValid = false;
+        // Only validate address for delivery orders
+        const fulfillmentType = document.querySelector('input[name="fulfillmentType"]:checked');
+        if (fulfillmentType && fulfillmentType.value === 'DELIVERY') {
+            const address = document.getElementById('shippingAddress').value.trim();
+            if (address.length < 10) {
+                document.getElementById('addressError').style.display = 'block';
+                isValid = false;
+            }
         }
 
         const paymentSelected = document.querySelector('input[name="paymentMethod"]:checked');
@@ -421,13 +579,15 @@
     });
 
     document.getElementById('shippingAddress').addEventListener('blur', function() {
-        if (this.value.trim().length < 10) {
-            document.getElementById('addressError').style.display = 'block';
-        } else {
-            document.getElementById('addressError').style.display = 'none';
+        const fulfillmentType = document.querySelector('input[name="fulfillmentType"]:checked');
+        if (fulfillmentType && fulfillmentType.value === 'DELIVERY') {
+            if (this.value.trim().length < 10) {
+                document.getElementById('addressError').style.display = 'block';
+            } else {
+                document.getElementById('addressError').style.display = 'none';
+            }
         }
     });
 </script>
-
 </body>
 </html>

@@ -3,124 +3,288 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Create Job Posting</title>
+    <title>Admin - Create Job Posting | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global layout -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        /* ===== PAGE STRUCTURE ===== */
+        .job-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
         }
-        h1 {
-            margin-bottom: 20px;
-        }
-        form {
-            max-width: 600px;
-            background: #f9f9f9;
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select,
-        input[type="date"] {
+
+        .job-layout-inner {
+            max-width: 780px;
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            font-size: 14px;
+            margin: 1rem auto;
         }
-        textarea {
-            resize: vertical;
-            height: 100px;
+
+        .job-card {
+            background: #ffffff;
+            padding: 2.2rem 2.3rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
         }
-        button {
-            padding: 10px 18px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+
+        .job-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
         }
-        button:hover {
-            background: #0056b3;
+
+        .section-heading p.section-kicker {
+            margin-bottom: 0.25rem;
         }
-        .cancel-btn {
-            background: #6c757d;
-            margin-left: 10px;
+
+        .section-heading h2 {
+            margin: 0;
         }
-        .cancel-btn:hover {
-            background: #545b62;
+
+        .section-subtitle {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
         }
+
+        /* ===== ALERTS ===== */
         .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
         }
+
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
         }
+
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        /* ===== FORM ===== */
+        .job-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        @media(max-width:768px) {
+            .job-layout-inner {
+                max-width: 100%;
+                padding: 0 1rem;
+            }
+            .form-grid-2 {
+                grid-template-columns: minmax(0,1fr);
+            }
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: #374151;
+        }
+
+        .form-control,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.55rem 0.7rem;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            background: #fafafa;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100,179,255,0.35);
+            background: #ffffff;
+        }
+
+        /* ===== BUTTONS ===== */
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .btn {
+            padding: 0.55rem 1.4rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 6px 15px rgba(37,99,235,0.3);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
         }
     </style>
 </head>
-<body>
-<h1>Create Job Posting</h1>
 
-<!-- Success/Error Messages -->
-<div id="successMessage" class="alert alert-success" style="display:none;"></div>
-<div id="errorMessage" class="alert alert-error" style="display:none;"></div>
+<body class="staff-layout">
 
-<form action="/admin/job/create" method="post">
-    <div>
-        <label for="jobPostingName">Job Title:</label>
-        <input type="text" id="jobPostingName" name="jobPostingName" placeholder="Enter job title" required>
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main job-page">
+    <div class="job-layout-inner">
+        <section class="job-card">
+
+            <div class="job-header-row">
+                <div class="section-heading">
+                    <p class="section-kicker">Job Posting Management</p>
+                    <h2>Create Job Posting</h2>
+                    <p class="section-subtitle">Add a new position for applicants.</p>
+                </div>
+            </div>
+
+            <form th:action="@{/admin/job-posting/create}" method="post" class="job-form">
+
+                <div class="form-field">
+                    <label for="jobPostingName" class="form-label">
+                        Job Title *
+                    </label>
+                    <input type="text"
+                           id="jobPostingName"
+                           name="jobPostingName"
+                           class="form-control"
+                           placeholder="Enter job title"
+                           required>
+                </div>
+
+                <div class="form-field">
+                    <label for="jobPostingDescription" class="form-label">
+                        Description *
+                    </label>
+                    <textarea id="jobPostingDescription"
+                              name="jobPostingDescription"
+                              class="form-textarea"
+                              placeholder="Enter job description"
+                              required></textarea>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="maxApplication" class="form-label">
+                            Max Applications *
+                        </label>
+                        <input type="number"
+                               id="maxApplication"
+                               name="maxApplication"
+                               class="form-control"
+                               min="1"
+                               placeholder="Enter max applicants allowed"
+                               required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="status" class="form-label">
+                            Status
+                        </label>
+                        <select id="status" name="status" class="form-select">
+                            <option value="ACTIVE">Active</option>
+                            <option value="DEACTIVATED" selected>Deactivated</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="effectiveFrom" class="form-label">
+                            Effective From *
+                        </label>
+                        <input type="date"
+                               id="effectiveFrom"
+                               name="effectiveFrom"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="effectiveTo" class="form-label">
+                            Effective To (optional)
+                        </label>
+                        <input type="date"
+                               id="effectiveTo"
+                               name="effectiveTo"
+                               class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <span>➕</span>
+                        <span>Create</span>
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            onclick="window.location.href='/admin/job-posting/list'">
+                        <span>↩</span>
+                        <span>Cancel</span>
+                    </button>
+                </div>
+
+            </form>
+            <br>
+
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+        </section>
     </div>
-
-    <div>
-        <label for="jobPostingDescription">Description:</label>
-        <textarea id="jobPostingDescription" name="jobPostingDescription" placeholder="Enter job description" required></textarea>
-    </div>
-
-    <div>
-        <label for="maxApplication">Max Applications:</label>
-        <input type="number" id="maxApplication" name="maxApplication" min="1" placeholder="Enter max applicants allowed" required>
-    </div>
-
-    <div>
-        <label for="effectiveFrom">Effective From:</label>
-        <input type="date" id="effectiveFrom" name="effectiveFrom" required>
-    </div>
-
-    <div>
-        <label for="effectiveTo">Effective To (optional):</label>
-        <input type="date" id="effectiveTo" name="effectiveTo">
-    </div>
-
-    <div>
-        <label for="status">Status:</label>
-        <select id="status" name="status">
-            <option value="ACTIVE">Active</option>
-            <option value="DEACTIVATED" selected>Deactivated</option>
-        </select>
-    </div>
-
-    <div>
-        <button type="submit">Create</button>
-        <button type="button" class="cancel-btn" onclick="window.location.href='/admin/job/list'">Cancel</button>
-    </div>
-</form>
-
+</main>
 </body>
 </html>

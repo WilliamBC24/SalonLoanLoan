@@ -335,8 +335,8 @@
 
     CREATE TABLE IF NOT EXISTS shift_template(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-        shift_start TIMESTAMP NOT NULL,
-        shift_end TIMESTAMP NOT NULL,
+        shift_start TIME NOT NULL,
+        shift_end TIME NOT NULL,
         CHECK (shift_end > shift_start),
         UNIQUE (shift_start, shift_end)
     );

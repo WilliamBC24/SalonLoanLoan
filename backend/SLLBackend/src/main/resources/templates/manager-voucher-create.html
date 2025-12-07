@@ -3,217 +3,355 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Create Voucher</title>
+    <title>Manager - Create Voucher | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            max-width: 800px;
+        /* ===== PAGE STRUCTURE ===== */
+        .voucher-create-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
         }
-        h1 {
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+
+        .voucher-create-layout-inner {
+            max-width: 70vw;
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            margin: 1.5rem auto;
         }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
+
+        .voucher-create-card {
+            background: #ffffff;
+            padding: 2.3rem 2.6rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
         }
-        .form-group .error {
-            color: #dc3545;
-            font-size: 0.875em;
-            margin-top: 5px;
-            display: none;
-        }
-        .form-group input.invalid,
-        .form-group select.invalid,
-        .form-group textarea.invalid {
-            border-color: #dc3545;
-        }
-        .button-group {
-            margin-top: 30px;
+
+        /* ===== HEADER ===== */
+        .voucher-create-header {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.6rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
         }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
+
+        .voucher-create-title-block {
+            text-align: left;
         }
-        .btn-primary {
-            background: #007bff;
-            color: white;
+
+        .voucher-create-title-block .section-kicker {
+            margin-bottom: 0.25rem;
         }
-        .btn-primary:hover {
-            background: #0056b3;
+
+        .voucher-create-title-block h2 {
+            margin: 0;
         }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
+
+        .voucher-create-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
-        .btn-secondary:hover {
-            background: #545b62;
+
+        .back-link-pill {
+            font-size: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            padding: 0.4rem 0.9rem;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            color: var(--text-main);
         }
+
+        .back-link-pill span.icon {
+            font-size: 1.05rem;
+            line-height: 1;
+        }
+
+        .back-link-pill:hover {
+            background: #f4f4f4;
+        }
+
+        /* ===== ALERTS ===== */
         .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
         }
+
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
         }
-        .required::after {
+
+        /* ===== FORM LAYOUT ===== */
+        .voucher-form-grid {
+            display: grid;
+            gap: 1.3rem 1.4rem;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+
+        @media (max-width: 800px) {
+            .voucher-create-layout-inner {
+                max-width: 90vw;
+            }
+            .voucher-form-grid {
+                grid-template-columns: minmax(0,1fr);
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-label.required::after {
             content: " *";
             color: #dc3545;
         }
+
+        .form-control {
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            background: #ffffff;
+        }
+
+        .form-control.invalid {
+            border-color: #dc3545;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .field-error {
+            color: #dc3545;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        /* ===== BUTTONS ===== */
+        .button-group {
+            margin-top: 2rem;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.55rem 1.4rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(37,99,235,0.24);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
     </style>
 </head>
-<body>
-    <h1>Create New Voucher</h1>
+<body class="staff-layout">
 
-    <!-- Error Messages -->
-    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-    <form id="voucherForm" method="post" action="/manager/voucher/create">
-        <div class="form-group">
-            <label for="voucherName" class="required">Voucher Name</label>
-            <input type="text" id="voucherName" name="voucherName" required>
-            <div class="error" id="voucherNameError">Voucher name is required.</div>
-        </div>
+<!-- MAIN CONTENT -->
+<main class="staff-main voucher-create-page">
+    <div class="voucher-create-layout-inner">
+        <section class="voucher-create-card">
 
-        <div class="form-group">
-            <label for="voucherDescription" class="required">Voucher Description</label>
-            <textarea id="voucherDescription" name="voucherDescription" required></textarea>
-            <div class="error" id="voucherDescriptionError">Voucher description is required.</div>
-        </div>
+            <!-- Header -->
+            <header class="voucher-create-header">
+                <div class="voucher-create-title-block section-heading">
+                    <p class="section-kicker">Voucher Management</p>
+                    <h2>Create New Voucher</h2>
+                </div>
+                <div class="voucher-create-actions">
+                    <a href="/manager/voucher/list" class="back-link-pill">
+                        <span class="icon">←</span>
+                        <span>Back to list</span>
+                    </a>
+                </div>
+            </header>
 
-        <div class="form-group">
-            <label for="voucherCode" class="required">Voucher Code</label>
-            <input type="text" id="voucherCode" name="voucherCode" required>
-            <div class="error" id="voucherCodeError">Voucher code is required.</div>
-        </div>
+            <!-- Error Messages -->
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-        <div class="form-group">
-            <label for="discountType" class="required">Discount Type</label>
-            <select id="discountType" name="discountType" required>
-                <option value="">Select Discount Type</option>
-                <option value="AMOUNT">Amount</option>
-                <option value="PERCENTAGE">Percentage</option>
-            </select>
-            <div class="error" id="discountTypeError">Please select a discount type.</div>
-        </div>
+            <form id="voucherForm" method="post" action="/manager/voucher/create">
+                <div class="voucher-form-grid">
 
-        <div class="form-group">
-            <label for="discountAmount" class="required">Discount Amount</label>
-            <input type="number" id="discountAmount" name="discountAmount" min="1" required>
-            <div class="error" id="discountAmountError">Discount amount must be greater than 0.</div>
-        </div>
+                    <div class="form-group">
+                        <label for="voucherName" class="form-label required">Voucher Name</label>
+                        <input type="text" id="voucherName" name="voucherName" class="form-control" required>
+                        <div class="field-error" id="voucherNameError">Voucher name is required.</div>
+                    </div>
 
-        <div class="form-group">
-            <label for="effectiveFrom" class="required">Effective From</label>
-            <input type="datetime-local" id="effectiveFrom" name="effectiveFrom" required>
-            <div class="error" id="effectiveFromError">Effective from date is required.</div>
-        </div>
+                    <div class="form-group">
+                        <label for="voucherCode" class="form-label required">Voucher Code</label>
+                        <input type="text" id="voucherCode" name="voucherCode" class="form-control" required>
+                        <div class="field-error" id="voucherCodeError">Voucher code is required.</div>
+                    </div>
 
-        <div class="form-group">
-            <label for="effectiveTo" class="required">Effective To</label>
-            <input type="datetime-local" id="effectiveTo" name="effectiveTo" required>
-            <div class="error" id="effectiveToError">Effective to date is required and must be after effective from date.</div>
-        </div>
+                    <div class="form-group">
+                        <label for="discountType" class="form-label required">Discount Type</label>
+                        <select id="discountType" name="discountType" class="form-control" required>
+                            <option value="">Select Discount Type</option>
+                            <option value="AMOUNT">Amount</option>
+                            <option value="PERCENTAGE">Percentage</option>
+                        </select>
+                        <div class="field-error" id="discountTypeError">Please select a discount type.</div>
+                    </div>
 
-        <div class="form-group">
-            <label for="maxUsage" class="required">Max Usage</label>
-            <input type="number" id="maxUsage" name="maxUsage" min="1" required>
-            <div class="error" id="maxUsageError">Max usage must be greater than 0.</div>
-        </div>
+                    <div class="form-group">
+                        <label for="discountAmount" class="form-label required">Discount Amount</label>
+                        <input type="number"
+                               id="discountAmount"
+                               name="discountAmount"
+                               class="form-control"
+                               min="1"
+                               required>
+                        <div class="field-error" id="discountAmountError">Discount amount must be greater than 0.</div>
+                    </div>
 
-        <div class="form-group">
-            <label for="voucherStatusId" class="required">Voucher Status</label>
-            <select id="voucherStatusId" name="voucherStatusId" required>
-                <option value="">Select Status</option>
-                <option th:each="status : ${statuses}" th:value="${status.id}" th:text="${status.name}">Status</option>
-            </select>
-            <div class="error" id="voucherStatusIdError">Please select a voucher status.</div>
-        </div>
+                    <div class="form-group">
+                        <label for="effectiveFrom" class="form-label required">Effective From</label>
+                        <input type="datetime-local"
+                               id="effectiveFrom"
+                               name="effectiveFrom"
+                               class="form-control"
+                               required>
+                        <div class="field-error" id="effectiveFromError">Effective from date is required.</div>
+                    </div>
 
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">Create Voucher</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/manager/voucher/list'">Cancel</button>
-        </div>
-    </form>
+                    <div class="form-group">
+                        <label for="effectiveTo" class="form-label required">Effective To</label>
+                        <input type="datetime-local"
+                               id="effectiveTo"
+                               name="effectiveTo"
+                               class="form-control"
+                               required>
+                        <div class="field-error" id="effectiveToError">
+                            Effective to date is required and must be after effective from date.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxUsage" class="form-label required">Max Usage</label>
+                        <input type="number"
+                               id="maxUsage"
+                               name="maxUsage"
+                               class="form-control"
+                               min="1"
+                               required>
+                        <div class="field-error" id="maxUsageError">Max usage must be greater than 0.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="voucherStatusId" class="form-label required">Voucher Status</label>
+                        <select id="voucherStatusId" name="voucherStatusId" class="form-control" required>
+                            <option value="">Select Status</option>
+                            <option th:each="status : ${statuses}"
+                                    th:value="${status.id}"
+                                    th:text="${status.name}">
+                                Status
+                            </option>
+                        </select>
+                        <div class="field-error" id="voucherStatusIdError">Please select a voucher status.</div>
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="voucherDescription" class="form-label required">Voucher Description</label>
+                        <textarea id="voucherDescription"
+                                  name="voucherDescription"
+                                  class="form-control"
+                                  required></textarea>
+                        <div class="field-error" id="voucherDescriptionError">Voucher description is required.</div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        ✓ <span>Create Voucher</span>
+                    </button>
+                    <a href="/manager/voucher/list" class="btn btn-secondary">
+                        ✕ <span>Cancel</span>
+                    </a>
+                </div>
+            </form>
+        </section>
+    </div>
 
     <script>
         document.getElementById('voucherForm').addEventListener('submit', function(event) {
             let isValid = true;
 
-            // Validate voucher name
-            const voucherName = document.getElementById('voucherName');
-            const voucherNameError = document.getElementById('voucherNameError');
-            if (!voucherName.value.trim()) {
-                voucherName.classList.add('invalid');
-                voucherNameError.style.display = 'block';
-                isValid = false;
-            } else {
-                voucherName.classList.remove('invalid');
-                voucherNameError.style.display = 'none';
+            function validateRequired(id, errorId) {
+                const el = document.getElementById(id);
+                const err = document.getElementById(errorId);
+                if (!el.value.trim()) {
+                    el.classList.add('invalid');
+                    err.style.display = 'block';
+                    isValid = false;
+                } else {
+                    el.classList.remove('invalid');
+                    err.style.display = 'none';
+                }
             }
 
-            // Validate voucher description
-            const voucherDescription = document.getElementById('voucherDescription');
-            const voucherDescriptionError = document.getElementById('voucherDescriptionError');
-            if (!voucherDescription.value.trim()) {
-                voucherDescription.classList.add('invalid');
-                voucherDescriptionError.style.display = 'block';
-                isValid = false;
-            } else {
-                voucherDescription.classList.remove('invalid');
-                voucherDescriptionError.style.display = 'none';
-            }
+            validateRequired('voucherName', 'voucherNameError');
+            validateRequired('voucherDescription', 'voucherDescriptionError');
+            validateRequired('voucherCode', 'voucherCodeError');
+            validateRequired('discountType', 'discountTypeError');
+            validateRequired('effectiveFrom', 'effectiveFromError');
+            validateRequired('effectiveTo', 'effectiveToError');
+            validateRequired('voucherStatusId', 'voucherStatusIdError');
 
-            // Validate voucher code
-            const voucherCode = document.getElementById('voucherCode');
-            const voucherCodeError = document.getElementById('voucherCodeError');
-            if (!voucherCode.value.trim()) {
-                voucherCode.classList.add('invalid');
-                voucherCodeError.style.display = 'block';
-                isValid = false;
-            } else {
-                voucherCode.classList.remove('invalid');
-                voucherCodeError.style.display = 'none';
-            }
-
-            // Validate discount type
-            const discountType = document.getElementById('discountType');
-            const discountTypeError = document.getElementById('discountTypeError');
-            if (!discountType.value) {
-                discountType.classList.add('invalid');
-                discountTypeError.style.display = 'block';
-                isValid = false;
-            } else {
-                discountType.classList.remove('invalid');
-                discountTypeError.style.display = 'none';
-            }
-
-            // Validate discount amount
             const discountAmount = document.getElementById('discountAmount');
             const discountAmountError = document.getElementById('discountAmountError');
             if (!discountAmount.value || parseInt(discountAmount.value) < 1) {
@@ -225,35 +363,6 @@
                 discountAmountError.style.display = 'none';
             }
 
-            // Validate effective from
-            const effectiveFrom = document.getElementById('effectiveFrom');
-            const effectiveFromError = document.getElementById('effectiveFromError');
-            if (!effectiveFrom.value) {
-                effectiveFrom.classList.add('invalid');
-                effectiveFromError.style.display = 'block';
-                isValid = false;
-            } else {
-                effectiveFrom.classList.remove('invalid');
-                effectiveFromError.style.display = 'none';
-            }
-
-            // Validate effective to
-            const effectiveTo = document.getElementById('effectiveTo');
-            const effectiveToError = document.getElementById('effectiveToError');
-            if (!effectiveTo.value) {
-                effectiveTo.classList.add('invalid');
-                effectiveToError.style.display = 'block';
-                isValid = false;
-            } else if (effectiveFrom.value && effectiveTo.value && new Date(effectiveTo.value) <= new Date(effectiveFrom.value)) {
-                effectiveTo.classList.add('invalid');
-                effectiveToError.style.display = 'block';
-                isValid = false;
-            } else {
-                effectiveTo.classList.remove('invalid');
-                effectiveToError.style.display = 'none';
-            }
-
-            // Validate max usage
             const maxUsage = document.getElementById('maxUsage');
             const maxUsageError = document.getElementById('maxUsageError');
             if (!maxUsage.value || parseInt(maxUsage.value) < 1) {
@@ -265,16 +374,20 @@
                 maxUsageError.style.display = 'none';
             }
 
-            // Validate voucher status
-            const voucherStatusId = document.getElementById('voucherStatusId');
-            const voucherStatusIdError = document.getElementById('voucherStatusIdError');
-            if (!voucherStatusId.value) {
-                voucherStatusId.classList.add('invalid');
-                voucherStatusIdError.style.display = 'block';
+            const effectiveFrom = document.getElementById('effectiveFrom');
+            const effectiveTo = document.getElementById('effectiveTo');
+            const effectiveToError = document.getElementById('effectiveToError');
+            if (effectiveFrom.value && effectiveTo.value &&
+                new Date(effectiveTo.value) <= new Date(effectiveFrom.value)) {
+                effectiveTo.classList.add('invalid');
+                effectiveToError.style.display = 'block';
                 isValid = false;
-            } else {
-                voucherStatusId.classList.remove('invalid');
-                voucherStatusIdError.style.display = 'none';
+            } else if (effectiveTo.value) {
+                effectiveTo.classList.remove('invalid');
+                if (effectiveToError.style.display === 'block' &&
+                    new Date(effectiveTo.value) > new Date(effectiveFrom.value)) {
+                    effectiveToError.style.display = 'none';
+                }
             }
 
             if (!isValid) {
@@ -283,70 +396,31 @@
             }
         });
 
-        // Real-time validation on input
-        document.getElementById('voucherName').addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('invalid');
-                document.getElementById('voucherNameError').style.display = 'none';
-            }
-        });
+        // Real-time validation
+        ['voucherName','voucherDescription','voucherCode','discountAmount','maxUsage']
+            .forEach(id => {
+                const el = document.getElementById(id);
+                el.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.classList.remove('invalid');
+                        const err = document.getElementById(id + 'Error');
+                        if (err) err.style.display = 'none';
+                    }
+                });
+            });
 
-        document.getElementById('voucherDescription').addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('invalid');
-                document.getElementById('voucherDescriptionError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('voucherCode').addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('invalid');
-                document.getElementById('voucherCodeError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('discountType').addEventListener('change', function() {
-            if (this.value) {
-                this.classList.remove('invalid');
-                document.getElementById('discountTypeError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('discountAmount').addEventListener('input', function() {
-            if (this.value && parseInt(this.value) >= 1) {
-                this.classList.remove('invalid');
-                document.getElementById('discountAmountError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('effectiveFrom').addEventListener('change', function() {
-            if (this.value) {
-                this.classList.remove('invalid');
-                document.getElementById('effectiveFromError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('effectiveTo').addEventListener('change', function() {
-            const effectiveFrom = document.getElementById('effectiveFrom').value;
-            if (this.value && (!effectiveFrom || new Date(this.value) > new Date(effectiveFrom))) {
-                this.classList.remove('invalid');
-                document.getElementById('effectiveToError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('maxUsage').addEventListener('input', function() {
-            if (this.value && parseInt(this.value) >= 1) {
-                this.classList.remove('invalid');
-                document.getElementById('maxUsageError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('voucherStatusId').addEventListener('change', function() {
-            if (this.value) {
-                this.classList.remove('invalid');
-                document.getElementById('voucherStatusIdError').style.display = 'none';
-            }
-        });
+        ['discountType','effectiveFrom','effectiveTo','voucherStatusId']
+            .forEach(id => {
+                const el = document.getElementById(id);
+                el.addEventListener('change', function() {
+                    if (this.value) {
+                        this.classList.remove('invalid');
+                        const err = document.getElementById(id + 'Error');
+                        if (err) err.style.display = 'none';
+                    }
+                });
+            });
     </script>
+</main>
 </body>
 </html>

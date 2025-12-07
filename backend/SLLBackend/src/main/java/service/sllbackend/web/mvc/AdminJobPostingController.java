@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import service.sllbackend.entity.JobPosting;
 import service.sllbackend.repository.JobPostingRepo;
 import service.sllbackend.service.JobPostingService;
@@ -36,16 +37,20 @@ public class AdminJobPostingController {
     }
 
     @PostMapping("/create")
-    public String jobPostingCreate(Model model, @Valid @ModelAttribute JobPostingDTO jobPostingDTO, BindingResult bindingResult){
+    public String jobPostingCreate(Model model, @Valid @ModelAttribute JobPostingDTO jobPostingDTO
+            , BindingResult bindingResult, RedirectAttributes redirectAttributes){
         if (bindingResult.hasErrors()){
-            return "admin-job-posting-create";
+            redirectAttributes.addFlashAttribute("errorMessage", "Create error. Check your inputs");
+            return "redirect:/admin/job-posting/create-form";
         }
         try {
             jobPostingService.createJobPosting(jobPostingDTO);
-            return "redirect:/admin/job/list";
+            redirectAttributes.addFlashAttribute("successMessage", "Created successfully");
+
         } catch (Exception e) {
-            return "redirect:/admin/job/create-form";
+            redirectAttributes.addFlashAttribute("errorMessage", "Create error. Check your inputs");
         }
+        return "redirect:/admin/job-posting/create-form";
     }
 
     @GetMapping("/view/{id}")
@@ -57,18 +62,21 @@ public class AdminJobPostingController {
     }
 
     @PostMapping("/edit/{id}")
-    public String jobPostingEdit(@PathVariable Long id, @Valid @ModelAttribute JobPostingEditDTO jobPostingEditDTO, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()){
-            JobPosting jobPosting = jobPostingRepo.findByJobPostingName((jobPostingEditDTO.getJobPostingName()))
-                    .orElseThrow(() -> new IllegalArgumentException("Job posting not found"));
-            model.addAttribute("jobPosting", jobPosting);
-            return "admin-job-posting-edit";
+    public String jobPostingEdit(@PathVariable Long id, @Valid @ModelAttribute JobPostingEditDTO jobPostingEditDTO
+            , BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Update error. Check your inputs");
+            return "redirect:/admin/job-posting/view/" + id;
         }
+
         try {
             jobPostingService.editJobPosting(id, jobPostingEditDTO);
-            return "redirect:/admin/job/list";
+            redirectAttributes.addFlashAttribute("successMessage", "Updated successfully.");
         } catch (Exception e) {
-            return "redirect:/admin/job/view/" + id;
+            redirectAttributes.addFlashAttribute("errorMessage", "Update error. Check your inputs");
         }
+
+        return "redirect:/admin/job-posting/view/" + id;
     }
 }

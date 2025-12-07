@@ -301,6 +301,24 @@
                 align-items: flex-start;
             }
         }
+
+        .fulfillment-badge {
+            display: inline-block;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .fulfillment-badge.pickup {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .fulfillment-badge.delivery {
+            background: #dbeafe;
+            color: #1e40af;
+        }
     </style>
 </head>
 <body>
@@ -358,6 +376,13 @@
                             </span>
                         </div>
                         <div class="info-item">
+                            <span class="info-label">Fulfillment</span>
+                            <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                                  class="fulfillment-badge pickup">🏪 In-Store Pickup</span>
+                            <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                                  class="fulfillment-badge delivery">🚚 Delivery</span>
+                        </div>
+                        <div class="info-item">
                             <span class="info-label">Payment Method</span>
                             <span class="info-value" th:text="${order.paymentMethod}">
                                 BANK_TRANSFER
@@ -382,11 +407,15 @@
                                 0123456789
                             </span>
                         </div>
-                        <div class="info-item full-width">
+                        <div class="info-item full-width" th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
                             <span class="info-label">Shipping Address</span>
-                            <span class="info-value" th:text="${order.customerInfo.shippingAddress}">
+                            <span class="info-value" th:text="${order.customerInfo.shippingAddress ?: 'N/A'}">
                                 123 Main Street, City
                             </span>
+                        </div>
+                        <div class="info-item full-width" th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}">
+                            <span class="info-label">Pickup Location</span>
+                            <span class="info-value">📍 Salon Loan Loan - We will notify you when ready!</span>
                         </div>
                     </div>
                 </section>

@@ -3,6 +3,7 @@ package service.sllbackend.service;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.entity.OrderInvoiceDetails;
 import service.sllbackend.entity.UserAccount;
+import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
 
 import java.util.List;
@@ -15,12 +16,13 @@ public interface OrderService {
      * @param username User's username
      * @param customerName Customer's name
      * @param phoneNumber Delivery phone number
-     * @param shippingAddress Delivery address
+     * @param shippingAddress Delivery address (optional for in-store pickup)
      * @param paymentTypeName Payment method name (e.g., "BANK_TRANSFER", "COD")
+     * @param fulfillmentType Fulfillment type (DELIVERY or IN_STORE_PICKUP)
      * @return Created order invoice
      */
     OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
-                           String shippingAddress, String paymentTypeName);
+                           String shippingAddress, String paymentTypeName, FulfillmentType fulfillmentType);
     
     /**
      * Get order history for a user

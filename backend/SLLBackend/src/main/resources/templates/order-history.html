@@ -167,6 +167,25 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .fulfillment-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .fulfillment-badge.pickup {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .fulfillment-badge.delivery {
+            background: #dbeafe;
+            color: #1e40af;
+        }
     </style>
 </head>
 <body>
@@ -219,6 +238,10 @@
                           th:text="${order.orderStatus}">
                         PENDING
                     </span>
+                    <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                          class="fulfillment-badge pickup">🏪 Pickup</span>
+                    <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                          class="fulfillment-badge delivery">🚚 Delivery</span>
                 </div>
 
                 <div class="order-details">

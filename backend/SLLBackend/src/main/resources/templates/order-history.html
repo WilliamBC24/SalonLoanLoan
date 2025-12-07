@@ -117,29 +117,8 @@
         .status-confirmed { background: #d1ecf1; color: #0c5460; }
         .status-processing { background: #cce5ff; color: #004085; }
         .status-shipped,
-        .status-delivered,
-        .status-picked_up { background: #d4edda; color: #155724; }
-        .status-ready_for_pickup { background: #d1ecf1; color: #0c5460; }
+        .status-delivered { background: #d4edda; color: #155724; }
         .status-cancelled { background: #f8d7da; color: #721c24; }
-
-        /* Fulfillment badge */
-        .fulfillment-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-            margin-left: 0.5rem;
-        }
-        .fulfillment-delivery {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-        .fulfillment-in_store_pickup {
-            background: #f0fdf4;
-            color: #166534;
-        }
 
         /* Details grid */
         .order-details {
@@ -188,6 +167,25 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .fulfillment-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .fulfillment-badge.pickup {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .fulfillment-badge.delivery {
+            background: #dbeafe;
+            color: #1e40af;
+        }
     </style>
 </head>
 <body>
@@ -228,10 +226,6 @@
                     <div>
                         <div class="order-id">
                             Order #<span th:text="${order.id}">123</span>
-                            <span th:class="'fulfillment-badge fulfillment-' + ${#strings.toLowerCase(order.fulfillmentType)}"
-                                  th:text="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).IN_STORE_PICKUP ? '🏪 Pickup' : '🚚 Delivery'}">
-                                Delivery
-                            </span>
                         </div>
                         <div class="order-date"
                              th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
@@ -244,6 +238,10 @@
                           th:text="${order.orderStatus}">
                         PENDING
                     </span>
+                    <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                          class="fulfillment-badge pickup">🏪 Pickup</span>
+                    <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                          class="fulfillment-badge delivery">🚚 Delivery</span>
                 </div>
 
                 <div class="order-details">

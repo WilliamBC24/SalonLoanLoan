@@ -113,14 +113,12 @@
             display: none;
         }
 
-        .fulfillment-options,
         .payment-options {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
         }
 
-        .fulfillment-option,
         .payment-option {
             flex: 1;
             min-width: 220px;
@@ -135,31 +133,26 @@
             background: #fafafa;
         }
 
-        .fulfillment-option input[type="radio"],
         .payment-option input[type="radio"] {
             margin-top: 0.2rem;
         }
 
-        .fulfillment-option:hover,
         .payment-option:hover {
             border-color: var(--accent, #ff8400);
         }
 
-        .fulfillment-option.selected,
         .payment-option.selected {
             border-color: var(--accent, #ff8400);
             background: #fff7ec;
             box-shadow: 0 6px 16px rgba(0,0,0,0.04);
         }
 
-        .fulfillment-option-title,
         .payment-option-title {
             font-weight: 600;
             font-size: 0.95rem;
             color: #333;
         }
 
-        .fulfillment-option-desc,
         .payment-option-desc {
             margin: 0.15rem 0 0;
             font-size: 0.8rem;
@@ -229,6 +222,53 @@
 
         .hidden {
             display: none !important;
+        }
+
+        .fulfillment-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+
+        .fulfillment-option {
+            flex: 1;
+            min-width: 220px;
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            border: 2px solid #e1e1e1;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            background: #fafafa;
+        }
+
+        .fulfillment-option input[type="radio"] {
+            margin-top: 0.2rem;
+        }
+
+        .fulfillment-option:hover {
+            border-color: var(--accent, #ff8400);
+        }
+
+        .fulfillment-option.selected {
+            border-color: var(--accent, #ff8400);
+            background: #fff7ec;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+        }
+
+        .fulfillment-option-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .fulfillment-option-desc {
+            margin: 0.15rem 0 0;
+            font-size: 0.8rem;
+            color: #777;
         }
 
         .pickup-info {
@@ -333,7 +373,7 @@
                         </div>
                     </div>
 
-                    <!-- Delivery Information (shown only for delivery) -->
+                    <!-- Delivery Information -->
                     <div class="form-section" id="deliverySection">
                         <h2>3. Delivery Address</h2>
 
@@ -415,11 +455,6 @@
                     <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
                 </div>
 
-                <div class="summary-item" id="shippingFeeRow">
-                    <span>Shipping</span>
-                    <span id="shippingFeeValue">Calculated at delivery</span>
-                </div>
-
                 <div class="summary-total">
                     <span>Total</span>
                     <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
@@ -451,50 +486,31 @@
         const shippingAddress = document.getElementById('shippingAddress');
         const codOption = document.getElementById('codOption');
         const inStoreOption = document.getElementById('inStoreOption');
-        const shippingFeeRow = document.getElementById('shippingFeeRow');
-        const shippingFeeValue = document.getElementById('shippingFeeValue');
 
         if (isPickup) {
-            // In-store pickup selected
             deliverySection.classList.add('hidden');
             pickupSection.classList.remove('hidden');
             shippingAddress.removeAttribute('required');
-            shippingAddress.value = '';
-            
-            // Show in-store payment option, hide COD
             codOption.classList.add('hidden');
             inStoreOption.classList.remove('hidden');
-            
-            // Uncheck COD if selected
+            // Uncheck COD if it was selected
             const codRadio = codOption.querySelector('input[type="radio"]');
             if (codRadio.checked) {
                 codRadio.checked = false;
                 codOption.classList.remove('selected');
             }
-            
-            // Update shipping fee display
-            shippingFeeValue.textContent = 'Free (Pickup)';
-            shippingFeeValue.style.color = '#16a34a';
         } else {
-            // Delivery selected
             deliverySection.classList.remove('hidden');
             pickupSection.classList.add('hidden');
             shippingAddress.setAttribute('required', '');
-            
-            // Show COD option, hide in-store
             codOption.classList.remove('hidden');
             inStoreOption.classList.add('hidden');
-            
-            // Uncheck in-store if selected
+            // Uncheck IN_STORE if it was selected
             const inStoreRadio = inStoreOption.querySelector('input[type="radio"]');
             if (inStoreRadio.checked) {
                 inStoreRadio.checked = false;
                 inStoreOption.classList.remove('selected');
             }
-            
-            // Update shipping fee display
-            shippingFeeValue.textContent = 'Calculated at delivery';
-            shippingFeeValue.style.color = '';
         }
     }
 

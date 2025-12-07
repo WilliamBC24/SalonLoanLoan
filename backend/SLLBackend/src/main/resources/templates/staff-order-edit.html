@@ -184,43 +184,16 @@
             border-color: #38bdf8;
         }
 
-        .status-delivered,
-        .status-picked_up {
+        .status-delivered {
             background: #dcfce7;
             color: #166534;
             border-color: #4ade80;
-        }
-
-        .status-ready_for_pickup {
-            background: #cffafe;
-            color: #155e75;
-            border-color: #22d3ee;
         }
 
         .status-cancelled {
             background: #fee2e2;
             color: #b91c1c;
             border-color: #f87171;
-        }
-
-        /* ===== FULFILLMENT BADGE ===== */
-        .fulfillment-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-        }
-
-        .fulfillment-delivery {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .fulfillment-in_store_pickup {
-            background: #f0fdf4;
-            color: #166534;
         }
 
         /* ===== FORM ===== */
@@ -319,6 +292,38 @@
                 padding: 1.4rem 1.5rem;
             }
         }
+
+        .complete-note {
+            padding: 0.6rem 0.9rem;
+            background: #ecfdf3;
+            color: #166534;
+            border-radius: 12px;
+            border: 1px solid #bbf7d0;
+            font-size: 0.86rem;
+        }
+
+        .complete-note strong {
+            display: block;
+            margin-bottom: 0.1rem;
+        }
+
+        .fulfillment-badge {
+            display: inline-block;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .fulfillment-badge.pickup {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .fulfillment-badge.delivery {
+            background: #dbeafe;
+            color: #1e40af;
+        }
     </style>
 </head>
 <body class="staff-layout">
@@ -374,18 +379,18 @@
                         </span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Fulfillment Type</span>
-                        <span th:class="'fulfillment-badge fulfillment-' + ${#strings.toLowerCase(order.fulfillmentType)}"
-                              th:text="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).IN_STORE_PICKUP ? '🏪 In-Store Pickup' : '🚚 Delivery'}">
-                            Delivery
-                        </span>
-                    </div>
-                    <div class="info-item">
                         <span class="info-label">Current Status</span>
                         <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
                               th:text="${order.orderStatus}">
                             PENDING
                         </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Fulfillment Type</span>
+                        <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                              class="fulfillment-badge pickup">🏪 In-Store Pickup</span>
+                        <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                              class="fulfillment-badge delivery">🚚 Delivery</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Total Amount</span>
@@ -411,7 +416,10 @@
 
                     <div class="form-group">
                         <label for="orderStatus">New Status *</label>
-                        <select id="orderStatus" name="orderStatus" required>
+                        <select id="orderStatus"
+                                name="orderStatus"
+                                th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'CANCELLED'}"
+                                required>
                             <option value="">-- Select New Status --</option>
                             <option th:each="status : ${orderStatuses}"
                                     th:value="${status}"
@@ -420,17 +428,12 @@
                                 PENDING
                             </option>
                         </select>
-                        <p class="help-text">
-                            Select a different status to update this order.
-                            <span th:if="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).IN_STORE_PICKUP}">
-                                For pickup orders, use READY_FOR_PICKUP when ready, and PICKED_UP when completed.
-                            </span>
-                        </p>
+                        <p class="help-text">Select a different status to update this order.</p>
                         <span class="error" id="statusError">Please select a status</span>
                     </div>
                 </div>
 
-                <div class="actions">
+                <div class="actions"  th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'CANCELLED'}">
                     <button type="submit" class="btn-pill-primary">
                         <span>Update Status</span>
                     </button>
@@ -440,6 +443,20 @@
                     </a>
                 </div>
             </form>
+            <div th:if="${order.orderStatus.name() == 'DELIVERED'}" class="complete-note">
+                <strong>✓ Order Delivered</strong>
+                <span>
+                        This order is marked as delivered.
+                        Status can no longer be changed.
+                    </span>
+            </div>
+            <div th:if="${order.orderStatus.name() == 'CANCELLED'}" class="complete-note">
+                <strong>X Order Cancelled</strong>
+                <span>
+                        This order is marked as cancelled.
+                        Status can no longer be changed.
+                    </span>
+            </div>
         </section>
     </div>
 </main>

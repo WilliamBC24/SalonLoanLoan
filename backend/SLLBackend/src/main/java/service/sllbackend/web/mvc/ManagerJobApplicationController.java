@@ -27,12 +27,12 @@ public class ManagerJobApplicationController {
     @PostMapping("/accept/{id}")
     public String adminJobApplicationAccept(@PathVariable("id") Long id){
         jobApplicationService.acceptApplication(id);
-        return "redirect:/manager/job/list";
+        return "redirect:/manager/job-application/list";
     }
 
     @PostMapping("/reject/{id}")
     public String adminJobApplicationReject(@PathVariable("id") Long id){
         jobApplicationService.rejectApplication(id);
-        return "redirect:/manager/job/list";
+        return "redirect:/manager/job-application/list";
     }
 }

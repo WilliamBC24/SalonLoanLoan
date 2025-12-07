@@ -206,44 +206,16 @@
             border-color: #38bdf8;
         }
 
-        .status-delivered,
-        .status-picked_up {
+        .status-delivered {
             background: #dcfce7;
             color: #166534;
             border-color: #4ade80;
-        }
-
-        .status-ready_for_pickup {
-            background: #cffafe;
-            color: #155e75;
-            border-color: #22d3ee;
         }
 
         .status-cancelled {
             background: #fee2e2;
             color: #b91c1c;
             border-color: #f87171;
-        }
-
-        /* ===== FULFILLMENT BADGE ===== */
-        .fulfillment-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-            margin-left: 0.5rem;
-        }
-
-        .fulfillment-delivery {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .fulfillment-in_store_pickup {
-            background: #f0fdf4;
-            color: #166534;
         }
 
         /* ===== ORDER DETAILS GRID ===== */
@@ -311,6 +283,25 @@
             border-color: #bfdbfe;
             color: #1d4ed8;
         }
+
+        .fulfillment-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .fulfillment-badge.pickup {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .fulfillment-badge.delivery {
+            background: #dbeafe;
+            color: #1e40af;
+        }
     </style>
 </head>
 <body class="staff-layout">
@@ -354,10 +345,6 @@
                         <div class="order-meta">
                             <div class="order-id">
                                 Order #<span th:text="${order.id}">123</span>
-                                <span th:class="'fulfillment-badge fulfillment-' + ${#strings.toLowerCase(order.fulfillmentType)}"
-                                      th:text="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).IN_STORE_PICKUP ? '🏪 Pickup' : '🚚 Delivery'}">
-                                    Delivery
-                                </span>
                             </div>
                             <div class="order-date"
                                  th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
@@ -368,6 +355,10 @@
                               th:text="${order.orderStatus}">
                             PENDING
                         </span>
+                        <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                              class="fulfillment-badge pickup">🏪 Pickup</span>
+                        <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                              class="fulfillment-badge delivery">🚚 Delivery</span>
                     </header>
 
                     <div class="order-details">
@@ -385,14 +376,14 @@
                             </span>
                         </div>
 
-                        <div class="detail-item" th:if="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).DELIVERY}">
+                        <div class="detail-item" th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
                             <span class="detail-label">Shipping Address</span>
                             <span class="detail-value" th:text="${order.customerInfo.shippingAddress ?: 'N/A'}">
                                 Address
                             </span>
                         </div>
 
-                        <div class="detail-item" th:if="${order.fulfillmentType == T(service.sllbackend.enumerator.FulfillmentType).IN_STORE_PICKUP}">
+                        <div class="detail-item" th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}">
                             <span class="detail-label">Pickup Location</span>
                             <span class="detail-value">Salon Loan Loan</span>
                         </div>

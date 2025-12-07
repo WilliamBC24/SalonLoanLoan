@@ -2,6 +2,7 @@ package service.sllbackend.dev;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class DataLoader implements CommandLineRunner {
 	private final InventoryConsignmentRepo inventoryConsignmentRepo;
 	private final InventoryInvoiceRepo inventoryInvoiceRepo;
 	private final InventoryInvoiceDetailRepo inventoryInvoiceDetailRepo;
+	private final ShiftTemplateRepo shiftTemplateRepo;
 
 	@Override
 	public void run(String... args) {
@@ -56,6 +58,20 @@ public class DataLoader implements CommandLineRunner {
 		registerJobPosting();
 		registerJobApplication();
 		registerAppointments();
+		registerShiftTemplates();
+	}
+
+	public void registerShiftTemplates(){
+		ShiftTemplate shiftTemplateAM = new ShiftTemplate();
+		shiftTemplateAM.setShiftStart(LocalTime.of(7, 30));
+		shiftTemplateAM.setShiftEnd(LocalTime.of(12, 0));
+
+		ShiftTemplate shiftTemplatePM = new ShiftTemplate();
+		shiftTemplatePM.setShiftStart(LocalTime.of(12, 30));
+		shiftTemplatePM.setShiftEnd(LocalTime.of(19, 0));
+
+		shiftTemplateRepo.save(shiftTemplateAM);
+		shiftTemplateRepo.save(shiftTemplatePM);
 	}
 
 	public void registerPromotions() {

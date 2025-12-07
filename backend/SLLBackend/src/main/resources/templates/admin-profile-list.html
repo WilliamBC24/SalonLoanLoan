@@ -3,161 +3,352 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Accounts</title>
+    <title>Admin - Accounts | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles (sidebar + main scroll) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        /* ===== PAGE STRUCTURE ===== */
+        .accounts-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
         }
-        .search-bar {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-        }
-        .filter-group {
-            margin-bottom: 15px;
-        }
-        .filter-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-        }
-        .checkbox-item input {
-            margin-right: 5px;
-        }
-        .search-buttons {
-            margin-top: 15px;
-        }
-        .search-buttons button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
-        }
-        .search-btn {
-            background: #007bff;
-            color: white;
-        }
-        .search-btn:hover {
-            background: #0056b3;
-        }
-        .reset-btn {
-            background: #6c757d;
-            color: white;
-        }
-        .reset-btn:hover {
-            background: #545b62;
-        }
-        table {
-            border-collapse: collapse;
+
+        .accounts-layout-inner {
+            max-width: 85vw;
             width: 100%;
+            margin: 1rem auto;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+
+        .accounts-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .accounts-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .accounts-title-block {
             text-align: left;
         }
-        th {
-            background: #f4f4f4;
+
+        .accounts-title-block .section-kicker {
+            margin-bottom: 0.25rem;
         }
-        tr:hover {
-            background: #f5f5f5;
+
+        .accounts-title-block h2 {
+            margin: 0;
         }
-        .view-link {
-            color: #007bff;
+
+        /* ===== SEARCH BAR / FILTERS ===== */
+        .accounts-search-bar {
+            background: #f9fafb;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 1.3rem 1.4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin-bottom: 0.35rem;
+        }
+
+        .filter-input-text {
+            width: 100%;
+            padding: 0.55rem 0.7rem;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 0.9rem;
+            background: #ffffff;
+        }
+
+        .filter-input-text:focus {
+            outline: none;
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100,179,255,0.35);
+        }
+
+        .checkbox-group,
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-item,
+        .radio-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.86rem;
+            color: #374151;
+        }
+
+        .checkbox-item input,
+        .radio-item input {
+            transform: translateY(0.5px);
+        }
+
+        .search-buttons {
+            margin-top: 0.6rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
             text-decoration: none;
         }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(37,99,235,0.24);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== TABLE WRAPPER ===== */
+        .accounts-table-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+            background: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        th {
+            font-weight: 700;
+            color: #4b5563;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .accounts-username {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .status-pill {
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-deactivated {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .view-link {
+            border-radius: 999px;
+            padding: 0.35rem 0.95rem;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: #111827;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
         .view-link:hover {
-            text-decoration: underline;
+            background: #f3f4f6;
         }
     </style>
 </head>
-<body>
-    <h1>All Accounts</h1>
+<body class="staff-layout">
 
-    <!-- Search and Filter Bar -->
-    <div class="search-bar">
-        <form method="get" action="/admin/profiles">
-            <div class="filter-group">
-                <label for="search-username">Search by Username:</label>
-                <input type="text" id="search-username" name="username"
-                       th:value="${searchUsername}"
-                       placeholder="Enter username..."
-                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            </div>
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
-            <div class="filter-group">
-                <label>Account Status:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="radio" id="status-all" name="activeStatus" value=""
-                               th:checked="${selectedActiveStatus == null}">
-                        <label for="status-all">All</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="radio" id="status-active" name="activeStatus" value="ACTIVE"
-                               th:checked="${selectedActiveStatus != null and selectedActiveStatus == T(com.example.enums.AccountStatus).ACTIVE}">
-                        <label for="status-active">Active Only</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="radio" id="status-inactive" name="activeStatus" value="DEACTIVATED"
-                               th:checked="${selectedActiveStatus != null and selectedActiveStatus == T(com.example.enums.AccountStatus).DEACTIVATED}">
-                        <label for="status-inactive">Inactive Only</label>
-                    </div>
+<!-- MAIN CONTENT -->
+<main class="staff-main accounts-page">
+    <div class="accounts-layout-inner">
+        <section class="accounts-card">
+
+            <!-- Header -->
+            <div class="accounts-header-row">
+                <div class="accounts-title-block section-heading">
+                    <p class="section-kicker">Account Management</p>
+                    <h2>All Accounts</h2>
+                </div>
+                <div class="accounts-actions">
+                    <a href="/admin/profiles/create-account" class="btn btn-primary btn-create">
+                        ➕ <span>Create Account</span>
+                    </a>
                 </div>
             </div>
 
-            <div class="filter-group">
-                <label>Account Type:</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="staff-only" name="staffOnly"
-                               th:checked="${staffOnly != null and staffOnly}">
-                        <label for="staff-only">Staff Only</label>
+            <!-- Search and Filter Bar -->
+            <div class="accounts-search-bar">
+                <form method="get" action="/admin/profiles">
+                    <div class="filter-group">
+                        <label for="search-username" class="filter-label">Search by Username</label>
+                        <input type="text"
+                               id="search-username"
+                               name="username"
+                               th:value="${searchUsername}"
+                               placeholder="Enter username..."
+                               class="filter-input-text">
                     </div>
-                </div>
+
+                    <div class="filter-group">
+                        <span class="filter-label">Account Status</span>
+                        <div class="radio-group">
+                            <label class="radio-item" for="status-all">
+                                <input type="radio" id="status-all" name="activeStatus" value=""
+                                       th:checked="${selectedActiveStatus == null}">
+                                <span>All</span>
+                            </label>
+
+                            <label class="radio-item" for="status-active">
+                                <input type="radio" id="status-active" name="activeStatus" value="ACTIVE"
+                                       th:checked="${selectedActiveStatus != null and selectedActiveStatus == T(com.example.enums.AccountStatus).ACTIVE}">
+                                <span>Active only</span>
+                            </label>
+
+                            <label class="radio-item" for="status-inactive">
+                                <input type="radio" id="status-inactive" name="activeStatus" value="DEACTIVATED"
+                                       th:checked="${selectedActiveStatus != null and selectedActiveStatus == T(com.example.enums.AccountStatus).DEACTIVATED}">
+                                <span>Inactive only</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <span class="filter-label">Account Type</span>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item" for="staff-only">
+                                <input type="checkbox"
+                                       id="staff-only"
+                                       name="staffOnly"
+                                       th:checked="${staffOnly != null and staffOnly}">
+                                <span>Staff List</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="search-buttons">
+                        <button type="submit" class="btn btn-primary">
+                            🔍 <span>Search</span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                onclick="window.location.href='/admin/profiles'">
+                            ↺ <span>Reset</span>
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <div class="search-buttons">
-                <button type="submit" class="search-btn">Search</button>
-                <button type="button" class="reset-btn" onclick="window.location.href='/admin/profiles'">Reset</button>
+            <!-- Accounts Table -->
+            <div class="accounts-table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Status</th>
+                        <th style="width: 1%;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="account : ${accounts}"
+                        th:with="editUrl=${type == 'staff'} ? @{/admin/profiles/staff/edit/{id}(id=${account.id})}
+                                              : @{/admin/profiles/user/edit/{id}(id=${account.id})}">
+                        <td class="accounts-username" th:text="${account.username}">Username</td>
+                        <td>
+                            <span class="status-pill"
+                                  th:class="'status-pill ' + (${account.accountStatus.name() == 'ACTIVE'} ? 'status-active' : 'status-deactivated')"
+                                  th:text="${account.accountStatus}">
+                                ACTIVE
+                            </span>
+                        </td>
+                        <td>
+                            <a th:href="${editUrl}" class="view-link">
+                                👁 <span>View details</span>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </form>
+
+        </section>
     </div>
-
-    <!-- Accounts Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Active</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        <tr th:each="account : ${accounts}"
-            th:with="editUrl=${type == 'staff'} ? @{/admin/profiles/staff/edit/{id}(id=${account.id})}
-                                  : @{/admin/profiles/user/edit/{id}(id=${account.id})}">
-            <td th:text="${account.username}">Username</td>
-            <td th:text="${account.accountStatus}">ACTIVE</td>
-            <td>
-                <a th:href="${editUrl}" class="view-link">View Details</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+</main>
 
 </body>
 </html>

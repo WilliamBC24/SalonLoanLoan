@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import service.sllbackend.entity.*;
+import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.repository.*;
 import service.sllbackend.service.InventoryService;
@@ -27,7 +28,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
-                                  String shippingAddress, String paymentTypeName) {
+                                  String shippingAddress, String paymentTypeName, FulfillmentType fulfillmentType) {
         // Get user account
         UserAccount userAccount = userAccountRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -51,23 +52,43 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         
-        // Calculate total price
+        // Calculate total price (no shipping fee for in-store pickup)
         int totalPrice = cartItems.stream()
                 .mapToInt(item -> item.getProduct().getCurrentPrice() * item.getAmount())
                 .sum();
         
-        // Get or create customer info
-        CustomerInfo customerInfo = customerInfoRepo
-                .findByPhoneNumberAndShippingAddress(phoneNumber, shippingAddress)
-                .orElseGet(() -> customerInfoRepo.save(CustomerInfo.builder()
-                        .name(customerName)
-                        .phoneNumber(phoneNumber)
-                        .shippingAddress(shippingAddress)
-                        .build()));
+        // Create or find customer info - always required for contact purposes
+        CustomerInfo customerInfo;
+        if (fulfillmentType == FulfillmentType.DELIVERY) {
+            // For delivery, require shipping address
+            if (shippingAddress == null || shippingAddress.trim().isEmpty()) {
+                throw new RuntimeException("Shipping address is required for delivery orders");
+            }
+            customerInfo = customerInfoRepo
+                    .findByPhoneNumberAndShippingAddress(phoneNumber, shippingAddress)
+                    .orElseGet(() -> customerInfoRepo.save(CustomerInfo.builder()
+                            .name(customerName)
+                            .phoneNumber(phoneNumber)
+                            .shippingAddress(shippingAddress)
+                            .build()));
+        } else {
+            // For in-store pickup, create customer info without shipping address
+            customerInfo = customerInfoRepo.save(CustomerInfo.builder()
+                    .name(customerName)
+                    .phoneNumber(phoneNumber)
+                    .build());
+        }
         
-        // Validate payment method (simple text validation)
-        if (!paymentTypeName.equals("BANK_TRANSFER") && !paymentTypeName.equals("COD")) {
-            throw new RuntimeException("Invalid payment method. Must be BANK_TRANSFER or COD");
+        // Validate payment method
+        // For in-store pickup, only allow BANK_TRANSFER or IN_STORE (pay at pickup)
+        if (fulfillmentType == FulfillmentType.IN_STORE_PICKUP) {
+            if (!paymentTypeName.equals("BANK_TRANSFER") && !paymentTypeName.equals("IN_STORE")) {
+                throw new RuntimeException("Invalid payment method for in-store pickup. Must be BANK_TRANSFER or IN_STORE");
+            }
+        } else {
+            if (!paymentTypeName.equals("BANK_TRANSFER") && !paymentTypeName.equals("COD")) {
+                throw new RuntimeException("Invalid payment method. Must be BANK_TRANSFER or COD");
+            }
         }
         
         // Create order invoice
@@ -76,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
                 .customerInfo(customerInfo)
                 .totalPrice(totalPrice)
                 .paymentMethod(paymentTypeName)
+                .fulfillmentType(fulfillmentType)
                 .orderStatus(OrderStatus.PENDING)
                 .build();
         orderInvoice = orderInvoiceRepo.save(orderInvoice);

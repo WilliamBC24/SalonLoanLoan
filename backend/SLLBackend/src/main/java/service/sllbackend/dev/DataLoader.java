@@ -43,6 +43,9 @@ public class DataLoader implements CommandLineRunner {
 	private final InventoryInvoiceRepo inventoryInvoiceRepo;
 	private final InventoryInvoiceDetailRepo inventoryInvoiceDetailRepo;
 	private final ShiftTemplateRepo shiftTemplateRepo;
+	private final OrderInvoiceRepo orderInvoiceRepo;
+	private final OrderInvoiceDetailsRepo orderInvoiceDetailsRepo;
+	private final CustomerInfoRepo customerInfoRepo;
 
 	@Override
 	public void run(String... args) {
@@ -61,6 +64,7 @@ public class DataLoader implements CommandLineRunner {
 		registerAppointments();
 		registerShiftTemplates();
 		registerPaymentTypes();
+		registerTestOrders();
 	}
 
 	public void registerPaymentTypes(){
@@ -1102,5 +1106,107 @@ public class DataLoader implements CommandLineRunner {
 				.scheduledAt(null) // not scheduled yet
 				.status(AppointmentStatus.PENDING)
 				.build());
+	}
+
+	public void registerTestOrders() {
+		// Get the test user
+		UserAccount userAccount = userAccountRepo.findByUsername("alice")
+				.orElseThrow(() -> new RuntimeException("Test user not found"));
+		
+		// Get some products for testing
+		List<Product> products = productRepo.findAll();
+		if (products.isEmpty()) {
+			log.warn("No products found for test orders");
+			return;
+		}
+		
+		// Test Order 1: Delivery to Hanoi (shipping fee: 30,000)
+		CustomerInfo hanoiCustomer = customerInfoRepo.save(CustomerInfo.builder()
+				.name("Alice Test")
+				.phoneNumber("0999999999")
+				.shippingAddress("123 Test Street, Hoan Kiem")
+				.city("Hanoi")
+				.ward("Hang Bong")
+				.build());
+		
+		int subtotal1 = products.get(0).getCurrentPrice() * 2;
+		int shippingFee1 = 30000; // Hanoi
+		int totalPrice1 = subtotal1 + shippingFee1;
+		
+		OrderInvoice hanoiOrder = orderInvoiceRepo.save(OrderInvoice.builder()
+				.userAccount(userAccount)
+				.customerInfo(hanoiCustomer)
+				.totalPrice(totalPrice1)
+				.shippingFee(shippingFee1)
+				.paymentMethod("BANK_TRANSFER")
+				.fulfillmentType(FulfillmentType.DELIVERY)
+				.orderStatus(OrderStatus.PENDING)
+				.build());
+		
+		orderInvoiceDetailsRepo.save(OrderInvoiceDetails.builder()
+				.orderInvoice(hanoiOrder)
+				.product(products.get(0))
+				.quantity(2)
+				.priceAtSale(products.get(0).getCurrentPrice())
+				.build());
+		
+		// Test Order 2: Delivery to Ho Chi Minh City (shipping fee: 70,000)
+		CustomerInfo hcmCustomer = customerInfoRepo.save(CustomerInfo.builder()
+				.name("Bob Test")
+				.phoneNumber("0888888888")
+				.shippingAddress("456 Test Avenue, District 1")
+				.city("Ho Chi Minh City")
+				.ward("Ben Nghe")
+				.build());
+		
+		int subtotal2 = products.get(1).getCurrentPrice() * 1;
+		int shippingFee2 = 70000; // Other city
+		int totalPrice2 = subtotal2 + shippingFee2;
+		
+		OrderInvoice hcmOrder = orderInvoiceRepo.save(OrderInvoice.builder()
+				.userAccount(userAccount)
+				.customerInfo(hcmCustomer)
+				.totalPrice(totalPrice2)
+				.shippingFee(shippingFee2)
+				.paymentMethod("COD")
+				.fulfillmentType(FulfillmentType.DELIVERY)
+				.orderStatus(OrderStatus.CONFIRMED)
+				.build());
+		
+		orderInvoiceDetailsRepo.save(OrderInvoiceDetails.builder()
+				.orderInvoice(hcmOrder)
+				.product(products.get(1))
+				.quantity(1)
+				.priceAtSale(products.get(1).getCurrentPrice())
+				.build());
+		
+		// Test Order 3: In-store pickup (no shipping fee)
+		CustomerInfo pickupCustomer = customerInfoRepo.save(CustomerInfo.builder()
+				.name("Charlie Test")
+				.phoneNumber("0777777777")
+				.build());
+		
+		int subtotal3 = products.get(2).getCurrentPrice() * 3;
+		int shippingFee3 = 0; // No shipping fee for pickup
+		int totalPrice3 = subtotal3 + shippingFee3;
+		
+		OrderInvoice pickupOrder = orderInvoiceRepo.save(OrderInvoice.builder()
+				.userAccount(userAccount)
+				.customerInfo(pickupCustomer)
+				.totalPrice(totalPrice3)
+				.shippingFee(shippingFee3)
+				.paymentMethod("BANK_TRANSFER")
+				.fulfillmentType(FulfillmentType.IN_STORE_PICKUP)
+				.orderStatus(OrderStatus.PENDING)
+				.build());
+		
+		orderInvoiceDetailsRepo.save(OrderInvoiceDetails.builder()
+				.orderInvoice(pickupOrder)
+				.product(products.get(2))
+				.quantity(3)
+				.priceAtSale(products.get(2).getCurrentPrice())
+				.build());
+		
+		log.info("Successfully loaded 3 test orders: 1 Hanoi (30k fee), 1 HCM (70k fee), 1 pickup (0 fee)");
 	}
 }

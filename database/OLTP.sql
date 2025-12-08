@@ -43,7 +43,9 @@
         name TEXT NOT NULL,
         phone_number VARCHAR(20) NOT NULL,
         email VARCHAR(100),
-        shipping_address TEXT
+        shipping_address TEXT,
+        city TEXT,
+        ward TEXT
     );
 
     CREATE UNIQUE INDEX uq_user_phone_active
@@ -475,6 +477,8 @@
         customer_info_id INT REFERENCES customer_info(id),
         total_price INT NOT NULL CHECK (total_price > 0),
         payment_method TEXT NOT NULL,
+        fulfillment_type TEXT NOT NULL DEFAULT 'DELIVERY',
+        shipping_fee INT NOT NULL DEFAULT 0,
         order_status TEXT NOT NULL DEFAULT 'PENDING',
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );

@@ -34,11 +34,12 @@ public class AppointmentImageServiceImpl implements AppointmentImageService {
     private final BeforeAppointmentImageRepo beforeAppointmentImageRepo;
     private final AfterAppointmentImageRepo afterAppointmentImageRepo;
     
+    // Field initialization provides defaults for unit tests where @Value is not injected
     @Value("${appointment.image.upload-dir:uploads/appointment-images/}")
     private String uploadDir = "uploads/appointment-images/";
     
     @Value("${appointment.image.max-file-size:5242880}") // 5MB default
-    private long maxFileSize = 5242880L;
+    private long maxFileSize = 5242880L; // 5MB in bytes
     
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
             "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"

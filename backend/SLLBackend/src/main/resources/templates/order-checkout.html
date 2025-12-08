@@ -377,12 +377,107 @@
                         <h2>3. Delivery Address</h2>
 
                         <div class="form-group">
-                            <label class="form-label" for="shippingAddress">Shipping Address *</label>
+                            <label class="form-label" for="city">City *</label>
+                            <select class="form-select" id="city" name="city" required>
+                                <option value="">Select a city</option>
+                                <option value="Hanoi">Hanoi</option>
+                                <option value="Ho Chi Minh City">Ho Chi Minh City</option>
+                                <option value="Da Nang">Da Nang</option>
+                                <option value="Hai Phong">Hai Phong</option>
+                                <option value="Can Tho">Can Tho</option>
+                                <option value="Bien Hoa">Bien Hoa</option>
+                                <option value="Hue">Hue</option>
+                                <option value="Nha Trang">Nha Trang</option>
+                                <option value="Buon Ma Thuot">Buon Ma Thuot</option>
+                                <option value="Quy Nhon">Quy Nhon</option>
+                                <option value="Vung Tau">Vung Tau</option>
+                                <option value="Nam Dinh">Nam Dinh</option>
+                                <option value="Thai Nguyen">Thai Nguyen</option>
+                                <option value="Thai Binh">Thai Binh</option>
+                                <option value="Ha Long">Ha Long</option>
+                                <option value="Long Xuyen">Long Xuyen</option>
+                                <option value="Rach Gia">Rach Gia</option>
+                                <option value="Cam Pha">Cam Pha</option>
+                                <option value="Vinh">Vinh</option>
+                                <option value="My Tho">My Tho</option>
+                                <option value="Phan Thiet">Phan Thiet</option>
+                                <option value="Ca Mau">Ca Mau</option>
+                                <option value="Bac Lieu">Bac Lieu</option>
+                                <option value="Phan Rang-Thap Cham">Phan Rang-Thap Cham</option>
+                                <option value="Tuy Hoa">Tuy Hoa</option>
+                                <option value="Pleiku">Pleiku</option>
+                                <option value="Dong Ha">Dong Ha</option>
+                                <option value="Tam Ky">Tam Ky</option>
+                                <option value="Bac Giang">Bac Giang</option>
+                                <option value="Viet Tri">Viet Tri</option>
+                                <option value="Ha Tinh">Ha Tinh</option>
+                                <option value="Thanh Hoa">Thanh Hoa</option>
+                                <option value="Ninh Binh">Ninh Binh</option>
+                                <option value="Yen Bai">Yen Bai</option>
+                                <option value="Dien Bien Phu">Dien Bien Phu</option>
+                                <option value="Lao Cai">Lao Cai</option>
+                                <option value="Lang Son">Lang Son</option>
+                                <option value="Cao Bang">Cao Bang</option>
+                                <option value="Son La">Son La</option>
+                                <option value="Hoa Binh">Hoa Binh</option>
+                                <option value="Bac Kan">Bac Kan</option>
+                                <option value="Tuyen Quang">Tuyen Quang</option>
+                                <option value="Ha Giang">Ha Giang</option>
+                                <option value="Lai Chau">Lai Chau</option>
+                                <option value="Phu Tho">Phu Tho</option>
+                                <option value="Quang Ninh">Quang Ninh</option>
+                                <option value="Bac Ninh">Bac Ninh</option>
+                                <option value="Hai Duong">Hai Duong</option>
+                                <option value="Hung Yen">Hung Yen</option>
+                                <option value="Ha Nam">Ha Nam</option>
+                                <option value="Vinh Phuc">Vinh Phuc</option>
+                                <option value="Quang Tri">Quang Tri</option>
+                                <option value="Quang Binh">Quang Binh</option>
+                                <option value="Quang Nam">Quang Nam</option>
+                                <option value="Quang Ngai">Quang Ngai</option>
+                                <option value="Binh Dinh">Binh Dinh</option>
+                                <option value="Phu Yen">Phu Yen</option>
+                                <option value="Khanh Hoa">Khanh Hoa</option>
+                                <option value="Ninh Thuan">Ninh Thuan</option>
+                                <option value="Binh Thuan">Binh Thuan</option>
+                                <option value="Kon Tum">Kon Tum</option>
+                                <option value="Gia Lai">Gia Lai</option>
+                                <option value="Dak Lak">Dak Lak</option>
+                                <option value="Dak Nong">Dak Nong</option>
+                                <option value="Lam Dong">Lam Dong</option>
+                                <option value="Binh Phuoc">Binh Phuoc</option>
+                                <option value="Tay Ninh">Tay Ninh</option>
+                                <option value="Binh Duong">Binh Duong</option>
+                                <option value="Dong Nai">Dong Nai</option>
+                                <option value="Ba Ria-Vung Tau">Ba Ria-Vung Tau</option>
+                                <option value="Long An">Long An</option>
+                                <option value="Tien Giang">Tien Giang</option>
+                                <option value="Ben Tre">Ben Tre</option>
+                                <option value="Tra Vinh">Tra Vinh</option>
+                                <option value="Vinh Long">Vinh Long</option>
+                                <option value="Dong Thap">Dong Thap</option>
+                                <option value="An Giang">An Giang</option>
+                                <option value="Kien Giang">Kien Giang</option>
+                                <option value="Hau Giang">Hau Giang</option>
+                                <option value="Soc Trang">Soc Trang</option>
+                            </select>
+                            <span class="error" id="cityError">Please select a city</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="ward">Ward/District (Optional)</label>
+                            <select class="form-select" id="ward" name="ward">
+                                <option value="">Select city first</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="shippingAddress">Street Address *</label>
                             <textarea class="form-textarea"
                                       id="shippingAddress"
                                       name="shippingAddress"
-                                      placeholder="Enter your complete address"></textarea>
-                            <span class="error" id="addressError">Please enter your shipping address</span>
+                                      placeholder="Enter your street address (house number, street name)"></textarea>
+                            <span class="error" id="addressError">Please enter your street address</span>
                         </div>
                     </div>
 
@@ -454,9 +549,14 @@
                     <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
                 </div>
 
+                <div class="summary-item" id="shippingFeeRow">
+                    <span>Shipping Fee</span>
+                    <span id="shippingFeeText">0 VND</span>
+                </div>
+
                 <div class="summary-total">
                     <span>Total</span>
-                    <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+                    <span id="totalPriceText" th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
                 </div>
             </div>
         </div>
@@ -468,6 +568,73 @@
 <div th:replace="~{fragments/footer :: site-footer}"></div>
 
 <script>
+    // Shipping fee constants
+    const HANOI_SHIPPING_FEE = 30000;
+    const OTHER_CITIES_SHIPPING_FEE = 70000;
+    const subtotalPrice = [[${cartSummary.totalPrice}]];
+
+    // Ward/District data for major cities
+    const cityWards = {
+        'Hanoi': ['Ba Dinh', 'Hoan Kiem', 'Tay Ho', 'Long Bien', 'Cau Giay', 'Dong Da', 'Hai Ba Trung', 'Hoang Mai', 'Thanh Xuan', 'Bac Tu Liem', 'Nam Tu Liem', 'Ha Dong', 'Son Tay', 'Soc Son', 'Dong Anh', 'Gia Lam', 'Thanh Tri', 'Thuong Tin', 'Phu Xuyen', 'Ung Hoa', 'My Duc', 'Thach That', 'Quoc Oai', 'Chuong My', 'Dan Phuong', 'Hoai Duc', 'Thanh Oai', 'Me Linh', 'Ba Vi'],
+        'Ho Chi Minh City': ['District 1', 'District 2', 'District 3', 'District 4', 'District 5', 'District 6', 'District 7', 'District 8', 'District 9', 'District 10', 'District 11', 'District 12', 'Binh Thanh', 'Go Vap', 'Phu Nhuan', 'Tan Binh', 'Tan Phu', 'Binh Tan', 'Thu Duc', 'Cu Chi', 'Hoc Mon', 'Binh Chanh', 'Nha Be', 'Can Gio'],
+        'Da Nang': ['Hai Chau', 'Thanh Khe', 'Son Tra', 'Ngu Hanh Son', 'Lien Chieu', 'Cam Le', 'Hoa Vang', 'Hoang Sa'],
+        'Hai Phong': ['Hong Bang', 'Ngo Quyen', 'Le Chan', 'Hai An', 'Kien An', 'Do Son', 'Duong Kinh', 'Thuy Nguyen', 'An Duong', 'An Lao', 'Kien Thuy', 'Tien Lang', 'Vinh Bao', 'Cat Hai', 'Bach Long Vi'],
+        'Can Tho': ['Ninh Kieu', 'O Mon', 'Binh Thuy', 'Cai Rang', 'Thot Not', 'Phong Dien', 'Co Do', 'Vinh Thanh', 'Thoi Lai']
+    };
+
+    function updateWardOptions() {
+        const citySelect = document.getElementById('city');
+        const wardSelect = document.getElementById('ward');
+        const selectedCity = citySelect.value;
+        
+        // Clear existing options
+        wardSelect.innerHTML = '<option value="">Select a ward/district</option>';
+        
+        // Populate ward options if city has wards defined
+        if (selectedCity && cityWards[selectedCity]) {
+            cityWards[selectedCity].forEach(ward => {
+                const option = document.createElement('option');
+                option.value = ward;
+                option.textContent = ward;
+                wardSelect.appendChild(option);
+            });
+            wardSelect.disabled = false;
+        } else if (selectedCity) {
+            // For cities without predefined wards, enable with generic option
+            wardSelect.innerHTML = '<option value="">No specific wards available</option>';
+            wardSelect.disabled = true;
+        } else {
+            wardSelect.innerHTML = '<option value="">Select city first</option>';
+            wardSelect.disabled = true;
+        }
+    }
+
+    function updateShippingFee() {
+        const fulfillmentType = document.querySelector('input[name="fulfillmentType"]:checked');
+        const citySelect = document.getElementById('city');
+        const shippingFeeText = document.getElementById('shippingFeeText');
+        const totalPriceText = document.getElementById('totalPriceText');
+        const shippingFeeRow = document.getElementById('shippingFeeRow');
+        
+        let shippingFee = 0;
+        
+        if (fulfillmentType && fulfillmentType.value === 'DELIVERY') {
+            const city = citySelect.value.toLowerCase();
+            if (city === 'hanoi' || city === 'hà nội' || city === 'ha noi') {
+                shippingFee = HANOI_SHIPPING_FEE;
+            } else if (city) {
+                shippingFee = OTHER_CITIES_SHIPPING_FEE;
+            }
+            shippingFeeRow.style.display = 'flex';
+        } else {
+            shippingFeeRow.style.display = 'none';
+        }
+        
+        shippingFeeText.textContent = shippingFee.toLocaleString('vi-VN') + ' VND';
+        const totalPrice = subtotalPrice + shippingFee;
+        totalPriceText.textContent = totalPrice.toLocaleString('vi-VN') + ' VND';
+    }
+
     function selectFulfillment(element) {
         document.querySelectorAll('.fulfillment-option').forEach(opt => {
             opt.classList.remove('selected');
@@ -486,10 +653,13 @@
         const codOption = document.getElementById('codOption');
         const inStoreOption = document.getElementById('inStoreOption');
 
+        const citySelect = document.getElementById('city');
+        
         if (isPickup) {
             deliverySection.classList.add('hidden');
             pickupSection.classList.remove('hidden');
             shippingAddress.removeAttribute('required');
+            citySelect.removeAttribute('required');
             codOption.classList.add('hidden');
             inStoreOption.classList.remove('hidden');
             // Uncheck COD if it was selected
@@ -502,6 +672,7 @@
             deliverySection.classList.remove('hidden');
             pickupSection.classList.add('hidden');
             shippingAddress.setAttribute('required', '');
+            citySelect.setAttribute('required', '');
             codOption.classList.remove('hidden');
             inStoreOption.classList.add('hidden');
             // Uncheck IN_STORE if it was selected
@@ -511,6 +682,9 @@
                 inStoreOption.classList.remove('selected');
             }
         }
+        
+        // Update shipping fee when fulfillment type changes
+        updateShippingFee();
     }
 
     function selectPayment(element) {
@@ -541,9 +715,15 @@
             isValid = false;
         }
 
-        // Only validate address for delivery orders
+        // Only validate address and city for delivery orders
         const fulfillmentType = document.querySelector('input[name="fulfillmentType"]:checked');
         if (fulfillmentType && fulfillmentType.value === 'DELIVERY') {
+            const city = document.getElementById('city').value;
+            if (!city) {
+                document.getElementById('cityError').style.display = 'block';
+                isValid = false;
+            }
+            
             const address = document.getElementById('shippingAddress').value.trim();
             if (address.length < 10) {
                 document.getElementById('addressError').style.display = 'block';
@@ -577,6 +757,16 @@
         }
     });
 
+    document.getElementById('city').addEventListener('change', function() {
+        if (this.value) {
+            document.getElementById('cityError').style.display = 'none';
+        }
+        // Update ward options when city changes
+        updateWardOptions();
+        // Update shipping fee when city changes
+        updateShippingFee();
+    });
+
     document.getElementById('shippingAddress').addEventListener('blur', function() {
         const fulfillmentType = document.querySelector('input[name="fulfillmentType"]:checked');
         if (fulfillmentType && fulfillmentType.value === 'DELIVERY') {
@@ -586,6 +776,12 @@
                 document.getElementById('addressError').style.display = 'none';
             }
         }
+    });
+
+    // Initialize shipping fee and ward options on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateWardOptions();
+        updateShippingFee();
     });
 </script>
 </body>

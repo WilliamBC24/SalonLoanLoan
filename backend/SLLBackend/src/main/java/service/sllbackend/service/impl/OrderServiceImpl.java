@@ -75,7 +75,9 @@ public class OrderServiceImpl implements OrderService {
             }
             
             // Calculate shipping fee: 30,000 for Hanoi, 70,000 for all other cities
-            if (city.trim().equalsIgnoreCase(HANOI_CITY_NAME)) {
+            // Normalize city name: trim and convert to lowercase for comparison
+            String normalizedCity = city.trim().toLowerCase();
+            if (normalizedCity.equals("hanoi") || normalizedCity.equals("hà nội") || normalizedCity.equals("ha noi")) {
                 shippingFee = HANOI_SHIPPING_FEE;
             } else {
                 shippingFee = OTHER_CITIES_SHIPPING_FEE;

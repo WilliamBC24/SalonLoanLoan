@@ -63,13 +63,21 @@ public class OrderServiceImpl implements OrderService {
                 .mapToInt(item -> item.getProduct().getCurrentPrice() * item.getAmount())
                 .sum();
         
-        // Calculate shipping fee based on city
+        // Validate delivery requirements and calculate shipping fee
         int shippingFee = 0;
         if (fulfillmentType == FulfillmentType.DELIVERY) {
-            // Shipping fee: 30,000 for Hanoi, 70,000 for all other cities
-            if (city != null && city.trim().equalsIgnoreCase(HANOI_CITY_NAME)) {
+            // For delivery, require shipping address and city
+            if (shippingAddress == null || shippingAddress.trim().isEmpty()) {
+                throw new RuntimeException("Shipping address is required for delivery orders");
+            }
+            if (city == null || city.trim().isEmpty()) {
+                throw new RuntimeException("City is required for delivery orders");
+            }
+            
+            // Calculate shipping fee: 30,000 for Hanoi, 70,000 for all other cities
+            if (city.trim().equalsIgnoreCase(HANOI_CITY_NAME)) {
                 shippingFee = HANOI_SHIPPING_FEE;
-            } else if (city != null && !city.trim().isEmpty()) {
+            } else {
                 shippingFee = OTHER_CITIES_SHIPPING_FEE;
             }
         }
@@ -83,13 +91,6 @@ public class OrderServiceImpl implements OrderService {
         // used by the same customer over time and preserves historical order information.
         CustomerInfo customerInfo;
         if (fulfillmentType == FulfillmentType.DELIVERY) {
-            // For delivery, require shipping address and city
-            if (shippingAddress == null || shippingAddress.trim().isEmpty()) {
-                throw new RuntimeException("Shipping address is required for delivery orders");
-            }
-            if (city == null || city.trim().isEmpty()) {
-                throw new RuntimeException("City is required for delivery orders");
-            }
             customerInfo = customerInfoRepo.save(CustomerInfo.builder()
                     .name(customerName)
                     .phoneNumber(phoneNumber)

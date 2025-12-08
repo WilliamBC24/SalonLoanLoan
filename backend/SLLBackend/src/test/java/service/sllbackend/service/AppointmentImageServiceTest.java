@@ -61,12 +61,13 @@ class AppointmentImageServiceTest {
 
     @Test
     void testAddBeforeImage_WithCompletedStatus_ShouldSucceed() throws IOException {
-        // Arrange
+        // Arrange - Create a realistic image file with proper filename
+        byte[] imageContent = new byte[1024]; // 1KB image content
         MockMultipartFile file = new MockMultipartFile(
                 "file",
-                "test.jpg",
+                "test-image.jpg",  // Must have proper filename with extension
                 "image/jpeg",
-                "test image content".getBytes()
+                imageContent
         );
 
         when(appointmentRepo.findById(1L)).thenReturn(Optional.of(completedAppointment));
@@ -110,12 +111,13 @@ class AppointmentImageServiceTest {
 
     @Test
     void testAddAfterImage_WithCompletedStatus_ShouldSucceed() throws IOException {
-        // Arrange
+        // Arrange - Create a realistic image file with proper filename
+        byte[] imageContent = new byte[1024]; // 1KB image content
         MockMultipartFile file = new MockMultipartFile(
                 "file",
-                "test.jpg",
+                "test-image.jpg",  // Must have proper filename with extension
                 "image/jpeg",
-                "test image content".getBytes()
+                imageContent
         );
 
         when(appointmentRepo.findById(1L)).thenReturn(Optional.of(completedAppointment));

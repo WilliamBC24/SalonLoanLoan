@@ -33,9 +33,16 @@ spring:
   servlet:
     multipart:
       enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
 
 server:
   port: 8080
+
+appointment:
+  image:
+    upload-dir: uploads/appointment-images/
+    max-file-size: 5242880 # 5MB in bytes
 
 vietqr:
   bank-id: ${VIETQR_BANK_ID:970407}

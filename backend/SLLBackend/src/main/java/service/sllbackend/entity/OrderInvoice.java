@@ -43,6 +43,10 @@ public class OrderInvoice {
     @Builder.Default
     private FulfillmentType fulfillmentType = FulfillmentType.DELIVERY;
 
+    @Column(name = "shipping_fee", nullable = false)
+    @Builder.Default
+    private Integer shippingFee = 0;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false, columnDefinition = "TEXT")
     @Builder.Default

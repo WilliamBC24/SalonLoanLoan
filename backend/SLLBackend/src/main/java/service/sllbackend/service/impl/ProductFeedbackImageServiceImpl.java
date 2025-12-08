@@ -116,6 +116,7 @@ public class ProductFeedbackImageServiceImpl implements ProductFeedbackImageServ
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         
         log.info("Saved product feedback image to: {}", filePath);
-        return filePath.toString();
+        // Return just the filename, not the full path
+        return filename;
     }
 }

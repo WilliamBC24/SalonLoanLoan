@@ -665,7 +665,7 @@
                     </div>
                     <div class="feedback-images" th:if="${feedback.images != null and !feedback.images.isEmpty()}">
                         <img th:each="image : ${feedback.images}"
-                             th:src="@{'/uploads/product-feedback-images/' + ${#strings.substringAfterLast(image.imagePath, '/')}}"
+                             th:src="@{'/uploads/product-feedback-images/' + ${image.imagePath}}"
                              th:alt="'Review image'"
                              class="feedback-image"
                              onclick="window.open(this.src, '_blank')">

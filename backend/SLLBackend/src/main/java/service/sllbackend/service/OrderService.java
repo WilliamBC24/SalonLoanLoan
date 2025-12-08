@@ -17,12 +17,15 @@ public interface OrderService {
      * @param customerName Customer's name
      * @param phoneNumber Delivery phone number
      * @param shippingAddress Delivery address (optional for in-store pickup)
+     * @param city City for delivery (required for DELIVERY orders)
+     * @param ward Ward for delivery (optional)
      * @param paymentTypeName Payment method name (e.g., "BANK_TRANSFER", "COD")
      * @param fulfillmentType Fulfillment type (DELIVERY or IN_STORE_PICKUP)
      * @return Created order invoice
      */
     OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
-                           String shippingAddress, String paymentTypeName, FulfillmentType fulfillmentType);
+                           String shippingAddress, String city, String ward,
+                           String paymentTypeName, FulfillmentType fulfillmentType);
     
     /**
      * Get order history for a user

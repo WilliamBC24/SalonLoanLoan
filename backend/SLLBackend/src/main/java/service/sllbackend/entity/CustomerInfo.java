@@ -29,4 +29,10 @@ public class CustomerInfo {
 
     @Column(name = "shipping_address", columnDefinition = "TEXT")
     private String shippingAddress;
+
+    @Column(name = "city", columnDefinition = "TEXT")
+    private String city;
+
+    @Column(name = "ward", columnDefinition = "TEXT")
+    private String ward;
 }

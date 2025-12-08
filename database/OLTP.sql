@@ -239,6 +239,12 @@
         comment TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS before_appointment_image(
+        id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        appointment_id INT NOT NULL REFERENCES appointment(id),
+        image_path TEXT NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS after_appointment_image(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         appointment_id INT NOT NULL REFERENCES appointment(id),
@@ -553,7 +559,7 @@
         reason TEXT NOT NULL,
         CHECK (quantity > 0)
     );
-
+
     CREATE TABLE IF NOT EXISTS loyalty_level(
         id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         name TEXT NOT NULL UNIQUE,

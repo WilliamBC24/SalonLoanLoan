@@ -36,6 +36,7 @@ public class StaffRegistrationManagementController {
     private final PaymentTypeService paymentTypeService;
     private final SatisfactionRatingService satisfactionRatingService;
     private final VietQrService vietQrService;
+    private final AppointmentImageService appointmentImageService;
     private final DTOMapper dtoMapper;
 
     @GetMapping("/list")
@@ -84,6 +85,12 @@ public class StaffRegistrationManagementController {
         boolean finalized = appointmentInvoiceService
                 .findByAppointmentId(appointment.getId().intValue())
                 .isPresent();
+
+        // ==== Load before/after images if appointment is COMPLETED ====
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
+            model.addAttribute("beforeImages", appointmentImageService.getBeforeImages(id));
+            model.addAttribute("afterImages", appointmentImageService.getAfterImages(id));
+        }
 
         model.addAttribute("allStatuses", AppointmentStatus.values());
         model.addAttribute("appointment", appointment);
@@ -434,6 +441,36 @@ public class StaffRegistrationManagementController {
         dto.setTotalAmount(total);
 
         return dto;
+    }
+
+    // ===== IMAGE UPLOAD ENDPOINTS =====
+    
+    @PostMapping("/view/{id}/upload-before-image")
+    public String uploadBeforeImage(@PathVariable int id,
+                                   @RequestParam("beforeImage") org.springframework.web.multipart.MultipartFile file,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            appointmentImageService.addBeforeImage(id, file);
+            redirectAttributes.addFlashAttribute("successMessage", "Before service image uploaded successfully.");
+        } catch (Exception e) {
+            log.error("Error uploading before image for appointment {}: {}", id, e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error uploading image: " + e.getMessage());
+        }
+        return "redirect:/staff/registration/view/" + id;
+    }
+
+    @PostMapping("/view/{id}/upload-after-image")
+    public String uploadAfterImage(@PathVariable int id,
+                                  @RequestParam("afterImage") org.springframework.web.multipart.MultipartFile file,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            appointmentImageService.addAfterImage(id, file);
+            redirectAttributes.addFlashAttribute("successMessage", "After service image uploaded successfully.");
+        } catch (Exception e) {
+            log.error("Error uploading after image for appointment {}: {}", id, e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error uploading image: " + e.getMessage());
+        }
+        return "redirect:/staff/registration/view/" + id;
     }
 
 }

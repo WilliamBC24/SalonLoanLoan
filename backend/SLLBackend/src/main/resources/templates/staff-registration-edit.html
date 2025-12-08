@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8"/>
-    <title>Manager - Edit Appointment | Salon Loan Loan</title>
+    <title>Staff - Edit Appointment | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Global staff layout styles -->
@@ -60,6 +60,20 @@
 
         .back-link-pill:hover {
             background: #f3f4f6;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
         }
 
         /* ===== FORM BASE ===== */
@@ -161,6 +175,13 @@
             cursor: default;
         }
 
+        select:disabled,
+        input:disabled {
+            background: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
         /* small button */
         .btn-inline {
             margin-top: 0.15rem;
@@ -175,6 +196,12 @@
 
         .btn-inline:hover {
             background: #f3f4f6;
+        }
+
+        .btn-inline:disabled {
+            background: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
         }
 
         /* ===== USER SEARCH DROPDOWN ===== */
@@ -368,6 +395,11 @@
             background: #1d4ed8;
         }
 
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
         .btn-secondary {
             background: white;
             border: 1px solid #d1d5db;
@@ -425,10 +457,16 @@
                 <a class="back-link-pill" onclick="window.history.back()">← Back</a>
             </div>
 
+            <!-- Finalized notice -->
+            <div th:if="${finalized}" class="alert alert-info">
+                This appointment has been finalized. An invoice already exists, so further editing is blocked.
+            </div>
+
             <!-- FORM -->
-            <form th:action="@{/manager/registration/save/{id}(id=${appointment.id})}"
+            <form th:action="@{/staff/registration/save/{id}(id=${appointment.id})}"
                   method="post"
-                  id="edit-form">
+                  id="edit-form"
+                  th:attr="data-finalized=${finalized}">
 
                 <div class="edit-grid">
 
@@ -452,12 +490,14 @@
                             <div class="field">
                                 <label>Phone Number</label>
                                 <input type="text" name="phoneNumber"
-                                       th:value="${appointment.phoneNumber}" />
+                                       th:value="${appointment.phoneNumber}"
+                                       th:readonly="${finalized}" />
                             </div>
 
                             <div class="field">
                                 <label>Status</label>
-                                <select name="status" id="statusSelect">
+                                <select name="status" id="statusSelect"
+                                        th:disabled="${finalized}">
                                     <option th:each="s : ${allStatuses}"
                                             th:value="${s}"
                                             th:text="${s}"
@@ -478,6 +518,30 @@
                             </div>
 
                             <div class="field">
+                                <label>Assigned Staff</label>
+                                <select name="assignedStaffId"
+                                        sec:authorize="hasAnyRole('MANAGER', 'ADMIN')"
+                                        th:disabled="${finalized}">
+                                    <option value="">Select staff…</option>
+                                    <option th:each="staff : ${allStaff}"
+                                            th:value="${staff.id}"
+                                            th:text="${staff.staff.name}"
+                                            th:selected="${
+                                                        appointment.responsibleStaffId != null
+                                                          ? staff.id == appointment.responsibleStaffId.id
+                                                          : (appointment.responsibleStaffId != null
+                                                                ? staff.id == appointment.responsibleStaffId.id
+                                                                : false)
+                                                    }">
+                                    </option>
+                                </select>
+                                <div class="field-note">
+                                    Choose who will actually handle this appointment in the salon.
+                                </div>
+                            </div>
+
+
+                            <div class="field">
                                 <label>Registered Start</label>
                                 <input type="datetime-local"
                                        id="registeredAt"
@@ -486,13 +550,15 @@
                             </div>
 
                             <div class="field">
-                                <label>Scheduled At (Manager Assigned)</label>
+                                <label>Scheduled At (Staff Assigned)</label>
                                 <!-- editable, default to existing scheduledAt or registered start -->
                                 <input type="datetime-local" name="scheduledAt" id="scheduledAt"
                                        th:value="${appointment.scheduledAt != null ?
                                                  #temporals.format(appointment.scheduledAt,'yyyy-MM-dd''T''HH:mm') :
-                                                 #temporals.format(appointmentDetails.scheduledStart,'yyyy-MM-dd''T''HH:mm')}" />
-                                <button type="button" class="btn-inline" id="btnUseRegistered">
+                                                 #temporals.format(appointmentDetails.scheduledStart,'yyyy-MM-dd''T''HH:mm')}"
+                                       th:readonly="${finalized}" />
+                                <button type="button" class="btn-inline" id="btnUseRegistered"
+                                        th:disabled="${finalized}">
                                     Use Registered Start
                                 </button>
                             </div>
@@ -517,8 +583,8 @@
                                 </p>
                             </div>
 
-                            <!-- Search + add services (like appointment register page) -->
-                            <div class="service-search-wrapper">
+                            <!-- Search + add services (hide when finalized) -->
+                            <div class="service-search-wrapper" th:if="${!finalized}">
                                 <label for="service-search" class="form-label">Search Services</label>
                                 <input type="text"
                                        id="service-search"
@@ -558,7 +624,7 @@
                                         <label>Staff</label>
                                         <select class="rs-staff-select"
                                                 th:name="${'requestedServices[' + iterStat.index + '].responsibleStaffId'}"
-                                                th:disabled="${disableDetails}">
+                                                th:disabled="${disableDetails or finalized}">
                                             <option th:each="staff : ${allStaff}"
                                                     th:value="${staff.id}"
                                                     th:text="${staff.staff.name}"
@@ -573,7 +639,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="service-row-footer" th:if="${!disableDetails}">
+                                    <div class="service-row-footer" th:if="${!disableDetails and !finalized}">
                                         <button type="button" class="service-remove-btn">Remove</button>
                                     </div>
                                 </div>
@@ -600,11 +666,11 @@
                                 <label>Assigned User</label>
                                 <div class="user-search-wrapper">
                                     <input type="hidden" name="username" id="username"
-                                           th:disabled="${disableDetails}" />
+                                           th:disabled="${disableDetails or finalized}" />
 
                                     <input type="text" id="userSearch"
                                            th:placeholder="${appointmentDetails.user != null ? appointmentDetails.user.username : ''}"
-                                           th:readonly="${disableDetails}" />
+                                           th:readonly="${disableDetails or finalized}" />
 
                                     <div id="userResults"></div>
                                 </div>
@@ -613,13 +679,13 @@
                             <div class="field">
                                 <label>Actual Start</label>
                                 <input type="datetime-local" name="actualStart" id="actualStart"
-                                       th:readonly="${disableDetails}"
+                                       th:readonly="${disableDetails or appointmentDetails.actualStart != null or finalized}"
                                        th:value="${appointmentDetails.actualStart != null ?
                                                  #temporals.format(appointmentDetails.actualStart,'yyyy-MM-dd''T''HH:mm') : null}" />
                                 <button type="button"
                                         class="btn-inline"
                                         id="btnStartNow"
-                                        th:disabled="${disableDetails}">
+                                        th:disabled="${disableDetails or appointmentDetails.actualEnd != null or finalized}">
                                     Start Now (set & save)
                                 </button>
                             </div>
@@ -627,16 +693,22 @@
                             <div class="field">
                                 <label>Actual End</label>
                                 <input type="datetime-local" name="actualEnd" id="actualEnd"
-                                       th:readonly="${disableDetails}"
+                                       th:readonly="${disableDetails or appointmentDetails.actualEnd != null or appointmentDetails.actualStart == null or finalized}"
                                        th:value="${appointmentDetails.actualEnd != null ?
                                                  #temporals.format(appointmentDetails.actualEnd,'yyyy-MM-dd''T''HH:mm') : null}" />
                                 <button type="button"
                                         class="btn-inline"
                                         id="btnCompleteNow"
-                                        th:disabled="${disableDetails or appointmentDetails.actualStart == null}">
+                                        th:disabled="${disableDetails or appointmentDetails.actualStart == null or appointmentDetails.actualEnd != null or finalized}">
                                     Complete Now (set & save)
                                 </button>
                             </div>
+                            <button type="button"
+                                    class="btn-inline"
+                                    th:disabled="${appointmentDetails.actualEnd == null}"
+                                    th:onclick="|window.location.href='@{/staff/registration/invoice/{id}(id=${appointment.id})}'|">
+                                View Invoice
+                            </button>
                         </div>
                     </div>
 
@@ -644,7 +716,11 @@
 
                 <!-- BUTTONS -->
                 <div class="form-buttons">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit"
+                            class="btn btn-primary"
+                            th:disabled="${finalized}">
+                        Save Changes
+                    </button>
                 </div>
             </form>
         </section>
@@ -657,6 +733,9 @@
     $(document).ready(function () {
         let debounceTimer;
 
+        const isFinalized = $('#edit-form').data('finalized') === true
+            || $('#edit-form').data('finalized') === 'true';
+
         /* ========= HELPERS ========= */
         function formatDateForInput(date) {
             const pad = (n) => String(n).padStart(2, '0');
@@ -666,6 +745,40 @@
             const hh = pad(date.getHours());
             const mm = pad(date.getMinutes());
             return yyyy + '-' + MM + '-' + dd + 'T' + hh + ':' + mm;
+        }
+
+        /* ========= SERVICES: TOTAL PRICE ========= */
+        function updateTotalPriceFromServices() {
+            let total = 0;
+            $('#services-list .service-row').each(function () {
+                const price = parseInt($(this).attr('data-price')) || 0;
+                total += price;
+            });
+            $('#total-price').text(total);
+        }
+
+        /* ========= SERVICES: REINDEX NAMES ========= */
+        function reindexServiceRows() {
+            $('#services-list .service-row').each(function (index) {
+                const $row = $(this);
+                $row.find('.rs-id')
+                    .attr('name', 'requestedServices[' + index + '].id');
+                $row.find('.rs-service-id')
+                    .attr('name', 'requestedServices[' + index + '].serviceId');
+                $row.find('.rs-price')
+                    .attr('name', 'requestedServices[' + index + '].priceAtBooking');
+                $row.find('.rs-staff-select')
+                    .attr('name', 'requestedServices[' + index + '].responsibleStaffId');
+            });
+        }
+
+        /* ========= INIT (even when finalized) ========= */
+        reindexServiceRows();
+        updateTotalPriceFromServices();
+
+        // If finalized, do not bind interactive handlers (no edits)
+        if (isFinalized) {
+            return;
         }
 
         /* ========= USER SEARCH ========= */
@@ -680,7 +793,7 @@
                 }
 
                 $.ajax({
-                    url: '/manager/registration/user-search',
+                    url: '/staff/registration/user-search',
                     type: 'GET',
                     data: { phone: query },
                     success: function (data) {
@@ -718,31 +831,6 @@
             }
         });
 
-        /* ========= SERVICES: TOTAL PRICE ========= */
-        function updateTotalPriceFromServices() {
-            let total = 0;
-            $('#services-list .service-row').each(function () {
-                const price = parseInt($(this).attr('data-price')) || 0;
-                total += price;
-            });
-            $('#total-price').text(total);
-        }
-
-        /* ========= SERVICES: REINDEX NAMES ========= */
-        function reindexServiceRows() {
-            $('#services-list .service-row').each(function (index) {
-                const $row = $(this);
-                $row.find('.rs-id')
-                    .attr('name', 'requestedServices[' + index + '].id');
-                $row.find('.rs-service-id')
-                    .attr('name', 'requestedServices[' + index + '].serviceId');
-                $row.find('.rs-price')
-                    .attr('name', 'requestedServices[' + index + '].priceAtBooking');
-                $row.find('.rs-staff-select')
-                    .attr('name', 'requestedServices[' + index + '].responsibleStaffId');
-            });
-        }
-
         /* ========= SERVICES: DUPLICATE CHECK ========= */
         function hasService(serviceId) {
             let found = false;
@@ -762,7 +850,7 @@
             updateTotalPriceFromServices();
         });
 
-        /* ========= SERVICES: SEARCH (like appointment register) ========= */
+        /* ========= SERVICES: SEARCH ========= */
         $('#service-search').on('input', function () {
             const query = $(this).val().trim();
 
@@ -853,7 +941,6 @@
             if (preferredStaffId) {
                 $select.val(preferredStaffId);
             } else {
-                // if no preferred staff, default to first option
                 const firstVal = $select.find('option:first').val();
                 $select.val(firstVal);
             }
@@ -877,7 +964,6 @@
         /* ========= STATUS SHORTCUT BUTTONS ========= */
 
         $('#btnStartNow').on('click', function () {
-            // if disabled via HTML, don't bother
             if ($(this).is(':disabled')) return;
 
             const now = formatDateForInput(new Date());
@@ -891,7 +977,6 @@
 
             const currentStart = $('#actualStart').val();
             if (!currentStart) {
-                // guard in JS just in case
                 return;
             }
             const now = formatDateForInput(new Date());
@@ -899,10 +984,6 @@
             $('#statusSelect').val('COMPLETED'); // assumes enum name COMPLETED
             $('#edit-form')[0].submit();
         });
-
-        /* ========= INIT ========= */
-        reindexServiceRows();
-        updateTotalPriceFromServices();
     });
 </script>
 

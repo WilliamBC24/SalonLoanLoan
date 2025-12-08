@@ -213,6 +213,58 @@ RETURN NULL;
 END;
     $$ LANGUAGE plpgsql;
 
+       CREATE OR REPLACE FUNCTION credit_loyalty_on_order_invoice_status()
+RETURNS trigger AS $$
+DECLARE
+target_user_id   INT;
+    loyalty_id       INT;
+    total_price      INT;
+    points_to_add    INT;
+BEGIN
+    target_user_id := NEW.user_account_id;
+
+    IF target_user_id IS NULL THEN
+        RETURN NEW;
+END IF;
+
+    -- Assuming order_invoice has a total_price column
+    total_price := NEW.total_price;
+
+    IF total_price IS NULL OR total_price <= 0 THEN
+        RETURN NEW;
+END IF;
+
+    points_to_add := ROUND(total_price / 100)::INT;
+    IF points_to_add <= 0 THEN
+        RETURN NEW;
+END IF;
+
+UPDATE loyalty
+SET point = point + points_to_add
+WHERE user_id = target_user_id
+    RETURNING id INTO loyalty_id;
+
+IF loyalty_id IS NULL THEN
+        RETURN NEW;
+END IF;
+
+    -- Insert history (order_id filled, appointment_invoice_id NULL)
+INSERT INTO loyalty_history (loyalty_id,
+                             appointment_invoice_id,
+                             order_id,
+                             amount,
+                             creditted_date)
+VALUES (loyalty_id,
+        NULL,
+        NEW.id,    -- order_id in LoyaltyHistory points to OrderInvoice.id
+        points_to_add,
+        NOW());
+
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
        CREATE OR REPLACE FUNCTION create_appointment_detail()
 RETURNS trigger AS $$
 DECLARE
@@ -399,4 +451,14 @@ CREATE TRIGGER propagate_service_details_to_combo_trigger
     AFTER UPDATE OF service_price, duration_minutes ON service
     FOR EACH ROW
     EXECUTE FUNCTION propagate_service_details_to_combo();
+
+CREATE TRIGGER credit_loyalty_on_order_invoice_status_trigger
+    AFTER UPDATE OF order_status ON order_invoice
+    FOR EACH ROW
+    WHEN (
+    NEW.order_status IN ('DELIVERED', 'PICKED_UP')
+    AND OLD.order_status IS DISTINCT FROM NEW.order_status
+)
+EXECUTE FUNCTION credit_loyalty_on_order_invoice_status();
+
 ^;

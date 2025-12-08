@@ -324,6 +324,25 @@
             background: #dbeafe;
             color: #1e40af;
         }
+
+        .alert {
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
     </style>
 </head>
 <body class="staff-layout">
@@ -350,9 +369,14 @@
             </div>
 
             <!-- Error Alert -->
+            <div th:if="${param.success}" class="alert alert-success">
+                <span th:text="${param.success}">Success message</span>
+            </div>
+
             <div th:if="${param.error}" class="alert alert-error">
                 <span th:text="${param.error}">Error message</span>
             </div>
+
 
             <!-- Order Information -->
             <div class="form-section">
@@ -418,7 +442,7 @@
                         <label for="orderStatus">New Status *</label>
                         <select id="orderStatus"
                                 name="orderStatus"
-                                th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'CANCELLED'}"
+                                th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'PICKED_UP' and order.orderStatus.name() != 'CANCELLED'}"
                                 required>
                             <option value="">-- Select New Status --</option>
                             <option th:each="status : ${orderStatuses}"
@@ -433,7 +457,7 @@
                     </div>
                 </div>
 
-                <div class="actions"  th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'CANCELLED'}">
+                <div class="actions"  th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'PICKED_UP' and order.orderStatus.name() != 'CANCELLED'}">
                     <button type="submit" class="btn-pill-primary">
                         <span>Update Status</span>
                     </button>
@@ -443,10 +467,10 @@
                     </a>
                 </div>
             </form>
-            <div th:if="${order.orderStatus.name() == 'DELIVERED'}" class="complete-note">
-                <strong>✓ Order Delivered</strong>
+            <div th:if="${order.orderStatus.name() == 'DELIVERED' or order.orderStatus.name() == 'PICKED_UP'}" class="complete-note">
+                <strong>✓ Order Completed</strong>
                 <span>
-                        This order is marked as delivered.
+                        This order is completed.
                         Status can no longer be changed.
                     </span>
             </div>

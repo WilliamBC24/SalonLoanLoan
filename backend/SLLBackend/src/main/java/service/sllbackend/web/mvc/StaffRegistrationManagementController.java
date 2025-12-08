@@ -39,7 +39,12 @@ public class ManagerRegistrationManagementController {
             @RequestParam(required = false) List<AppointmentStatus> statuses,
             Model model) {
 
-        List<Appointment> registrations = appointmentService.getByNameAndStatus(name == null ? name : name.trim(), statuses);
+        List<Appointment> registrations;
+        if (name == null) {
+             registrations = appointmentService.getByNameAndStatus(name, statuses);
+        } else {
+            registrations = appointmentService.getByPhoneNumberAndStatus(name, statuses);
+        }
 
         model.addAttribute("registrations", registrations);
         model.addAttribute("allStatuses", AppointmentStatus.values());
@@ -55,7 +60,7 @@ public class ManagerRegistrationManagementController {
         AppointmentDetailsViewDTO appointmentDetailsDTO;
         boolean disableDetails = false;
 
-        if (appointmentDetails != null && appointmentDetails.getScheduledStart() != null) {
+        if (appointmentDetails != null && appointmentDetails.getScheduledStart() != null && appointment.getResponsibleStaffId() != null) {
             UserAccount user = appointmentDetails.getUser();
             appointmentDetailsDTO = dtoMapper.toAppointmentDetailsViewDTO(appointmentDetails, user);
         } else {
@@ -84,27 +89,13 @@ public class ManagerRegistrationManagementController {
                                         @Valid @ModelAttribute AppointmentDetailsEditDTO dto,
                                         BindingResult bindingResult,
                                         Model model) {
-        log.info("=== SAVE REGISTRATION id={} ===", id);
-        log.info("Phone: {}, scheduledAt: {}, status: {}, username: {}",
-                dto.getPhoneNumber(), dto.getScheduledAt(), dto.getStatus(), dto.getUsername());
-
-        if (dto.getRequestedServices() == null) {
-            log.warn("requestedServices is NULL in DTO");
-        } else {
-            log.info("requestedServices size = {}", dto.getRequestedServices().size());
-            for (int i = 0; i < dto.getRequestedServices().size(); i++) {
-                RequestedServiceEditDTO rsDto = dto.getRequestedServices().get(i);
-                log.info("DTO RS[{}] -> id={}, serviceId={}, priceAtBooking={}, responsibleStaffId={}",
-                        i, rsDto.getId(), rsDto.getServiceId(), rsDto.getPriceAtBooking(), rsDto.getResponsibleStaffId());
-            }
-        }
         if (bindingResult.hasErrors()) {
             log.error(bindingResult.getAllErrors().toString());
             return "redirect:/manager/registration/view/" + id;
         }
 
         // ===== 1. Update Appointment fields =====
-        Appointment appointment = appointmentService.findById((long)id);
+        Appointment appointment = appointmentService.findById((long) id);
 
         if (dto.getPhoneNumber() != null && !dto.getPhoneNumber().isBlank()) {
             appointment.setPhoneNumber(dto.getPhoneNumber());
@@ -116,6 +107,10 @@ public class ManagerRegistrationManagementController {
 
         if (dto.getStatus() != null) {
             appointment.setStatus(dto.getStatus());
+        }
+
+        if (dto.getAssignedStaffId() != null) {
+            appointment.setResponsibleStaffId(staffService.findById(dto.getAssignedStaffId()));
         }
 
         appointmentService.save(appointment);
@@ -152,20 +147,15 @@ public class ManagerRegistrationManagementController {
             for (RequestedServiceEditDTO rsDto : dto.getRequestedServices()) {
 
                 if (rsDto.getServiceId() <= 0) {
-                    log.info("Skip RS DTO with serviceId <= 0: {}", rsDto);
                     continue;
                 }
 
                 RequestedService rs;
                 Integer rsDtoId = rsDto.getId();
-                log.info("Processing RS DTO: id={}, serviceId={}, price={}, staffId={}",
-                        rsDtoId, rsDto.getServiceId(), rsDto.getPriceAtBooking(), rsDto.getResponsibleStaffId());
 
                 if (rsDtoId != null && rsDtoId > 0 && existingById.containsKey(rsDtoId)) {
-                    log.info("Updating existing RS with id={}", rsDtoId);
                     rs = existingById.get(rsDtoId);
                 } else {
-                    log.info("Creating NEW RS for serviceId={}", rsDto.getServiceId());
                     rs = new RequestedService();
                     rs.setAppointment(appointment);
 
@@ -183,11 +173,6 @@ public class ManagerRegistrationManagementController {
                 }
 
                 requestedServicesService.save(rs);
-                log.info("Saved RS: id={}, serviceId={}, price={}, staffId={}",
-                        rs.getId(),
-                        rs.getService() != null ? rs.getService().getId() : null,
-                        rs.getPriceAtBooking(),
-                        rs.getResponsibleStaff() != null ? rs.getResponsibleStaff().getId() : null);
 
                 keepIds.add(rs.getId());
             }

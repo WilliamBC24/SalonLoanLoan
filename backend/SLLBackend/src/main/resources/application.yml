@@ -44,6 +44,12 @@ appointment:
     upload-dir: uploads/appointment-images/
     max-file-size: 5242880 # 5MB in bytes
 
+product:
+  feedback:
+    image:
+      upload-dir: uploads/product-feedback-images/
+      max-file-size: 5242880 # 5MB in bytes
+
 vietqr:
   bank-id: ${VIETQR_BANK_ID:970407}
   account-no: ${VIETQR_ACCOUNT_NO:9720032001}

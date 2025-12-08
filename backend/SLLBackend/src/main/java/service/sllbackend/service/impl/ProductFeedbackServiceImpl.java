@@ -51,7 +51,7 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         
-        List<ProductFeedback> allFeedback = productFeedbackRepo.findByProductOrderByIdDesc(product);
+        List<ProductFeedback> allFeedback = productFeedbackRepo.findByProductWithImagesOrderByIdDesc(product);
         
         // Filter out feedback containing bad words
         return allFeedback.stream()

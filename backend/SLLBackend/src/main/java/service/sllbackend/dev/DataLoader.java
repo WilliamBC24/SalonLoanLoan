@@ -38,6 +38,7 @@ public class DataLoader implements CommandLineRunner {
 	private final LoyaltyLevelRepo loyaltyLevelRepo;
 	private final AppointmentRepo appointmentRepo;
 	private final InventoryLotRepo inventoryLotRepo;
+	private final PaymentTypeRepo paymentTypeRepo;
 	private final InventoryConsignmentRepo inventoryConsignmentRepo;
 	private final InventoryInvoiceRepo inventoryInvoiceRepo;
 	private final InventoryInvoiceDetailRepo inventoryInvoiceDetailRepo;
@@ -59,6 +60,14 @@ public class DataLoader implements CommandLineRunner {
 		registerJobApplication();
 		registerAppointments();
 		registerShiftTemplates();
+		registerPaymentTypes();
+	}
+
+	public void registerPaymentTypes(){
+		PaymentType paymentType = PaymentType.builder().name("CASH").build();
+		PaymentType paymentType2 = PaymentType.builder().name("BANK_TRANSFER").build();
+		paymentTypeRepo.save(paymentType);
+		paymentTypeRepo.save(paymentType2);
 	}
 
 	public void registerShiftTemplates(){

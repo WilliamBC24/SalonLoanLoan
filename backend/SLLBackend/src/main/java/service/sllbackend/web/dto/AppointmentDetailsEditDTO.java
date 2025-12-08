@@ -28,6 +28,8 @@ public class AppointmentDetailsEditDTO {
 
     private String username;
 
+    private Integer assignedStaffId;
+
     @PastOrPresent
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime actualStart;

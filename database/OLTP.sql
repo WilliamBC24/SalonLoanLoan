@@ -478,7 +478,7 @@
         total_price INT NOT NULL CHECK (total_price > 0),
         payment_method TEXT NOT NULL,
         fulfillment_type TEXT NOT NULL DEFAULT 'DELIVERY',
-        shipping_fee INT NOT NULL DEFAULT 0,
+        shipping_fee INT NOT NULL DEFAULT 0 CHECK (shipping_fee >= 0),
         order_status TEXT NOT NULL DEFAULT 'PENDING',
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );

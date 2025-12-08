@@ -18,6 +18,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     
+    // Shipping fee constants (in VND)
+    private static final int HANOI_SHIPPING_FEE = 30000;
+    private static final int OTHER_CITIES_SHIPPING_FEE = 70000;
+    private static final String HANOI_CITY_NAME = "Hanoi";
+    
     private final OrderInvoiceRepo orderInvoiceRepo;
     private final OrderInvoiceDetailsRepo orderInvoiceDetailsRepo;
     private final CustomerInfoRepo customerInfoRepo;
@@ -62,17 +67,20 @@ public class OrderServiceImpl implements OrderService {
         int shippingFee = 0;
         if (fulfillmentType == FulfillmentType.DELIVERY) {
             // Shipping fee: 30,000 for Hanoi, 70,000 for all other cities
-            if (city != null && city.trim().equalsIgnoreCase("Hanoi")) {
-                shippingFee = 30000;
+            if (city != null && city.trim().equalsIgnoreCase(HANOI_CITY_NAME)) {
+                shippingFee = HANOI_SHIPPING_FEE;
             } else if (city != null && !city.trim().isEmpty()) {
-                shippingFee = 70000;
+                shippingFee = OTHER_CITIES_SHIPPING_FEE;
             }
         }
         
         // Calculate total price (subtotal + shipping fee)
         int totalPrice = subtotal + shippingFee;
         
-        // Create or find customer info - always required for contact purposes
+        // Create customer info for this order
+        // Note: Each order creates a new CustomerInfo record to maintain a snapshot of the
+        // delivery details at the time of order. This allows tracking different addresses
+        // used by the same customer over time and preserves historical order information.
         CustomerInfo customerInfo;
         if (fulfillmentType == FulfillmentType.DELIVERY) {
             // For delivery, require shipping address and city

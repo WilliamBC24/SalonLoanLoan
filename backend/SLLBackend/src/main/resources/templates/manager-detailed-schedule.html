@@ -128,7 +128,7 @@
             padding: 0.7rem 0.8rem;
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.6rem;
         }
 
         .shift-block-header {
@@ -168,6 +168,21 @@
             background: #ecfeff;
             color: #0f172a;
             border: 1px solid #bae6fd;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .staff-chip button {
+            border: none;
+            background: transparent;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .staff-chip button:hover {
+            color: #ef4444;
         }
 
         .shift-suggestion {
@@ -179,6 +194,41 @@
         .suggestion-highlight {
             font-weight: 500;
             color: #111827;
+        }
+
+        .shift-add-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.25rem;
+        }
+
+        .shift-add-row label {
+            font-size: 0.78rem;
+            color: #6b7280;
+        }
+
+        .shift-add-row select {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.4rem;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+        }
+
+        .shift-add-row button {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            border: none;
+            background: #111827;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .shift-add-row button:hover {
+            background: #1f2937;
         }
 
         /* Appointment section */
@@ -270,7 +320,8 @@
 <div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
 <!-- MAIN CONTENT -->
-<main class="staff-main schedule-page">
+<main class="staff-main schedule-page"
+      th:attr="data-date=${#temporals.format(date, 'yyyy-MM-dd')}">
     <div class="schedule-layout-inner">
         <section class="schedule-card">
 
@@ -304,7 +355,8 @@
                         <div class="shift-section-title">Shifts &amp; Staff</div>
                     </div>
 
-                    <div class="shift-list" th:if="${day.shifts != null and !#lists.isEmpty(day.shifts)}">
+                    <div class="shift-list"
+                         th:if="${day.shifts != null and !#lists.isEmpty(day.shifts)}">
 
                         <!-- One block per shift (AM / PM) -->
                         <div class="shift-block"
@@ -313,31 +365,71 @@
                                 <div>
                                     <!-- AM / PM label -->
                                     <span class="shift-name-pill">
-                                        <span th:text="${shift.shiftName} + ' shift'">AM shift</span>
-                                    </span>
+                    <span th:text="${shift.shiftName} + ' shift'">AM shift</span>
+                </span>
 
-                                    <!-- Time range: prefer DTO’s timeRange; fallback to hardcoded AM/PM ranges -->
+                                    <!-- Time range: prefer DTO’s timeRange; fallback to hardcoded AM/PM -->
                                     <span class="shift-time"
                                           th:text="${shift.timeRange != null ? shift.timeRange
-                                                    : (shift.shiftName == 'AM' ? '07:30 - 12:00' : '12:30 - 19:00')}">
-                                        07:30 - 12:00
-                                    </span>
+                                : (shift.shiftName == 'AM' ? '07:30 - 12:00' : '12:30 - 19:00')}">
+                    07:30 - 12:00
+                </span>
                                 </div>
+                            </div>
+
+                            <!-- ADD STAFF FORM -->
+                            <div class="shift-add-row">
+                                <form th:action="@{/manager/shift/assign-staff}"
+                                      method="post"
+                                      style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+
+                                    <!-- pass date & shiftInstanceId -->
+                                    <input type="hidden" name="date"
+                                           th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
+                                    <input type="hidden" name="shiftInstanceId"
+                                           th:value="${shift.shiftInstanceId}" />
+
+                                    <label style="font-size:0.78rem; color:#6b7280;">Add staff:</label>
+
+                                    <select name="staffId" class="shift-staff-select">
+                                        <option value="">Select staff…</option>
+                                        <option th:each="staff : ${allStaff}"
+                                                th:value="${staff.id}"
+                                                th:text="${staff.name}">
+                                            Staff Name
+                                        </option>
+                                    </select>
+
+                                    <button type="submit">Add</button>
+                                </form>
                             </div>
 
                             <!-- Assigned staff -->
                             <div>
                                 <span style="font-size: 0.8rem; color:#4b5563;">Assigned staff:</span>
                                 <div class="shift-staff-list">
-                                    <span class="staff-chip"
-                                          th:each="s : ${shift.assignedStaff}"
-                                          th:text="${s.staffName}">
-                                        Staff Name
-                                    </span>
+                <span class="staff-chip"
+                      th:each="s : ${shift.assignedStaff}">
+                    <span th:text="${s.staffName}">Staff Name</span>
+
+                    <!-- REMOVE STAFF FORM -->
+                    <form th:action="@{/manager/shift/remove-staff}"
+                          method="post"
+                          style="display:inline;">
+                        <input type="hidden" name="date"
+                               th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
+                        <input type="hidden" name="shiftInstanceId"
+                               th:value="${shift.shiftInstanceId}" />
+                        <input type="hidden" name="staffId"
+                               th:value="${s.staffId}" />
+                        <button type="submit" title="Remove">&times;</button>
+                    </form>
+                </span>
+
                                     <span th:if="${shift.assignedStaff == null or #lists.isEmpty(shift.assignedStaff)}"
                                           style="font-size: 0.78rem; color:#9ca3af;">
-                                        No staff assigned yet
-                                    </span>
+                    No staff assigned yet
+                </span>
                                 </div>
                             </div>
 
@@ -346,14 +438,15 @@
                                  th:if="${shift.suggestedStaff != null and !#lists.isEmpty(shift.suggestedStaff)}">
                                 Suggestions:
                                 <span th:each="suggestion, iterStat : ${shift.suggestedStaff}">
-                                    <span class="suggestion-highlight"
-                                          th:text="${suggestion.staffName}">Anna</span>
-                                    (<span th:text="${suggestion.preferenceCount}">0</span> prefs)
-                                    <span th:if="${!iterStat.last}"> · </span>
-                                </span>
+                <span class="suggestion-highlight"
+                      th:text="${suggestion.staffName}">Anna</span>
+                (<span th:text="${suggestion.preferenceCount}">0</span> prefs)
+                <span th:if="${!iterStat.last}"> · </span>
+            </span>
                             </div>
                         </div>
                     </div>
+
 
                     <p th:if="${day.shifts == null or #lists.isEmpty(day.shifts)}"
                        style="font-size: 0.8rem; color:#6b7280;">
@@ -455,6 +548,86 @@
         </section>
     </div>
 </main>
+
+<!-- JS for assign/remove staff -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!--<script>-->
+<!--    // Get date from main tag attribute-->
+<!--    const scheduleDate = document-->
+<!--        .querySelector("main.schedule-page")-->
+<!--        ?.getAttribute("data-date");-->
+
+<!--    console.log("Day schedule date =", scheduleDate);-->
+
+<!--    // If you have CSRF enabled, you can uncomment these lines and-->
+<!--    // add the meta tags for _csrf and _csrf_header in your layout.-->
+<!--    /*-->
+<!--    const csrfToken  = $("meta[name='_csrf']").attr("content");-->
+<!--    const csrfHeader = $("meta[name='_csrf_header']").attr("content");-->
+
+<!--    if (csrfToken && csrfHeader) {-->
+<!--        $(document).ajaxSend(function (e, xhr, options) {-->
+<!--            xhr.setRequestHeader(csrfHeader, csrfToken);-->
+<!--        });-->
+<!--    }-->
+<!--    */-->
+
+<!--    function assignStaffToShift(button) {-->
+<!--        const $block = $(button).closest(".shift-block");-->
+<!--        const $select = $block.find(".shift-staff-select");-->
+<!--        const staffId = $select.val();-->
+<!--        const shiftInstanceId = $select.data("shift-id");-->
+
+<!--        console.log("assignStaffToShift clicked", { shiftInstanceId, staffId, scheduleDate });-->
+
+<!--        if (!staffId) {-->
+<!--            console.warn("No staff selected for shift", shiftInstanceId);-->
+<!--            return;-->
+<!--        }-->
+
+<!--        $.ajax({-->
+<!--            url: "/manager/shift/assign-staff",-->
+<!--            method: "POST",-->
+<!--            data: {-->
+<!--                shiftInstanceId: shiftInstanceId,-->
+<!--                staffId: staffId,-->
+<!--                date: scheduleDate-->
+<!--            },-->
+<!--            success: function (resp) {-->
+<!--                console.log("Assign OK:", resp);-->
+<!--                window.location.reload();-->
+<!--            },-->
+<!--            error: function (xhr, status, err) {-->
+<!--                console.error("Assign error:", status, err, xhr.responseText);-->
+<!--                alert("Failed to assign staff. Check console for details.");-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+
+<!--    function removeStaffFromShift(shiftInstanceId, staffId) {-->
+<!--        console.log("removeStaffFromShift clicked", { shiftInstanceId, staffId, scheduleDate });-->
+
+<!--        $.ajax({-->
+<!--            url: "/manager/shift/remove-staff",-->
+<!--            method: "POST",-->
+<!--            data: {-->
+<!--                shiftInstanceId: shiftInstanceId,-->
+<!--                staffId: staffId,-->
+<!--                date: scheduleDate-->
+<!--            },-->
+<!--            success: function (resp) {-->
+<!--                console.log("Remove OK:", resp);-->
+<!--                window.location.reload();-->
+<!--            },-->
+<!--            error: function (xhr, status, err) {-->
+<!--                console.error("Remove error:", status, err, xhr.responseText);-->
+<!--                alert("Failed to remove staff. Check console for details.");-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+<!--</script>-->
+
+
 
 </body>
 </html>

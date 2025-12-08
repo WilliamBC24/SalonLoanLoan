@@ -15,11 +15,13 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long> {
 """)
     List<Appointment> findByUserIdIgnoreCaseContainingAndStatusIn(int userAccountId, List<AppointmentStatus> statuses);
     List<Appointment> findByNameIgnoreCaseContainingAndStatusIn(String name, List<AppointmentStatus> statuses);
+    List<Appointment> findByPhoneNumberAndStatusIn(String name, List<AppointmentStatus> statuses);
 
     @Query("""
     select a from Appointment a join AppointmentDetails ad on a.id = ad.appointment.id and ad.user.id = ?1
 """)
     List<Appointment> findByUserIdIgnoreCaseContaining(int userAccountId);
     List<Appointment> findByNameIgnoreCaseContaining(String name);
+    List<Appointment> findByPhoneNumber(String name);
     List<Appointment> findByScheduledAtBetween(LocalDateTime start, LocalDateTime end);
 }

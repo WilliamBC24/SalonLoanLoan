@@ -1,7 +1,7 @@
 package service.sllbackend.service.impl;
 
 import org.springframework.stereotype.Service;
-import service.sllbackend.repository.ShiftTemplateRepo;
+import service.sllbackend.repository.*;
 import service.sllbackend.service.ShiftScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,9 +10,6 @@ import service.sllbackend.entity.ShiftAssignment;
 import service.sllbackend.entity.ShiftInstance;
 import service.sllbackend.entity.ShiftTemplate;
 import service.sllbackend.entity.Staff;
-import service.sllbackend.repository.AppointmentRepo;
-import service.sllbackend.repository.ShiftAssignmentRepo;
-import service.sllbackend.repository.ShiftInstanceRepo;
 import service.sllbackend.web.dto.*;
 
 import java.time.*;
@@ -29,6 +26,7 @@ public class ShiftScheduleServiceImpl implements ShiftScheduleService {
     private final ShiftAssignmentRepo shiftAssignmentRepo;
     private final ShiftTemplateRepo shiftTemplateRepo;
     private final AppointmentRepo appointmentRepo;
+    private final StaffRepo staffRepo;
 
     @Override
     @Transactional
@@ -136,9 +134,9 @@ public class ShiftScheduleServiceImpl implements ShiftScheduleService {
         List<Appointment> appointments =
                 appointmentRepo.findByScheduledAtBetween(start, end);
 
-        // Map for quick lookup of preferences by staff + shift
-        Map<Integer, Integer> preferenceCountByStaffAndShift =
-                buildPreferenceCountByStaffAndShift(dayShifts, appointments);
+        // 2b) Build suggestions for each shift from preferred staff + current assignments
+        Map<Integer, List<StaffSuggestionViewDTO>> suggestionsByShift =
+                buildStaffSuggestionsForDay(dayShifts, appointments, assignmentsByShiftId);
 
         // 3) Build shift blocks (AM/PM)
         List<ShiftBlockViewDTO> shiftBlocks = new ArrayList<>();
@@ -166,10 +164,9 @@ public class ShiftScheduleServiceImpl implements ShiftScheduleService {
 
             block.setAssignedStaff(assignedStaffDTOs);
 
-            // Suggestions based on preference
+            // Suggestions based on preferred staff in appointments (not only assigned staff)
             List<StaffSuggestionViewDTO> suggestions =
-                    buildStaffSuggestionsForShift(shiftInstance, shiftAssignments, preferenceCountByStaffAndShift);
-
+                    suggestionsByShift.getOrDefault(shiftInstance.getId(), List.of());
             block.setSuggestedStaff(suggestions);
 
             shiftBlocks.add(block);
@@ -187,6 +184,119 @@ public class ShiftScheduleServiceImpl implements ShiftScheduleService {
 
         return dto;
     }
+
+    private Map<Integer, List<StaffSuggestionViewDTO>> buildStaffSuggestionsForDay(
+            List<ShiftInstance> dayShifts,
+            List<Appointment> appointments,
+            Map<Integer, List<ShiftAssignment>> assignmentsByShiftId
+    ) {
+        // shiftId -> (staffId -> suggestion DTO)
+        Map<Integer, Map<Integer, StaffSuggestionViewDTO>> temp = new HashMap<>();
+
+        // Pre-index assigned staff per shift
+        Map<Integer, Set<Integer>> assignedStaffIdsByShift = new HashMap<>();
+        for (Map.Entry<Integer, List<ShiftAssignment>> entry : assignmentsByShiftId.entrySet()) {
+            Integer shiftId = entry.getKey();
+            Set<Integer> staffIds = entry.getValue().stream()
+                    .map(sa -> sa.getAssignedStaff())
+                    .filter(Objects::nonNull)
+                    .map(Staff::getId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+            assignedStaffIdsByShift.put(shiftId, staffIds);
+        }
+
+        // 1) Count preferences per (shift, staff) based on appointments
+        for (Appointment appt : appointments) {
+            if (appt.getScheduledAt() == null || appt.getPreferredStaffId() == null) {
+                continue;
+            }
+
+            LocalTime time = appt.getScheduledAt().toLocalTime();
+            ShiftInstance matchedShift = findShiftForTime(dayShifts, time);
+            if (matchedShift == null) {
+                continue;
+            }
+
+            Integer shiftId = matchedShift.getId();
+            Staff preferred = appt.getPreferredStaffId();
+            if (preferred == null || preferred.getId() == null) {
+                continue;
+            }
+
+            int staffId = preferred.getId();
+            String staffName = preferred.getName();
+
+            Map<Integer, StaffSuggestionViewDTO> perShiftMap =
+                    temp.computeIfAbsent(shiftId, k -> new HashMap<>());
+
+            StaffSuggestionViewDTO dto = perShiftMap.computeIfAbsent(staffId, id -> {
+                StaffSuggestionViewDTO s = new StaffSuggestionViewDTO();
+                s.setStaffId(id);
+                s.setStaffName(staffName);
+                s.setPreferenceCount(0);
+                // mark currentlyAssigned if this staff is already assigned to this shift
+                boolean assigned = assignedStaffIdsByShift
+                        .getOrDefault(shiftId, Set.of())
+                        .contains(id);
+                s.setCurrentlyAssigned(assigned);
+                return s;
+            });
+
+            dto.setPreferenceCount(dto.getPreferenceCount() + 1);
+        }
+
+        // 2) Ensure all currently assigned staff also appear (even if nobody preferred them)
+        for (ShiftInstance shiftInstance : dayShifts) {
+            Integer shiftId = shiftInstance.getId();
+            List<ShiftAssignment> assignmentsForShift =
+                    assignmentsByShiftId.getOrDefault(shiftId, List.of());
+
+            if (assignmentsForShift.isEmpty()) continue;
+
+            Map<Integer, StaffSuggestionViewDTO> perShiftMap =
+                    temp.computeIfAbsent(shiftId, k -> new HashMap<>());
+
+            for (ShiftAssignment sa : assignmentsForShift) {
+                Staff staff = sa.getAssignedStaff();
+                if (staff == null || staff.getId() == null) continue;
+
+                int staffId = staff.getId();
+
+                StaffSuggestionViewDTO dto = perShiftMap.computeIfAbsent(staffId, id -> {
+                    StaffSuggestionViewDTO s = new StaffSuggestionViewDTO();
+                    s.setStaffId(id);
+                    s.setStaffName(staff.getName());
+                    s.setPreferenceCount(0);        // no preferences yet
+                    s.setCurrentlyAssigned(true);   // but they ARE assigned
+                    return s;
+                });
+
+                // if created earlier from preferences, at least mark them assigned
+                dto.setCurrentlyAssigned(true);
+            }
+        }
+
+        // 3) Convert inner maps to sorted lists
+        Map<Integer, List<StaffSuggestionViewDTO>> result = new HashMap<>();
+        for (Map.Entry<Integer, Map<Integer, StaffSuggestionViewDTO>> entry : temp.entrySet()) {
+            List<StaffSuggestionViewDTO> list = new ArrayList<>(entry.getValue().values());
+            // Sort: by preferenceCount desc, then by name
+            list.sort(
+                    Comparator.comparingInt(StaffSuggestionViewDTO::getPreferenceCount)
+                            .reversed()
+                            .thenComparing(
+                                    StaffSuggestionViewDTO::getStaffName,
+                                    Comparator.nullsLast(String::compareToIgnoreCase)
+                            )
+            );
+            result.put(entry.getKey(), list);
+        }
+
+        return result;
+    }
+
+
 
     @Override
     @Transactional
@@ -212,6 +322,48 @@ public class ShiftScheduleServiceImpl implements ShiftScheduleService {
                 }
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void assignStaffToShift(Integer shiftInstanceId, Integer staffId) {
+        if (shiftInstanceId == null || staffId == null) {
+            throw new IllegalArgumentException("shiftInstanceId and staffId must not be null");
+        }
+
+        ShiftInstance shiftInstance = shiftInstanceRepo.findById((long) shiftInstanceId)
+                .orElseThrow(() -> new IllegalArgumentException("ShiftInstance not found: " + shiftInstanceId));
+
+        Staff staff = staffRepo.findById(staffId)
+                .orElseThrow(() -> new IllegalArgumentException("Staff not found: " + staffId));
+
+        // Avoid duplicates (unique constraint on shift_instance_id + assigned_staff_id)
+        boolean exists = shiftAssignmentRepo
+                .existsByShiftInstanceAndAssignedStaff(shiftInstance, staff);
+
+        if (!exists) {
+            ShiftAssignment assignment = new ShiftAssignment();
+            assignment.setShiftInstance(shiftInstance);
+            assignment.setAssignedStaff(staff);
+            shiftAssignmentRepo.save(assignment);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void removeStaffFromShift(Integer shiftInstanceId, Integer staffId) {
+        if (shiftInstanceId == null || staffId == null) {
+            throw new IllegalArgumentException("shiftInstanceId and staffId must not be null");
+        }
+
+        ShiftInstance shiftInstance = shiftInstanceRepo.findById((long) shiftInstanceId)
+                .orElseThrow(() -> new IllegalArgumentException("ShiftInstance not found: " + shiftInstanceId));
+
+        Staff staff = staffRepo.findById(staffId)
+                .orElseThrow(() -> new IllegalArgumentException("Staff not found: " + staffId));
+
+        // This will delete the matching assignment if it exists; no-op otherwise
+        shiftAssignmentRepo.deleteByShiftInstanceAndAssignedStaff(shiftInstance, staff);
     }
 
     // ==========================

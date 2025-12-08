@@ -553,7 +553,7 @@
         reason TEXT NOT NULL,
         CHECK (quantity > 0)
     );
-
+
     CREATE TABLE IF NOT EXISTS loyalty_level(
         id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         name TEXT NOT NULL UNIQUE,

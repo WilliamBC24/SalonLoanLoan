@@ -332,6 +332,95 @@
             color: #555;
             font-size: 0.92rem;
             line-height: 1.5;
+            margin-bottom: 0.6rem;
+        }
+
+        .feedback-images {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.6rem;
+        }
+
+        .feedback-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .feedback-image:hover {
+            transform: scale(1.05);
+        }
+
+        .image-upload-section {
+            margin-top: 1rem;
+        }
+
+        .image-upload-label {
+            display: inline-block;
+            padding: 0.6rem 1rem;
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .image-upload-label:hover {
+            background: #e8e8e8;
+            border-color: #999;
+        }
+
+        .image-upload-input {
+            display: none;
+        }
+
+        .image-preview-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+
+        .image-preview-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .image-preview-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-preview-remove:hover {
+            background: #cc0000;
         }
 
         @media (max-width: 900px) {
@@ -482,7 +571,7 @@
                     Write a Review
                 </h3>
 
-                <form th:action="@{/products/rate}" method="post">
+                <form th:action="@{/products/rate}" method="post" enctype="multipart/form-data" id="reviewForm">
                     <input type="hidden" name="productId" th:value="${product.id}"/>
 
                     <div>
@@ -517,6 +606,20 @@
                                   class="comment-input"
                                   placeholder="Share your thoughts about this product..."
                                   th:text="${userFeedback?.comment}"></textarea>
+                    </div>
+
+                    <div class="image-upload-section">
+                        <label for="imageUpload" class="image-upload-label">
+                            📷 Add Photos (Max 5)
+                        </label>
+                        <input type="file" 
+                               id="imageUpload" 
+                               name="images" 
+                               accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                               multiple
+                               class="image-upload-input"
+                               onchange="previewImages(event)">
+                        <div id="imagePreviewContainer" class="image-preview-container"></div>
                     </div>
 
                     <button type="submit"
@@ -560,6 +663,13 @@
                          th:text="${feedback.comment}">
                         Great product!
                     </div>
+                    <div class="feedback-images" th:if="${feedback.images != null and !feedback.images.isEmpty()}">
+                        <img th:each="image : ${feedback.images}"
+                             th:src="@{'/uploads/product-feedback-images/' + ${#strings.substringAfterLast(image.imagePath, '/')}}"
+                             th:alt="'Review image'"
+                             class="feedback-image"
+                             onclick="window.open(this.src, '_blank')">
+                    </div>
                 </div>
             </div>
         </section>
@@ -569,6 +679,88 @@
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>
+
+<script>
+    let selectedFiles = [];
+    const MAX_IMAGES = 5;
+
+    function previewImages(event) {
+        const files = Array.from(event.target.files);
+        const container = document.getElementById('imagePreviewContainer');
+        
+        // Limit to MAX_IMAGES
+        if (selectedFiles.length + files.length > MAX_IMAGES) {
+            alert(`You can only upload up to ${MAX_IMAGES} images.`);
+            event.target.value = '';
+            return;
+        }
+
+        files.forEach(file => {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select only image files.');
+                return;
+            }
+
+            // Validate file size (5MB)
+            if (file.size > 5242880) {
+                alert('Each image must be less than 5MB.');
+                return;
+            }
+
+            selectedFiles.push(file);
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'image-preview-wrapper';
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'image-preview';
+
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '×';
+                removeBtn.className = 'image-preview-remove';
+                removeBtn.type = 'button';
+                removeBtn.onclick = function() {
+                    const index = selectedFiles.indexOf(file);
+                    if (index > -1) {
+                        selectedFiles.splice(index, 1);
+                    }
+                    wrapper.remove();
+                    updateFileInput();
+                };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                container.appendChild(wrapper);
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        // Clear the input to allow re-selection
+        event.target.value = '';
+    }
+
+    function updateFileInput() {
+        const input = document.getElementById('imageUpload');
+        const dataTransfer = new DataTransfer();
+        
+        selectedFiles.forEach(file => {
+            dataTransfer.items.add(file);
+        });
+        
+        input.files = dataTransfer.files;
+    }
+
+    // Handle form submission
+    document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
+        // Update the file input with selected files before submission
+        updateFileInput();
+    });
+</script>
 
 </body>
 </html>

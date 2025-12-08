@@ -51,6 +51,8 @@ public class OrderController {
             @RequestParam String customerName,
             @RequestParam String phoneNumber,
             @RequestParam(required = false) String shippingAddress,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String ward,
             @RequestParam String paymentMethod,
             @RequestParam String fulfillmentType,
             Principal principal) {
@@ -65,6 +67,8 @@ public class OrderController {
                     customerName,
                     phoneNumber,
                     shippingAddress,
+                    city,
+                    ward,
                     paymentMethod,
                     fulfillment
             );

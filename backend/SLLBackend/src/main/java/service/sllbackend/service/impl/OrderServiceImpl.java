@@ -18,6 +18,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     
+    // Shipping fee constants (in VND)
+    private static final int HANOI_SHIPPING_FEE = 30000;
+    private static final int OTHER_CITIES_SHIPPING_FEE = 70000;
+    private static final String HANOI_CITY_NAME = "Hanoi";
+    
     private final OrderInvoiceRepo orderInvoiceRepo;
     private final OrderInvoiceDetailsRepo orderInvoiceDetailsRepo;
     private final CustomerInfoRepo customerInfoRepo;
@@ -28,7 +33,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
-                                  String shippingAddress, String paymentTypeName, FulfillmentType fulfillmentType) {
+                                  String shippingAddress, String city, String ward,
+                                  String paymentTypeName, FulfillmentType fulfillmentType) {
         // Get user account
         UserAccount userAccount = userAccountRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -52,25 +58,48 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         
-        // Calculate total price (no shipping fee for in-store pickup)
-        int totalPrice = cartItems.stream()
+        // Calculate subtotal (product prices only)
+        int subtotal = cartItems.stream()
                 .mapToInt(item -> item.getProduct().getCurrentPrice() * item.getAmount())
                 .sum();
         
-        // Create or find customer info - always required for contact purposes
-        CustomerInfo customerInfo;
+        // Validate delivery requirements and calculate shipping fee
+        int shippingFee = 0;
         if (fulfillmentType == FulfillmentType.DELIVERY) {
-            // For delivery, require shipping address
+            // For delivery, require shipping address and city
             if (shippingAddress == null || shippingAddress.trim().isEmpty()) {
                 throw new RuntimeException("Shipping address is required for delivery orders");
             }
-            customerInfo = customerInfoRepo
-                    .findByPhoneNumberAndShippingAddress(phoneNumber, shippingAddress)
-                    .orElseGet(() -> customerInfoRepo.save(CustomerInfo.builder()
-                            .name(customerName)
-                            .phoneNumber(phoneNumber)
-                            .shippingAddress(shippingAddress)
-                            .build()));
+            if (city == null || city.trim().isEmpty()) {
+                throw new RuntimeException("City is required for delivery orders");
+            }
+            
+            // Calculate shipping fee: 30,000 for Hanoi, 70,000 for all other cities
+            // Normalize city name: trim and convert to lowercase for comparison
+            String normalizedCity = city.trim().toLowerCase();
+            if (normalizedCity.equals("hanoi") || normalizedCity.equals("hà nội") || normalizedCity.equals("ha noi")) {
+                shippingFee = HANOI_SHIPPING_FEE;
+            } else {
+                shippingFee = OTHER_CITIES_SHIPPING_FEE;
+            }
+        }
+        
+        // Calculate total price (subtotal + shipping fee)
+        int totalPrice = subtotal + shippingFee;
+        
+        // Create customer info for this order
+        // Note: Each order creates a new CustomerInfo record to maintain a snapshot of the
+        // delivery details at the time of order. This allows tracking different addresses
+        // used by the same customer over time and preserves historical order information.
+        CustomerInfo customerInfo;
+        if (fulfillmentType == FulfillmentType.DELIVERY) {
+            customerInfo = customerInfoRepo.save(CustomerInfo.builder()
+                    .name(customerName)
+                    .phoneNumber(phoneNumber)
+                    .shippingAddress(shippingAddress)
+                    .city(city)
+                    .ward(ward)
+                    .build());
         } else {
             // For in-store pickup, create customer info without shipping address
             customerInfo = customerInfoRepo.save(CustomerInfo.builder()
@@ -96,6 +125,7 @@ public class OrderServiceImpl implements OrderService {
                 .userAccount(userAccount)
                 .customerInfo(customerInfo)
                 .totalPrice(totalPrice)
+                .shippingFee(shippingFee)
                 .paymentMethod(paymentTypeName)
                 .fulfillmentType(fulfillmentType)
                 .orderStatus(OrderStatus.PENDING)

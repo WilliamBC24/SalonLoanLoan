@@ -239,6 +239,12 @@
         comment TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS before_appointment_image(
+        id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        appointment_id INT NOT NULL REFERENCES appointment(id),
+        image_path TEXT NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS after_appointment_image(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         appointment_id INT NOT NULL REFERENCES appointment(id),

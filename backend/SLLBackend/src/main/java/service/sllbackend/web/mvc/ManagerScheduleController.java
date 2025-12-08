@@ -7,7 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import service.sllbackend.entity.Staff;
+import service.sllbackend.enumerator.StaffStatus;
 import service.sllbackend.service.ShiftScheduleService;
+import service.sllbackend.service.StaffService;
 import service.sllbackend.web.dto.CalendarDayViewDTO;
 import service.sllbackend.web.dto.DayShiftScheduleViewDTO;
 
@@ -22,6 +25,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class ManagerScheduleController {
     private final ShiftScheduleService shiftScheduleService;
+    private final StaffService staffService;
 
     @GetMapping
     public String getMonthSchedule(
@@ -62,9 +66,11 @@ public class ManagerScheduleController {
         // Let service collect ShiftInstance + ShiftAssignment + Appointment for that day
         DayShiftScheduleViewDTO daySchedule =
                 shiftScheduleService.buildDaySchedule(date);
+        List<Staff> allStaff = staffService.findAllByStatus(StaffStatus.ACTIVE);
 
         model.addAttribute("day", daySchedule);
         model.addAttribute("date", date);
+        model.addAttribute("allStaff", allStaff);
 
         // you will create manager-schedule-day.html later
         return "manager-detailed-schedule";

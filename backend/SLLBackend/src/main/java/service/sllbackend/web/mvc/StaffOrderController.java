@@ -6,10 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.OrderInvoice;
+import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.service.OrderService;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -42,7 +44,21 @@ public class StaffOrderController {
         try {
             OrderInvoice order = orderService.getOrderDetails(orderId);
             model.addAttribute("order", order);
-            model.addAttribute("orderStatuses", OrderStatus.values());
+            OrderStatus[] orderStatuses;
+
+            if (order.getFulfillmentType() == FulfillmentType.DELIVERY) {
+                orderStatuses = Arrays.stream(OrderStatus.values())
+                        .filter(s -> s != OrderStatus.READY_FOR_PICKUP
+                                && s != OrderStatus.PICKED_UP)
+                        .toArray(OrderStatus[]::new);
+            } else {
+                orderStatuses = Arrays.stream(OrderStatus.values())
+                        .filter(s -> s != OrderStatus.SHIPPED
+                                && s != OrderStatus.DELIVERED)
+                        .toArray(OrderStatus[]::new);
+            }
+
+            model.addAttribute("orderStatuses", orderStatuses);
             
             return "staff-order-edit";
         } catch (Exception e) {
@@ -63,7 +79,7 @@ public class StaffOrderController {
         try {
             OrderStatus newStatus = OrderStatus.valueOf(orderStatus);
             orderService.updateOrderStatus(orderId, newStatus);
-            return "redirect:/staff/order/list?success=Order status updated successfully";
+            return "redirect:/staff/order/edit?orderId=" + orderId + "&success=Order status updated successfully";
         } catch (Exception e) {
             return "redirect:/staff/order/edit?orderId=" + orderId + "&error=" + e.getMessage();
         }

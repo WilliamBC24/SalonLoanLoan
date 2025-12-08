@@ -45,16 +45,23 @@ public class ProductFeedbackController {
             
             // Upload images if provided
             if (images != null && !images.isEmpty()) {
+                log.info("Processing {} image(s) for feedback {}", images.size(), feedback.getId());
+                int successCount = 0;
                 for (MultipartFile image : images) {
                     if (!image.isEmpty()) {
                         try {
                             productFeedbackImageService.addImage(feedback.getId(), image);
+                            successCount++;
+                            log.info("Successfully uploaded image {} for feedback {}", image.getOriginalFilename(), feedback.getId());
                         } catch (Exception e) {
-                            log.error("Error uploading image for feedback {}: {}", feedback.getId(), e.getMessage());
+                            log.error("Error uploading image {} for feedback {}: {}", image.getOriginalFilename(), feedback.getId(), e.getMessage(), e);
                             // Continue uploading other images even if one fails
                         }
                     }
                 }
+                log.info("Successfully uploaded {}/{} images for feedback {}", successCount, images.size(), feedback.getId());
+            } else {
+                log.info("No images provided for feedback {}", feedback.getId());
             }
             
             return "redirect:/products/" + productId + "?ratingSuccess=true";

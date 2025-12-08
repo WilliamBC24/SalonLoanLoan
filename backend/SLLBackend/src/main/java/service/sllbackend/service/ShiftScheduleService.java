@@ -11,4 +11,6 @@ public interface ShiftScheduleService {
     List<CalendarDayViewDTO> buildMonthSchedule(YearMonth month);
     DayShiftScheduleViewDTO buildDaySchedule(LocalDate date);
     void ensureShiftInstancesForMonth(YearMonth month);
+    void assignStaffToShift(Integer shiftInstanceId, Integer staffId);
+    void removeStaffFromShift(Integer shiftInstanceId, Integer staffId);
 }

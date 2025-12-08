@@ -51,6 +51,18 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
+  @Override
+    @Transactional(readOnly = true)
+    public List<Appointment> getByPhoneNumberAndStatus(String name, List<AppointmentStatus> statuses) {
+        if (statuses == null || statuses.isEmpty()) {
+            return appointmentRepo.findByPhoneNumber(name != null ? name : "");
+        } else {
+            return appointmentRepo.findByPhoneNumberAndStatusIn(
+                    name != null ? name : "", statuses
+            );
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Appointment findById(Long id) {

@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Manage Registrations | Salon Loan Loan</title>
+    <title>Staff - Manage Registrations | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -315,7 +315,7 @@
                     </div>
                 </div>
 
-                <form method="get" action="/manager/registration/list">
+                <form method="get" action="/staff/registration/list">
                     <div class="search-form">
                         <!-- Name search -->
                         <div class="filter-group">
@@ -350,7 +350,7 @@
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/manager/registration/list'">
+                                onclick="window.location.href='/staff/registration/list'">
                             <span>✕</span>
                             <span>Reset</span>
                         </button>
@@ -381,7 +381,7 @@
                             -
                         </td>
                         <td>
-                            <a th:href="@{/manager/registration/view/{id}(id=${appointment.id})}" class="view-link">
+                            <a th:href="@{/staff/registration/view/{id}(id=${appointment.id})}" class="view-link">
                                 View Details
                             </a>
                         </td>

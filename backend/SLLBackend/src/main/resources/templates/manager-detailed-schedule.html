@@ -485,7 +485,7 @@
                                     <tr th:each="appt : ${day.appointments}"
                                         th:if="${appt.shiftInstanceId} == ${shift.shiftInstanceId}"
                                         class="clickable-row"
-                                        th:onclick="|window.location.href='@{/manager/registration/view/{id}(id=${appt.appointmentId})}'|">
+                                        th:onclick="|window.location.href='@{/staff/registration/view/{id}(id=${appt.appointmentId})}'|">
                                         <td th:text="${#temporals.format(appt.scheduledAt, 'HH:mm')}">
                                             09:30
                                         </td>
@@ -548,85 +548,6 @@
         </section>
     </div>
 </main>
-
-<!-- JS for assign/remove staff -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!--<script>-->
-<!--    // Get date from main tag attribute-->
-<!--    const scheduleDate = document-->
-<!--        .querySelector("main.schedule-page")-->
-<!--        ?.getAttribute("data-date");-->
-
-<!--    console.log("Day schedule date =", scheduleDate);-->
-
-<!--    // If you have CSRF enabled, you can uncomment these lines and-->
-<!--    // add the meta tags for _csrf and _csrf_header in your layout.-->
-<!--    /*-->
-<!--    const csrfToken  = $("meta[name='_csrf']").attr("content");-->
-<!--    const csrfHeader = $("meta[name='_csrf_header']").attr("content");-->
-
-<!--    if (csrfToken && csrfHeader) {-->
-<!--        $(document).ajaxSend(function (e, xhr, options) {-->
-<!--            xhr.setRequestHeader(csrfHeader, csrfToken);-->
-<!--        });-->
-<!--    }-->
-<!--    */-->
-
-<!--    function assignStaffToShift(button) {-->
-<!--        const $block = $(button).closest(".shift-block");-->
-<!--        const $select = $block.find(".shift-staff-select");-->
-<!--        const staffId = $select.val();-->
-<!--        const shiftInstanceId = $select.data("shift-id");-->
-
-<!--        console.log("assignStaffToShift clicked", { shiftInstanceId, staffId, scheduleDate });-->
-
-<!--        if (!staffId) {-->
-<!--            console.warn("No staff selected for shift", shiftInstanceId);-->
-<!--            return;-->
-<!--        }-->
-
-<!--        $.ajax({-->
-<!--            url: "/manager/shift/assign-staff",-->
-<!--            method: "POST",-->
-<!--            data: {-->
-<!--                shiftInstanceId: shiftInstanceId,-->
-<!--                staffId: staffId,-->
-<!--                date: scheduleDate-->
-<!--            },-->
-<!--            success: function (resp) {-->
-<!--                console.log("Assign OK:", resp);-->
-<!--                window.location.reload();-->
-<!--            },-->
-<!--            error: function (xhr, status, err) {-->
-<!--                console.error("Assign error:", status, err, xhr.responseText);-->
-<!--                alert("Failed to assign staff. Check console for details.");-->
-<!--            }-->
-<!--        });-->
-<!--    }-->
-
-<!--    function removeStaffFromShift(shiftInstanceId, staffId) {-->
-<!--        console.log("removeStaffFromShift clicked", { shiftInstanceId, staffId, scheduleDate });-->
-
-<!--        $.ajax({-->
-<!--            url: "/manager/shift/remove-staff",-->
-<!--            method: "POST",-->
-<!--            data: {-->
-<!--                shiftInstanceId: shiftInstanceId,-->
-<!--                staffId: staffId,-->
-<!--                date: scheduleDate-->
-<!--            },-->
-<!--            success: function (resp) {-->
-<!--                console.log("Remove OK:", resp);-->
-<!--                window.location.reload();-->
-<!--            },-->
-<!--            error: function (xhr, status, err) {-->
-<!--                console.error("Remove error:", status, err, xhr.responseText);-->
-<!--                alert("Failed to remove staff. Check console for details.");-->
-<!--            }-->
-<!--        });-->
-<!--    }-->
-<!--</script>-->
-
 
 
 </body>

@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Staff - Appointment Invoice | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Global staff layout + styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <style>
+        /* ===== PAGE STRUCTURE ===== */
+        .invoice-create-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .invoice-layout-inner {
+            max-width: 85vw;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .invoice-card-shell {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .invoice-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .invoice-title-block {
+            text-align: left;
+        }
+
+        .invoice-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .invoice-title-block h2 {
+            margin: 0;
+        }
+
+        .invoice-meta-pill {
+            padding: 0.3rem 0.8rem;
+            border-radius: 999px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: #374151;
+        }
+
+        .invoice-meta-pill span.code {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .back-link-pill {
+            font-size: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            padding: 0.4rem 0.9rem;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .back-link-pill span.icon {
+            font-size: 1.05rem;
+            line-height: 1;
+        }
+
+        .back-link-pill:hover {
+            background: #f4f4f4;
+        }
+
+        /* Top-level layout: details left, form right */
+        .invoice-layout-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.9fr) minmax(0, 1.1fr);
+            gap: 1.8rem;
+        }
+
+        .invoice-left-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+        }
+
+        .invoice-section-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+            padding: 1.6rem 1.8rem;
+        }
+
+        .invoice-section-card h3 {
+            margin: 0 0 0.8rem;
+            font-size: 1.05rem;
+            color: #111827;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(0,0,0,0.04);
+            padding-bottom: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem 1.2rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: #6b7280;
+            font-size: 0.75rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            color: #111827;
+            font-size: 0.93rem;
+            font-weight: 500;
+        }
+
+        .info-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Services table */
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.4rem;
+        }
+
+        .services-table th,
+        .services-table td {
+            padding: 0.65rem 0.4rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        .services-table th {
+            background: #f9fafb;
+            text-align: left;
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .services-table .service-name {
+            font-weight: 500;
+        }
+
+        .services-table .price {
+            font-weight: 600;
+            color: #16a34a;
+        }
+
+        .services-table tfoot td {
+            border-bottom: none;
+            font-size: 0.9rem;
+        }
+
+        .row-total-label {
+            text-align: right;
+            font-weight: 600;
+            padding-top: 0.7rem;
+        }
+
+        .row-total-value {
+            text-align: right;
+            font-weight: 700;
+            color: #16a34a;
+            padding-top: 0.7rem;
+        }
+
+        /* RIGHT: form card */
+        .invoice-form-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+            padding: 1.6rem 1.8rem;
+        }
+
+        .invoice-form-card h3 {
+            margin: 0 0 0.8rem;
+            font-size: 1.05rem;
+            color: #111827;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(0,0,0,0.04);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 0.55rem 0.7rem;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-family: inherit;
+            font-size: 0.9rem;
+            min-height: 100px;
+            background: #fafafa;
+            resize: vertical;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100, 179, 255, 0.35);
+            background: #ffffff;
+        }
+
+        /* Satisfaction rating (stars) */
+        .star-rating {
+            display: inline-flex;
+            flex-direction: row-reverse;
+            gap: 0.2rem;
+            font-size: 1.4rem;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            cursor: pointer;
+            color: #e5e7eb;
+            transition: color 0.2s ease;
+        }
+
+        .star-rating.readonly label {
+            cursor: default;
+        }
+
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #facc15;
+        }
+
+        .rating-hint {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Payment method */
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .payment-option {
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 0.6rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: #f9fafb;
+            cursor: pointer;
+        }
+
+        .payment-option input {
+            margin: 0;
+        }
+
+        .payment-option-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .payment-option-desc {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .payment-option.selected {
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(100, 179, 255, 0.35);
+            background: #ffffff;
+        }
+
+        /* QR box (bank transfer) */
+        .payment-box {
+            margin-top: 1.2rem;
+            text-align: center;
+            padding: 1.1rem 1rem 1.3rem;
+            border-radius: 18px;
+            border: 2px solid #facc15;
+            background: #fffbeb;
+        }
+
+        .payment-box h4 {
+            margin: 0 0 0.35rem;
+            font-size: 0.95rem;
+            color: #854d0e;
+        }
+
+        .payment-box p {
+            margin: 0.15rem 0;
+            font-size: 0.83rem;
+            color: #854d0e;
+        }
+
+        .payment-box img {
+            margin-top: 0.5rem;
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            background: #ffffff;
+            padding: 0.6rem;
+        }
+
+        .summary-total-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.1rem 0 0.4rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .summary-total-inline span:last-child {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #16a34a;
+        }
+
+        /* Buttons */
+        .invoice-actions {
+            margin-top: 1.4rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 999px;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .btn-primary {
+            background: var(--accent, #2563eb);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(0.95);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .alert {
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        @media (max-width: 960px) {
+            .invoice-layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .invoice-card-shell {
+                padding: 1.7rem 1.4rem;
+            }
+
+            .invoice-section-card,
+            .invoice-form-card {
+                padding: 1.5rem 1.4rem;
+            }
+
+            .invoice-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main invoice-create-page">
+    <div class="invoice-layout-inner">
+        <section class="invoice-card-shell">
+
+            <!-- Header row -->
+            <div class="invoice-header-row">
+                <div class="invoice-title-block section-heading">
+                    <p class="section-kicker">Billing &amp; Payments</p>
+                    <h2>Create Appointment Invoice</h2>
+                </div>
+
+                <div style="display:flex; gap:0.6rem; align-items:center;">
+                    <div class="invoice-meta-pill">
+                        <span>Appointment</span>
+                        <span>#</span>
+                        <span class="code" th:text="${appointment.id}">123</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+            <!-- GRID: details + form -->
+            <div class="invoice-layout-grid">
+
+                <!-- LEFT: Appointment + services -->
+                <div class="invoice-left-col">
+
+                    <!-- Appointment Information -->
+                    <section class="invoice-section-card">
+                        <h3>Appointment Information</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Date &amp; Time</span>
+                                <span class="info-value"
+                                      th:text="${#temporals.format(appointment.startTime, 'dd MMM yyyy HH:mm')}">
+                                    01 Jan 2025 10:00
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Customer Name</span>
+                                <span class="info-value"
+                                      th:text="${appointment.customerName}">
+                                    Customer Name
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Phone Number</span>
+                                <span class="info-value"
+                                      th:text="${appointment.customerPhoneNumber}">
+                                    0123456789
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Handled By</span>
+                                <span class="info-value"
+                                      th:text="${appointment.assignedStaffName}">
+                                    Staff Name
+                                </span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Services Performed -->
+                    <section class="invoice-section-card">
+                        <h3>Services Performed</h3>
+                        <table class="services-table">
+                            <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th style="width:110px;">Staff</th>
+                                <th style="width:110px;">Price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="detail : ${appointmentDetails}">
+                                <td class="service-name"
+                                    th:text="${detail.serviceName}">
+                                    Haircut &amp; Styling
+                                </td>
+                                <td th:text="${detail.staffName}">
+                                    Loan Loan
+                                </td>
+                                <td class="price"
+                                    th:text="${detail.unitPrice} + ' VND'">
+                                    150,000 VND
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr th:if="${invoice.discountAmount != null and invoice.discountAmount > 0}">
+                                <td colspan="2" class="row-total-label">Discount</td>
+                                <td class="row-total-value"
+                                    th:text="'- ' + ${invoice.discountAmount} + ' VND'">
+                                    - 0 VND
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="row-total-label">Total</td>
+                                <td class="row-total-value"
+                                    th:text="${invoice.totalAmount} + ' VND'">
+                                    0 VND
+                                </td>
+                            </tr>
+                            </tfoot>
+
+                        </table>
+                    </section>
+
+                </div>
+
+                <!-- RIGHT: Rating + Payment + Submit -->
+                <aside>
+                    <!-- Wrap form on the right column (rating, notes, payment, submit) -->
+                    <form class="invoice-form-card"
+                          method="post"
+                          th:action="@{/staff/registration/invoice/{id}/complete(id=${appointment.id})}"
+                          th:attr="data-completed=${completed}">
+                        <h3>Finalize Invoice</h3>
+
+                        <!-- Hidden IDs -->
+                        <input type="hidden" name="appointmentId" th:value="${appointment.id}" />
+                        <input type="hidden" name="invoiceId" th:value="${invoice.id}" />
+
+                        <!-- Satisfaction rating -->
+                        <div class="form-group">
+                            <label for="satisfactionRating">Customer Satisfaction</label>
+                            <div class="star-rating"
+                                 th:classappend="${completed} ? ' readonly'">
+                                <!-- value 5 down to 1 so hover behaves nicely -->
+                                <input type="radio" id="star5" name="satisfactionRating" value="5"
+                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 5}"
+                                       th:disabled="${completed}">
+                                <label for="star5">★</label>
+
+                                <input type="radio" id="star4" name="satisfactionRating" value="4"
+                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 4}"
+                                       th:disabled="${completed}">
+                                <label for="star4">★</label>
+
+                                <input type="radio" id="star3" name="satisfactionRating" value="3"
+                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 3}"
+                                       th:disabled="${completed}">
+                                <label for="star3">★</label>
+
+                                <input type="radio" id="star2" name="satisfactionRating" value="2"
+                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 2}"
+                                       th:disabled="${completed}">
+                                <label for="star2">★</label>
+
+                                <input type="radio" id="star1" name="satisfactionRating" value="1"
+                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 1}"
+                                       th:disabled="${completed}">
+                                <label for="star1">★</label>
+                            </div>
+                            <div class="rating-hint">
+                                1 = Very dissatisfied &nbsp;&middot;&nbsp; 5 = Very satisfied
+                            </div>
+                        </div>
+
+                        <!-- Public notes -->
+                        <div class="form-group">
+                            <label for="customerNotes">Customer Notes</label>
+                            <textarea id="customerNotes"
+                                      name="customerNotes"
+                                      placeholder="Notes about the customer's experience, hair condition, aftercare advice, etc."
+                                      th:text="${satisfactionComment}"
+                                      th:readonly="${completed}"></textarea>
+                        </div>
+
+                        <!-- Payment method (hidden if completed) -->
+                        <div class="form-group" th:if="${!completed}">
+                            <label>Payment Method</label>
+                            <div class="payment-methods" id="paymentMethods">
+                                <label class="payment-option"
+                                       data-value="CASH">
+                                    <input type="radio"
+                                           name="paymentMethod"
+                                           value="CASH"
+                                           checked>
+                                    <div>
+                                        <div class="payment-option-title">Cash</div>
+                                        <div class="payment-option-desc">
+                                            Customer pays in cash at the salon.
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="payment-option"
+                                       data-value="BANK_TRANSFER">
+                                    <input type="radio"
+                                           name="paymentMethod"
+                                           value="BANK_TRANSFER">
+                                    <div>
+                                        <div class="payment-option-title">Bank Transfer (VietQR)</div>
+                                        <div class="payment-option-desc">
+                                            Generate VietQR code for the customer to scan and pay.
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Summary total -->
+                        <div class="summary-total-inline">
+                            <span>Total Amount</span>
+                            <span th:text="${invoice.totalAmount} + ' VND'">
+                                0 VND
+                            </span>
+                        </div>
+
+                        <!-- QR payment box (only if not completed AND QR available) -->
+                        <div id="bankTransferBox"
+                             th:if="${!completed} and paymentQrUrl != null"
+                             class="payment-box"
+                             style="display:none;">
+                            <h4>Bank Transfer Payment</h4>
+                            <p>Scan this VietQR code to pay for the appointment.</p>
+                            <img th:src="${paymentQrUrl}" alt="VietQR Payment Code" />
+                            <p>After successful payment, click "Complete Invoice" to confirm.</p>
+                        </div>
+
+                        <!-- Actions (hide Complete button when already completed) -->
+                        <div class="invoice-actions" th:if="${!completed}">
+                            <button type="submit" class="btn btn-primary">
+                                ✅ <span>Complete Invoice</span>
+                            </button>
+                        </div>
+                    </form>
+                </aside>
+
+            </div>
+        </section>
+    </div>
+</main>
+
+<script>
+    // Payment method UI + QR toggle
+    (function () {
+        const formEl = document.querySelector('.invoice-form-card');
+        const isCompleted = formEl && formEl.dataset.completed === 'true';
+
+        const methodsContainer = document.getElementById('paymentMethods');
+        const bankTransferBox = document.getElementById('bankTransferBox');
+
+        if (!isCompleted && methodsContainer) {
+            const options = methodsContainer.querySelectorAll('.payment-option');
+
+            function updateSelection() {
+                options.forEach(opt => {
+                    const radio = opt.querySelector('input[type="radio"]');
+                    if (radio.checked) {
+                        opt.classList.add('selected');
+                    } else {
+                        opt.classList.remove('selected');
+                    }
+                });
+
+                const selectedRadio = methodsContainer.querySelector('input[type="radio"]:checked');
+                if (selectedRadio && selectedRadio.value === 'BANK_TRANSFER' && bankTransferBox) {
+                    bankTransferBox.style.display = 'block';
+                } else if (bankTransferBox) {
+                    bankTransferBox.style.display = 'none';
+                }
+            }
+
+            options.forEach(opt => {
+                const radio = opt.querySelector('input[type="radio"]');
+                opt.addEventListener('click', function (e) {
+                    if (e.target.tagName.toLowerCase() !== 'input') {
+                        radio.checked = true;
+                    }
+                    updateSelection();
+                });
+            });
+
+            updateSelection();
+        }
+
+        // Lock comment if there is no rating selected (only when NOT completed)
+        (function () {
+            if (isCompleted) return;
+
+            const ratingInputs = document.querySelectorAll('input[name="satisfactionRating"]');
+            const notes = document.getElementById('customerNotes');
+            if (!notes || ratingInputs.length === 0) return;
+
+            function updateNotesLock() {
+                const anySelected = Array.from(ratingInputs).some(r => r.checked);
+                if (!anySelected) {
+                    notes.disabled = true;
+                    if (!notes.value) {
+                        notes.placeholder = 'Select a rating first to add notes.';
+                    }
+                } else {
+                    notes.disabled = false;
+                }
+            }
+
+            ratingInputs.forEach(input => {
+                input.addEventListener('change', updateNotesLock);
+            });
+
+            updateNotesLock();
+        })();
+    })();
+</script>
+
+</body>
+</html>

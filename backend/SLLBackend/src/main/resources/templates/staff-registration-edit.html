@@ -723,6 +723,102 @@
                     </button>
                 </div>
             </form>
+
+            <!-- ===== SERVICE IMAGES (only visible when COMPLETED) ===== -->
+            <div th:if="${appointment.status.name() == 'COMPLETED'}" class="edit-card" style="margin-top: 2rem;">
+                <div class="form-section-header">
+                    <p class="form-section-title">Service Images</p>
+                    <p class="form-section-subtitle">Upload before and after service photos for this completed appointment.</p>
+                </div>
+
+                <!-- Flash Messages -->
+                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <div class="edit-grid" style="grid-template-columns: 1fr 1fr;">
+                    <!-- BEFORE IMAGES -->
+                    <div class="edit-col">
+                        <div class="card-block">
+                            <h4 style="margin-bottom: 1rem;">Before Service</h4>
+                            
+                            <!-- Upload Form -->
+                            <form th:action="@{/staff/registration/view/{id}/upload-before-image(id=${appointment.id})}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  style="margin-bottom: 1.5rem;">
+                                <div class="field">
+                                    <label>Upload Before Image</label>
+                                    <input type="file" 
+                                           name="beforeImage" 
+                                           accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                                           required />
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
+                                    Upload Before Image
+                                </button>
+                            </form>
+
+                            <!-- Display Uploaded Images -->
+                            <div th:if="${beforeImages != null and !beforeImages.isEmpty()}">
+                                <h5 style="margin-bottom: 0.8rem;">Uploaded Images:</h5>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">
+                                    <div th:each="img : ${beforeImages}" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                                        <img th:src="@{'/uploads/appointment-images/' + ${img.imagePath.substring(img.imagePath.lastIndexOf('/') + 1)}}" 
+                                             alt="Before service"
+                                             style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;"
+                                             onclick="window.open(this.src, '_blank')" />
+                                    </div>
+                                </div>
+                            </div>
+                            <p th:if="${beforeImages == null or beforeImages.isEmpty()}" 
+                               style="color: #666; font-style: italic;">
+                                No before images uploaded yet.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- AFTER IMAGES -->
+                    <div class="edit-col">
+                        <div class="card-block">
+                            <h4 style="margin-bottom: 1rem;">After Service</h4>
+                            
+                            <!-- Upload Form -->
+                            <form th:action="@{/staff/registration/view/{id}/upload-after-image(id=${appointment.id})}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  style="margin-bottom: 1.5rem;">
+                                <div class="field">
+                                    <label>Upload After Image</label>
+                                    <input type="file" 
+                                           name="afterImage" 
+                                           accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                                           required />
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
+                                    Upload After Image
+                                </button>
+                            </form>
+
+                            <!-- Display Uploaded Images -->
+                            <div th:if="${afterImages != null and !afterImages.isEmpty()}">
+                                <h5 style="margin-bottom: 0.8rem;">Uploaded Images:</h5>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">
+                                    <div th:each="img : ${afterImages}" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                                        <img th:src="@{'/uploads/appointment-images/' + ${img.imagePath.substring(img.imagePath.lastIndexOf('/') + 1)}}" 
+                                             alt="After service"
+                                             style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;"
+                                             onclick="window.open(this.src, '_blank')" />
+                                    </div>
+                                </div>
+                            </div>
+                            <p th:if="${afterImages == null or afterImages.isEmpty()}" 
+                               style="color: #666; font-style: italic;">
+                                No after images uploaded yet.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
 </main>

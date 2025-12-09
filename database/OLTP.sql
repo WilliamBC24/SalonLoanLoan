@@ -43,7 +43,9 @@
         name TEXT NOT NULL,
         phone_number VARCHAR(20) NOT NULL,
         email VARCHAR(100),
-        shipping_address TEXT
+        shipping_address TEXT,
+        city TEXT,
+        ward TEXT
     );
 
     CREATE UNIQUE INDEX uq_user_phone_active
@@ -237,6 +239,12 @@
         appointment_id INT NOT NULL UNIQUE REFERENCES appointment(id),
         rating SMALLINT NOT NULL CHECK (rating >= 1 AND rating <= 5),
         comment TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS before_appointment_image(
+        id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        appointment_id INT NOT NULL REFERENCES appointment(id),
+        image_path TEXT NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS after_appointment_image(
@@ -475,6 +483,8 @@
         customer_info_id INT REFERENCES customer_info(id),
         total_price INT NOT NULL CHECK (total_price > 0),
         payment_method TEXT NOT NULL,
+        fulfillment_type TEXT NOT NULL DEFAULT 'DELIVERY',
+        shipping_fee INT NOT NULL DEFAULT 0 CHECK (shipping_fee >= 0),
         order_status TEXT NOT NULL DEFAULT 'PENDING',
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
@@ -553,7 +563,7 @@
         reason TEXT NOT NULL,
         CHECK (quantity > 0)
     );
-
+
     CREATE TABLE IF NOT EXISTS loyalty_level(
         id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         name TEXT NOT NULL UNIQUE,

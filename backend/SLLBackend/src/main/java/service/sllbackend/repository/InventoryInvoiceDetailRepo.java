@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import service.sllbackend.entity.InventoryInvoiceDetail;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface InventoryInvoiceDetailRepo extends JpaRepository<InventoryInvoiceDetail, Integer> {
@@ -13,4 +14,6 @@ public interface InventoryInvoiceDetailRepo extends JpaRepository<InventoryInvoi
            "JOIN FETCH iid.product " +
            "WHERE iid.inventoryInvoice.id = :invoiceId")
     List<InventoryInvoiceDetail> findByInvoiceIdWithProduct(@Param("invoiceId") Integer invoiceId);
+
+    List<InventoryInvoiceDetail> findByInventoryInvoice_CreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }

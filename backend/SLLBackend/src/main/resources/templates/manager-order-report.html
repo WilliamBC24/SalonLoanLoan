@@ -433,8 +433,8 @@
                     <div class="summary-label">Total order revenue</div>
                     <div class="summary-main">
                         <span class="summary-value"
-                              th:text="${#numbers.formatDecimal(report.totalRevenue, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                            0 ₫
+                              th:text="${#numbers.formatDecimal(report.totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                            0 VND
                         </span>
                     </div>
                     <p class="summary-caption">
@@ -497,16 +497,16 @@
                             <td th:text="${row.fulfillmentType}">DELIVERY</td>
                             <td th:text="${row.statusLabel}">DELIVERED</td>
                             <td class="cell-number"
-                                th:text="${#numbers.formatDecimal(row.totalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                0 ₫
+                                th:text="${#numbers.formatDecimal(row.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                0 VND
                             </td>
                             <td class="cell-number cell-muted"
-                                th:text="${#numbers.formatDecimal(row.discount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                0 ₫
+                                th:text="${#numbers.formatDecimal(row.discount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                0 VND
                             </td>
                             <td class="cell-number"
-                                th:text="${#numbers.formatDecimal(row.netPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                0 ₫
+                                th:text="${#numbers.formatDecimal(row.netPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                0 VND
                             </td>
                         </tr>
 

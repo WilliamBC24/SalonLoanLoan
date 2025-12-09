@@ -175,7 +175,7 @@
                 <h2 th:text="${service.serviceName}">Service Name</h2>
 
                 <p class="service-price"
-                   th:text="${service.servicePrice} + ' VND'">0 VND</p>
+                   th:text="${#numbers.formatDecimal(service.servicePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</p>
 
                 <p class="service-description"
                    th:text="${service.serviceDescription != null ? service.serviceDescription : 'No description available'}">

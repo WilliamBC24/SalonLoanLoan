@@ -191,7 +191,7 @@
 <body>
 
 <!-- HEADER -->
-<div th:replace="~{fragments/profile-header :: profile-site-header}"></div>
+<div th:replace="~{fragments/header :: site-header}"></div>
 
 <main class="orders-page">
     <div class="container">
@@ -238,9 +238,9 @@
                           th:text="${order.orderStatus}">
                         PENDING
                     </span>
-                    <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                    <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
                           class="fulfillment-badge pickup">🏪 Pickup</span>
-                    <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                    <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
                           class="fulfillment-badge delivery">🚚 Delivery</span>
                 </div>
 
@@ -269,7 +269,7 @@
                     <div class="detail-item">
                         <div class="detail-label">Total Amount</div>
                         <div class="detail-value order-total"
-                             th:text="${order.totalPrice} + ' VND'">
+                             th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                             0 VND
                         </div>
                     </div>

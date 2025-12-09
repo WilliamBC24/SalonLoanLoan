@@ -35,18 +35,22 @@
             </a>
 
             <!-- When logged in -->
-            <div th:if="${username != null}" style="display: flex; align-items: center; gap: 0.6rem;">
-                <a th:href="@{/user/profile}" style="font-size:0.9rem; text-decoration:none; color:inherit;">
-                    <strong th:text="${username}">User</strong>
-                </a>
+            <div th:if="${username != null}" class="user-menu">
+                <div class="user-menu-trigger">
+                    <span class="user-name" th:text="${username}">User</span>
+                    <span class="user-menu-caret">▾</span>
+                </div>
 
-                <form th:action="@{/logout}" method="post" style="margin: 0;">
-                    <button type="submit"
-                            class="btn-outline"
-                            style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.8rem;">
-                        Logout
-                    </button>
-                </form>
+                <div class="user-menu-dropdown">
+                    <a th:href="@{/user/profile}" class="user-menu-item">Profile</a>
+                    <a th:href="@{/user/password}" class="user-menu-item">Change Password</a>
+                    <a th:href="@{/user/appointment-history}" class="user-menu-item">Appointment History</a>
+                    <a th:href="@{/order/history}" class="user-menu-item">Order History</a>
+
+                    <form th:action="@{/logout}" method="post" class="user-menu-item logout-item">
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
             </div>
         </div>
 

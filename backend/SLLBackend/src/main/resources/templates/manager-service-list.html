@@ -432,12 +432,28 @@
                         <td th:text="${svc.serviceName}">Service name</td>
                         <td th:text="${svc.serviceCategory != null ? svc.serviceCategory.name : 'N/A'}">Category</td>
                         <td th:text="${svc.serviceType}">SINGLE</td>
-                        <td th:text="${svc.servicePrice}">0</td>
+                        <td th:text="${#numbers.formatDecimal(svc.servicePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0</td>
                         <td th:text="${svc.durationMinutes}">0</td>
                         <td th:text="${svc.activeStatus}">false</td>
+
                         <td>
+                            <!-- Always show Edit -->
                             <a th:href="@{/manager/service/edit/{id}(id=${svc.id})}" class="edit-link">
                                 <span>Edit</span>
+                            </a>
+
+                            <!-- If activeStatus = true → show Deactivate -->
+                            <a th:if="${svc.activeStatus}"
+                               th:href="@{/manager/service/deactivate/{id}(id=${svc.id})}"
+                               class="edit-link danger">
+                                <span>Deactivate</span>
+                            </a>
+
+                            <!-- If activeStatus = false → show Activate -->
+                            <a th:if="${!svc.activeStatus}"
+                               th:href="@{/manager/service/activate/{id}(id=${svc.id})}"
+                               class="edit-link success">
+                                <span>Activate</span>
                             </a>
                         </td>
                     </tr>

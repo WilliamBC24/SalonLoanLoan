@@ -396,7 +396,13 @@
                         </td>
                         <td th:text="${voucher.voucherName}">Voucher name</td>
                         <td th:text="${voucher.discountType}">AMOUNT</td>
-                        <td th:text="${voucher.discountAmount}">0</td>
+
+                        <td th:text="${voucher.discountType.name() == 'AMOUNT'
+                ? #numbers.formatDecimal(voucher.discountAmount, 0, 'COMMA', 0, 'POINT') + ' VND'
+                : voucher.discountAmount + '%'}">
+                            0
+                        </td>
+
                         <td th:text="${#temporals.format(voucher.effectiveFrom, 'yyyy-MM-dd HH:mm')}">
                             2024-01-01 00:00
                         </td>

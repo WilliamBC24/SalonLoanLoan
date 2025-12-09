@@ -546,7 +546,7 @@
 
                 <div class="summary-item">
                     <span>Subtotal</span>
-                    <span th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+                    <span th:text="${#numbers.formatDecimal(cartSummary.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
                 </div>
 
                 <div class="summary-item" id="shippingFeeRow">
@@ -556,7 +556,8 @@
 
                 <div class="summary-total">
                     <span>Total</span>
-                    <span id="totalPriceText" th:text="${cartSummary.totalPrice} + ' VND'">0 VND</span>
+                    <span id="totalPriceText"
+                          th:text="${#numbers.formatDecimal(cartSummary.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
                 </div>
             </div>
         </div>
@@ -573,6 +574,14 @@
     const OTHER_CITIES_SHIPPING_FEE = 70000;
     const subtotalPrice = [[${cartSummary.totalPrice}]];
 
+    // Money formatter to match Thymeleaf: 1,234,567 + ' VND'
+    function formatMoney(value) {
+        const num = Number(value) || 0;
+        return num
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' VND';
+    }
+
     // Ward/District data for major cities
     const cityWards = {
         'Hanoi': ['Ba Dinh', 'Hoan Kiem', 'Tay Ho', 'Long Bien', 'Cau Giay', 'Dong Da', 'Hai Ba Trung', 'Hoang Mai', 'Thanh Xuan', 'Bac Tu Liem', 'Nam Tu Liem', 'Ha Dong', 'Son Tay', 'Soc Son', 'Dong Anh', 'Gia Lam', 'Thanh Tri', 'Thuong Tin', 'Phu Xuyen', 'Ung Hoa', 'My Duc', 'Thach That', 'Quoc Oai', 'Chuong My', 'Dan Phuong', 'Hoai Duc', 'Thanh Oai', 'Me Linh', 'Ba Vi'],
@@ -586,10 +595,10 @@
         const citySelect = document.getElementById('city');
         const wardSelect = document.getElementById('ward');
         const selectedCity = citySelect.value;
-        
+
         // Clear existing options
         wardSelect.innerHTML = '<option value="">Select a ward/district</option>';
-        
+
         // Populate ward options if city has wards defined
         if (selectedCity && cityWards[selectedCity]) {
             cityWards[selectedCity].forEach(ward => {
@@ -615,9 +624,9 @@
         const shippingFeeText = document.getElementById('shippingFeeText');
         const totalPriceText = document.getElementById('totalPriceText');
         const shippingFeeRow = document.getElementById('shippingFeeRow');
-        
+
         let shippingFee = 0;
-        
+
         if (fulfillmentType && fulfillmentType.value === 'DELIVERY') {
             const city = citySelect.value.toLowerCase();
             if (city === 'hanoi' || city === 'hà nội' || city === 'ha noi') {
@@ -629,10 +638,10 @@
         } else {
             shippingFeeRow.style.display = 'none';
         }
-        
-        shippingFeeText.textContent = shippingFee.toLocaleString('vi-VN') + ' VND';
+
+        shippingFeeText.textContent = formatMoney(shippingFee);
         const totalPrice = subtotalPrice + shippingFee;
-        totalPriceText.textContent = totalPrice.toLocaleString('vi-VN') + ' VND';
+        totalPriceText.textContent = formatMoney(totalPrice);
     }
 
     function selectFulfillment(element) {
@@ -654,7 +663,7 @@
         const inStoreOption = document.getElementById('inStoreOption');
 
         const citySelect = document.getElementById('city');
-        
+
         if (isPickup) {
             deliverySection.classList.add('hidden');
             pickupSection.classList.remove('hidden');
@@ -682,7 +691,7 @@
                 inStoreOption.classList.remove('selected');
             }
         }
-        
+
         // Update shipping fee when fulfillment type changes
         updateShippingFee();
     }
@@ -723,7 +732,7 @@
                 document.getElementById('cityError').style.display = 'block';
                 isValid = false;
             }
-            
+
             const address = document.getElementById('shippingAddress').value.trim();
             if (address.length < 10) {
                 document.getElementById('addressError').style.display = 'block';

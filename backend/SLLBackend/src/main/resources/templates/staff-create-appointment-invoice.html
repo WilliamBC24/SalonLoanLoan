@@ -544,7 +544,7 @@
                                     Loan Loan
                                 </td>
                                 <td class="price"
-                                    th:text="${detail.unitPrice} + ' VND'">
+                                    th:text="${#numbers.formatDecimal(detail.unitPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     150,000 VND
                                 </td>
                             </tr>
@@ -553,14 +553,14 @@
                             <tr th:if="${invoice.discountAmount != null and invoice.discountAmount > 0}">
                                 <td colspan="2" class="row-total-label">Discount</td>
                                 <td class="row-total-value"
-                                    th:text="'- ' + ${invoice.discountAmount} + ' VND'">
+                                    th:text="'- ' + ${#numbers.formatDecimal(invoice.discountAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     - 0 VND
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="2" class="row-total-label">Total</td>
                                 <td class="row-total-value"
-                                    th:text="${invoice.totalAmount} + ' VND'">
+                                    th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     0 VND
                                 </td>
                             </tr>
@@ -666,7 +666,7 @@
                         <!-- Summary total -->
                         <div class="summary-total-inline">
                             <span>Total Amount</span>
-                            <span th:text="${invoice.totalAmount} + ' VND'">
+                            <span th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                 0 VND
                             </span>
                         </div>

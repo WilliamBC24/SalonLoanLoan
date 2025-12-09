@@ -334,8 +334,8 @@
                        th:href="@{/manager/report/appointment}"></a>
                     <div class="kpi-label">Appointments Revenue</div>
                     <div class="kpi-value"
-                         th:text="${#numbers.formatDecimal(monthlyAppointmentRevenue, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                        0 ₫
+                         th:text="${#numbers.formatDecimal(monthlyAppointmentRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                        0 VND
                     </div>
                     <div class="kpi-caption">Total from completed appointments this month.</div>
                 </div>
@@ -346,8 +346,8 @@
                        th:href="@{/manager/report/order}"></a>
                     <div class="kpi-label">Orders Revenue</div>
                     <div class="kpi-value"
-                         th:text="${#numbers.formatDecimal(monthlyOrderRevenue, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                        0 ₫
+                         th:text="${#numbers.formatDecimal(monthlyOrderRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                        0 VND
                     </div>
                     <div class="kpi-caption">Total from product orders this month.</div>
                 </div>
@@ -358,8 +358,8 @@
                        th:href="@{/manager/report/supplier}"></a>
                     <div class="kpi-label">Supplies Cost</div>
                     <div class="kpi-value"
-                         th:text="${#numbers.formatDecimal(monthlySupplyCost, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                        0 ₫
+                         th:text="${#numbers.formatDecimal(monthlySupplyCost, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                        0 VND
                     </div>
                     <div class="kpi-caption">Total spent on suppliers this month.</div>
                 </div>
@@ -368,8 +368,8 @@
                 <div class="kpi-card">
                     <div class="kpi-label">Net Income</div>
                     <div class="kpi-value"
-                         th:text="${#numbers.formatDecimal(monthlyNetIncome, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                        0 ₫
+                         th:text="${#numbers.formatDecimal(monthlyNetIncome, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                        0 VND
                     </div>
                     <div class="kpi-caption">
                         Appointments + Orders − Supplies.
@@ -417,8 +417,8 @@
                                 <tbody>
                                 <tr th:each="row : ${supplierSummary}">
                                     <td th:text="${row.supplierName}">Supplier A</td>
-                                    <td th:text="${#numbers.formatDecimal(row.totalSpent, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                        0 ₫
+                                    <td th:text="${#numbers.formatDecimal(row.totalSpent, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                        0 VND
                                     </td>
                                     <td class="cell-muted"
                                         th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
@@ -508,8 +508,8 @@
                                 <tbody>
                                 <tr th:each="row : ${salesSummary}">
                                     <td th:text="${row.sourceLabel}">Appointments</td>
-                                    <td th:text="${#numbers.formatDecimal(row.grossSales, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                        0 ₫
+                                    <td th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                        0 VND
                                     </td>
                                     <td class="cell-muted"
                                         th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
@@ -533,3 +533,4 @@
 </main>
 </body>
 </html>
+

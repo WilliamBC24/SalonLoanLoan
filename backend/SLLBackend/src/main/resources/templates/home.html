@@ -69,7 +69,7 @@
                             Service description goes here.
                         </p>
                         <p class="price">
-                            <span th:text="'₫' + ${service.servicePrice}">₫0</span>
+                            <span th:text="${#numbers.formatDecimal(service.servicePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
                         </p>
                     </div>
                     </a>
@@ -106,7 +106,7 @@
                             Product description goes here.
                         </p>
                         <p class="price">
-                            <span th:text="'₫' + ${product.currentPrice}">₫0</span>
+                            <span th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
                         </p>
                     </div>
                     </a>

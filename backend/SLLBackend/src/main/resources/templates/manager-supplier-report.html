@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manager - Supplier Report | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles (sidebar + main scroll) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <style>
+        /* ===== PAGE STRUCTURE ===== */
+        .supplier-report-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .supplier-report-layout-inner {
+            max-width: 90vw;
+            width: 100%;
+            margin: 1rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .supplier-report-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ===== */
+        .report-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .report-header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .report-header-title .section-kicker {
+            margin: 0;
+        }
+
+        .report-header-title h2 {
+            margin: 0;
+        }
+
+        .report-header-sub {
+            margin: 0;
+            font-size: 0.88rem;
+            color: #6b7280;
+        }
+
+        .report-period-pill {
+            border-radius: 999px;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .report-period-pill span.emoji {
+            font-size: 1.1rem;
+        }
+
+        /* ===== FILTER FORM ===== */
+        .filter-card {
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: 1.25rem 1.4rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .filter-header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .filter-header-title span.emoji {
+            font-size: 1.1rem;
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) auto;
+            gap: 0.8rem;
+        }
+
+        .filter-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.8rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.82rem;
+        }
+
+        .filter-group select {
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            padding: 0.45rem 0.8rem;
+            font-size: 0.88rem;
+            background: #ffffff;
+            outline: none;
+        }
+
+        .filter-group select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+        }
+
+        .filter-actions {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.6rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== TABLE ===== */
+        .supplier-table-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .supplier-table-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .supplier-table-title h3 {
+            margin: 0;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .supplier-table-title span {
+            font-size: 0.82rem;
+            color: #6b7280;
+        }
+
+        .supplier-meta {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .supplier-table-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        .supplier-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            font-size: 0.88rem;
+        }
+
+        .supplier-table thead {
+            background: #f9fafb;
+        }
+
+        .supplier-table th,
+        .supplier-table td {
+            padding: 0.6rem 0.9rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .supplier-table th {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+            font-weight: 700;
+        }
+
+        .supplier-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .supplier-table tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+        .cell-number {
+            text-align: right;
+        }
+
+        .cell-muted {
+            color: #9ca3af;
+        }
+
+        .empty-row {
+            text-align: center;
+            font-size: 0.88rem;
+            color: #9ca3af;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .supplier-report-layout-inner {
+                padding: 0;
+            }
+
+            .supplier-report-card {
+                padding: 1.8rem 1.4rem;
+            }
+
+            .filter-form {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .filter-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .filter-fields {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .report-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main supplier-report-page">
+    <div class="supplier-report-layout-inner">
+        <section class="supplier-report-card">
+
+            <!-- HEADER -->
+            <div class="report-header-row">
+                <div class="report-header-title section-heading">
+                    <p class="section-kicker">Function 22.2</p>
+                    <h2>Supplier Report</h2>
+                    <p class="report-header-sub">
+                        See how much you spent on each supplier in the selected period.
+                    </p>
+                </div>
+
+                <div class="report-period-pill">
+                    <span>
+                        <span th:text="${selectedMonth}">3</span>/<span th:text="${selectedYear}">2025</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- FILTERS -->
+            <section class="filter-card">
+                <div class="filter-header">
+                    <div class="filter-header-title">
+                        <span>Filter by time range</span>
+                    </div>
+                </div>
+
+                <form class="filter-form"
+                      th:action="@{/manager/report/supplier}"
+                      method="get">
+                    <div class="filter-fields">
+                        <div class="filter-group">
+                            <label for="month-select">Month</label>
+                            <select id="month-select" name="month">
+                                <option th:each="m : ${monthOptions}"
+                                        th:value="${m}"
+                                        th:selected="${m} == ${selectedMonth}"
+                                        th:text="${m}">
+                                    1
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="year-select">Year</label>
+                            <select id="year-select" name="year">
+                                <option th:each="y : ${yearOptions}"
+                                        th:value="${y}"
+                                        th:selected="${y} == ${selectedYear}"
+                                        th:text="${y}">
+                                    2025
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span>Apply</span>
+                        </button>
+                        <a th:href="@{/manager/report/supplier}" class="btn btn-secondary">
+                            <span>Reset</span>
+                        </a>
+                    </div>
+                </form>
+            </section>
+
+            <!-- TABLE SECTION -->
+            <section>
+                <div class="supplier-table-section-header">
+                    <div class="supplier-table-title">
+                        <h3>Suppliers overview</h3>
+                        <span>
+                            <span th:text="${#lists.size(supplierSummary)}">0</span>
+                            suppliers in this period
+                        </span>
+                    </div>
+                    <div class="supplier-meta">
+                        Amounts shown in VND.
+                    </div>
+                </div>
+
+                <div class="supplier-table-wrapper">
+                    <table class="supplier-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Supplier</th>
+                            <th class="cell-number">Total Spent</th>
+                            <th class="cell-number">Share</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="row, iterStat : ${supplierSummary}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${row.supplierName}">Supplier A</td>
+                            <td class="cell-number"
+                                th:text="${#numbers.formatDecimal(row.totalSpent, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                0 ₫
+                            </td>
+                            <td class="cell-number cell-muted"
+                                th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
+                                0.0%
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(supplierSummary)}">
+                            <td colspan="4" class="empty-row">
+                                No supplier data for the selected period.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </section>
+    </div>
+</main>
+</body>
+</html>

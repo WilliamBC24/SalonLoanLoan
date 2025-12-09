@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manager - Satisfaction Report | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles (sidebar + main scroll) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <style>
+        /* ===== PAGE STRUCTURE ===== */
+        .satisfaction-report-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .satisfaction-report-layout-inner {
+            max-width: 90vw;
+            width: 100%;
+            margin: 1rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .satisfaction-report-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ===== */
+        .report-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .report-header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .report-header-title .section-kicker {
+            margin: 0;
+        }
+
+        .report-header-title h2 {
+            margin: 0;
+        }
+
+        .report-header-sub {
+            margin: 0;
+            font-size: 0.88rem;
+            color: #6b7280;
+        }
+
+        .report-period-pill {
+            border-radius: 999px;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .report-period-pill span.emoji {
+            font-size: 1.1rem;
+        }
+
+        /* ===== FILTER FORM ===== */
+        .filter-card {
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: 1.25rem 1.4rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .filter-header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .filter-header-title span.emoji {
+            font-size: 1.1rem;
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) auto;
+            gap: 0.8rem;
+        }
+
+        .filter-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.8rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.82rem;
+        }
+
+        .filter-group select {
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            padding: 0.45rem 0.8rem;
+            font-size: 0.88rem;
+            background: #ffffff;
+            outline: none;
+        }
+
+        .filter-group select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+        }
+
+        .filter-actions {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.6rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== SUMMARY CARDS ===== */
+        .satisfaction-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .satisfaction-summary-card {
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            padding: 1rem 1.1rem;
+            background: #f9fafb;
+        }
+
+        .satisfaction-summary-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .satisfaction-summary-rating {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+
+        .satisfaction-summary-rating span.unit {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .satisfaction-summary-meta {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* ===== TABLE ===== */
+        .satisfaction-table-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .satisfaction-table-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .satisfaction-table-title h3 {
+            margin: 0;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .satisfaction-table-title span {
+            font-size: 0.82rem;
+            color: #6b7280;
+        }
+
+        .satisfaction-meta {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .satisfaction-table-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        .satisfaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            font-size: 0.88rem;
+        }
+
+        .satisfaction-table thead {
+            background: #f9fafb;
+        }
+
+        .satisfaction-table th,
+        .satisfaction-table td {
+            padding: 0.6rem 0.9rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .satisfaction-table th {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+            font-weight: 700;
+        }
+
+        .satisfaction-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .satisfaction-table tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+        .cell-number {
+            text-align: right;
+        }
+
+        .cell-muted {
+            color: #9ca3af;
+        }
+
+        .empty-row {
+            text-align: center;
+            font-size: 0.88rem;
+            color: #9ca3af;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .satisfaction-report-layout-inner {
+                padding: 0;
+            }
+
+            .satisfaction-report-card {
+                padding: 1.8rem 1.4rem;
+            }
+
+            .filter-form {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .filter-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .satisfaction-summary-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .report-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .filter-fields {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main satisfaction-report-page">
+    <div class="satisfaction-report-layout-inner">
+        <section class="satisfaction-report-card">
+
+            <!-- HEADER -->
+            <div class="report-header-row">
+                <div class="report-header-title section-heading">
+                    <p class="section-kicker">Function 22.3</p>
+                    <h2>Satisfaction Report</h2>
+                    <p class="report-header-sub">
+                        Track how satisfied customers are with appointments and product orders.
+                    </p>
+                </div>
+
+                <div class="report-period-pill">
+                    <span>
+                        <span th:text="${selectedMonth}">3</span>/<span th:text="${selectedYear}">2025</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- FILTERS -->
+            <section class="filter-card">
+                <div class="filter-header">
+                    <div class="filter-header-title">
+                        <span>Filter by time range</span>
+                    </div>
+                </div>
+
+                <form class="filter-form"
+                      th:action="@{/manager/report/satisfaction}"
+                      method="get">
+                    <div class="filter-fields">
+                        <div class="filter-group">
+                            <label for="month-select">Month</label>
+                            <select id="month-select" name="month">
+                                <option th:each="m : ${monthOptions}"
+                                        th:value="${m}"
+                                        th:selected="${m} == ${selectedMonth}"
+                                        th:text="${m}">
+                                    1
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="year-select">Year</label>
+                            <select id="year-select" name="year">
+                                <option th:each="y : ${yearOptions}"
+                                        th:value="${y}"
+                                        th:selected="${y} == ${selectedYear}"
+                                        th:text="${y}">
+                                    2025
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span>Apply</span>
+                        </button>
+                        <a th:href="@{/manager/report/satisfaction}" class="btn btn-secondary">
+                            <span>Reset</span>
+                        </a>
+                    </div>
+                </form>
+            </section>
+
+            <!-- SUMMARY CARDS (Appointments / Product Orders) -->
+            <section class="satisfaction-summary-grid">
+                <div class="satisfaction-summary-card"
+                     th:if="${!#lists.isEmpty(satisfactionSummary)}"
+                     th:with="row=${satisfactionSummary[0]}">
+                    <div class="satisfaction-summary-title"
+                         th:text="${row.segmentLabel}">
+                        Appointments
+                    </div>
+                    <div class="satisfaction-summary-rating">
+                        <span th:text="${row.averageRating != null ? #numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA') : '-'}">
+                            4.5
+                        </span>
+                        <span class="unit">/ 5</span>
+                    </div>
+                    <div class="satisfaction-summary-meta">
+                        <span th:text="${row.responseCount}">0</span> responses
+                        for this segment.
+                    </div>
+                </div>
+
+                <div class="satisfaction-summary-card"
+                     th:if="${#lists.size(satisfactionSummary) > 1}"
+                     th:with="row=${satisfactionSummary[1]}">
+                    <div class="satisfaction-summary-title"
+                         th:text="${row.segmentLabel}">
+                        Product Orders
+                    </div>
+                    <div class="satisfaction-summary-rating">
+                        <span th:text="${row.averageRating != null ? #numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA') : '-'}">
+                            4.3
+                        </span>
+                        <span class="unit">/ 5</span>
+                    </div>
+                    <div class="satisfaction-summary-meta">
+                        <span th:text="${row.responseCount}">0</span> responses
+                        for this segment.
+                    </div>
+                </div>
+            </section>
+
+            <!-- TABLE SECTION -->
+            <section>
+                <div class="satisfaction-table-section-header">
+                    <div class="satisfaction-table-title">
+                        <h3>Satisfaction by segment</h3>
+                        <span>
+                            Overview of ratings and response counts.
+                        </span>
+                    </div>
+                    <div class="satisfaction-meta">
+                        Ratings are shown on a 1–5 scale.
+                    </div>
+                </div>
+
+                <div class="satisfaction-table-wrapper">
+                    <table class="satisfaction-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Segment</th>
+                            <th class="cell-number">Average Rating</th>
+                            <th class="cell-number">Responses</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="row, iterStat : ${satisfactionSummary}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${row.segmentLabel}">Appointments</td>
+                            <td class="cell-number"
+                                th:text="${row.averageRating != null ? #numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA') : '-'}">
+                                4.5
+                            </td>
+                            <td class="cell-number"
+                                th:text="${row.responseCount}">0</td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(satisfactionSummary)}">
+                            <td colspan="4" class="empty-row">
+                                No satisfaction data for the selected period.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </section>
+    </div>
+</main>
+</body>
+</html>

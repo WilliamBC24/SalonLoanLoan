@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manager - Reports Dashboard | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles (sidebar + main scroll) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <style>
+        /* ===== PAGE STRUCTURE ===== */
+        .report-dashboard-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .report-dashboard-layout-inner {
+            max-width: 90vw;
+            width: 100%;
+            margin: 1rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .report-dashboard-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ===== */
+        .report-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .report-title-block {
+            text-align: left;
+        }
+
+        .report-title-block .section-kicker {
+            margin-bottom: 0.25rem;
+        }
+
+        .report-title-block h2 {
+            margin: 0;
+        }
+
+        .report-subtext {
+            margin: 0.2rem 0 0;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .report-period-pill {
+            border-radius: 999px;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .report-period-pill span.emoji {
+            font-size: 1rem;
+        }
+
+        /* ===== KPI GRID ===== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            padding: 1.3rem 1.2rem;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            position: relative;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+        }
+
+        .kpi-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .kpi-caption {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .kpi-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            border-radius: 999px;
+            padding: 0.18rem 0.55rem;
+            font-size: 0.75rem;
+            background: #ecfdf5;
+            color: #15803d;
+        }
+
+        .kpi-pill.negative {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        /* ===== REPORT TILES (TABLES) ===== */
+        .report-tiles {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.6rem;
+        }
+
+        .report-tile {
+            position: relative;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+        }
+
+        /* Sales (bottom) takes full width */
+        .report-tile.report-tile-wide {
+            grid-column: 1 / -1;
+        }
+
+        /* Make entire tile clickable */
+        .report-tile-link {
+            position: absolute;
+            inset: 0;
+            z-index: 9999 !important;
+            display: block;
+        }
+
+        .report-tile-inner {
+            position: relative;
+            z-index: 2;
+            padding: 1.4rem 1.5rem 1.3rem;
+        }
+
+        .report-tile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .report-tile-title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .report-tile-title {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .report-tile-kicker {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+        }
+
+        .report-tile-meta {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .report-tile-chevron {
+            font-size: 1rem;
+            color: #9ca3af;
+        }
+
+        .report-tile:hover {
+            background: #f9fafb;
+        }
+
+        .report-tile:hover .report-tile-chevron {
+            color: #4b5563;
+        }
+
+        .report-tile:hover .report-tile-link {
+            cursor: pointer;
+        }
+
+        /* Small tables */
+        .report-table-wrapper {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+        }
+
+        .report-table thead {
+            background: #f9fafb;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 0.55rem 0.85rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .report-table th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+            font-weight: 700;
+        }
+
+        .report-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .report-table tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+        .report-table .cell-muted {
+            color: #9ca3af;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.86rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1100px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .report-tiles {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .report-tile.report-tile-wide {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .report-dashboard-layout-inner {
+                padding: 0;
+            }
+
+            .report-dashboard-card {
+                padding: 1.8rem 1.4rem;
+            }
+
+            .report-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .kpi-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main report-dashboard-page">
+    <div class="report-dashboard-layout-inner">
+        <section class="report-dashboard-card">
+            <!-- Header -->
+            <div class="report-header-row">
+                <div class="report-title-block section-heading">
+                    <p class="section-kicker">Manager Reports</p>
+                    <h2>Monthly Performance Overview</h2>
+                    <p class="report-subtext">
+                        Track this month’s revenue, costs, and key reports across appointments and orders.
+                    </p>
+                </div>
+
+                <div class="report-period-pill">
+                    <span th:text="${currentMonthLabel}">March 2025</span>
+                </div>
+            </div>
+
+            <!-- KPI CARDS -->
+            <div class="kpi-grid">
+                <!-- Appointments revenue -->
+                <div class="kpi-card">
+                    <a class="report-tile-link"
+                       th:href="@{/manager/report/appointment}"></a>
+                    <div class="kpi-label">Appointments Revenue</div>
+                    <div class="kpi-value"
+                         th:text="${#numbers.formatDecimal(monthlyAppointmentRevenue, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                        0 ₫
+                    </div>
+                    <div class="kpi-caption">Total from completed appointments this month.</div>
+                </div>
+
+                <!-- Orders revenue -->
+                <div class="kpi-card">
+                    <a class="report-tile-link"
+                       th:href="@{/manager/report/order}"></a>
+                    <div class="kpi-label">Orders Revenue</div>
+                    <div class="kpi-value"
+                         th:text="${#numbers.formatDecimal(monthlyOrderRevenue, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                        0 ₫
+                    </div>
+                    <div class="kpi-caption">Total from product orders this month.</div>
+                </div>
+
+                <!-- Supplies cost -->
+                <div class="kpi-card">
+                    <a class="report-tile-link"
+                       th:href="@{/manager/report/supplier}"></a>
+                    <div class="kpi-label">Supplies Cost</div>
+                    <div class="kpi-value"
+                         th:text="${#numbers.formatDecimal(monthlySupplyCost, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                        0 ₫
+                    </div>
+                    <div class="kpi-caption">Total spent on suppliers this month.</div>
+                </div>
+
+                <!-- Net income -->
+                <div class="kpi-card">
+                    <div class="kpi-label">Net Income</div>
+                    <div class="kpi-value"
+                         th:text="${#numbers.formatDecimal(monthlyNetIncome, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                        0 ₫
+                    </div>
+                    <div class="kpi-caption">
+                        Appointments + Orders − Supplies.
+                    </div>
+                    <!-- Optional chip (e.g., vs. last month) -->
+                    <div class="kpi-pill"
+                         th:classappend="${monthlyNetIncomeGrowth &lt; 0} ? ' negative'">
+                        <span th:text="${monthlyNetIncomeGrowth &gt;= 0 ? '▲' : '▼'}">▲</span>
+                        <span th:text="${#numbers.formatDecimal(monthlyNetIncomeGrowth, 1, 'POINT', 1, 'COMMA')} + '%'">
+                            0.0%
+                        </span>
+                        <span>vs. last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REPORT TILES -->
+            <div class="report-tiles">
+
+                <!-- Function 22.2: Supplier Report -->
+                <section class="report-tile">
+                    <a class="report-tile-link"
+                       th:href="@{/manager/report/supplier}"></a>
+
+                    <div class="report-tile-inner">
+                        <div class="report-tile-header">
+                            <div class="report-tile-title-block">
+                                <h3 class="report-tile-title">Supplier Report</h3>
+                                <span class="report-tile-meta">
+                                    How much you spent on each supplier this month.
+                                </span>
+                            </div>
+                            <span class="report-tile-chevron">➜</span>
+                        </div>
+
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                <tr>
+                                    <th>Supplier</th>
+                                    <th>Total Spent</th>
+                                    <th class="cell-muted">Share</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row : ${supplierSummary}">
+                                    <td th:text="${row.supplierName}">Supplier A</td>
+                                    <td th:text="${#numbers.formatDecimal(row.totalSpent, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                        0 ₫
+                                    </td>
+                                    <td class="cell-muted"
+                                        th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
+                                        0.0%
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(supplierSummary)}">
+                                    <td colspan="3" class="empty-row">
+                                        No supplier data for this period.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Function 22.3: Satisfaction Report -->
+                <section class="report-tile">
+                    <a class="report-tile-link"
+                       th:href="@{/manager/report/satisfaction}"></a>
+
+                    <div class="report-tile-inner">
+                        <div class="report-tile-header">
+                            <div class="report-tile-title-block">
+                                <h3 class="report-tile-title">Satisfaction Report</h3>
+                                <span class="report-tile-meta">
+                                    Customer satisfaction across appointments and product orders.
+                                </span>
+                            </div>
+                            <span class="report-tile-chevron">➜</span>
+                        </div>
+
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                <tr>
+                                    <th>Segment</th>
+                                    <th>Avg. Rating</th>
+                                    <th>Responses</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row : ${satisfactionSummary}">
+                                    <td th:text="${row.segmentLabel}">Appointments</td>
+                                    <td th:text="${#numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA')}">
+                                        0.0
+                                    </td>
+                                    <td th:text="${row.responseCount}">0</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(satisfactionSummary)}">
+                                    <td colspan="3" class="empty-row">
+                                        No satisfaction data for this period.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Function 22.5: Sales Report -->
+                <section class="report-tile report-tile-wide">
+                    <a class="report-tile-link"
+                       th:href="@{/manager/report/sales}"></a>
+
+                    <div class="report-tile-inner">
+                        <div class="report-tile-header">
+                            <div class="report-tile-title-block">
+                                <h3 class="report-tile-title">Sales Report</h3>
+                                <span class="report-tile-meta">
+                                    See how much you made from appointments vs. product orders.
+                                </span>
+                            </div>
+                            <span class="report-tile-chevron">➜</span>
+                        </div>
+
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Gross Sales</th>
+                                    <th class="cell-muted">Share</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row : ${salesSummary}">
+                                    <td th:text="${row.sourceLabel}">Appointments</td>
+                                    <td th:text="${#numbers.formatDecimal(row.grossSales, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                        0 ₫
+                                    </td>
+                                    <td class="cell-muted"
+                                        th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
+                                        0.0%
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(salesSummary)}">
+                                    <td colspan="3" class="empty-row">
+                                        No sales data for this period.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>

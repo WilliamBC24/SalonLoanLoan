@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin - Commission Settings | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global layout + styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <style>
+        /* ===== PAGE STRUCTURE ===== */
+        .commission-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .commission-layout-inner {
+            max-width: 85vw;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .commission-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ROW ===== */
+        .commission-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .commission-title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .commission-subtext {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .commission-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        /* ===== TABLE ===== */
+        .commission-table-wrapper {
+            margin-top: 0.75rem;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .commission-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .commission-table thead {
+            background: #f9fafb;
+        }
+
+        .commission-table th,
+        .commission-table td {
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .commission-table th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+        }
+
+        .commission-table tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .position-cell-main {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .position-cell-sub {
+            font-size: 0.78rem;
+            color: #6b7280;
+        }
+
+        .commission-type-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.15rem 0.6rem;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .commission-input {
+            max-width: 100px;
+            padding: 0.3rem 0.4rem;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 0.9rem;
+        }
+
+        .commission-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+        }
+
+        .commission-percent-suffix {
+            margin-left: 0.15rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        /* ===== FOOTER BUTTONS ===== */
+        .commission-footer {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #ffffff;
+            border-radius: 999px;
+            padding: 0.5rem 1.2rem;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.05);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary-link {
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-right: 0.75rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .commission-layout-inner {
+                max-width: 95vw;
+            }
+
+            .commission-card {
+                padding: 1.7rem 1.4rem;
+            }
+
+            .commission-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .commission-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .commission-table thead {
+                display: none;
+            }
+
+            .commission-table,
+            .commission-table tbody,
+            .commission-table tr,
+            .commission-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .commission-table tr {
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .commission-table td {
+                border: none;
+                padding: 0.6rem 0.9rem;
+            }
+
+            .commission-table td::before {
+                content: attr(data-label);
+                display: block;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: #6b7280;
+                margin-bottom: 0.15rem;
+            }
+
+            .commission-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+
+            .btn-secondary-link {
+                margin-right: 0;
+                align-self: flex-start;
+            }
+
+            .btn-primary {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Sidebar / header for admin area -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main commission-page">
+    <div class="commission-layout-inner">
+        <section class="commission-card">
+
+            <!-- HEADER -->
+            <div class="commission-header-row">
+                <div class="commission-title-block section-heading">
+                    <p class="section-kicker">Admin Settings</p>
+                    <h2>Commission Configuration</h2>
+                    <p class="commission-subtext">
+                        View and update commission percentages by staff position and commission type.
+                    </p>
+                </div>
+
+                <div class="commission-actions">
+                    <!-- Placeholder for future filters, if needed -->
+                    <span style="font-size: 0.85rem; color: #6b7280;">
+                        All commissions are stored in real time.
+                    </span>
+                </div>
+            </div>
+
+            <!-- FLASH MESSAGES -->
+            <div th:if="${successMessage}" class="alert alert-success"
+                 th:text="${successMessage}">
+                Commission percentages updated successfully.
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-error"
+                 th:text="${errorMessage}">
+                Something went wrong.
+            </div>
+
+            <!-- FORM -->
+            <form th:action="@{/admin/commission}" method="post">
+<!--                <input type="hidden"-->
+<!--                       th:name="${_csrf.parameterName}"-->
+<!--                       th:value="${_csrf.token}" />-->
+
+                <div class="commission-table-wrapper">
+                    <table class="commission-table">
+                        <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Commission Type</th>
+                            <th>Commission (%)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="c : ${commissions}">
+                            <!-- Hidden ID -->
+                            <input type="hidden" name="id" th:value="${c.id}" />
+
+                            <!-- Position -->
+                            <td data-label="Position">
+                                <div class="position-cell-main"
+                                     th:text="${c.position.positionName}">Stylist</div>
+                            </td>
+
+                            <!-- Commission Type -->
+                            <td data-label="Commission Type">
+                                <span class="commission-type-tag"
+                                      th:text="${#strings.replace(c.commissionType.name(), '_', ' ')}">
+                                    SERVICE
+                                </span>
+                            </td>
+
+                            <!-- Commission % -->
+                            <td data-label="Commission (%)">
+                                <div style="display: flex; align-items: center;">
+                                    <input class="commission-input"
+                                           type="number"
+                                           name="commission"
+                                           min="0" max="100" step="1"
+                                           th:value="${c.commission}" />
+                                    <span class="commission-percent-suffix">%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- FOOTER BUTTONS -->
+                <div class="commission-footer">
+                    <button type="reset" class="btn-secondary-link">
+                        Reset changes
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        Save changes
+                        <span aria-hidden="true">💾</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+</body>
+</html>

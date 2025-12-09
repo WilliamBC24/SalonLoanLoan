@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manager - Create Expense | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+    <style>
+        .expense-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .expense-layout-inner {
+            max-width: 700px;
+            width: 100%;
+            margin: 1rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .expense-card {
+            background: #ffffff;
+            padding: 2rem 2.3rem;
+            border-radius: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.4rem;
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+            color: #444;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #d0d0d0;
+            font-size: 0.95rem;
+            transition: border-color .2s, box-shadow .2s;
+            background: #fff;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255,132,0,0.25);
+        }
+
+        .form-textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            margin-top: 1.6rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-outline {
+            padding: 0.7rem 1.5rem;
+        }
+
+        .alert {
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .expense-layout-inner {
+                padding: 0 1rem;
+            }
+
+            .expense-card {
+                padding: 1.6rem 1.4rem;
+            }
+
+            .section-title {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Staff Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main expense-page">
+    <div class="expense-layout-inner">
+
+        <h1 class="section-title">Create New Expense</h1>
+
+        <!-- SUCCESS / ERROR ALERTS -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <div class="expense-card">
+            <form th:action="@{/manager/report/expense/create}" method="post" th:object="${expenseDto}">
+
+                <!-- CATEGORY -->
+                <div class="form-group">
+                    <label class="form-label">Expense Category *</label>
+                    <select class="form-select" th:field="*{expenseCategoryId}" required>
+                        <option value="">-- Select Category --</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.id}"
+                                th:text="${cat.name}">
+                        </option>
+                    </select>
+                    <p class="error" th:if="${#fields.hasErrors('expenseCategoryId')}"
+                       th:errors="*{expenseCategoryId}"></p>
+                </div>
+
+                <!-- AMOUNT -->
+                <div class="form-group">
+                    <label class="form-label">Amount (₫) *</label>
+                    <input class="form-input"
+                           type="number"
+                           th:field="*{amount}"
+                           placeholder="Enter amount..."
+                           min="1"
+                           required>
+                    <p class="error" th:if="${#fields.hasErrors('amount')}"
+                       th:errors="*{amount}"></p>
+                </div>
+
+                <!-- DATE INCURRED -->
+                <div class="form-group">
+                    <label class="form-label">Date Incurred *</label>
+                    <input class="form-input"
+                           name="dateIncurred"
+                           type="date"
+                           th:field="*{dateIncurred}"
+                           required>
+                    <p class="error" th:if="${#fields.hasErrors('dateIncurred')}"
+                       th:errors="*{dateIncurred}"></p>
+                    <div style="margin-top: 0.4rem;">
+                        <button type="button"
+                                class="btn-secondary"
+                                style="padding: 0.35rem 0.8rem; border-radius: 999px; font-size: 0.8rem;"
+                                onclick="document.querySelector('input[name=\'dateIncurred\']').value = new Date().toISOString().substring(0,10);">
+                            Use Today
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- NOTE -->
+                <div class="form-group">
+                    <label class="form-label">Note (Optional)</label>
+                    <textarea class="form-textarea"
+                              th:field="*{note}"
+                              placeholder="Additional details..."></textarea>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="form-actions">
+                    <a th:href="@{/manager/report/expense/list}" class="btn-outline">Cancel</a>
+                    <button type="submit" class="btn-primary">Create Expense</button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

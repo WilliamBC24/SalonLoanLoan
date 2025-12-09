@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Satisfaction Report | Salon Loan Loan</title>
+    <title>Manager - Expense Report | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -11,20 +11,20 @@
 
     <style>
         /* ===== PAGE STRUCTURE ===== */
-        .satisfaction-report-page {
+        .expense-report-page {
             padding: 2.5rem 0 3rem;
             background: var(--bg-light);
             min-height: 100vh;
         }
 
-        .satisfaction-report-layout-inner {
+        .expense-report-layout-inner {
             max-width: 90vw;
             width: 100%;
             margin: 1rem auto;
             padding: 0 1.5rem;
         }
 
-        .satisfaction-report-card {
+        .expense-report-card {
             background: #ffffff;
             padding: 2.2rem;
             border-radius: var(--radius-lg);
@@ -184,48 +184,8 @@
             background: #f3f4f6;
         }
 
-        /* ===== SUMMARY CARDS ===== */
-        .satisfaction-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 1.1rem;
-            margin-bottom: 1.6rem;
-        }
-
-        .satisfaction-summary-card {
-            border-radius: 18px;
-            border: 1px solid #e5e7eb;
-            padding: 1rem 1.1rem;
-            background: #f9fafb;
-        }
-
-        .satisfaction-summary-title {
-            font-size: 0.88rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .satisfaction-summary-rating {
-            font-size: 1.4rem;
-            font-weight: 700;
-            display: flex;
-            align-items: baseline;
-            gap: 0.25rem;
-        }
-
-        .satisfaction-summary-rating span.unit {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        .satisfaction-summary-meta {
-            font-size: 0.8rem;
-            color: #6b7280;
-            margin-top: 0.25rem;
-        }
-
         /* ===== TABLE ===== */
-        .satisfaction-table-section-header {
+        .expense-table-section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -233,30 +193,30 @@
             margin-bottom: 0.85rem;
         }
 
-        .satisfaction-table-title {
+        .expense-table-title {
             display: flex;
             flex-direction: column;
             gap: 0.2rem;
         }
 
-        .satisfaction-table-title h3 {
+        .expense-table-title h3 {
             margin: 0;
             font-size: 0.98rem;
             font-weight: 700;
             color: #111827;
         }
 
-        .satisfaction-table-title span {
+        .expense-table-title span {
             font-size: 0.82rem;
             color: #6b7280;
         }
 
-        .satisfaction-meta {
+        .expense-meta {
             font-size: 0.8rem;
             color: #9ca3af;
         }
 
-        .satisfaction-table-wrapper {
+        .expense-table-wrapper {
             border-radius: 18px;
             overflow: hidden;
             box-shadow: var(--shadow-soft);
@@ -264,25 +224,25 @@
             background: #ffffff;
         }
 
-        .satisfaction-table {
+        .expense-table {
             width: 100%;
             border-collapse: collapse;
             background: transparent;
             font-size: 0.88rem;
         }
 
-        .satisfaction-table thead {
+        .expense-table thead {
             background: #f9fafb;
         }
 
-        .satisfaction-table th,
-        .satisfaction-table td {
+        .expense-table th,
+        .expense-table td {
             padding: 0.6rem 0.9rem;
             border-bottom: 1px solid #e5e7eb;
             text-align: left;
         }
 
-        .satisfaction-table th {
+        .expense-table th {
             font-size: 0.78rem;
             text-transform: uppercase;
             letter-spacing: 0.06em;
@@ -290,11 +250,11 @@
             font-weight: 700;
         }
 
-        .satisfaction-table tbody tr:last-child td {
+        .expense-table tbody tr:last-child td {
             border-bottom: none;
         }
 
-        .satisfaction-table tbody tr:hover {
+        .expense-table tbody tr:hover {
             background: #f3f4f6;
         }
 
@@ -314,11 +274,11 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
-            .satisfaction-report-layout-inner {
+            .expense-report-layout-inner {
                 padding: 0;
             }
 
-            .satisfaction-report-card {
+            .expense-report-card {
                 padding: 1.8rem 1.4rem;
             }
 
@@ -331,20 +291,14 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .satisfaction-summary-grid {
+        @media (max-width: 640px) {
+            .filter-fields {
                 grid-template-columns: minmax(0, 1fr);
             }
 
             .report-header-row {
                 flex-direction: column;
                 align-items: flex-start;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .filter-fields {
-                grid-template-columns: minmax(0, 1fr);
             }
         }
     </style>
@@ -355,24 +309,24 @@
 <div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
 
 <!-- MAIN CONTENT -->
-<main class="staff-main satisfaction-report-page">
-    <div class="satisfaction-report-layout-inner">
-        <section class="satisfaction-report-card">
+<main class="staff-main expense-report-page">
+    <div class="expense-report-layout-inner">
+        <section class="expense-report-card">
 
             <!-- HEADER -->
             <div class="report-header-row">
                 <div class="report-header-title section-heading">
-                    <p class="section-kicker">Satisfaction</p>
-                    <h2>Satisfaction Report</h2>
+                    <p class="section-kicker">Expense</p>
+                    <h2>Expense Report</h2>
                     <p class="report-header-sub">
-                        Track how satisfied customers are with appointments and product orders.
+                        See how your expenses are distributed across categories in the selected period.
                     </p>
                 </div>
 
                 <div class="report-period-pill">
-                    <span>
-                        <span th:text="${selectedMonth}">3</span>/<span th:text="${selectedYear}">2025</span>
-                    </span>
+                <span>
+                    <span th:text="${selectedMonth}">3</span>/<span th:text="${selectedYear}">2025</span>
+                </span>
                 </div>
             </div>
 
@@ -385,7 +339,7 @@
                 </div>
 
                 <form class="filter-form"
-                      th:action="@{/manager/report/satisfaction}"
+                      th:action="@{/manager/report/expense/list}"
                       method="get">
                     <div class="filter-fields">
                         <div class="filter-group">
@@ -417,93 +371,58 @@
                         <button type="submit" class="btn btn-primary">
                             <span>Apply</span>
                         </button>
-                        <a th:href="@{/manager/report/satisfaction}" class="btn btn-secondary">
+                        <a th:href="@{/manager/report/expense/list}" class="btn btn-secondary">
                             <span>Reset</span>
+                        </a>
+                        <a th:href="@{/manager/report/expense}" class="btn btn-primary" style="background:#059669;">
+                            <span>Create New Expense</span>
                         </a>
                     </div>
                 </form>
             </section>
 
-            <!-- SUMMARY CARDS (Appointments / Product Orders) -->
-            <section class="satisfaction-summary-grid">
-                <div class="satisfaction-summary-card"
-                     th:if="${!#lists.isEmpty(satisfactionSummary)}"
-                     th:with="row=${satisfactionSummary[0]}">
-                    <div class="satisfaction-summary-title"
-                         th:text="${row.segmentLabel}">
-                        Appointments
-                    </div>
-                    <div class="satisfaction-summary-rating">
-                        <span th:text="${row.averageRating != null ? #numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA') : '-'}">
-                            4.5
-                        </span>
-                        <span class="unit">/ 5</span>
-                    </div>
-                    <div class="satisfaction-summary-meta">
-                        <span th:text="${row.responseCount}">0</span> responses
-                        for this segment.
-                    </div>
-                </div>
-
-                <div class="satisfaction-summary-card"
-                     th:if="${#lists.size(satisfactionSummary) > 1}"
-                     th:with="row=${satisfactionSummary[1]}">
-                    <div class="satisfaction-summary-title"
-                         th:text="${row.segmentLabel}">
-                        Product Orders
-                    </div>
-                    <div class="satisfaction-summary-rating">
-                        <span th:text="${row.averageRating != null ? #numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA') : '-'}">
-                            4.3
-                        </span>
-                        <span class="unit">/ 5</span>
-                    </div>
-                    <div class="satisfaction-summary-meta">
-                        <span th:text="${row.responseCount}">0</span> responses
-                        for this segment.
-                    </div>
-                </div>
-            </section>
-
             <!-- TABLE SECTION -->
             <section>
-                <div class="satisfaction-table-section-header">
-                    <div class="satisfaction-table-title">
-                        <h3>Satisfaction by segment</h3>
+                <div class="expense-table-section-header">
+                    <div class="expense-table-title">
+                        <h3>Expenses overview</h3>
                         <span>
-                            Overview of ratings and response counts.
-                        </span>
+                        <span th:text="${#lists.size(expenseSummary)}">0</span>
+                        categories in this period
+                    </span>
                     </div>
-                    <div class="satisfaction-meta">
-                        Ratings are shown on a 1–5 scale.
+                    <div class="expense-meta">
+                        Amounts shown in VND.
                     </div>
                 </div>
 
-                <div class="satisfaction-table-wrapper">
-                    <table class="satisfaction-table">
+                <div class="expense-table-wrapper">
+                    <table class="expense-table">
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Segment</th>
-                            <th class="cell-number">Average Rating</th>
-                            <th class="cell-number">Responses</th>
+                            <th>Category</th>
+                            <th class="cell-number">Total Spent</th>
+                            <th class="cell-number">Share</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="row, iterStat : ${satisfactionSummary}">
+                        <tr th:each="row, iterStat : ${expenseSummary}">
                             <td th:text="${iterStat.count}">1</td>
-                            <td th:text="${row.segmentLabel}">Appointments</td>
+                            <td th:text="${row.categoryName}">Utilities</td>
                             <td class="cell-number"
-                                th:text="${row.averageRating != null ? #numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA') : '-'}">
-                                4.5
+                                th:text="${#numbers.formatDecimal(row.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                0 VND
                             </td>
-                            <td class="cell-number"
-                                th:text="${row.responseCount}">0</td>
+                            <td class="cell-number cell-muted"
+                                th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
+                                0.0%
+                            </td>
                         </tr>
 
-                        <tr th:if="${#lists.isEmpty(satisfactionSummary)}">
+                        <tr th:if="${#lists.isEmpty(expenseSummary)}">
                             <td colspan="4" class="empty-row">
-                                No satisfaction data for the selected period.
+                                No expense data for the selected period.
                             </td>
                         </tr>
                         </tbody>

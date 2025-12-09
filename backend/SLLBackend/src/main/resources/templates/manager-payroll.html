@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manager - Payroll | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global layout + styles -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <style>
+        /* ===== PAGE STRUCTURE ===== */
+        .payroll-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .payroll-layout-inner {
+            max-width: 85vw;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .payroll-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ROW ===== */
+        .payroll-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payroll-title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .payroll-subtext {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .payroll-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .month-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            padding: 0.3rem 0.65rem;
+            background: #f9fafb;
+            font-size: 0.85rem;
+        }
+
+        .month-nav button {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0.1rem 0.25rem;
+            font-size: 1rem;
+        }
+
+        .month-label {
+            font-weight: 600;
+            padding: 0 0.5rem;
+            white-space: nowrap;
+        }
+
+        /* ===== SUMMARY ===== */
+        .payroll-summary {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #4b5563;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+        }
+
+        .summary-item-label {
+            font-weight: 500;
+            margin-right: 0.25rem;
+        }
+
+        /* ===== TABLE ===== */
+        .payroll-table-wrapper {
+            margin-top: 0.5rem;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .payroll-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .payroll-table thead {
+            background: #f9fafb;
+        }
+
+        .payroll-table th,
+        .payroll-table td {
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .payroll-table th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+        }
+
+        .payroll-table tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .staff-cell-main {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .staff-cell-sub {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .money-cell {
+            text-align: right;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .money-positive {
+            color: #15803d;
+        }
+
+        .money-negative {
+            color: #b91c1c;
+        }
+
+        .total-row {
+            background: #fefce8;
+            font-weight: 600;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .payroll-layout-inner {
+                max-width: 95vw;
+            }
+
+            .payroll-card {
+                padding: 1.7rem 1.4rem;
+            }
+
+            .payroll-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .payroll-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .payroll-table thead {
+                display: none;
+            }
+
+            .payroll-table,
+            .payroll-table tbody,
+            .payroll-table tr,
+            .payroll-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .payroll-table tr {
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .payroll-table td {
+                border: none;
+                padding: 0.6rem 0.9rem;
+            }
+
+            .payroll-table td::before {
+                content: attr(data-label);
+                display: block;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: #6b7280;
+                margin-bottom: 0.15rem;
+            }
+
+            .money-cell {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Manager header / sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main payroll-page">
+    <div class="payroll-layout-inner">
+        <section class="payroll-card">
+
+            <!-- HEADER -->
+            <div class="payroll-header-row">
+                <div class="payroll-title-block section-heading">
+                    <p class="section-kicker">Manager View</p>
+                    <h2>Monthly Payroll</h2>
+                    <p class="payroll-subtext">
+                        Overview of staff commission, bonuses and deductions for this month.
+                    </p>
+                </div>
+
+                <div class="payroll-controls">
+                    <form th:action="@{/manager/payroll}" method="get" class="month-nav">
+                        <button type="submit"
+                                name="monthOffset"
+                                th:value="${monthOffset - 1}"
+                                title="Previous month">
+                            ◀
+                        </button>
+
+                        <span class="month-label"
+                              th:text="${currentMonthLabel}">March 2025</span>
+
+                        <button type="submit"
+                                name="monthOffset"
+                                th:value="${monthOffset + 1}"
+                                title="Next month">
+                            ▶
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SUMMARY -->
+            <div class="payroll-summary" th:if="${payrollRows != null}">
+                <div>
+                    <span class="summary-item-label">Staff count:</span>
+                    <span th:text="${#lists.size(payrollRows)}">0</span>
+                </div>
+                <div>
+                    <span class="summary-item-label">Total commission:</span>
+                    <span th:text="${#numbers.formatInteger(totalCommission, 3, 'COMMA')} + ' VND'">
+            0 VND
+        </span>
+                </div>
+                <div>
+                    <span class="summary-item-label">Total bonus:</span>
+                    <span th:text="${#numbers.formatInteger(totalBonus, 3, 'COMMA')} + ' VND'">
+            0 VND
+        </span>
+                </div>
+                <div>
+                    <span class="summary-item-label">Total deductions:</span>
+                    <span th:text="${#numbers.formatInteger(totalDeductions, 3, 'COMMA')} + ' VND'">
+            0 VND
+        </span>
+                </div>
+            </div>
+
+
+            <!-- TABLE -->
+            <div class="payroll-table-wrapper">
+                <table class="payroll-table">
+                    <thead>
+                    <tr>
+                        <th>Staff</th>
+                        <th>Position</th>
+                        <th class="money-cell">Base Salary</th>
+                        <th class="money-cell">Commission</th>
+                        <th class="money-cell">Bonus</th>
+                        <th class="money-cell">Deductions</th>
+                        <th class="money-cell">Total Pay</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(payrollRows)}">
+                        <td colspan="7" style="text-align: center; padding: 1.2rem;">
+                            No payroll data for this month.
+                        </td>
+                    </tr>
+
+                    <tr th:each="row : ${payrollRows}">
+                        <td data-label="Staff">
+                            <div class="staff-cell-main"
+                                 th:text="${row.staffName}">Nguyen Van A</div>
+                            <div class="staff-cell-sub">
+                                ID: <span th:text="${row.staffId}">1</span>
+                            </div>
+                        </td>
+
+                        <td data-label="Position">
+                            <span th:text="${row.positionName != null ? row.positionName : '—'}">
+                                Stylist
+                            </span>
+                        </td>
+
+                        <td class="money-cell" data-label="Base Salary"
+                            th:text="${#numbers.formatInteger(row.baseSalary, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+
+                        <td class="money-cell money-positive" data-label="Commission"
+                            th:text="${#numbers.formatInteger(row.commissionAmount, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+
+                        <td class="money-cell money-positive" data-label="Bonus"
+                            th:text="${#numbers.formatInteger(row.bonusAmount, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+
+                        <td class="money-cell money-negative" data-label="Deductions"
+                            th:text="${#numbers.formatInteger(row.deductionsAmount, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+
+                        <td class="money-cell" data-label="Total Pay"
+                            th:classappend="${row.totalPay < 0} ? ' money-negative' : ' money-positive'"
+                            th:text="${#numbers.formatInteger(row.totalPay, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+                    </tr>
+
+                    <!-- Optional total row at bottom -->
+                    <tr class="total-row" th:if="${!#lists.isEmpty(payrollRows)}">
+                        <td colspan="2">Total</td>
+                        <td class="money-cell"
+                            th:text="${#numbers.formatInteger(totalBaseSalary, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+                        <td class="money-cell"
+                            th:text="${#numbers.formatInteger(totalCommission, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+                        <td class="money-cell"
+                            th:text="${#numbers.formatInteger(totalBonus, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+                        <td class="money-cell"
+                            th:text="${#numbers.formatInteger(totalDeductions, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+                        <td class="money-cell"
+                            th:text="${#numbers.formatInteger(totalTotalPay, 3, 'COMMA')} + ' VND'">
+                            0 VND
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+    </div>
+</main>
+
+</body>
+</html>

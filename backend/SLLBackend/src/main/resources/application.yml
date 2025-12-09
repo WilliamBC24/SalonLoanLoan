@@ -29,6 +29,17 @@ spring:
       mode: always
       data-locations: classpath:triggers.sql
       separator: ^
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sonbltse184773@fpt.edu.vn
+    password: qdpg uena lzug pxrf
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   servlet:
     multipart:

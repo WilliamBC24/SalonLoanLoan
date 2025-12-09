@@ -19,4 +19,6 @@ public interface ReportService {
     List<SatisfactionSummaryDTO> getSatisfactionSummary(YearMonth month);
 
     List<SalesSummaryDTO> getSalesSummary(YearMonth month);
+
+    List<ExpenseSummaryDTO> getExpenseSummary(YearMonth month);
 }

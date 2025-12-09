@@ -23,4 +23,9 @@ public class StaffServiceImpl implements StaffService {
     public List<Staff> findAllByStatus(StaffStatus status) {
         return staffRepo.findByStaffStatus(status);
     }
+
+    @Override
+    public Staff findByName(String name) {
+        return staffRepo.findByName(name);
+    }
 }

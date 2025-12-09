@@ -366,6 +366,88 @@ public class ShiftScheduleServiceImpl implements ShiftScheduleService {
         shiftAssignmentRepo.deleteByShiftInstanceAndAssignedStaff(shiftInstance, staff);
     }
 
+    @Override
+    public List<CalendarDayViewDTO> buildMonthScheduleForStaff(YearMonth targetMonth, Integer staffId) {
+        if (targetMonth == null) {
+            targetMonth = YearMonth.now();
+        }
+
+        LocalDate firstDayOfMonth = targetMonth.atDay(1);
+        LocalDate lastDayOfMonth  = targetMonth.atEndOfMonth();
+
+        // 1. Load all assignments of this staff in the month
+        List<ShiftAssignment> assignments = shiftAssignmentRepo
+                .findByAssignedStaff_IdAndShiftInstance_ShiftDateBetween(
+                        staffId,
+                        firstDayOfMonth,
+                        lastDayOfMonth
+                );
+
+        // 2. Group by date
+        Map<LocalDate, List<ShiftAssignment>> assignmentsByDate = assignments.stream()
+                .collect(Collectors.groupingBy(a -> a.getShiftInstance().getShiftDate()));
+
+        // 3. Build calendar range (full weeks covering month)
+        LocalDate calendarStart = firstDayOfMonth;
+        while (calendarStart.getDayOfWeek().getValue() != 1) { // 1 = Monday; change if Sunday-start
+            calendarStart = calendarStart.minusDays(1);
+        }
+
+        LocalDate calendarEnd = lastDayOfMonth;
+        while (calendarEnd.getDayOfWeek().getValue() != 7) { // 7 = Sunday
+            calendarEnd = calendarEnd.plusDays(1);
+        }
+
+        List<CalendarDayViewDTO> days = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        for (LocalDate date = calendarStart; !date.isAfter(calendarEnd); date = date.plusDays(1)) {
+            boolean inCurrentMonth = YearMonth.from(date).equals(targetMonth);
+            boolean isToday = date.equals(today);
+
+            List<ShiftAssignment> dayAssignments =
+                    assignmentsByDate.getOrDefault(date, Collections.emptyList());
+
+            // Determine if this staff has AM / PM shifts on this day
+            boolean hasMorning = false;
+            boolean hasAfternoon = false;
+
+            for (ShiftAssignment assignment : dayAssignments) {
+                ShiftInstance instance = assignment.getShiftInstance();
+                ShiftTemplate template = instance.getShiftTemplate();
+
+                // You may have explicit fields/enum; adjust this logic:
+                // Example: use shiftStart < 12:00 as "morning"
+                LocalTime start = template.getShiftStart();
+                if (start.isBefore(LocalTime.NOON)) {
+                    hasMorning = true;
+                } else {
+                    hasAfternoon = true;
+                }
+            }
+
+            CalendarDayViewDTO dto = CalendarDayViewDTO.builder()
+                    .date(date)
+                    .inCurrentMonth(inCurrentMonth)
+                    .today(isToday)
+                    .totalAppointments(0)          // staff view: not used
+                    .hasMorningShift(hasMorning)
+                    .amAssignedStaffCount(hasMorning ? 1 : 0)
+                    .amRecommendedStaffCount(0)    // not used in staff view
+                    .amLoadLevel(null)            // or "assigned" if you want
+                    .hasAfternoonShift(hasAfternoon)
+                    .pmAssignedStaffCount(hasAfternoon ? 1 : 0)
+                    .pmRecommendedStaffCount(0)
+                    .pmLoadLevel(null)
+                    .build();
+
+            days.add(dto);
+        }
+
+        return days;
+    }
+
+
     // ==========================
     // Helpers
     // ==========================

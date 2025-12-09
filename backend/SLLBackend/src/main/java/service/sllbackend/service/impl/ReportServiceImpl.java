@@ -2,17 +2,16 @@ package service.sllbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import service.sllbackend.entity.AppointmentInvoice;
-import service.sllbackend.entity.InventoryInvoice;
-import service.sllbackend.entity.InventoryInvoiceDetail;
-import service.sllbackend.entity.OrderInvoice;
-import service.sllbackend.entity.ProductFeedback;
-import service.sllbackend.entity.SatisfactionRating;
-import service.sllbackend.entity.Supplier;
+import service.sllbackend.entity.*;
+import service.sllbackend.enumerator.CommissionType;
+import service.sllbackend.enumerator.PayrollAdjustment;
+import service.sllbackend.enumerator.StaffStatus;
 import service.sllbackend.repository.*;
 import service.sllbackend.service.ReportService;
+import service.sllbackend.service.StaffService;
 import service.sllbackend.web.dto.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
@@ -28,9 +27,21 @@ public class ReportServiceImpl implements ReportService {
     private final SatisfactionRatingRepo satisfactionRatingRepo;
     private final ProductFeedbackRepo productFeedbackRepo;
     private final AppointmentDetailsRepo appointmentDetailsRepo;
-
+    private final ExpenseRepo expenseRepo;
+    private final StaffService staffService;
+    private final StaffCurrentPositionRepo staffCurrentPositionRepo;
+    private final StaffCommissionRepo staffCommissionRepo;
+    private final RequestedServiceRepo requestedServiceRepo;
+    private final StaffPayrollAdjustmentRepo staffPayrollAdjustmentRepo;
     // --- Helper record to keep monthly totals in one place ---
-    private record MonthlyTotals(int appointmentRevenue, int orderRevenue, int supplyCost) {}
+    // Added expenseTotal so net income subtracts it too
+    private record MonthlyTotals(
+            int appointmentRevenue,
+            int orderRevenue,
+            int supplyCost,
+            int expenseTotal,
+            int staffPayrollTotal
+    ) {}
 
     private LocalDateTime startOf(YearMonth month) {
         return month.atDay(1).atStartOfDay();
@@ -41,51 +52,207 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
-     * Calculate monthly totals (appointments, orders, supplies).
+     * Calculate monthly totals (appointments, orders, supplies, other expenses).
      * Supply cost is aggregated from InventoryInvoiceDetail.
+     * Expenses are aggregated from Expense.
      */
     private MonthlyTotals calculateMonthlyTotals(YearMonth month) {
         LocalDateTime start = startOf(month);
         LocalDateTime end = startOfNext(month);
 
-        // Appointments revenue
+        // ===== Appointment revenue =====
         int appointmentRevenue = appointmentInvoiceRepo
-                .findByCreatedAtBetween(start, end)                // adjust repo method if needed
+                .findByCreatedAtBetween(start, end)
                 .stream()
-                .mapToInt(AppointmentInvoice::getTotalPrice)       // adjust getter if needed
+                .mapToInt(AppointmentInvoice::getTotalPrice)
                 .sum();
 
-        // Orders revenue
+        // ===== Order revenue =====
         int orderRevenue = orderInvoiceRepo
-                .findByCreatedAtBetween(start, end)                // adjust repo method if needed
+                .findByCreatedAtBetween(start, end)
                 .stream()
-                .mapToInt(OrderInvoice::getTotalPrice)             // adjust getter if needed
+                .mapToInt(OrderInvoice::getTotalPrice)
                 .sum();
 
-        // Supplies cost from InventoryInvoiceDetail
-        // Preferred: query details directly by invoice date in repo:
-        //   findByInventoryInvoiceCreatedAtBetween(start, end)
+        // ===== Supply cost =====
         List<InventoryInvoiceDetail> detailLines =
                 inventoryInvoiceDetailRepo.findByInventoryInvoice_CreatedAtBetween(start, end);
-        // If your repo is different, change the method name above.
 
         int supplyCost = detailLines.stream()
-                .mapToInt(InventoryInvoiceDetail::getSubtotal)   // or quantity * unitPrice
+                .mapToInt(InventoryInvoiceDetail::getSubtotal)
                 .sum();
 
-        return new MonthlyTotals(appointmentRevenue, orderRevenue, supplyCost);
+        // ===== Other expenses (normal expenses) =====
+        LocalDate startDate = month.atDay(1);
+        LocalDate endDate = month.atEndOfMonth();
+
+        List<Expense> expenses =
+                expenseRepo.findByDateIncurredBetween(startDate, endDate);
+
+        int expenseTotal = expenses.stream()
+                .mapToInt(e -> (int) e.getAmount())
+                .sum();
+
+        // ===== Staff payroll cost (recalculated per staff) =====
+        int staffPayrollTotal = 0;
+
+        List<Staff> activeStaff = staffService.findAllByStatus(StaffStatus.ACTIVE);
+
+        for (Staff staff : activeStaff) {
+            staffPayrollTotal += calculateStaffTotalPayForPeriod(
+                    staff,
+                    start,      // LocalDateTime periodStart
+                    end,        // LocalDateTime periodEnd
+                    startDate,  // LocalDate dayStart
+                    endDate     // LocalDate dayEnd
+            );
+        }
+
+        System.out.println(staffPayrollTotal);
+
+        return new MonthlyTotals(
+                appointmentRevenue,
+                orderRevenue,
+                supplyCost,
+                expenseTotal,
+                staffPayrollTotal     // ← new field
+        );
     }
+    private StaffPosition getCurrentPositionOfStaff(Staff staff) {
+        return staffCurrentPositionRepo.findByStaff_Id(staff.getId())
+                .map(StaffCurrentPosition::getPosition)
+                .orElse(null);
+    }
+    private Short getAppointmentCommissionPercentForStaff(Staff staff) {
+        StaffPosition pos = getCurrentPositionOfStaff(staff);
+        if (pos == null) {
+            return 0;
+        }
+
+        Optional<StaffCommission> commissionOpt =
+                staffCommissionRepo.findByPositionAndCommissionType(
+                        pos,
+                        CommissionType.APPOINTMENT
+                );
+        return commissionOpt
+                .map(StaffCommission::getCommission)
+                .orElse((short) 0);
+    }
+    private int calculateAppointmentCommissionForStaff(
+            Staff staff,
+            LocalDateTime periodStart,
+            LocalDateTime periodEnd
+    ) {
+        // 1) Load commission rate for this staff's position
+        Short commissionPercent = getAppointmentCommissionPercentForStaff(staff);
+
+        if (commissionPercent == null || commissionPercent <= 0) {
+            return 0;
+        }
+
+        // 2) Find all requested services where this staff is responsible,
+        // and the appointment's scheduledAt is in [periodStart, periodEnd)
+        List<RequestedService> requestedServices =
+                requestedServiceRepo
+                        .findByResponsibleStaffAndAppointment_ScheduledAtBetween(
+                                staff,
+                                periodStart,
+                                periodEnd
+                        );
+
+        int totalCommission = 0;
+
+        for (RequestedService rs : requestedServices) {
+            Integer priceAtBooking = rs.getPriceAtBooking();
+            if (priceAtBooking == null) {
+                continue;
+            }
+
+            // price * percent / 100, all ints
+            int commissionForService = priceAtBooking * commissionPercent / 100;
+            totalCommission += commissionForService;
+        }
+
+        return totalCommission;
+    }
+
+    private int calculateStaffTotalPayForPeriod(
+            Staff staff,
+            LocalDateTime periodStart,
+            LocalDateTime periodEnd,
+            LocalDate dayStart,
+            LocalDate dayEnd
+    ) {
+        // Commission from requested services in this period
+        int appointmentCommission = calculateAppointmentCommissionForStaff(
+                staff,
+                periodStart,
+                periodEnd
+        );
+
+        // Bonus & deductions in this period
+        BonusDeduction bd = calculateBonusAndDeductionsForStaff(
+                staff,
+                dayStart,
+                dayEnd
+        );
+
+        int baseSalary = 0; // plug in real base salary later if you have it
+
+        return baseSalary
+                + appointmentCommission
+                + bd.bonus()
+                - bd.deduction();
+    }
+    private BonusDeduction calculateBonusAndDeductionsForStaff(
+            Staff staff,
+            LocalDate periodStart,
+            LocalDate periodEnd
+    ) {
+        List<StaffPayrollAdjustment> adjustments =
+                staffPayrollAdjustmentRepo.findByStaffAndEffectiveDateBetween(
+                        staff,
+                        periodStart,
+                        periodEnd
+                );
+
+        int bonus = 0;
+        int deduction = 0;
+
+        for (StaffPayrollAdjustment adj : adjustments) {
+            int amount = adj.getAmount() != null ? adj.getAmount() : 0;
+            if (adj.getAdjustmentType() == PayrollAdjustment.BONUS) {
+                bonus += amount;
+            } else if (adj.getAdjustmentType() == PayrollAdjustment.DEDUCTION) {
+                deduction += amount;
+            }
+        }
+
+        return new BonusDeduction(bonus, deduction);
+    }
+    private record BonusDeduction(int bonus, int deduction) {
+    }
+
 
     @Override
     public MonthlyOverviewDTO getMonthlyOverview(YearMonth month) {
         YearMonth target = (month != null) ? month : YearMonth.now();
 
         MonthlyTotals current = calculateMonthlyTotals(target);
-        int netIncome = current.appointmentRevenue() + current.orderRevenue() - current.supplyCost();
+        int netIncome = current.appointmentRevenue()
+                + current.orderRevenue()
+                - current.supplyCost()
+                - current.expenseTotal()
+                - current.staffPayrollTotal();  // ← subtract salary/payroll cost
 
         YearMonth previousMonth = target.minusMonths(1);
         MonthlyTotals previous = calculateMonthlyTotals(previousMonth);
-        int previousNetIncome = previous.appointmentRevenue() + previous.orderRevenue() - previous.supplyCost();
+        int previousNetIncome = previous.appointmentRevenue()
+                + previous.orderRevenue()
+                - previous.supplyCost()
+                - previous.expenseTotal()
+                - previous.staffPayrollTotal();  // ← subtract salary/payroll cost
+        ;  // subtract expenses as well
 
         Double growthPct = null;
         if (previousNetIncome != 0) {
@@ -117,15 +284,12 @@ public class ReportServiceImpl implements ReportService {
                     if (staffId == null) {
                         return true;
                     }
-                    // Adjust this part to match your Appointment/Staff mapping
                     if (inv.getAppointment() == null) {
                         return false;
                     }
 
                     var appointment = inv.getAppointment();
 
-                    // Example assumption:
-                    // Appointment has getResponsibleStaffAccount() -> StaffAccount -> getId()
                     if (appointment.getResponsibleStaffId() == null) {
                         return false;
                     }
@@ -143,22 +307,21 @@ public class ReportServiceImpl implements ReportService {
                     var appointment = inv.getAppointment();
                     var appointmentDetails = appointmentDetailsRepo.findByAppointmentId((long) appointment.getId()).orElse(null);
 
-                    // Safe null-ish mappings – tweak to match your real model
                     String appointmentCode = (appointment != null) ? String.valueOf(appointment.getId()) : null;
                     LocalDateTime scheduledAt = (appointment != null) ? appointment.getScheduledAt() : null;
 
                     String customerName = null;
                     if (appointment != null && appointmentDetails.getUser() != null) {
-                        customerName = appointmentDetails.getUser().getUsername(); // adjust if needed
+                        customerName = appointmentDetails.getUser().getUsername();
                     }
 
                     String staffName = null;
                     if (appointment != null && appointment.getResponsibleStaffId() != null) {
-                            staffName = appointment.getResponsibleStaffId().getName();
+                        staffName = appointment.getResponsibleStaffId().getName();
                     }
 
-                    int totalPrice = inv.getTotalPrice();  // already int
-                    int discount   = 0;                    // if you have discount field, plug it in
+                    int totalPrice = inv.getTotalPrice();
+                    int discount   = 0;
                     int netPrice   = totalPrice - discount;
 
                     return AppointmentReportRowDTO.builder()
@@ -174,7 +337,6 @@ public class ReportServiceImpl implements ReportService {
                 })
                 .toList();
 
-        // 4. Summary fields
         int totalRevenue   = rows.stream().mapToInt(AppointmentReportRowDTO::getNetPrice).sum();
         int appointmentCount = rows.size();
 
@@ -191,25 +353,17 @@ public class ReportServiceImpl implements ReportService {
         LocalDateTime start = startOf(target);
         LocalDateTime end   = startOfNext(target);
 
-        // 1. Get all order invoices in the month
         List<OrderInvoice> invoices = orderInvoiceRepo
                 .findByCreatedAtBetween(start, end);
 
-        // (Optional) you might want to only include DELIVERED / PICKED_UP orders:
-        // invoices = invoices.stream()
-        //         .filter(inv -> inv.getOrderStatus() == OrderStatus.DELIVERED
-        //                     || inv.getOrderStatus() == OrderStatus.PICKED_UP)
-        //         .toList();
-
-        // 2. Map to row DTOs for the table
         List<OrderReportRowDTO> rows = invoices.stream()
                 .map(inv -> {
-                    String orderCode = String.valueOf(inv.getId());  // adjust if different
+                    String orderCode = String.valueOf(inv.getId());
                     LocalDateTime createdAt = inv.getCreatedAt();
 
                     String customerName = null;
                     if (inv.getUserAccount() != null) {
-                        customerName = inv.getUserAccount().getUsername(); // adjust if needed
+                        customerName = inv.getUserAccount().getUsername();
                     }
 
                     String fulfillmentType = (inv.getFulfillmentType() != null)
@@ -221,7 +375,7 @@ public class ReportServiceImpl implements ReportService {
                             : null;
 
                     int totalPrice = inv.getTotalPrice();
-                    int discount   = 0;                       // plug real discount field if you have it
+                    int discount   = 0;
                     int netPrice   = totalPrice - discount;
 
                     return OrderReportRowDTO.builder()
@@ -238,7 +392,6 @@ public class ReportServiceImpl implements ReportService {
                 })
                 .toList();
 
-        // 3. Summary fields
         int totalRevenue = rows.stream().mapToInt(OrderReportRowDTO::getNetPrice).sum();
         int orderCount   = rows.size();
 
@@ -249,29 +402,25 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
-
     @Override
     public List<SupplierSummaryDTO> getSupplierSummary(YearMonth month) {
         YearMonth target = (month != null) ? month : YearMonth.now();
         LocalDateTime start = startOf(target);
         LocalDateTime end = startOfNext(target);
 
-        // Get all detail lines for invoices in this month
         List<InventoryInvoiceDetail> detailLines =
                 inventoryInvoiceDetailRepo.findByInventoryInvoice_CreatedAtBetween(start, end);
-        // Again, adjust repo method name to match your real one.
 
-        // Group by supplier via the header invoice
         Map<Supplier, Integer> totalsBySupplier = new HashMap<>();
 
         for (InventoryInvoiceDetail detail : detailLines) {
-            InventoryInvoice invoice = detail.getInventoryInvoice();   // adjust getter if needed
+            InventoryInvoice invoice = detail.getInventoryInvoice();
             if (invoice == null) continue;
 
-            Supplier supplier = invoice.getSupplier();                 // adjust getter if needed
+            Supplier supplier = invoice.getSupplier();
             if (supplier == null) continue;
 
-            int amount = detail.getSubtotal();                       // or quantity * unitPrice
+            int amount = detail.getSubtotal();
             totalsBySupplier.merge(supplier, amount, Integer::sum);
         }
 
@@ -287,7 +436,7 @@ public class ReportServiceImpl implements ReportService {
                     double pct = (double) total * 100.0 / grandTotal;
 
                     return SupplierSummaryDTO.builder()
-                            .supplierName(supplier.getSupplierName())  // adjust getter if needed
+                            .supplierName(supplier.getSupplierName())
                             .totalSpent(total)
                             .percentage(pct)
                             .build();
@@ -302,14 +451,13 @@ public class ReportServiceImpl implements ReportService {
         LocalDateTime start = startOf(target);
         LocalDateTime end   = startOfNext(target);
 
-        // === Appointments satisfaction (by appointment.scheduledAt) ===
         List<SatisfactionRating> appointmentFeedbacks =
                 satisfactionRatingRepo.findByAppointment_ScheduledAtBetween(start, end);
 
         List<Integer> appointmentRatings = appointmentFeedbacks.stream()
-                .map(r -> r.getRating())                // Short
+                .map(SatisfactionRating::getRating)
                 .filter(Objects::nonNull)
-                .map(Short::intValue)                   // to Integer
+                .map(Short::intValue)
                 .toList();
 
         Double appointmentAvg = appointmentRatings.isEmpty()
@@ -322,7 +470,7 @@ public class ReportServiceImpl implements ReportService {
         List<ProductFeedback> productFeedbacks = productFeedbackRepo.findAll();
 
         List<Integer> productRatings = productFeedbacks.stream()
-                .map(ProductFeedback::getRating)        // Short
+                .map(ProductFeedback::getRating)
                 .filter(Objects::nonNull)
                 .map(Short::intValue)
                 .toList();
@@ -388,5 +536,38 @@ public class ReportServiceImpl implements ReportService {
         result.sort(Comparator.comparingInt(SalesSummaryDTO::getGrossSales).reversed());
 
         return result;
+    }
+
+    @Override
+    public List<ExpenseSummaryDTO> getExpenseSummary(YearMonth month) {
+
+        LocalDate start = month.atDay(1);
+        LocalDate end = month.atEndOfMonth();
+
+        List<Expense> expenses = expenseRepo.findByDateIncurredBetween(start, end);
+
+        if (expenses.isEmpty()) {
+            return List.of();
+        }
+
+        long total = expenses.stream()
+                .mapToLong(Expense::getAmount)
+                .sum();
+
+        Map<ExpenseCategory, Long> grouped = expenses.stream()
+                .collect(Collectors.groupingBy(
+                        Expense::getExpenseCategory,
+                        Collectors.summingLong(Expense::getAmount)
+                ));
+
+        return grouped.entrySet().stream()
+                .map(e -> ExpenseSummaryDTO.builder()
+                        .categoryName(e.getKey().getName())
+                        .totalAmount(e.getValue())
+                        .percentage((e.getValue() * 100.0) / total)
+                        .build()
+                )
+                .sorted(Comparator.comparing(ExpenseSummaryDTO::getTotalAmount).reversed())
+                .toList();
     }
 }

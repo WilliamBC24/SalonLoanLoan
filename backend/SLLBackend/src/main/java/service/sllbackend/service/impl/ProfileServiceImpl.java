@@ -5,13 +5,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import service.sllbackend.entity.Staff;
-import service.sllbackend.entity.StaffAccount;
-import service.sllbackend.entity.UserAccount;
+import service.sllbackend.entity.*;
 import service.sllbackend.enumerator.AccountStatus;
-import service.sllbackend.repository.StaffAccountRepo;
-import service.sllbackend.repository.StaffRepo;
-import service.sllbackend.repository.UserAccountRepo;
+import service.sllbackend.repository.*;
 import service.sllbackend.service.ProfileService;
 import service.sllbackend.utils.EncryptSSN;
 import service.sllbackend.utils.ValidationUtils;
@@ -24,6 +20,8 @@ import java.util.List;
 public class ProfileServiceImpl implements ProfileService {
     private final UserAccountRepo userAccountRepo;
     private final StaffAccountRepo staffAccountRepo;
+    private final StaffPositionRepo staffPositionRepo;
+    private final StaffCurrentPositionRepo staffCurrentPositionRepo;
     private final StaffRepo staffRepo;
     private final ValidationUtils validationUtils;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -226,6 +224,12 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         staffRepo.save(staff);
+
+        StaffPosition staffPosition = staffPositionRepo.findByPositionName("staff");
+        staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
+                .staff(staff)
+                .position(staffPosition)
+                .build());
     }
 
 

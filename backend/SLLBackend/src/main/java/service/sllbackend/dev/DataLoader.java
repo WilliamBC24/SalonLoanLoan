@@ -43,6 +43,8 @@ public class DataLoader implements CommandLineRunner {
 	private final InventoryInvoiceRepo inventoryInvoiceRepo;
 	private final InventoryInvoiceDetailRepo inventoryInvoiceDetailRepo;
 	private final ShiftTemplateRepo shiftTemplateRepo;
+	private final ExpenseCategoryRepo expenseCategoryRepo;
+	private final StaffCommissionRepo staffCommissionRepo;
 
 	@Override
 	public void run(String... args) {
@@ -61,6 +63,46 @@ public class DataLoader implements CommandLineRunner {
 		registerAppointments();
 		registerShiftTemplates();
 		registerPaymentTypes();
+		registerExpenseCategories();
+		registerStaffPositions();
+		registerStaffCommissions();
+	}
+
+	public void registerStaffPositions() {
+		StaffPosition staffPosition = StaffPosition.builder().positionName("staff").build();
+		StaffPosition assistantPosition = StaffPosition.builder().positionName("assistant").build();
+		StaffPosition managerPosition = StaffPosition.builder().positionName("manager").build();
+		staffPositionRepo.save(staffPosition);
+		staffPositionRepo.save(assistantPosition);
+		staffPositionRepo.save(managerPosition);
+	}
+
+	public void registerStaffCommissions() {
+		StaffCommission mainStylistCommission = StaffCommission.builder()
+				.commissionType(CommissionType.APPOINTMENT)
+				.position(staffPositionRepo.findByPositionName("staff"))
+				.commission((short) 30).build();
+		StaffCommission assistantStylistCommission = StaffCommission.builder()
+				.commissionType(CommissionType.APPOINTMENT)
+				.position(staffPositionRepo.findByPositionName("assistant"))
+				.commission((short) 20).build();
+		StaffCommission managerStylistCommission = StaffCommission.builder()
+				.commissionType(CommissionType.APPOINTMENT)
+				.position(staffPositionRepo.findByPositionName("manager"))
+				.commission((short) 40).build();
+		StaffCommission adminStylistCommission = StaffCommission.builder()
+				.commissionType(CommissionType.APPOINTMENT)
+				.position(staffPositionRepo.findByPositionName("admin"))
+				.commission((short) 100).build();
+		staffCommissionRepo.save(mainStylistCommission);
+		staffCommissionRepo.save(assistantStylistCommission);
+		staffCommissionRepo.save(managerStylistCommission);
+		staffCommissionRepo.save(adminStylistCommission);
+	}
+
+	public void registerExpenseCategories() {
+		ExpenseCategory expenseCategory = ExpenseCategory.builder().name("Bills").build();
+		expenseCategoryRepo.save(expenseCategory);
 	}
 
 	public void registerPaymentTypes(){

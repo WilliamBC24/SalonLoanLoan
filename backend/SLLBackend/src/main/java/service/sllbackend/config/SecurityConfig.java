@@ -44,7 +44,7 @@ public class SecurityConfig {
 	@Order(0)
 	public SecurityFilterChain staticResourcesSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/css/**", "/js/**", "/api/**", "/services/search")
+				.securityMatcher("/css/**", "/js/**", "/api/**", "/services/search", "/contact")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
 				.build();
@@ -91,13 +91,12 @@ public class SecurityConfig {
 
 	@Bean
 	@Order(3)
-	public SecurityFilterChain staffSecurityFilter(HttpSecurity http) throws Exception {
+	public SecurityFilterChain assistantSecurityFilter(HttpSecurity http) throws Exception {
 		return http
-				.securityMatcher("/auth/staff/**", "/staff/**")
+				.securityMatcher("/assistant/**")
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/staff/login").anonymous()
-						.requestMatchers("/staff/**", "/auth/staff/**").hasAnyRole("STAFF", "MANAGER", "ADMIN")
+						.requestMatchers("/assistant/**").hasAnyRole("STAFF", "MANAGER", "ADMIN", "ASSISTANT")
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
 						.usernameParameter("username")
@@ -110,6 +109,26 @@ public class SecurityConfig {
 
 	@Bean
 	@Order(4)
+	public SecurityFilterChain staffSecurityFilter(HttpSecurity http) throws Exception {
+		return http
+				.securityMatcher("/auth/staff/**", "/staff/**")
+				.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/auth/staff/login").anonymous()
+						.requestMatchers("/staff/**").hasAnyRole("STAFF", "MANAGER", "ADMIN")
+						.requestMatchers("/auth/staff/**", "/staff/profile/**").hasAnyRole("STAFF", "MANAGER", "ADMIN", "ASSISTANT")
+						.anyRequest().authenticated())
+				.formLogin(formLogin -> formLogin.loginPage("/auth/staff/login")
+						.usernameParameter("username")
+						.passwordParameter("password")
+						.failureUrl("/auth/staff/login?error")
+						.defaultSuccessUrl("/staff/profile", true))
+				.authenticationManager(staffProviderManager())
+				.build();
+	}
+
+	@Bean
+	@Order(5)
 	public SecurityFilterChain managerSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/manager/**")
@@ -127,7 +146,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@Order(5)
+	@Order(6)
 	public SecurityFilterChain adminSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/admin/**")
@@ -145,7 +164,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@Order(6)
+	@Order(7)
 	public SecurityFilterChain logoutSecurityFilter(HttpSecurity http) throws Exception {
 		return http
 				.securityMatcher("/logout")

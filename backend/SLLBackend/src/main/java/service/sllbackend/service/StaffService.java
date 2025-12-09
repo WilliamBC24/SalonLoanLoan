@@ -8,4 +8,5 @@ import java.util.List;
 public interface StaffService {
     Staff findById(int staffId);
     List<Staff> findAllByStatus(StaffStatus status);
+    Staff findByName(String name);
 }

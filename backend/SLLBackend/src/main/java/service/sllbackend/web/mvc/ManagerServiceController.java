@@ -151,4 +151,23 @@ public class ManagerServiceController {
             return "redirect:/manager/service/edit/" + id;
         }
     }
+
+    @GetMapping("/activate/{id}")
+    public String activateService(@PathVariable Integer id) {
+        Service service = serviceRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+        service.setActiveStatus(true);
+
+        serviceRepo.save(service);
+        return "redirect:/manager/service/list";
+    }
+    @GetMapping("/deactivate/{id}")
+    public String deactivateService(@PathVariable Integer id) {
+        Service service = serviceRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+        service.setActiveStatus(false);
+
+        serviceRepo.save(service);
+        return "redirect:/manager/service/list";
+    }
 }

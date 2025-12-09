@@ -37,6 +37,7 @@ public class StaffRegistrationManagementController {
     private final SatisfactionRatingService satisfactionRatingService;
     private final VietQrService vietQrService;
     private final AppointmentImageService appointmentImageService;
+    private final EmailService emailService;
     private final DTOMapper dtoMapper;
 
     @GetMapping("/list")

@@ -59,6 +59,13 @@
             color: #6b7280;
         }
 
+        .report-header-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.6rem;
+        }
+
         .report-period-pill {
             border-radius: 999px;
             padding: 0.4rem 0.9rem;
@@ -142,11 +149,6 @@
             background: #ffffff;
             box-shadow: var(--shadow-soft);
             overflow: hidden;
-        }
-
-        /* Sales (bottom) takes full width */
-        .report-tile.report-tile-wide {
-            grid-column: 1 / -1;
         }
 
         /* Make entire tile clickable */
@@ -274,10 +276,6 @@
             .report-tiles {
                 grid-template-columns: minmax(0, 1fr);
             }
-
-            .report-tile.report-tile-wide {
-                grid-column: auto;
-            }
         }
 
         @media (max-width: 768px) {
@@ -291,6 +289,10 @@
 
             .report-header-row {
                 flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .report-header-actions {
                 align-items: flex-start;
             }
         }
@@ -321,8 +323,10 @@
                     </p>
                 </div>
 
-                <div class="report-period-pill">
-                    <span th:text="${currentMonthLabel}">March 2025</span>
+                <div class="report-header-actions">
+                    <div class="report-period-pill">
+                        <span th:text="${currentMonthLabel}">March 2025</span>
+                    </div>
                 </div>
             </div>
 
@@ -372,9 +376,8 @@
                         0 VND
                     </div>
                     <div class="kpi-caption">
-                        Appointments + Orders − Supplies.
+                        Appointments + Orders − Expenses.
                     </div>
-                    <!-- Optional chip (e.g., vs. last month) -->
                     <div class="kpi-pill"
                          th:classappend="${monthlyNetIncomeGrowth &lt; 0} ? ' negative'">
                         <span th:text="${monthlyNetIncomeGrowth &gt;= 0 ? '▲' : '▼'}">▲</span>
@@ -386,10 +389,10 @@
                 </div>
             </div>
 
-            <!-- REPORT TILES -->
+            <!-- REPORT TILES: 2 top, 2 bottom -->
             <div class="report-tiles">
 
-                <!-- Function 22.2: Supplier Report -->
+                <!-- Supplier Report -->
                 <section class="report-tile">
                     <a class="report-tile-link"
                        th:href="@{/manager/report/supplier}"></a>
@@ -436,7 +439,7 @@
                     </div>
                 </section>
 
-                <!-- Function 22.3: Satisfaction Report -->
+                <!-- Satisfaction Report -->
                 <section class="report-tile">
                     <a class="report-tile-link"
                        th:href="@{/manager/report/satisfaction}"></a>
@@ -480,8 +483,8 @@
                     </div>
                 </section>
 
-                <!-- Function 22.5: Sales Report -->
-                <section class="report-tile report-tile-wide">
+                <!-- Sales Report -->
+                <section class="report-tile">
                     <a class="report-tile-link"
                        th:href="@{/manager/report/sales}"></a>
 
@@ -527,10 +530,56 @@
                     </div>
                 </section>
 
+                <!-- Expense Report -->
+                <section class="report-tile">
+                    <a class="report-tile-link"
+                       th:href="@{/manager/report/expense/list}"></a>
+
+                    <div class="report-tile-inner">
+                        <div class="report-tile-header">
+                            <div class="report-tile-title-block">
+                                <h3 class="report-tile-title">Expense Report</h3>
+                                <span class="report-tile-meta">
+                                    Breakdown of expenses by category for this month.
+                                </span>
+                            </div>
+                            <span class="report-tile-chevron">➜</span>
+                        </div>
+
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Total Expense</th>
+                                    <th class="cell-muted">Share</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row : ${expenseSummary}">
+                                    <td th:text="${row.categoryName}">Rent</td>
+                                    <td th:text="${#numbers.formatDecimal(row.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                        0 VND
+                                    </td>
+                                    <td class="cell-muted"
+                                        th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
+                                        0.0%
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(expenseSummary)}">
+                                    <td colspan="3" class="empty-row">
+                                        No expense data for this period.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
             </div>
         </section>
     </div>
 </main>
 </body>
 </html>
-

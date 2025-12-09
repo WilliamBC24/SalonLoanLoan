@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manager - Sales Report | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Global staff layout styles (sidebar + main scroll) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <style>
+        /* ===== PAGE STRUCTURE ===== */
+        .sales-report-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .sales-report-layout-inner {
+            max-width: 90vw;
+            width: 100%;
+            margin: 1rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .sales-report-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===== HEADER ===== */
+        .report-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .report-header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .report-header-title .section-kicker {
+            margin: 0;
+        }
+
+        .report-header-title h2 {
+            margin: 0;
+        }
+
+        .report-header-sub {
+            margin: 0;
+            font-size: 0.88rem;
+            color: #6b7280;
+        }
+
+        .report-period-pill {
+            border-radius: 999px;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .report-period-pill span.emoji {
+            font-size: 1.1rem;
+        }
+
+        /* ===== FILTER FORM ===== */
+        .filter-card {
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: 1.25rem 1.4rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .filter-header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .filter-header-title span.emoji {
+            font-size: 1.1rem;
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) auto;
+            gap: 0.8rem;
+        }
+
+        .filter-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.8rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.82rem;
+        }
+
+        .filter-group select {
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            padding: 0.45rem 0.8rem;
+            font-size: 0.88rem;
+            background: #ffffff;
+            outline: none;
+        }
+
+        .filter-group select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+        }
+
+        .filter-actions {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.6rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        /* ===== SUMMARY GRID ===== */
+        .sales-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .sales-summary-card {
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            padding: 1rem 1.1rem;
+            background: #f9fafb;
+        }
+
+        .sales-summary-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .sales-summary-amount {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+
+        .sales-summary-amount span.currency {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .sales-summary-meta {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* ===== TABLE ===== */
+        .sales-table-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .sales-table-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .sales-table-title h3 {
+            margin: 0;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .sales-table-title span {
+            font-size: 0.82rem;
+            color: #6b7280;
+        }
+
+        .sales-meta {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .sales-table-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            font-size: 0.88rem;
+        }
+
+        .sales-table thead {
+            background: #f9fafb;
+        }
+
+        .sales-table th,
+        .sales-table td {
+            padding: 0.6rem 0.9rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .sales-table th {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+            font-weight: 700;
+        }
+
+        .sales-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .sales-table tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+        .cell-number {
+            text-align: right;
+        }
+
+        .cell-muted {
+            color: #9ca3af;
+        }
+
+        .empty-row {
+            text-align: center;
+            font-size: 0.88rem;
+            color: #9ca3af;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .sales-report-layout-inner {
+                padding: 0;
+            }
+
+            .sales-report-card {
+                padding: 1.8rem 1.4rem;
+            }
+
+            .filter-form {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .filter-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sales-summary-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .report-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .filter-fields {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="staff-layout">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="staff-main sales-report-page">
+    <div class="sales-report-layout-inner">
+        <section class="sales-report-card">
+
+            <!-- HEADER -->
+            <div class="report-header-row">
+                <div class="report-header-title section-heading">
+                    <p class="section-kicker">Function 22.5</p>
+                    <h2>Sales Report</h2>
+                    <p class="report-header-sub">
+                        Compare how much you earn from appointments versus product orders.
+                    </p>
+                </div>
+
+                <div class="report-period-pill">
+                    <span>
+                        <span th:text="${selectedMonth}">3</span>/<span th:text="${selectedYear}">2025</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- FILTERS -->
+            <section class="filter-card">
+                <div class="filter-header">
+                    <div class="filter-header-title">
+                        <span>Filter by time range</span>
+                    </div>
+                </div>
+
+                <form class="filter-form"
+                      th:action="@{/manager/report/sales}"
+                      method="get">
+                    <div class="filter-fields">
+                        <div class="filter-group">
+                            <label for="month-select">Month</label>
+                            <select id="month-select" name="month">
+                                <option th:each="m : ${monthOptions}"
+                                        th:value="${m}"
+                                        th:selected="${m} == ${selectedMonth}"
+                                        th:text="${m}">
+                                    1
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="year-select">Year</label>
+                            <select id="year-select" name="year">
+                                <option th:each="y : ${yearOptions}"
+                                        th:value="${y}"
+                                        th:selected="${y} == ${selectedYear}"
+                                        th:text="${y}">
+                                    2025
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span>Apply</span>
+                        </button>
+                        <a th:href="@{/manager/report/sales}" class="btn btn-secondary">
+                            <span>Reset</span>
+                        </a>
+                    </div>
+                </form>
+            </section>
+
+            <!-- SUMMARY CARDS (Appointments / Product Orders) -->
+            <section class="sales-summary-grid">
+                <!-- Appointments card (if present) -->
+                <div class="sales-summary-card"
+                     th:if="${!#lists.isEmpty(salesSummary)}"
+                     th:with="row=${salesSummary[0]}">
+                    <div class="sales-summary-title"
+                         th:text="${row.sourceLabel}">
+                        Appointments
+                    </div>
+                    <div class="sales-summary-amount">
+                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                            0 ₫
+                        </span>
+                        <span class="currency"
+                              th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
+                            0.0%
+                        </span>
+                    </div>
+                    <div class="sales-summary-meta">
+                        Gross sales from appointments in this period.
+                    </div>
+                </div>
+
+                <!-- Orders card (if present) -->
+                <div class="sales-summary-card"
+                     th:if="${#lists.size(salesSummary) > 1}"
+                     th:with="row=${salesSummary[1]}">
+                    <div class="sales-summary-title"
+                         th:text="${row.sourceLabel}">
+                        Product Orders
+                    </div>
+                    <div class="sales-summary-amount">
+                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                            0 ₫
+                        </span>
+                        <span class="currency"
+                              th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
+                            0.0%
+                        </span>
+                    </div>
+                    <div class="sales-summary-meta">
+                        Gross sales from product orders in this period.
+                    </div>
+                </div>
+            </section>
+
+            <!-- TABLE SECTION -->
+            <section>
+                <div class="sales-table-section-header">
+                    <div class="sales-table-title">
+                        <h3>Sales by source</h3>
+                        <span>
+                            Breakdown of sales by source and share of total.
+                        </span>
+                    </div>
+                    <div class="sales-meta">
+                        Amounts shown in VND.
+                    </div>
+                </div>
+
+                <div class="sales-table-wrapper">
+                    <table class="sales-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Source</th>
+                            <th class="cell-number">Gross Sales</th>
+                            <th class="cell-number">Share</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="row, iterStat : ${salesSummary}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${row.sourceLabel}">Appointments</td>
+                            <td class="cell-number"
+                                th:text="${#numbers.formatDecimal(row.grossSales, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                0 ₫
+                            </td>
+                            <td class="cell-number cell-muted"
+                                th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
+                                0.0%
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(salesSummary)}">
+                            <td colspan="4" class="empty-row">
+                                No sales data for the selected period.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </section>
+    </div>
+</main>
+</body>
+</html>

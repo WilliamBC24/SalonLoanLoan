@@ -21,10 +21,10 @@ public interface OrderInvoiceDetailsRepo extends JpaRepository<OrderInvoiceDetai
            "FROM OrderInvoiceDetails oid " +
            "JOIN oid.orderInvoice oi " +
            "WHERE oi.userAccount = :userAccount " +
-           "AND oi.orderStatus = :status " +
+           "AND oi.orderStatus IN :status " +
            "AND oid.product.id = :productId")
     boolean existsByUserAccountAndProductIdAndOrderStatus(
             @Param("userAccount") UserAccount userAccount,
             @Param("productId") Integer productId,
-            @Param("status") OrderStatus status);
+            @Param("status") List<OrderStatus> status);
 }

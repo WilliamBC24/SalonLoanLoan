@@ -42,7 +42,7 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
         
         // Check if user has any delivered order containing this product (optimized single query)
         return orderInvoiceDetailsRepo.existsByUserAccountAndProductIdAndOrderStatus(
-                userAccount, productId, OrderStatus.DELIVERED);
+                userAccount, productId, List.of(OrderStatus.DELIVERED, OrderStatus.PICKED_UP));
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.entity.UserAccount;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -12,4 +13,6 @@ public interface OrderInvoiceRepo extends JpaRepository<OrderInvoice, Integer> {
     List<OrderInvoice> findByUserAccountOrderByCreatedAtDesc(UserAccount userAccount);
 
     long countByUserAccount(UserAccount user);
+
+    List<OrderInvoice> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }

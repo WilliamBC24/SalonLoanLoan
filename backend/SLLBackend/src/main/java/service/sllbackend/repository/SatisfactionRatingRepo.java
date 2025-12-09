@@ -4,8 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import service.sllbackend.entity.Appointment;
 import service.sllbackend.entity.SatisfactionRating;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface SatisfactionRatingRepo extends JpaRepository<SatisfactionRating, Long> {
     Optional<SatisfactionRating> findByAppointment(Appointment appointment);
+    List<SatisfactionRating> findByAppointment_ScheduledAtBetween(LocalDateTime start, LocalDateTime end);
 }

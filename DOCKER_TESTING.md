@@ -11,7 +11,12 @@ This guide explains how to use Docker to run the database and backend for testin
 
 ### Option 1: Using Docker Compose (Recommended)
 
-1. Make sure you have the `.env` file in the root directory with the following configuration:
+1. Create a `.env` file in the root directory by copying the `.env.example` file:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   The `.env` file should contain:
    ```
    POSTGRES_DB=sll
    POSTGRES_USER=alice

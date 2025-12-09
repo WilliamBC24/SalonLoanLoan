@@ -408,8 +408,8 @@
                             <td th:text="${iterStat.count}">1</td>
                             <td th:text="${row.supplierName}">Supplier A</td>
                             <td class="cell-number"
-                                th:text="${#numbers.formatDecimal(row.totalSpent, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                0 ₫
+                                th:text="${#numbers.formatDecimal(row.totalSpent, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                0 VND
                             </td>
                             <td class="cell-number cell-muted"
                                 th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">

@@ -235,7 +235,7 @@
                             </td>
                             <td>
                                 <span class="price"
-                                      th:text="${item.product.currentPrice} + ' VND'">
+                                      th:text="${#numbers.formatDecimal(item.product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     0 VND
                                 </span>
                             </td>
@@ -251,7 +251,7 @@
                             <td>
                                 <span class="price"
                                       th:id="'item-total-' + ${item.product.id}"
-                                      th:text="${item.product.currentPrice * item.amount} + ' VND'">
+                                      th:text="${#numbers.formatDecimal(item.product.currentPrice * item.amount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     0 VND
                                 </span>
                             </td>
@@ -282,7 +282,7 @@
                 <div class="summary-total">
                     <span>Total:</span>
                     <span id="total-price"
-                          th:text="${totalPrice} + ' VND'">
+                          th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                         0 VND
                     </span>
                 </div>
@@ -302,6 +302,10 @@
 <div th:replace="~{fragments/footer :: site-footer}"></div>
 
 <script>
+    function formatMoney(value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' VND';
+    }
+
     function updateQuantity(input) {
         const productId = input.getAttribute('data-product-id');
         const amount = input.value;
@@ -320,14 +324,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+
                     const itemTotalElement = document.getElementById('item-total-' + productId);
                     if (itemTotalElement && data.itemTotal !== undefined) {
-                        itemTotalElement.textContent = data.itemTotal + ' VND';
+                        itemTotalElement.textContent = formatMoney(data.itemTotal);
                     }
 
                     const totalPriceElement = document.getElementById('total-price');
                     if (totalPriceElement && data.totalPrice !== undefined) {
-                        totalPriceElement.textContent = data.totalPrice + ' VND';
+                        totalPriceElement.textContent = formatMoney(data.totalPrice);
                     }
                 }
             })

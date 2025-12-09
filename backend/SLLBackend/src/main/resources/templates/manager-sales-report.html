@@ -436,8 +436,8 @@
                         Appointments
                     </div>
                     <div class="sales-summary-amount">
-                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                            0 ₫
+                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                            0 VND
                         </span>
                         <span class="currency"
                               th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
@@ -458,8 +458,8 @@
                         Product Orders
                     </div>
                     <div class="sales-summary-amount">
-                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                            0 ₫
+                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                            0 VND
                         </span>
                         <span class="currency"
                               th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">
@@ -501,8 +501,8 @@
                             <td th:text="${iterStat.count}">1</td>
                             <td th:text="${row.sourceLabel}">Appointments</td>
                             <td class="cell-number"
-                                th:text="${#numbers.formatDecimal(row.grossSales, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                0 ₫
+                                th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                0 VND
                             </td>
                             <td class="cell-number cell-muted"
                                 th:text="${#numbers.formatDecimal(row.percentage, 1, 'POINT', 1, 'COMMA')} + '%'">

@@ -243,7 +243,7 @@
 <body>
 
 <!-- HEADER -->
-<div th:replace="~{fragments/profile-header :: profile-site-header}"></div>
+<div th:replace="~{fragments/header :: site-header}"></div>
 
 <main class="appointment-detail-page">
     <div class="container appointment-detail-wrapper">
@@ -311,7 +311,7 @@
                 <div class="meta-item">
                     <div class="meta-label">Total Price</div>
                     <div class="meta-value meta-value-highlight"
-                         th:text="${totalPrice != null ? totalPrice + ' VND' : '—'}">
+                         th:text="${totalPrice != null} ? #numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'">
                         0 VND
                     </div>
                 </div>
@@ -376,7 +376,7 @@
                         </div>
 
                         <div class="service-price"
-                             th:text="${item.priceAtBooking} + ' VND'">
+                             th:text="${#numbers.formatDecimal(item.priceAtBooking, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                             0 VND
                         </div>
                     </div>
@@ -391,7 +391,9 @@
                     <div class="summary-item" th:if="${totalPrice != null}">
                         <span class="summary-item-label">Total Price:</span>
                         <span class="summary-item-value price"
-                              th:text="${totalPrice} + ' VND'">0 VND</span>
+                              th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                            0 VND
+                        </span>
                     </div>
                 </div>
             </div>

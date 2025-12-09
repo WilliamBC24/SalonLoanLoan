@@ -397,9 +397,9 @@
                         <div class="detail-item">
                             <span class="detail-label">Total Amount</span>
                             <span class="detail-value order-total"
-                                  th:text="${order.totalPrice} + ' VND'">
-                                0 VND
-                            </span>
+                                  th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+        0 VND
+    </span>
                         </div>
                     </div>
 

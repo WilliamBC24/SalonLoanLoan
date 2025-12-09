@@ -377,9 +377,9 @@
                         </div>
                         <div class="info-item">
                             <span class="info-label">Fulfillment</span>
-                            <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                            <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
                                   class="fulfillment-badge pickup">🏪 In-Store Pickup</span>
-                            <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
+                            <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
                                   class="fulfillment-badge delivery">🚚 Delivery</span>
                         </div>
                         <div class="info-item">
@@ -443,14 +443,14 @@
                             </td>
                             <td>
                                 <span class="price"
-                                      th:text="${item.priceAtSale} + ' VND'">
+                                      th:text="${#numbers.formatDecimal(item.priceAtSale, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     0 VND
                                 </span>
                             </td>
                             <td th:text="${item.quantity}">1</td>
                             <td>
                                 <span class="price"
-                                      th:text="${item.priceAtSale * item.quantity} + ' VND'">
+                                      th:text="${#numbers.formatDecimal(item.priceAtSale * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     0 VND
                                 </span>
                             </td>
@@ -468,7 +468,7 @@
 
                     <div class="summary-total">
                         <span>Total</span>
-                        <span th:text="${order.totalPrice} + ' VND'">0 VND</span>
+                        <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
                     </div>
 
                     <!-- QR Payment Box -->
@@ -528,3 +528,4 @@
 
 </body>
 </html>
+đồ ngu

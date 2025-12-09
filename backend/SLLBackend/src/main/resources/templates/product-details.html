@@ -486,7 +486,8 @@
                 <h2 th:text="${product.productName}">Product Name</h2>
 
                 <p class="product-price"
-                   th:text="${product.currentPrice} + ' VND'">
+                th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+
                     0 VND
                 </p>
 

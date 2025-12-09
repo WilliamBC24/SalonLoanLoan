@@ -234,7 +234,13 @@
                         <td class="promo-name" th:text="${promotion.promotionName}">Promotion name</td>
                         <td th:text="${promotion.promotionDescription}">Description</td>
                         <td th:text="${promotion.discountType}">AMOUNT</td>
-                        <td th:text="${promotion.discountAmount}">0</td>
+
+                        <td th:text="${promotion.discountType.name() == 'AMOUNT'
+                ? #numbers.formatDecimal(promotion.discountAmount, 0, 'COMMA', 0, 'POINT') + ' VND'
+                : promotion.discountAmount + '%'}">
+                            0
+                        </td>
+
                         <td th:text="${#temporals.format(promotion.effectiveFrom, 'yyyy-MM-dd HH:mm')}">
                             2024-01-01 00:00
                         </td>

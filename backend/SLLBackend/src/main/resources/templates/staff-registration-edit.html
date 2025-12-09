@@ -616,7 +616,9 @@
                                         <p class="service-name"
                                            th:text="${rs.service.serviceName}">Service Name</p>
                                         <p class="service-meta">
-                                            <span th:text="'₫' + ${rs.priceAtBooking}">₫0</span>
+                                            <span th:text="${#numbers.formatDecimal(rs.priceAtBooking, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                0 VND
+                                            </span>
                                         </p>
                                     </div>
 
@@ -647,7 +649,7 @@
 
                             <div class="services-price-summary">
                                 <span>Total Price at Booking</span>
-                                <strong>₫<span id="total-price">0</span></strong>
+                                <strong><span id="total-price">0</span> VND</strong>
                             </div>
                         </div>
                     </div>
@@ -740,7 +742,7 @@
                     <div class="edit-col">
                         <div class="card-block">
                             <h4 style="margin-bottom: 1rem;">Before Service</h4>
-                            
+
                             <!-- Upload Form -->
                             <form th:action="@{/staff/registration/view/{id}/upload-before-image(id=${appointment.id})}"
                                   method="post"
@@ -748,8 +750,8 @@
                                   style="margin-bottom: 1.5rem;">
                                 <div class="field">
                                     <label>Upload Before Image</label>
-                                    <input type="file" 
-                                           name="beforeImage" 
+                                    <input type="file"
+                                           name="beforeImage"
                                            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                                            required />
                                 </div>
@@ -763,14 +765,14 @@
                                 <h5 style="margin-bottom: 0.8rem;">Uploaded Images:</h5>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">
                                     <div th:each="img : ${beforeImages}" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
-                                        <img th:src="@{'/uploads/appointment-images/' + ${img.imagePath.substring(img.imagePath.lastIndexOf('/') + 1)}}" 
+                                        <img th:src="@{'/uploads/appointment-images/' + ${img.imagePath.substring(img.imagePath.lastIndexOf('/') + 1)}}"
                                              alt="Before service"
                                              style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;"
                                              onclick="window.open(this.src, '_blank')" />
                                     </div>
                                 </div>
                             </div>
-                            <p th:if="${beforeImages == null or beforeImages.isEmpty()}" 
+                            <p th:if="${beforeImages == null or beforeImages.isEmpty()}"
                                style="color: #666; font-style: italic;">
                                 No before images uploaded yet.
                             </p>
@@ -781,7 +783,7 @@
                     <div class="edit-col">
                         <div class="card-block">
                             <h4 style="margin-bottom: 1rem;">After Service</h4>
-                            
+
                             <!-- Upload Form -->
                             <form th:action="@{/staff/registration/view/{id}/upload-after-image(id=${appointment.id})}"
                                   method="post"
@@ -789,8 +791,8 @@
                                   style="margin-bottom: 1.5rem;">
                                 <div class="field">
                                     <label>Upload After Image</label>
-                                    <input type="file" 
-                                           name="afterImage" 
+                                    <input type="file"
+                                           name="afterImage"
                                            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                                            required />
                                 </div>
@@ -804,14 +806,14 @@
                                 <h5 style="margin-bottom: 0.8rem;">Uploaded Images:</h5>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">
                                     <div th:each="img : ${afterImages}" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
-                                        <img th:src="@{'/uploads/appointment-images/' + ${img.imagePath.substring(img.imagePath.lastIndexOf('/') + 1)}}" 
+                                        <img th:src="@{'/uploads/appointment-images/' + ${img.imagePath.substring(img.imagePath.lastIndexOf('/') + 1)}}"
                                              alt="After service"
                                              style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;"
                                              onclick="window.open(this.src, '_blank')" />
                                     </div>
                                 </div>
                             </div>
-                            <p th:if="${afterImages == null or afterImages.isEmpty()}" 
+                            <p th:if="${afterImages == null or afterImages.isEmpty()}"
                                style="color: #666; font-style: italic;">
                                 No after images uploaded yet.
                             </p>
@@ -826,6 +828,11 @@
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    function formatCurrency(value) {
+        const num = Number(value) || 0;
+        return num.toLocaleString('en-US'); // 1,000,000
+    }
+
     $(document).ready(function () {
         let debounceTimer;
 
@@ -850,7 +857,7 @@
                 const price = parseInt($(this).attr('data-price')) || 0;
                 total += price;
             });
-            $('#total-price').text(total);
+            $('#total-price').text(formatCurrency(total));
         }
 
         /* ========= SERVICES: REINDEX NAMES ========= */
@@ -883,7 +890,7 @@
 
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
-                if (query.length < 2) {
+                if (query.length < 1) {
                     $('#userResults').empty();
                     return;
                 }
@@ -950,7 +957,7 @@
         $('#service-search').on('input', function () {
             const query = $(this).val().trim();
 
-            if (query.length < 2) {
+            if (query.length < 1) {
                 $('#service-list').empty();
                 return;
             }
@@ -970,15 +977,17 @@
                         }
 
                         data.forEach(s => {
+                            const priceDisplay = formatCurrency(s.servicePrice);
                             $list.append(`
                                 <div class="service-item"
                                      data-id="${s.id}"
                                      data-name="${s.serviceName}"
                                      data-price="${s.servicePrice}">
-                                    ${s.serviceName} - ₫${s.servicePrice}
+                                    ${s.serviceName} - ${priceDisplay} VND
                                 </div>
                             `);
                         });
+
                     },
                     error: function (err) {
                         console.error('Error fetching services', err);
@@ -1001,6 +1010,7 @@
             }
 
             const preferredStaffId = $('#preferredStaffSelect').val() || '';
+            const priceDisplay = formatCurrency(servicePrice);
 
             // Build row
             const $row = $(`
@@ -1014,7 +1024,7 @@
                     <div class="service-main">
                         <p class="service-name">${serviceName}</p>
                         <p class="service-meta">
-                            <span>₫${servicePrice}</span>
+                            <span>${priceDisplay} VND</span>
                         </p>
                     </div>
 

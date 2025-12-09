@@ -429,7 +429,7 @@
                     <tr th:each="product : ${products}">
                         <td th:text="${product.id}">1</td>
                         <td th:text="${product.productName}">Product name</td>
-                        <td th:text="${product.currentPrice}">0</td>
+                        <td th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0</td>
                         <td th:text="${product.productDescription}">Description</td>
                         <td>
                             <span th:text="${stockMap[product.id]}">0</span>
@@ -442,6 +442,19 @@
                         <td>
                             <a th:href="@{/manager/products/edit/{id}(id=${product.id})}" class="edit-link">
                                 Edit
+                            </a>
+                            <!-- If activeStatus = true → show Deactivate -->
+                            <a th:if="${product.activeStatus}"
+                               th:href="@{/manager/products/deactivate/{id}(id=${product.id})}"
+                               class="edit-link danger">
+                                <span>Deactivate</span>
+                            </a>
+
+                            <!-- If activeStatus = false → show Activate -->
+                            <a th:if="${!product.activeStatus}"
+                               th:href="@{/manager/products/activate/{id}(id=${product.id})}"
+                               class="edit-link success">
+                                <span>Activate</span>
                             </a>
                         </td>
                     </tr>

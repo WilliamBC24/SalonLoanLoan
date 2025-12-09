@@ -1102,5 +1102,13 @@ public class DataLoader implements CommandLineRunner {
 				.scheduledAt(null) // not scheduled yet
 				.status(AppointmentStatus.PENDING)
 				.build());
+
+		appointmentRepo.save(Appointment.builder()
+				.name("David")
+				.phoneNumber("0666444555")
+				.registeredAt(LocalDateTime.now().minusDays(7))
+				.scheduledAt(LocalDateTime.now().minusDays(2))
+				.status(AppointmentStatus.COMPLETED)
+				.build());
 	}
 }

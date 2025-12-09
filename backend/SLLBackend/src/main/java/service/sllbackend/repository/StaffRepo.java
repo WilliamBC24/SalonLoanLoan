@@ -22,4 +22,5 @@ public interface StaffRepo extends JpaRepository<Staff, Integer> {
             @Param("ssn") String ssn,
             @Param("currentUserId") Long currentUserId);
     List<Staff> findByStaffStatus(StaffStatus staffStatus);
+    Staff findByName(String name);
 }

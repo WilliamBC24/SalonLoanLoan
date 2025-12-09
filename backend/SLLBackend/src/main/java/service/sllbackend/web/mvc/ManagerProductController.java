@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import service.sllbackend.entity.Product;
+import service.sllbackend.entity.Service;
+import service.sllbackend.repository.ProductRepo;
 import service.sllbackend.service.ProductsService;
 
 @Controller
@@ -23,9 +25,11 @@ import service.sllbackend.service.ProductsService;
 public class ManagerProductController {
 
     private final ProductsService productsService;
+    private final ProductRepo productRepo;
 
-    public ManagerProductController(ProductsService productsService) {
+    public ManagerProductController(ProductsService productsService, ProductRepo productRepo) {
         this.productsService = productsService;
+        this.productRepo = productRepo;
     }
 
     @GetMapping("/list")
@@ -139,5 +143,24 @@ public class ManagerProductController {
     public ResponseEntity<List<Product>> getProductsApi() {
         List<Product> products = productsService.getProducts(null, null);
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/activate/{id}")
+    public String activateProduct(@PathVariable Integer id) {
+        Product product = productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        product.setActiveStatus(true);
+
+        productRepo.save(product);
+        return "redirect:/manager/products/list";
+    }
+    @GetMapping("/deactivate/{id}")
+    public String deactivateProduct(@PathVariable Integer id) {
+        Product product = productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        product.setActiveStatus(false);
+
+        productRepo.save(product);
+        return "redirect:/manager/products/list";
     }
 }

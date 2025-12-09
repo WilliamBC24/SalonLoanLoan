@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
+import service.sllbackend.service.EmailService;
 import service.sllbackend.service.OrderService;
 
 import java.security.Principal;
@@ -20,6 +21,7 @@ import java.util.List;
 public class StaffOrderController {
     
     private final OrderService orderService;
+    private final EmailService emailService;
 
     @GetMapping("/list")
     @Transactional(readOnly = true)
@@ -79,6 +81,9 @@ public class StaffOrderController {
         try {
             OrderStatus newStatus = OrderStatus.valueOf(orderStatus);
             orderService.updateOrderStatus(orderId, newStatus);
+            if (newStatus == OrderStatus.READY_FOR_PICKUP) {
+                emailService.sendOrderPickupNotice(orderId);
+            }
             return "redirect:/staff/order/edit?orderId=" + orderId + "&success=Order status updated successfully";
         } catch (Exception e) {
             return "redirect:/staff/order/edit?orderId=" + orderId + "&error=" + e.getMessage();

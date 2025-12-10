@@ -45,6 +45,8 @@ public class DataLoader implements CommandLineRunner {
 	private final ShiftTemplateRepo shiftTemplateRepo;
 	private final ExpenseCategoryRepo expenseCategoryRepo;
 	private final StaffCommissionRepo staffCommissionRepo;
+	private final ProductImageRepo productImageRepo;
+	private final ServiceImageRepo serviceImageRepo;
 
 	@Override
 	public void run(String... args) {
@@ -66,6 +68,8 @@ public class DataLoader implements CommandLineRunner {
 		registerExpenseCategories();
 		registerStaffPositions();
 		registerStaffCommissions();
+		registerProductImages();
+		registerServiceImages();
 	}
 
 	public void registerStaffPositions() {
@@ -1152,5 +1156,55 @@ public class DataLoader implements CommandLineRunner {
 				.scheduledAt(LocalDateTime.now().minusDays(2))
 				.status(AppointmentStatus.COMPLETED)
 				.build());
+	}
+
+	public void registerProductImages() {
+		log.info("Loading product images...");
+		
+		// Get all products
+		List<Product> products = productRepo.findAll();
+		
+		// Add placeholder images for products using placeholder service
+		// Using picsum.photos for random placeholder images
+		int imageIndex = 100;
+		for (Product product : products) {
+			// Add 2-3 images per product
+			int numImages = 2 + (product.getId() % 2); // 2 or 3 images
+			for (int i = 0; i < numImages; i++) {
+				String imagePath = "https://picsum.photos/seed/product-" + product.getId() + "-" + i + "/800/600";
+				productImageRepo.save(ProductImage.builder()
+						.product(product)
+						.imagePath(imagePath)
+						.build());
+				imageIndex++;
+			}
+		}
+		
+		log.info("Successfully loaded images for {} products", products.size());
+	}
+
+	public void registerServiceImages() {
+		log.info("Loading service images...");
+		
+		// Get all services
+		List<Service> services = serviceRepo.findAll();
+		
+		// Add placeholder images for services using placeholder service
+		// Using picsum.photos for random placeholder images
+		int imageIndex = 200;
+		for (Service service : services) {
+			// Add 1-2 images per service
+			int numImages = 1 + (service.getId() % 2); // 1 or 2 images
+			for (int i = 0; i < numImages; i++) {
+				String imagePath = "https://picsum.photos/seed/service-" + service.getId() + "-" + i + "/800/600";
+				serviceImageRepo.save(ServiceImage.builder()
+						.service(service)
+						.imagePath(imagePath)
+						.build());
+				imageIndex++;
+			}
+		}
+		
+		log.info("Successfully loaded images for {} services", services.size());
 	}
 }

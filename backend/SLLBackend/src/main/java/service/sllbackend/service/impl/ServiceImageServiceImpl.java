@@ -42,6 +42,20 @@ public class ServiceImageServiceImpl implements ServiceImageService {
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList(
             ".jpg", ".jpeg", ".png", ".gif", ".webp"
     );
+    
+    @jakarta.annotation.PostConstruct
+    public void init() {
+        // Ensure upload directory exists at startup
+        try {
+            Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+                log.info("Created service image upload directory: {}", uploadPath);
+            }
+        } catch (IOException e) {
+            log.error("Failed to create service image upload directory", e);
+        }
+    }
 
     @Override
     @Transactional
@@ -125,8 +139,8 @@ public class ServiceImageServiceImpl implements ServiceImageService {
             throw new IllegalArgumentException("Invalid file extension. Only image files are allowed: " + ALLOWED_EXTENSIONS);
         }
 
-        // Create upload directory if it doesn't exist
-        Path uploadPath = Paths.get(uploadDir);
+        // Use absolute path for upload directory
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -142,7 +156,7 @@ public class ServiceImageServiceImpl implements ServiceImageService {
         // Ensure uploadDir ends with / before appending filename
         String normalizedUploadDir = uploadDir.endsWith("/") ? uploadDir : uploadDir + "/";
         String webPath = "/" + normalizedUploadDir + filename;
-        log.info("Saved service image to: {} (web path: {})", filePath, webPath);
+        log.info("Saved service image to: {} (web path: {})", filePath.toAbsolutePath(), webPath);
         return webPath;
     }
 }

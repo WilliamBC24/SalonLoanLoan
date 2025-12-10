@@ -152,8 +152,14 @@
             <!-- LEFT: IMAGE -->
             <section class="service-media-card">
                 <div class="service-image-wrapper">
-                    <img src="https://via.placeholder.com/600x450.png?text=Service+Image"
+                    <img id="mainServiceImage" 
+                         src="https://via.placeholder.com/600x450.png?text=Service+Image"
                          alt="Service Image">
+                </div>
+                
+                <!-- Image thumbnails -->
+                <div id="imageThumbnails" style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; overflow-x: auto;">
+                    <!-- Thumbnails will be loaded here dynamically -->
                 </div>
 
                 <div class="service-meta">
@@ -198,6 +204,55 @@
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>
+
+<script>
+    // ===== LOAD SERVICE IMAGES =====
+    const serviceId = [[${service.id}]];
+    
+    function loadServiceImages() {
+        fetch(`/api/services/${serviceId}/images`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.images && data.images.length > 0) {
+                    const mainImage = document.getElementById('mainServiceImage');
+                    const thumbnailsContainer = document.getElementById('imageThumbnails');
+                    
+                    // Set first image as main image
+                    mainImage.src = data.images[0].imagePath;
+                    mainImage.onerror = function() {
+                        this.src = 'https://via.placeholder.com/600x450.png?text=Service+Image';
+                    };
+                    
+                    // Create thumbnails
+                    thumbnailsContainer.innerHTML = '';
+                    data.images.forEach((image, index) => {
+                        const thumbnail = document.createElement('img');
+                        thumbnail.src = image.imagePath;
+                        thumbnail.alt = 'Service thumbnail';
+                        thumbnail.style.cssText = 'width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid ' + (index === 0 ? '#1a7c34' : '#e5e5e5');
+                        thumbnail.onclick = function() {
+                            mainImage.src = image.imagePath;
+                            // Update thumbnail borders
+                            thumbnailsContainer.querySelectorAll('img').forEach(img => {
+                                img.style.borderColor = '#e5e5e5';
+                            });
+                            thumbnail.style.borderColor = '#1a7c34';
+                        };
+                        thumbnail.onerror = function() {
+                            this.src = 'https://via.placeholder.com/80?text=N/A';
+                        };
+                        thumbnailsContainer.appendChild(thumbnail);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading service images:', error);
+            });
+    }
+    
+    // Load images on page load
+    loadServiceImages();
+</script>
 
 </body>
 </html>

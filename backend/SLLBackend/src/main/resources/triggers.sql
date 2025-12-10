@@ -72,6 +72,16 @@ WHERE point_required >= NEW.point
 ORDER BY point_required ASC
     LIMIT 1;
 
+IF new_rank IS NULL THEN
+SELECT id
+INTO new_rank
+FROM loyalty_level
+WHERE point_required < NEW.point
+ORDER BY point_required DESC
+    LIMIT 1;
+END IF;
+
+
 IF new_rank IS DISTINCT FROM NEW.level_id THEN
 UPDATE loyalty
 SET level_id = new_rank

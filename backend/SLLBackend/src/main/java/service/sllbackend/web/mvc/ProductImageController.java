@@ -104,11 +104,7 @@ public class ProductImageController {
     @GetMapping("/images/file/{imageId}")
     public ResponseEntity<Resource> getImageFile(@PathVariable Integer imageId) {
         try {
-            List<ProductImage> allImages = productImageService.getImages(null);
-            ProductImage image = allImages.stream()
-                    .filter(img -> img.getId().equals(imageId))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Image not found"));
+            ProductImage image = productImageService.getImageById(imageId);
 
             Path filePath = Paths.get(image.getImagePath());
             Resource resource = new UrlResource(filePath.toUri());

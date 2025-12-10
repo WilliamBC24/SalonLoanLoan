@@ -63,6 +63,12 @@ public class ServiceImageServiceImpl implements ServiceImageService {
     }
 
     @Override
+    public ServiceImage getImageById(Integer imageId) {
+        return serviceImageRepo.findById(imageId)
+                .orElseThrow(() -> new IllegalArgumentException("Image not found with id: " + imageId));
+    }
+
+    @Override
     @Transactional
     public void deleteImage(Integer imageId) {
         ServiceImage image = serviceImageRepo.findById(imageId)

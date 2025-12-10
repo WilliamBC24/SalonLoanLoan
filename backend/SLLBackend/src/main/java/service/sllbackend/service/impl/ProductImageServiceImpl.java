@@ -64,6 +64,12 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
+    public ProductImage getImageById(Integer imageId) {
+        return productImageRepo.findById(imageId)
+                .orElseThrow(() -> new IllegalArgumentException("Image not found with id: " + imageId));
+    }
+
+    @Override
     @Transactional
     public void deleteImage(Integer imageId) {
         ProductImage image = productImageRepo.findById(imageId)

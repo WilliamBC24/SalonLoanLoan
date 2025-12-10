@@ -151,12 +151,14 @@
             <!-- SERVICE GRID (cards like homepage/products) -->
             <div class="product-grid" th:if="${!#lists.isEmpty(services)}">
 
-                <article class="product-card" th:each="svc : ${services}">
+                <article class="product-card" th:each="svc : ${services}" th:attr="data-service-id=${svc.id}">
                     <a th:href="@{/services/{id}(id=${svc.id})}">
                     <!-- Image -->
                     <div class="product-image">
-                        <img src="https://via.placeholder.com/400x300.png?text=Service"
-                             alt="Service Image">
+                        <img th:id="'service-image-' + ${svc.id}"
+                             src="https://via.placeholder.com/400x300.png?text=Loading..."
+                             alt="Service Image"
+                             onerror="this.src='https://via.placeholder.com/400x300.png?text=Service'">
                     </div>
 
                     <!-- Body -->
@@ -198,6 +200,35 @@
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>
+
+<script>
+    // Load service images dynamically
+    document.addEventListener('DOMContentLoaded', function() {
+        const serviceCards = document.querySelectorAll('.product-card[data-service-id]');
+        
+        serviceCards.forEach(card => {
+            const serviceId = card.getAttribute('data-service-id');
+            const imgElement = document.getElementById('service-image-' + serviceId);
+            
+            // Fetch images for this service
+            fetch(`/api/services/${serviceId}/images`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.images && data.images.length > 0) {
+                        // Use the first image
+                        imgElement.src = data.images[0].imagePath;
+                    } else {
+                        // Fallback to placeholder
+                        imgElement.src = 'https://via.placeholder.com/400x300.png?text=Service';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading service image:', error);
+                    imgElement.src = 'https://via.placeholder.com/400x300.png?text=Service';
+                });
+        });
+    });
+</script>
 
 </body>
 </html>

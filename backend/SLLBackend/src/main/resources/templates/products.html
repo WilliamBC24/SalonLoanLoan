@@ -116,11 +116,13 @@
 
             <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
 
-                <article class="product-card" th:each="product : ${products}">
+                <article class="product-card" th:each="product : ${products}" th:attr="data-product-id=${product.id}">
                     <a th:href="@{/products/{id}(id=${product.id})}" style="display:block; color:inherit;">
                     <div class="product-image">
-                        <img src="https://via.placeholder.com/400x400.png?text=Product"
-                             alt="Product Image">
+                        <img th:id="'product-image-' + ${product.id}"
+                             src="https://via.placeholder.com/400x400.png?text=Loading..."
+                             alt="Product Image"
+                             onerror="this.src='https://via.placeholder.com/400x400.png?text=Product'">
 
                         <!-- Optional Active Indicator -->
 <!--                        <div class="badge"-->
@@ -162,6 +164,35 @@
 
 <!-- Footer -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>
+
+<script>
+    // Load product images dynamically
+    document.addEventListener('DOMContentLoaded', function() {
+        const productCards = document.querySelectorAll('.product-card[data-product-id]');
+        
+        productCards.forEach(card => {
+            const productId = card.getAttribute('data-product-id');
+            const imgElement = document.getElementById('product-image-' + productId);
+            
+            // Fetch images for this product
+            fetch(`/api/products/${productId}/images`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.images && data.images.length > 0) {
+                        // Use the first image
+                        imgElement.src = data.images[0].imagePath;
+                    } else {
+                        // Fallback to placeholder
+                        imgElement.src = 'https://via.placeholder.com/400x400.png?text=Product';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading product image:', error);
+                    imgElement.src = 'https://via.placeholder.com/400x400.png?text=Product';
+                });
+        });
+    });
+</script>
 
 </body>
 </html>

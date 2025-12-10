@@ -55,12 +55,14 @@
             </div>
 
             <div class="product-grid" th:if="${!#lists.isEmpty(services)}">
-                <article class="product-card" th:each="service : ${services}">
+                <article class="product-card" th:each="service : ${services}" th:attr="data-service-id=${service.id}">
                     <a th:href="@{/services/{id}(id=${service.id})}">
                     <div class="product-image">
                         <!-- Placeholder image for services -->
-                        <img src="https://via.placeholder.com/400x260.png?text=Service"
-                             alt="Service Image">
+                        <img th:id="'home-service-image-' + ${service.id}"
+                             src="https://via.placeholder.com/400x260.png?text=Loading..."
+                             alt="Service Image"
+                             onerror="this.src='https://via.placeholder.com/400x260.png?text=Service'">
                     </div>
                     <div class="product-body">
                         <h3 th:text="${service.serviceName}">Service Name</h3>
@@ -91,12 +93,14 @@
             </div>
 
             <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
-                <article class="product-card" th:each="product : ${products}">
+                <article class="product-card" th:each="product : ${products}" th:attr="data-product-id=${product.id}">
                     <a th:href="@{/products/{id}(id=${product.id})}" style="display:block; color:inherit;">
                     <div class="product-image">
                         <!-- Placeholder image for products -->
-                        <img src="https://via.placeholder.com/400x400.png?text=Product"
-                             alt="Product Image">
+                        <img th:id="'home-product-image-' + ${product.id}"
+                             src="https://via.placeholder.com/400x400.png?text=Loading..."
+                             alt="Product Image"
+                             onerror="this.src='https://via.placeholder.com/400x400.png?text=Product'">
                     </div>
 
                     <div class="product-body">
@@ -143,6 +147,54 @@
         .bindPopup('Here is Salon Loan Loan!')
         .openPopup();
     /*]]>*/
+</script>
+
+<!-- IMAGE LOADING SCRIPT -->
+<script>
+    // Load images for services and products on home page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load service images
+        const serviceCards = document.querySelectorAll('.product-card[data-service-id]');
+        serviceCards.forEach(card => {
+            const serviceId = card.getAttribute('data-service-id');
+            const imgElement = document.getElementById('home-service-image-' + serviceId);
+            
+            fetch(`/api/services/${serviceId}/images`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.images && data.images.length > 0) {
+                        imgElement.src = data.images[0].imagePath;
+                    } else {
+                        imgElement.src = 'https://via.placeholder.com/400x260.png?text=Service';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading service image:', error);
+                    imgElement.src = 'https://via.placeholder.com/400x260.png?text=Service';
+                });
+        });
+        
+        // Load product images
+        const productCards = document.querySelectorAll('.product-card[data-product-id]');
+        productCards.forEach(card => {
+            const productId = card.getAttribute('data-product-id');
+            const imgElement = document.getElementById('home-product-image-' + productId);
+            
+            fetch(`/api/products/${productId}/images`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.images && data.images.length > 0) {
+                        imgElement.src = data.images[0].imagePath;
+                    } else {
+                        imgElement.src = 'https://via.placeholder.com/400x400.png?text=Product';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading product image:', error);
+                    imgElement.src = 'https://via.placeholder.com/400x400.png?text=Product';
+                });
+        });
+    });
 </script>
 
 <div th:replace="~{fragments/footer :: site-footer}"></div>

@@ -138,7 +138,9 @@ public class ServiceImageServiceImpl implements ServiceImageService {
         Path filePath = uploadPath.resolve(filename);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         
-        log.info("Saved service image to: {}", filePath);
-        return filePath.toString();
+        // Return web-accessible path instead of file system path
+        String webPath = "/" + uploadDir + filename;
+        log.info("Saved service image to: {} (web path: {})", filePath, webPath);
+        return webPath;
     }
 }

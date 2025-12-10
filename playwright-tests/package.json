@@ -1,0 +1,17 @@
+{
+  "name": "salon-loan-loan-tests",
+  "version": "1.0.0",
+  "description": "Playwright end-to-end tests for Salon Loan Loan application",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug"
+  },
+  "keywords": ["playwright", "testing", "e2e"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

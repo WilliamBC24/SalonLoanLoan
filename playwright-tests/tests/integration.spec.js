@@ -30,6 +30,7 @@ test.describe('Frontend and Backend Integration', () => {
     await page.click('button[type="submit"]');
     
     // Wait for successful login (redirected away from login page)
+    await page.waitForLoadState('networkidle');
     await page.waitForURL(/^(?!.*\/user\/login).*$/, { timeout: 10000 });
     
     // Step 2: Navigate to services page
@@ -62,8 +63,9 @@ test.describe('Frontend and Backend Integration', () => {
     await page.fill('input[name="password"]', 'alice');
     await page.click('button[type="submit"]');
     
-    // Wait for login to complete
-    await page.waitForTimeout(2000);
+    // Wait for login to complete and page to stabilize
+    await page.waitForLoadState('networkidle');
+    await page.waitForURL(/^(?!.*\/user\/login).*$/, { timeout: 10000 });
     
     // Try to access user profile
     await page.goto('/user/profile');
@@ -156,8 +158,9 @@ test.describe('Backend Data Loading', () => {
     await page.fill('input[name="password"]', 'alice');
     await page.click('button[type="submit"]');
     
-    // Should successfully login
-    await page.waitForTimeout(2000);
+    // Wait for login to complete
+    await page.waitForLoadState('networkidle');
+    await page.waitForURL(/^(?!.*\/user\/login).*$/, { timeout: 10000 });
     
     // Verify we're not on login page anymore
     const currentUrl = page.url();

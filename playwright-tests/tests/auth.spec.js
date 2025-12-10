@@ -46,9 +46,8 @@ test.describe('User Authentication', () => {
     
     await page.click('button[type="submit"]');
     
-    // Should show error message or stay on login page
-    // Wait a bit for potential error message
-    await page.waitForTimeout(1000);
+    // Wait for page to process the login attempt
+    await page.waitForLoadState('networkidle');
     
     // Verify we're still on login page or see error
     const currentUrl = page.url();

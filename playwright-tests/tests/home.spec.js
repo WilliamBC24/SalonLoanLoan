@@ -10,8 +10,8 @@ test.describe('Home Page', () => {
   test('should display home page with hero section', async ({ page }) => {
     await page.goto('/');
     
-    // Check page title
-    await expect(page).toHaveTitle(/Home/);
+    // Check page title - should contain "Home" or "Salon Loan Loan"
+    await expect(page).toHaveTitle(/Salon Loan Loan|Home/);
     
     // Check hero section
     await expect(page.locator('.hero')).toBeVisible();

@@ -21,8 +21,8 @@ test.describe('Services Page', () => {
   test('should display service cards or empty message', async ({ page }) => {
     await page.goto('/services');
     
-    // Check if there are service cards
-    const serviceCards = page.locator('.product-card, .service-card, article').filter({ has: page.locator('a[href*="/services/"]') });
+    // Check if there are service cards (look for articles with service links)
+    const serviceCards = page.locator('article').filter({ has: page.locator('a[href*="/services/"]') });
     const noServicesMsg = page.locator('text=/No services|No items/i');
     
     // Either we have cards or a message

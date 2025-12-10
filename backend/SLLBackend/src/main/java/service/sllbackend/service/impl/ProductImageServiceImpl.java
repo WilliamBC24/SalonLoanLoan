@@ -140,7 +140,9 @@ public class ProductImageServiceImpl implements ProductImageService {
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         
         // Return web-accessible path instead of file system path
-        String webPath = "/" + uploadDir + filename;
+        // Ensure uploadDir ends with / before appending filename
+        String normalizedUploadDir = uploadDir.endsWith("/") ? uploadDir : uploadDir + "/";
+        String webPath = "/" + normalizedUploadDir + filename;
         log.info("Saved product image to: {} (web path: {})", filePath, webPath);
         return webPath;
     }

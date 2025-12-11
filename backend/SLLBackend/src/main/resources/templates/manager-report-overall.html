@@ -135,6 +135,13 @@
             color: #b91c1c;
         }
 
+        .kpi-actions-row {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
         /* ===== REPORT TILES (TABLES) ===== */
         .report-tiles {
             display: grid;
@@ -149,14 +156,6 @@
             background: #ffffff;
             box-shadow: var(--shadow-soft);
             overflow: hidden;
-        }
-
-        /* Make entire tile clickable */
-        .report-tile-link {
-            position: absolute;
-            inset: 0;
-            z-index: 9999 !important;
-            display: block;
         }
 
         .report-tile-inner {
@@ -197,21 +196,15 @@
             color: #9ca3af;
         }
 
-        .report-tile-chevron {
-            font-size: 1rem;
-            color: #9ca3af;
+        .report-tile-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            justify-content: flex-end;
         }
 
         .report-tile:hover {
             background: #f9fafb;
-        }
-
-        .report-tile:hover .report-tile-chevron {
-            color: #4b5563;
-        }
-
-        .report-tile:hover .report-tile-link {
-            cursor: pointer;
         }
 
         /* Small tables */
@@ -263,6 +256,34 @@
             text-align: center;
             color: #9ca3af;
             font-size: 0.86rem;
+        }
+
+        /* ===== GENERIC SMALL BUTTON / LINK PILLS ===== */
+        .pill-link {
+            border-radius: 999px;
+            padding: 0.22rem 0.7rem;
+            font-size: 0.78rem;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            text-decoration: none;
+            color: #374151;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .pill-link:hover {
+            background: #eef2ff;
+        }
+
+        .pill-link.export {
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+
+        .pill-link.export:hover {
+            background: #bbf7d0;
         }
 
         /* ===== RESPONSIVE ===== */
@@ -334,38 +355,65 @@
             <div class="kpi-grid">
                 <!-- Appointments revenue -->
                 <div class="kpi-card">
-                    <a class="report-tile-link"
-                       th:href="@{/manager/report/appointment}"></a>
                     <div class="kpi-label">Appointments Revenue</div>
                     <div class="kpi-value"
                          th:text="${#numbers.formatDecimal(monthlyAppointmentRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                         0 VND
                     </div>
                     <div class="kpi-caption">Total from completed appointments this month.</div>
+                    <div class="kpi-actions-row">
+                        <a class="pill-link"
+                           th:href="@{/manager/report/appointment}">
+                            <span>View report</span>
+                        </a>
+                        <a class="pill-link export"
+                           th:href="@{/manager/report/appointment/export}">
+                            <span>⬇</span>
+                            <span>Export Excel</span>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Orders revenue -->
                 <div class="kpi-card">
-                    <a class="report-tile-link"
-                       th:href="@{/manager/report/order}"></a>
                     <div class="kpi-label">Orders Revenue</div>
                     <div class="kpi-value"
                          th:text="${#numbers.formatDecimal(monthlyOrderRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                         0 VND
                     </div>
                     <div class="kpi-caption">Total from product orders this month.</div>
+                    <div class="kpi-actions-row">
+                        <a class="pill-link"
+                           th:href="@{/manager/report/order}">
+                            <span>View report</span>
+                        </a>
+                        <a class="pill-link export"
+                           th:href="@{/manager/report/order/export}">
+                            <span>⬇</span>
+                            <span>Export Excel</span>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Supplies cost -->
                 <div class="kpi-card">
-                    <a class="report-tile-link"
-                       th:href="@{/manager/report/supplier}"></a>
                     <div class="kpi-label">Supplies Cost</div>
                     <div class="kpi-value"
                          th:text="${#numbers.formatDecimal(monthlySupplyCost, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                         0 VND
                     </div>
                     <div class="kpi-caption">Total spent on suppliers this month.</div>
+                    <div class="kpi-actions-row">
+                        <a class="pill-link"
+                           th:href="@{/manager/report/supplier}">
+                            <span>View report</span>
+                        </a>
+                        <a class="pill-link export"
+                           th:href="@{/manager/report/supplier/export}">
+                            <span>⬇</span>
+                            <span>Export Excel</span>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Net income -->
@@ -394,9 +442,6 @@
 
                 <!-- Supplier Report -->
                 <section class="report-tile">
-                    <a class="report-tile-link"
-                       th:href="@{/manager/report/supplier}"></a>
-
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
@@ -405,7 +450,17 @@
                                     How much you spent on each supplier this month.
                                 </span>
                             </div>
-                            <span class="report-tile-chevron">➜</span>
+                            <div class="report-tile-actions">
+                                <a class="pill-link"
+                                   th:href="@{/manager/report/supplier}">
+                                    <span>View</span>
+                                </a>
+                                <a class="pill-link export"
+                                   th:href="@{/manager/report/supplier/export}">
+                                    <span>⬇</span>
+                                    <span>Export</span>
+                                </a>
+                            </div>
                         </div>
 
                         <div class="report-table-wrapper">
@@ -441,9 +496,6 @@
 
                 <!-- Satisfaction Report -->
                 <section class="report-tile">
-                    <a class="report-tile-link"
-                       th:href="@{/manager/report/satisfaction}"></a>
-
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
@@ -452,7 +504,17 @@
                                     Customer satisfaction across appointments and product orders.
                                 </span>
                             </div>
-                            <span class="report-tile-chevron">➜</span>
+                            <div class="report-tile-actions">
+                                <a class="pill-link"
+                                   th:href="@{/manager/report/satisfaction}">
+                                    <span>View</span>
+                                </a>
+                                <a class="pill-link export"
+                                   th:href="@{/manager/report/satisfaction/export}">
+                                    <span>⬇</span>
+                                    <span>Export</span>
+                                </a>
+                            </div>
                         </div>
 
                         <div class="report-table-wrapper">
@@ -485,9 +547,6 @@
 
                 <!-- Sales Report -->
                 <section class="report-tile">
-                    <a class="report-tile-link"
-                       th:href="@{/manager/report/sales}"></a>
-
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
@@ -496,7 +555,17 @@
                                     See how much you made from appointments vs. product orders.
                                 </span>
                             </div>
-                            <span class="report-tile-chevron">➜</span>
+                            <div class="report-tile-actions">
+                                <a class="pill-link"
+                                   th:href="@{/manager/report/sales}">
+                                    <span>View</span>
+                                </a>
+                                <a class="pill-link export"
+                                   th:href="@{/manager/report/sales/export}">
+                                    <span>⬇</span>
+                                    <span>Export</span>
+                                </a>
+                            </div>
                         </div>
 
                         <div class="report-table-wrapper">
@@ -532,9 +601,6 @@
 
                 <!-- Expense Report -->
                 <section class="report-tile">
-                    <a class="report-tile-link"
-                       th:href="@{/manager/report/expense/list}"></a>
-
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
@@ -543,7 +609,17 @@
                                     Breakdown of expenses by category for this month.
                                 </span>
                             </div>
-                            <span class="report-tile-chevron">➜</span>
+                            <div class="report-tile-actions">
+                                <a class="pill-link"
+                                   th:href="@{/manager/report/expense/list}">
+                                    <span>View</span>
+                                </a>
+                                <a class="pill-link export"
+                                   th:href="@{/manager/report/expense/list/export}">
+                                    <span>⬇</span>
+                                    <span>Export</span>
+                                </a>
+                            </div>
                         </div>
 
                         <div class="report-table-wrapper">

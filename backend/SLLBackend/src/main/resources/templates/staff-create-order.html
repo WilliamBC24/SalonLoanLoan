@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff - Create In-store Order | Salon Loan Loan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+    <style>
+        .staff-order-create-page {
+            padding: 2.5rem 0 3rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .staff-order-layout-inner {
+            max-width: 80vw;
+            width: 100%;
+            margin: 1rem auto;
+        }
+
+        .staff-order-card {
+            background: #ffffff;
+            padding: 2.2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e8e8e8;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .staff-order-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-kicker {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6b7280;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+
+        .staff-order-actions {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .back-link-pill {
+            font-size: 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            padding: 0.4rem 0.9rem;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .back-link-pill:hover {
+            background: #f4f4f4;
+        }
+
+        .back-link-pill .icon {
+            font-size: 1.05rem;
+        }
+
+        .order-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.6fr);
+            gap: 1.75rem;
+            margin-top: 0.4rem;
+        }
+
+        @media (max-width: 900px) {
+            .staff-order-layout-inner {
+                max-width: 95vw;
+            }
+
+            .order-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .order-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-card-inner {
+            background: #f9fafb;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 1.2rem 1.3rem 1.4rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            margin-top: 0.9rem;
+            font-weight: 600;
+            font-size: 0.94rem;
+            display: block;
+        }
+
+        .form-input, .form-select, .form-text {
+            width: 100%;
+            padding: 0.75rem 1.05rem;
+            border: 1px solid #d0d0d0;
+            border-radius: 999px;
+            font-size: 0.94rem;
+            transition: border 0.2s, box-shadow 0.2s;
+            background: #ffffff;
+        }
+
+        .form-text {
+            border-radius: 12px;
+        }
+
+        .form-input:focus, .form-select:focus, .form-text:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 34, 119, 0.18);
+        }
+
+        .field-note {
+            margin-top: 0.32rem;
+            font-size: 0.82rem;
+            color: #6b7280;
+        }
+
+        .field-note.error {
+            color: #dc2626;
+        }
+
+        .message {
+            margin-bottom: 1.1rem;
+            padding: 0.85rem 1.05rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .message.error {
+            background: #ffecec;
+            border: 1px solid #ffb3b3;
+            color: #b30000;
+        }
+
+        .message.success {
+            background: #e8fff0;
+            border: 1px solid #b2e5c4;
+            color: #0f8a3b;
+        }
+
+        /* User search */
+        .user-search-wrapper {
+            position: relative;
+        }
+
+        #userResults {
+            position: absolute;
+            top: 110%;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .user-option {
+            padding: 0.55rem 0.9rem;
+            font-size: 0.88rem;
+            cursor: pointer;
+        }
+
+        .user-option:hover {
+            background: #f3f4ff;
+        }
+
+        .selected-user-note {
+            font-size: 0.82rem;
+            margin-top: 0.4rem;
+            color: #059669;
+        }
+
+        /* Product search + items */
+        .product-search-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #productResults {
+            margin-top: 0.5rem;
+            background: #fafafa;
+            border-radius: 16px;
+            border: 1px solid #e6e6e6;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .product-row {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .product-row:last-child {
+            border-bottom: none;
+        }
+
+        .product-row:hover {
+            background: #f3f3f3;
+        }
+
+        .order-items-wrapper {
+            margin-top: 1.25rem;
+            background: #f7f7fe;
+            border-radius: 16px;
+            border: 1px solid #dcdcff;
+            padding: 0.9rem 1rem 1rem;
+        }
+
+        .order-items-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.75rem;
+        }
+
+        .order-items-header h4 {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .order-items-table {
+            width: 100%;
+            margin-top: 0.6rem;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .order-items-table thead {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .order-items-table th, .order-items-table td {
+            padding: 0.5rem 0.4rem;
+            text-align: left;
+        }
+
+        .order-items-table td.qty-cell input {
+            width: 70px;
+            padding: 0.35rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid #d4d4d8;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .remove-item-btn {
+            border: none;
+            background: none;
+            color: #b91c1c;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .summary-card {
+            margin-top: 1.1rem;
+            background: #fff9e8;
+            border-radius: 16px;
+            border: 1px solid #ffe6b0;
+            padding: 1.05rem 1.3rem;
+            font-size: 0.93rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.15rem 0;
+        }
+
+        .summary-row strong {
+            font-weight: 600;
+        }
+
+        .summary-status {
+            margin-top: 0.6rem;
+            font-size: 0.88rem;
+            color: #16a34a;
+        }
+
+        .submit-row {
+            margin-top: 1.8rem;
+        }
+
+        .submit-row .btn-primary {
+            width: 100%;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+</head>
+<body class="staff-layout">
+
+<!-- Staff Sidebar -->
+<div th:replace="~{fragments/staff-sidebar :: staff-site-header}"></div>
+
+<main class="staff-main staff-order-create-page">
+    <div class="staff-order-layout-inner">
+        <section class="staff-order-card">
+
+            <div class="staff-order-header-row">
+                <div>
+                    <p class="section-kicker">In-store Sale</p>
+                    <h2>Create Order</h2>
+                </div>
+                <div class="staff-order-actions">
+                    <a href="/staff/order/list" class="back-link-pill">
+                        <span class="icon">←</span>
+                        <span>Back to Orders</span>
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${param.error}" class="message error">
+                Failed to create order. Please check the information and try again.
+            </div>
+            <div th:if="${param.success}" class="message success">
+                Order created successfully.
+            </div>
+
+            <!-- FORM: adjust action to your staff controller -->
+            <form th:action="@{/staff/order/create}" method="post" id="staff-order-form">
+                <!-- Fulfillment type & status defaults -->
+                <input type="hidden" name="fulfillmentType" value="IN_STORE_PICKUP">
+                <!-- if you want to send order status, otherwise set on server -->
+                <input type="hidden" name="orderStatus" value="PICKED_UP">
+
+                <div class="order-grid">
+                    <!-- LEFT: customer + user assignment + payment -->
+                    <div class="order-col">
+                        <div class="order-card-inner">
+
+                            <label class="form-label">Assigned User (optional)</label>
+                            <div class="user-search-wrapper">
+                                <!-- Hidden: username of system user -->
+                                <input type="hidden" name="username" id="username"/>
+
+                                <!-- Visible search field (by phone or username) -->
+                                <input type="text"
+                                       id="userSearch"
+                                       class="form-input"
+                                       placeholder="Search user by phone or username..."/>
+
+                                <div id="userResults"></div>
+                            </div>
+                            <div id="selectedUserNote" class="selected-user-note" style="display:none;"></div>
+                            <div class="field-note">
+                                If no user is chosen, this order will not be linked to any account.
+                            </div>
+
+                            <label class="form-label" for="paymentMethod">Payment Method *</label>
+                            <select id="paymentMethod" name="paymentMethod" class="form-select" required>
+                                <!-- in-store pickup allowed: BANK_TRANSFER, IN_STORE -->
+                                <option value="IN_STORE">Pay at counter (IN_STORE)</option>
+                                <option value="BANK_TRANSFER">Bank transfer</option>
+                            </select>
+                            <div class="field-note">
+                                Fulfillment type is fixed to in-store pickup for this page.
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: product search + items + totals -->
+                    <div class="order-col">
+                        <div class="order-card-inner">
+                            <div class="product-search-wrapper">
+                                <label class="form-label" for="productSearch">Add Products *</label>
+                                <input type="text" id="productSearch"
+                                       class="form-input"
+                                       placeholder="Search products by name or code...">
+
+                                <div id="productResults"></div>
+                            </div>
+
+                            <div class="order-items-wrapper">
+                                <div class="order-items-header">
+                                    <h4>Order Items</h4>
+                                    <span id="items-count-label" class="field-note">No items yet</span>
+                                </div>
+
+                                <table class="order-items-table" id="order-items-table">
+                                    <thead>
+                                    <tr>
+                                        <th style="width:40%;">Product</th>
+                                        <th style="width:15%;">Unit Price</th>
+                                        <th style="width:15%;">Qty</th>
+                                        <th style="width:20%;">Subtotal</th>
+                                        <th style="width:10%;"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="order-items-body">
+                                    <!-- dynamic rows -->
+                                    </tbody>
+                                </table>
+                                <div id="items-warning" class="field-note error"></div>
+                            </div>
+
+                            <div class="summary-card">
+                                <div class="summary-row">
+                                    <span>Items subtotal:</span>
+                                    <strong><span id="subtotal-label">0 VND</span></strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Shipping fee:</span>
+                                    <strong><span id="shipping-fee-label">0 VND</span></strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Total price:</span>
+                                    <strong><span id="total-label">0 VND</span></strong>
+                                </div>
+
+                                <div class="summary-status">
+                                    Order status will be set to <strong>PICKED_UP</strong> for this in-store order.
+                                </div>
+
+                                <!-- hidden fields for backend -->
+                                <input type="hidden" id="subtotal-input" name="subtotal">
+                                <input type="hidden" id="shippingFee-input" name="shippingFee" value="0">
+                                <input type="hidden" id="total-input" name="totalPrice">
+                                <!-- items JSON: [{productId, quantity, unitPrice}] -->
+                                <input type="hidden" id="itemsJson" name="itemsJson">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit-row">
+                    <button type="submit" class="btn-primary">
+                        Create Order
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+<script>
+    $(function () {
+        let debounceTimer;
+        let selectedUser = null;
+        let orderItems = []; // {productId, name, unitPrice, quantity}
+
+        function formatMoney(v) {
+            return Number(v || 0).toLocaleString('vi-VN') + ' VND';
+        }
+
+        function updateItemsUI() {
+            const $tbody = $('#order-items-body');
+            $tbody.empty();
+
+            if (orderItems.length === 0) {
+                $('#items-count-label').text('No items yet');
+            } else {
+                $('#items-count-label').text(orderItems.length + ' item(s)');
+            }
+
+            let subtotal = 0;
+            orderItems.forEach(item => {
+                const lineSubtotal = item.unitPrice * item.quantity;
+                subtotal += lineSubtotal;
+
+                const row = `
+                    <tr data-product-id="${item.productId}">
+                        <td>${item.name}</td>
+                        <td>${formatMoney(item.unitPrice)}</td>
+                        <td class="qty-cell">
+                            <input type="number" min="1" value="${item.quantity}" class="item-qty-input"/>
+                        </td>
+                        <td class="subtotal-cell">${formatMoney(lineSubtotal)}</td>
+                        <td>
+                            <button type="button" class="remove-item-btn">Remove</button>
+                        </td>
+                    </tr>
+                `;
+                $tbody.append(row);
+            });
+
+            const shippingFee = 0; // fixed for in-store pickup
+            const total = subtotal + shippingFee;
+
+            $('#subtotal-label').text(formatMoney(subtotal));
+            $('#shipping-fee-label').text(formatMoney(shippingFee));
+            $('#total-label').text(formatMoney(total));
+
+            $('#subtotal-input').val(subtotal);
+            $('#shippingFee-input').val(shippingFee);
+            $('#total-input').val(total);
+
+            $('#itemsJson').val(JSON.stringify(orderItems));
+
+            if (subtotal <= 0) {
+                $('#items-warning').text('Order must have at least one product with quantity > 0.');
+            } else {
+                $('#items-warning').text('');
+            }
+        }
+
+        function upsertOrderItem(product) {
+            const existing = orderItems.find(i => i.productId === product.id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                orderItems.push({
+                    productId: product.id,
+                    name: product.productName,
+                    unitPrice: product.currentPrice,
+                    quantity: 1
+                });
+            }
+            updateItemsUI();
+        }
+
+        // ===== Product search (AJAX) =====
+        $('#productSearch').on('input', function () {
+            const query = $(this).val().trim();
+            clearTimeout(debounceTimer);
+
+            if (query.length < 1) {
+                $('#productResults').empty();
+                return;
+            }
+
+            debounceTimer = setTimeout(() => {
+                $.ajax({
+                    url: '/products/search',      // adjust endpoint
+                    type: 'GET',
+                    data: { query: query },
+                    success: function (data) {
+                        $('#productResults').empty();
+                        data.forEach(p => {
+                            console.log(data)
+                            const row = `
+                                <div class="product-row"
+                                     data-id="${p.id}"
+                                     data-name="${p.productName}"
+                                     data-price="${p.currentPrice}">
+                                    ${p.productName} - ${formatMoney(p.currentPrice)}
+                                </div>
+                            `;
+                            $('#productResults').append(row);
+                        });
+                    },
+                    error: function () {
+                        $('#productResults').empty();
+                    }
+                });
+            }, 350);
+        });
+
+        $('#productResults').on('click', '.product-row', function () {
+            const product = {
+                id: parseInt($(this).data('id')),
+                productName: $(this).data('name'),
+                currentPrice: parseInt($(this).data('price'))
+            };
+            upsertOrderItem(product);
+        });
+
+        // ===== Quantity change & remove =====
+        $('#order-items-body').on('input', '.item-qty-input', function () {
+            const $row = $(this).closest('tr');
+            const productId = parseInt($row.data('product-id'));
+            const newQty = Math.max(1, parseInt($(this).val() || '1'));
+
+            const item = orderItems.find(i => i.productId === productId);
+            if (item) {
+                item.quantity = newQty;
+                const lineSubtotal = item.unitPrice * item.quantity;
+                $row.find('.subtotal-cell').text(formatMoney(lineSubtotal));
+                updateItemsUI();
+            }
+        });
+
+        $('#order-items-body').on('click', '.remove-item-btn', function () {
+            const $row = $(this).closest('tr');
+            const productId = parseInt($row.data('product-id'));
+            orderItems = orderItems.filter(i => i.productId !== productId);
+            $row.remove();
+            updateItemsUI();
+        });
+
+        // ===== User search (same pattern as appointment page) =====
+        $('#userSearch').on('input', function () {
+            const query = $(this).val();
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(() => {
+                if (query.length < 1) {
+                    $('#userResults').empty();
+                    return;
+                }
+
+                $.ajax({
+                    url: '/staff/registration/user-search',
+                    type: 'GET',
+                    data: { phone: query },
+                    success: function (data) {
+                        $('#userResults').empty();
+                        data.forEach(user => {
+                            $('#userResults').append(
+                                `<div class="user-option"
+                                      data-username="${user.username}"
+                                      data-phonenumber="${user.phoneNumber}">
+                                     ${user.username} (${user.phoneNumber})
+                                 </div>`
+                            );
+                        });
+                    }
+                });
+            }, 350);
+        });
+
+        $('#userResults').on('click', '.user-option', function () {
+            const username = $(this).data('username');
+            const phone = $(this).data('phonenumber');
+
+            $('#username').val(username);
+            $('#selectedUserNote')
+                .text('Assigned user: ' + username + ' (' + phone + ')')
+                .show();
+            $('#phoneNumber').val(phone);
+
+            $('#userResults').empty();
+        });
+
+        // Clear assignment if staff deletes text
+        $('#userSearch').on('blur', function () {
+            if (!$(this).val().trim() && !selectedUser) {
+                $('#username').val('');
+                $('#selectedUserNote').hide().text('');
+            }
+        });
+
+        // ===== Simple validation on submit =====
+        $('#staff-order-form').on('submit', function (e) {
+            let ok = true;
+
+
+
+            if (orderItems.length === 0) {
+                $('#items-warning').text('Please add at least one product.');
+                ok = false;
+            } else {
+                $('#items-warning').text('');
+            }
+
+            if (!ok) {
+                e.preventDefault();
+            }
+        });
+
+        // initial totals
+        updateItemsUI();
+    });
+</script>
+</body>
+</html>

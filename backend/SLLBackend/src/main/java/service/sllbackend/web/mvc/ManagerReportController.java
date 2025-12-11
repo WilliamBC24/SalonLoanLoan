@@ -1,6 +1,11 @@
 package service.sllbackend.web.mvc;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +20,8 @@ import service.sllbackend.repository.StaffAccountRepo;
 import service.sllbackend.service.ReportService;
 import service.sllbackend.web.dto.*;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -287,4 +294,449 @@ public class ManagerReportController {
             return "redirect:/manager/report/expense";
         }
     }
+    @GetMapping("/appointment/export")
+    public void exportAppointmentReport(
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year,
+            @RequestParam(value = "staffId", required = false) Integer staffId,
+            HttpServletResponse response
+    ) throws IOException {
+
+        YearMonth targetMonth = resolveMonthYear(month, year);
+        AppointmentReportDTO report = reportService.getAppointmentReport(targetMonth, staffId);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Appointment Report");
+            int rowIdx = 0;
+
+            // ==== SUMMARY (top) ====
+            Row summary1 = sheet.createRow(rowIdx++);
+            summary1.createCell(0).setCellValue("Month");
+            summary1.createCell(1).setCellValue(targetMonth.toString());
+
+            Row summary2 = sheet.createRow(rowIdx++);
+            summary2.createCell(0).setCellValue("Total Appointments");
+            summary2.createCell(1).setCellValue(report.getAppointmentCount());
+
+            Row summary3 = sheet.createRow(rowIdx++);
+            summary3.createCell(0).setCellValue("Total Revenue");
+            summary3.createCell(1).setCellValue(report.getTotalRevenue());
+
+            // Blank row
+            rowIdx++;
+
+            // ==== DETAILS HEADER ====
+            Row header = sheet.createRow(rowIdx++);
+            int c = 0;
+            header.createCell(c++).setCellValue("Invoice ID");
+            header.createCell(c++).setCellValue("Appointment Code");
+            header.createCell(c++).setCellValue("Scheduled At");
+            header.createCell(c++).setCellValue("Customer Name");
+            header.createCell(c++).setCellValue("Staff Name");
+            header.createCell(c++).setCellValue("Total Price");
+            header.createCell(c++).setCellValue("Discount");
+            header.createCell(c++).setCellValue("Net Price");
+
+            // ==== DETAILS ROWS ====
+            if (report.getRows() != null) {
+                for (AppointmentReportRowDTO r : report.getRows()) {
+                    Row row = sheet.createRow(rowIdx++);
+                    int col = 0;
+                    row.createCell(col++).setCellValue(
+                            r.getInvoiceId() != null ? r.getInvoiceId() : 0
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getAppointmentCode() != null ? r.getAppointmentCode() : ""
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getScheduledAt() != null ? r.getScheduledAt().format(dtf) : ""
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getCustomerName() != null ? r.getCustomerName() : ""
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getStaffName() != null ? r.getStaffName() : ""
+                    );
+                    row.createCell(col++).setCellValue(r.getTotalPrice());
+                    row.createCell(col++).setCellValue(r.getDiscount());
+                    row.createCell(col++).setCellValue(r.getNetPrice());
+                }
+            }
+
+            // Autosize
+            for (int i = 0; i < header.getLastCellNum(); i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            String fileName = "appointment-report-" + targetMonth + ".xlsx";
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+            try (OutputStream out = response.getOutputStream()) {
+                workbook.write(out);
+            }
+        }
+    }
+    @GetMapping("/order/export")
+    public void exportOrderReport(
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year,
+            HttpServletResponse response
+    ) throws IOException {
+
+        YearMonth targetMonth = resolveMonthYear(month, year);
+        OrderReportDTO report = reportService.getOrderReport(targetMonth);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Order Report");
+            int rowIdx = 0;
+
+            // ==== SUMMARY ====
+            Row summary1 = sheet.createRow(rowIdx++);
+            summary1.createCell(0).setCellValue("Month");
+            summary1.createCell(1).setCellValue(targetMonth.toString());
+
+            Row summary2 = sheet.createRow(rowIdx++);
+            summary2.createCell(0).setCellValue("Total Orders");
+            summary2.createCell(1).setCellValue(report.getOrderCount());
+
+            Row summary3 = sheet.createRow(rowIdx++);
+            summary3.createCell(0).setCellValue("Total Revenue");
+            summary3.createCell(1).setCellValue(report.getTotalRevenue());
+
+            rowIdx++;
+
+            // ==== DETAILS HEADER ====
+            Row header = sheet.createRow(rowIdx++);
+            int c = 0;
+            header.createCell(c++).setCellValue("Invoice ID");
+            header.createCell(c++).setCellValue("Order Code");
+            header.createCell(c++).setCellValue("Created At");
+            header.createCell(c++).setCellValue("Customer Name");
+            header.createCell(c++).setCellValue("Fulfillment Type");
+            header.createCell(c++).setCellValue("Status");
+            header.createCell(c++).setCellValue("Total Price");
+            header.createCell(c++).setCellValue("Discount");
+            header.createCell(c++).setCellValue("Net Price");
+
+            // ==== DETAILS ROWS ====
+            if (report.getRows() != null) {
+                for (OrderReportRowDTO r : report.getRows()) {
+                    Row row = sheet.createRow(rowIdx++);
+                    int col = 0;
+                    row.createCell(col++).setCellValue(
+                            r.getInvoiceId() != null ? r.getInvoiceId() : 0
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getOrderCode() != null ? r.getOrderCode() : ""
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getCreatedAt() != null ? r.getCreatedAt().format(dtf) : ""
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getCustomerName() != null ? r.getCustomerName() : ""
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getFulfillmentType() != null ? r.getFulfillmentType() : ""
+                    );
+                    row.createCell(col++).setCellValue(
+                            r.getStatusLabel() != null ? r.getStatusLabel() : ""
+                    );
+                    row.createCell(col++).setCellValue(r.getTotalPrice());
+                    row.createCell(col++).setCellValue(r.getDiscount());
+                    row.createCell(col++).setCellValue(r.getNetPrice());
+                }
+            }
+
+            for (int i = 0; i < header.getLastCellNum(); i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            String fileName = "order-report-" + targetMonth + ".xlsx";
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+            try (OutputStream out = response.getOutputStream()) {
+                workbook.write(out);
+            }
+        }
+    }
+    @GetMapping("/supplier/export")
+    public void exportSupplierReport(
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year,
+            HttpServletResponse response
+    ) throws IOException {
+
+        YearMonth targetMonth = resolveMonthYear(month, year);
+        List<SupplierSummaryDTO> supplierSummary = reportService.getSupplierSummary(targetMonth);
+
+        // Sum total spent for summary
+        int totalSpent = supplierSummary.stream()
+                .mapToInt(SupplierSummaryDTO::getTotalSpent)
+                .sum();
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Supplier Report");
+            int rowIdx = 0;
+
+            // SUMMARY
+            Row s1 = sheet.createRow(rowIdx++);
+            s1.createCell(0).setCellValue("Month");
+            s1.createCell(1).setCellValue(targetMonth.toString());
+
+            Row s2 = sheet.createRow(rowIdx++);
+            s2.createCell(0).setCellValue("Total Supply Cost");
+            s2.createCell(1).setCellValue(totalSpent);
+
+            rowIdx++;
+
+            // HEADER
+            Row header = sheet.createRow(rowIdx++);
+            int c = 0;
+            header.createCell(c++).setCellValue("Supplier Name");
+            header.createCell(c++).setCellValue("Total Spent");
+            header.createCell(c++).setCellValue("Percentage (%)");
+
+            // ROWS
+            for (SupplierSummaryDTO s : supplierSummary) {
+                Row row = sheet.createRow(rowIdx++);
+                int col = 0;
+                row.createCell(col++).setCellValue(
+                        s.getSupplierName() != null ? s.getSupplierName() : ""
+                );
+                row.createCell(col++).setCellValue(s.getTotalSpent());
+                row.createCell(col++).setCellValue(
+                        s.getPercentage() != null ? s.getPercentage() : 0.0
+                );
+            }
+
+            for (int i = 0; i < header.getLastCellNum(); i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            String fileName = "supplier-report-" + targetMonth + ".xlsx";
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+            try (OutputStream out = response.getOutputStream()) {
+                workbook.write(out);
+            }
+        }
+    }
+    @GetMapping("/satisfaction/export")
+    public void exportSatisfactionReport(
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year,
+            HttpServletResponse response
+    ) throws IOException {
+
+        YearMonth targetMonth = resolveMonthYear(month, year);
+        List<SatisfactionSummaryDTO> list =
+                reportService.getSatisfactionSummary(targetMonth);
+
+        long totalResponses = list.stream()
+                .mapToLong(s -> s.getResponseCount() != null ? s.getResponseCount() : 0L)
+                .sum();
+
+        Double weightedAvg = null;
+        if (totalResponses > 0) {
+            double sum = 0.0;
+            for (SatisfactionSummaryDTO s : list) {
+                if (s.getAverageRating() != null && s.getResponseCount() != null) {
+                    sum += s.getAverageRating() * s.getResponseCount();
+                }
+            }
+            weightedAvg = sum / totalResponses;
+        }
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Satisfaction Report");
+            int rowIdx = 0;
+
+            // SUMMARY
+            Row s1 = sheet.createRow(rowIdx++);
+            s1.createCell(0).setCellValue("Month");
+            s1.createCell(1).setCellValue(targetMonth.toString());
+
+            Row s2 = sheet.createRow(rowIdx++);
+            s2.createCell(0).setCellValue("Total Responses");
+            s2.createCell(1).setCellValue(totalResponses);
+
+            Row s3 = sheet.createRow(rowIdx++);
+            s3.createCell(0).setCellValue("Weighted Average Rating");
+            s3.createCell(1).setCellValue(weightedAvg != null ? weightedAvg : 0.0);
+
+            rowIdx++;
+
+            // HEADER
+            Row header = sheet.createRow(rowIdx++);
+            int c = 0;
+            header.createCell(c++).setCellValue("Segment");
+            header.createCell(c++).setCellValue("Average Rating");
+            header.createCell(c++).setCellValue("Response Count");
+
+            // ROWS
+            for (SatisfactionSummaryDTO s : list) {
+                Row row = sheet.createRow(rowIdx++);
+                int col = 0;
+                row.createCell(col++).setCellValue(
+                        s.getSegmentLabel() != null ? s.getSegmentLabel() : ""
+                );
+                row.createCell(col++).setCellValue(
+                        s.getAverageRating() != null ? s.getAverageRating() : 0.0
+                );
+                row.createCell(col++).setCellValue(
+                        s.getResponseCount() != null ? s.getResponseCount() : 0L
+                );
+            }
+
+            for (int i = 0; i < header.getLastCellNum(); i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            String fileName = "satisfaction-report-" + targetMonth + ".xlsx";
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+            try (OutputStream out = response.getOutputStream()) {
+                workbook.write(out);
+            }
+        }
+    }
+    @GetMapping("/sales/export")
+    public void exportSalesReport(
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year,
+            HttpServletResponse response
+    ) throws IOException {
+
+        YearMonth targetMonth = resolveMonthYear(month, year);
+        List<SalesSummaryDTO> list =
+                reportService.getSalesSummary(targetMonth);
+
+        int totalSales = list.stream()
+                .mapToInt(SalesSummaryDTO::getGrossSales)
+                .sum();
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sales Report");
+            int rowIdx = 0;
+
+            // SUMMARY
+            Row s1 = sheet.createRow(rowIdx++);
+            s1.createCell(0).setCellValue("Month");
+            s1.createCell(1).setCellValue(targetMonth.toString());
+
+            Row s2 = sheet.createRow(rowIdx++);
+            s2.createCell(0).setCellValue("Total Gross Sales");
+            s2.createCell(1).setCellValue(totalSales);
+
+            rowIdx++;
+
+            // HEADER
+            Row header = sheet.createRow(rowIdx++);
+            int c = 0;
+            header.createCell(c++).setCellValue("Source");
+            header.createCell(c++).setCellValue("Gross Sales");
+            header.createCell(c++).setCellValue("Percentage (%)");
+
+            // ROWS
+            for (SalesSummaryDTO s : list) {
+                Row row = sheet.createRow(rowIdx++);
+                int col = 0;
+                row.createCell(col++).setCellValue(
+                        s.getSourceLabel() != null ? s.getSourceLabel() : ""
+                );
+                row.createCell(col++).setCellValue(s.getGrossSales());
+                row.createCell(col++).setCellValue(
+                        s.getPercentage() != null ? s.getPercentage() : 0.0
+                );
+            }
+
+            for (int i = 0; i < header.getLastCellNum(); i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            String fileName = "sales-report-" + targetMonth + ".xlsx";
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+            try (OutputStream out = response.getOutputStream()) {
+                workbook.write(out);
+            }
+        }
+    }
+    @GetMapping("/expense/list/export")
+    public void exportExpenseReport(
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year,
+            HttpServletResponse response
+    ) throws IOException {
+
+        YearMonth targetMonth = resolveMonthYear(month, year);
+        List<ExpenseSummaryDTO> list =
+                reportService.getExpenseSummary(targetMonth);
+
+        long totalExpense = list.stream()
+                .mapToLong(e -> e.getTotalAmount() != null ? e.getTotalAmount() : 0L)
+                .sum();
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Expense Report");
+            int rowIdx = 0;
+
+            // SUMMARY
+            Row s1 = sheet.createRow(rowIdx++);
+            s1.createCell(0).setCellValue("Month");
+            s1.createCell(1).setCellValue(targetMonth.toString());
+
+            Row s2 = sheet.createRow(rowIdx++);
+            s2.createCell(0).setCellValue("Total Expense");
+            s2.createCell(1).setCellValue(totalExpense);
+
+            rowIdx++;
+
+            // HEADER
+            Row header = sheet.createRow(rowIdx++);
+            int c = 0;
+            header.createCell(c++).setCellValue("Category");
+            header.createCell(c++).setCellValue("Total Amount");
+            header.createCell(c++).setCellValue("Percentage (%)");
+
+            // ROWS
+            for (ExpenseSummaryDTO e : list) {
+                Row row = sheet.createRow(rowIdx++);
+                int col = 0;
+                row.createCell(col++).setCellValue(
+                        e.getCategoryName() != null ? e.getCategoryName() : ""
+                );
+                row.createCell(col++).setCellValue(
+                        e.getTotalAmount() != null ? e.getTotalAmount() : 0L
+                );
+                row.createCell(col++).setCellValue(
+                        e.getPercentage() != null ? e.getPercentage() : 0.0
+                );
+            }
+
+            for (int i = 0; i < header.getLastCellNum(); i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            String fileName = "expense-report-" + targetMonth + ".xlsx";
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+            try (OutputStream out = response.getOutputStream()) {
+                workbook.write(out);
+            }
+        }
+    }
+
+
+
 }

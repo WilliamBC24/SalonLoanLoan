@@ -186,6 +186,16 @@ public class DataLoader implements CommandLineRunner {
 				.accountStatus(AccountStatus.ACTIVE)
 				.build());
 
+		userAccountRepo.save(UserAccount.builder()
+				.username("anon")
+				.password(passwordEncoder.encode("anon"))
+				.gender(Gender.MALE)
+				.birthDate(LocalDate.of(2004, 9, 6))
+				.phoneNumber("0888888888")
+				.email("a@gomal.com")
+				.accountStatus(AccountStatus.ACTIVE)
+				.build());
+
 		log.info("User registered: " + username + " with password: " + rawPassword);
 	}
 

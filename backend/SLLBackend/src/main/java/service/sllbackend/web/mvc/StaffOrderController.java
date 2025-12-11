@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
@@ -89,4 +90,39 @@ public class StaffOrderController {
             return "redirect:/staff/order/edit?orderId=" + orderId + "&error=" + e.getMessage();
         }
     }
+
+    @GetMapping("/create")
+    public String showCreateOrderForm(Model model) {
+        return "staff-create-order";
+    }
+
+    @PostMapping("/create")
+    @Transactional
+    public String createInStoreOrder(
+            @RequestParam String paymentMethod,
+            @RequestParam(required = false) String username,   // assigned user (optional)
+            @RequestParam String itemsJson,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            // staff username (who creates the order), can be null if not logged in
+            String staffUsername = (principal != null ? principal.getName() : null);
+
+            orderService.createInStoreOrder(
+                    staffUsername,        // staff who creates order
+                    username,             // optional assigned user (can be null / empty)
+                    "aaa",
+                    "0999999999",
+                    paymentMethod,        // must be IN_STORE or BANK_TRANSFER
+                    itemsJson            // optional internal note
+            );
+
+            return "redirect:/staff/order/create?success";
+        } catch (Exception e) {
+            return "redirect:/staff/order/create?error";
+        }
+    }
 }
+
+

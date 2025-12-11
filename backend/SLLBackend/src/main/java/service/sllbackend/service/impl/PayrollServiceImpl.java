@@ -95,6 +95,64 @@ public class PayrollServiceImpl implements PayrollService {
         return result;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public StaffPayrollViewDTO buildPayrollForStaffMonth(Staff staff, YearMonth targetMonth) {
+        if (staff == null) {
+            throw new IllegalArgumentException("Staff must not be null");
+        }
+
+        if (targetMonth == null) {
+            targetMonth = YearMonth.now();
+        }
+
+        LocalDate periodStart = targetMonth.atDay(1);
+        LocalDate periodEnd   = targetMonth.atEndOfMonth();
+
+        LocalDateTime startDateTime = periodStart.atStartOfDay();
+        // end is exclusive: first moment of the next day
+        LocalDateTime endDateTime   = periodEnd.plusDays(1).atStartOfDay();
+
+        // ===== 1. COMMISSION FROM REQUESTED SERVICES =====
+        int appointmentCommission = calculateAppointmentCommissionForStaff(
+                staff,
+                startDateTime,
+                endDateTime
+        );
+
+        // If you later have product commission, calculate here
+        int productCommission = 0;
+
+        // ===== 2. BONUS & DEDUCTION FROM ADJUSTMENTS =====
+        BonusDeduction bd = calculateBonusAndDeductionsForStaff(
+                staff,
+                periodStart,
+                periodEnd
+        );
+
+        int payrollBonus      = bd.bonus;
+        int payrollDeduction  = bd.deduction;
+
+        // ===== 3. TOTAL PAY (no base salary for now, same as monthly method) =====
+        int baseSalary       = 0; // plug in real salary if/when you have it
+        int commissionTotal  = appointmentCommission + productCommission;
+        int totalPay         = baseSalary + commissionTotal + payrollBonus - payrollDeduction;
+
+        StaffPosition pos = getCurrentPositionOfStaff(staff);
+
+        return StaffPayrollViewDTO.builder()
+                .staffId(staff.getId())
+                .staffName(staff.getName())
+                .positionName(pos != null ? pos.getPositionName() : null)
+                .baseSalary(baseSalary)
+                .commissionAmount(commissionTotal)
+                .bonusAmount(payrollBonus)
+                .deductionsAmount(payrollDeduction)
+                .totalPay(totalPay)
+                .build();
+    }
+
+
     /**
      * Calculate commission from all requested services for this staff
      * in the given date-time window, using price_at_booking * commission%.

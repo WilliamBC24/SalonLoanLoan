@@ -76,4 +76,13 @@ public interface OrderService {
     List<OrderInvoice> getAllOrders();
 
     long countByUser(UserAccount user);
+
+    OrderInvoice createInStoreOrder(
+            String staffUsername,       // staff who creates the order
+            String username,            // optional assigned user (customer username)
+            String customerName,
+            String phoneNumber,
+            String paymentTypeName,     // must be IN_STORE or BANK_TRANSFER
+            String itemsJson    // JSON list of items: [{productId, quantity}, ...]
+    );
 }

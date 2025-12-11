@@ -37,7 +37,6 @@ public class StaffRegistrationManagementController {
     private final SatisfactionRatingService satisfactionRatingService;
     private final VietQrService vietQrService;
     private final AppointmentImageService appointmentImageService;
-    private final EmailService emailService;
     private final DTOMapper dtoMapper;
 
     @GetMapping("/list")
@@ -472,6 +471,33 @@ public class StaffRegistrationManagementController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error uploading image: " + e.getMessage());
         }
         return "redirect:/staff/registration/view/" + id;
+    }
+
+    @GetMapping("/create")
+    public String showCreateAppointmentForm(Model model) {
+        // DTO used by the form; make sure field names match the form inputs:
+        // name, phoneNumber, appointmentDate, appointmentTime,
+        // selectedServices (comma-separated IDs), staffId, ...
+        if (!model.containsAttribute("appointmentRegisterDTO")) {
+            model.addAttribute("appointmentRegisterDTO", new AppointmentRegisterDTO());
+        }
+        return "staff-create-appointment"; // staff-appointment-create.html
+    }
+
+    @PostMapping("/create")
+    public String createAppointment(
+            @ModelAttribute("appointmentRegisterDTO") AppointmentRegisterDTO appointmentRegisterDTO,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            appointmentService.register(appointmentRegisterDTO);
+            // after creating, go back to staff appointment list
+            return "redirect:/staff/registration/create?success";
+        } catch (Exception ex) {
+            // if something blows up, show the same page with ?error
+            redirectAttributes.addFlashAttribute("appointmentRegisterDTO", appointmentRegisterDTO);
+            return "redirect:/staff/registration/create?error";
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package service.sllbackend.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.repository.*;
 import service.sllbackend.service.InventoryService;
 import service.sllbackend.service.OrderService;
+import service.sllbackend.web.dto.InStoreOrderItemDTO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +31,8 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepo cartRepo;
     private final UserAccountRepo userAccountRepo;
     private final InventoryService inventoryService;
+    private final ObjectMapper objectMapper;
+    private final ProductRepo productRepo;
 
     @Override
     @Transactional
@@ -247,4 +251,153 @@ public class OrderServiceImpl implements OrderService {
     public long countByUser(UserAccount user) {
         return orderInvoiceRepo.countByUserAccount(user);
     }
+
+    @Transactional
+    public OrderInvoice createInStoreOrder(
+            String staffUsername,       // staff who creates the order
+            String username,            // optional assigned user (customer username)
+            String customerName,
+            String phoneNumber,
+            String paymentTypeName,     // must be IN_STORE or BANK_TRANSFER
+            String itemsJson           // JSON list of items: [{productId, quantity}, ...]
+    ) {
+        if (customerName == null || customerName.trim().isEmpty()) {
+            throw new RuntimeException("Customer name is required");
+        }
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            throw new RuntimeException("Phone number is required");
+        }
+
+        // Payment validation: in-store pickup only allows IN_STORE or BANK_TRANSFER
+        if (!"IN_STORE".equals(paymentTypeName) && !"BANK_TRANSFER".equals(paymentTypeName)) {
+            throw new RuntimeException("Invalid payment method for in-store order. Must be IN_STORE or BANK_TRANSFER");
+        }
+
+        // Determine which user account will be linked to the order
+        // - If username (assigned user) is provided, use that
+        // - Otherwise, fall back to staff account (cannot be null because user_account_id is NOT NULL)
+        String effectiveUsername = null;
+        if (username != null && !username.trim().isEmpty()) {
+            effectiveUsername = username.trim();
+        } else if (staffUsername != null && !staffUsername.trim().isEmpty()) {
+            effectiveUsername = staffUsername.trim();
+        }
+
+        if (effectiveUsername == null) {
+            throw new RuntimeException("No user account available to attach this order");
+        }
+        final String finalEffectiveName = effectiveUsername;
+
+        UserAccount userAccount = userAccountRepo.findByUsername(finalEffectiveName)
+                .orElse(userAccountRepo.findByUsername("anon").get());
+
+        // Parse itemsJson -> list of items
+        List<InStoreOrderItemDTO> items;
+        try {
+            items = objectMapper.readValue(
+                    itemsJson,
+                    objectMapper.getTypeFactory()
+                            .constructCollectionType(List.class, InStoreOrderItemDTO.class)
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid items data", e);
+        }
+
+        if (items == null || items.isEmpty()) {
+            throw new RuntimeException("Order must contain at least one product");
+        }
+
+        // Normalize + basic validation
+        items = items.stream()
+                .filter(i -> i.getProductId() != null && i.getQuantity() != null && i.getQuantity() > 0)
+                .toList();
+
+        if (items.isEmpty()) {
+            throw new RuntimeException("All items have invalid quantity");
+        }
+
+        // Check stock for all items first
+        for (InStoreOrderItemDTO item : items) {
+            Integer productId = item.getProductId();
+            Integer requiredQuantity = item.getQuantity();
+
+            if (!inventoryService.hasEnoughStock(productId, requiredQuantity)) {
+                Integer available = inventoryService.getAvailableStock(productId);
+                Product p = productRepo.findById(productId)
+                        .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+
+                throw new RuntimeException(
+                        "Insufficient stock for product: " + p.getProductName() +
+                                ". Required: " + requiredQuantity +
+                                ", Available: " + available
+                );
+            }
+        }
+
+        // Calculate subtotal using current product price from DB
+        int subtotal = 0;
+        Map<Integer, Product> productCache = new HashMap<>();
+
+        for (InStoreOrderItemDTO item : items) {
+            Product product = productCache.computeIfAbsent(
+                    item.getProductId(),
+                    id -> productRepo.findById(id)
+                            .orElseThrow(() -> new RuntimeException("Product not found: " + id))
+            );
+
+            subtotal += product.getCurrentPrice() * item.getQuantity();
+        }
+
+        if (subtotal <= 0) {
+            throw new RuntimeException("Order total must be greater than 0");
+        }
+
+        int shippingFee = 0; // in-store pickup only
+        int totalPrice = subtotal + shippingFee;
+
+        // Create CustomerInfo snapshot (no shipping address for in-store pickup)
+        CustomerInfo customerInfo = customerInfoRepo.save(
+                CustomerInfo.builder()
+                        .name(customerName)
+                        .phoneNumber(phoneNumber)
+                        .build()
+        );
+
+        // Create OrderInvoice
+        OrderInvoice orderInvoice = OrderInvoice.builder()
+                .userAccount(userAccount)
+                .customerInfo(customerInfo)
+                .totalPrice(totalPrice)
+                .shippingFee(shippingFee)
+                .paymentMethod(paymentTypeName)
+                .fulfillmentType(FulfillmentType.IN_STORE_PICKUP)
+                .orderStatus(OrderStatus.PICKED_UP)
+                .build();
+
+        orderInvoice = orderInvoiceRepo.save(orderInvoice);
+
+        // Create details + reduce stock
+        for (InStoreOrderItemDTO item : items) {
+            Product product = productCache.get(item.getProductId());
+
+            OrderInvoiceDetails details = OrderInvoiceDetails.builder()
+                    .orderInvoice(orderInvoice)
+                    .product(product)
+                    .quantity(item.getQuantity())
+                    .priceAtSale(product.getCurrentPrice())
+                    .build();
+
+            orderInvoiceDetailsRepo.save(details);
+
+            inventoryService.reduceStock(
+                    product.getId(),
+                    item.getQuantity(),
+                    orderInvoice.getId()
+            );
+        }
+
+
+        return orderInvoice;
+    }
+
 }

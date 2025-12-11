@@ -108,7 +108,6 @@ public class ReportServiceImpl implements ReportService {
             );
         }
 
-        System.out.println(staffPayrollTotal);
 
         return new MonthlyTotals(
                 appointmentRevenue,

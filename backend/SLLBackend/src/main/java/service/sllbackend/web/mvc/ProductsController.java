@@ -1,15 +1,14 @@
 package service.sllbackend.web.mvc;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import service.sllbackend.entity.Product;
 import service.sllbackend.entity.ProductFeedback;
@@ -77,4 +76,23 @@ public class ProductsController {
         
         return "product-details";
     }
+    @GetMapping("/search")
+    @ResponseBody
+    public List<Map<String, Object>> searchProducts(@RequestParam String query) {
+
+        // Get list of products that match the name/code
+        List<Product> products = productsService.getProducts(query, true);
+
+        // Return minimal JSON objects for the AJAX frontend
+        return products.stream()
+                .map(p -> {
+                    Map<String, Object> dto = new HashMap<>();
+                    dto.put("id", p.getId());
+                    dto.put("productName", p.getProductName());
+                    dto.put("currentPrice", p.getCurrentPrice());
+                    return dto;
+                })
+                .toList();
+    }
+
 }

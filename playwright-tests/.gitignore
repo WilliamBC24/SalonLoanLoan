@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Test results
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Videos and screenshots
+videos/
+screenshots/
+
+# Traces
+traces/
+
+# Logs
+*.log
+npm-debug.log*

@@ -240,6 +240,147 @@
         .btn-secondary:hover {
             background: #f3f4f6;
         }
+
+        /* ===== IMAGE UPLOAD ===== */
+        .image-section {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .image-section h3 {
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            color: #374151;
+        }
+
+        .image-upload-area {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .image-upload-input {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 1rem;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .file-input-label:hover {
+            background: #f3f4f6;
+        }
+
+        .file-name {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .btn-upload {
+            padding: 0.45rem 0.9rem;
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn-upload:hover {
+            background: #059669;
+        }
+
+        .btn-upload:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .image-card {
+            position: relative;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .image-card-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .btn-delete-image {
+            background: rgba(220, 38, 38, 0.9);
+            color: #ffffff;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-delete-image:hover {
+            background: rgba(185, 28, 28, 1);
+        }
+
+        .upload-message {
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .upload-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .upload-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
     </style>
 </head>
 <body class="staff-layout">
@@ -340,6 +481,31 @@
                                    th:checked="${product.activeStatus}">
                             <span>Active Status</span>
                         </label>
+                    </div>
+
+                    <!-- Image Upload Section -->
+                    <div class="image-section">
+                        <h3>📷 Product Images</h3>
+                        <div class="image-upload-area">
+                            <div class="image-upload-input">
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="imageFile" accept="image/*">
+                                    <label for="imageFile" class="file-input-label">
+                                        <span>📁</span>
+                                        <span>Choose Image</span>
+                                    </label>
+                                </div>
+                                <span class="file-name" id="fileName">No file chosen</span>
+                                <button type="button" class="btn-upload" id="uploadBtn" disabled
+                                        onclick="uploadProductImage()">
+                                    Upload
+                                </button>
+                            </div>
+                            <div id="uploadMessage"></div>
+                        </div>
+                        <div class="image-gallery" id="imageGallery">
+                            <!-- Images will be loaded here dynamically -->
+                        </div>
                     </div>
 
                     <div class="button-group">
@@ -493,6 +659,126 @@
             error.style.display = 'none';
         }
     });
+
+    // ===== IMAGE UPLOAD FUNCTIONALITY =====
+    const productId = [[${product.id}]];
+    
+    // Handle file input change
+    document.getElementById('imageFile').addEventListener('change', function() {
+        const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+        document.getElementById('fileName').textContent = fileName;
+        document.getElementById('uploadBtn').disabled = this.files.length === 0;
+    });
+
+    // Load existing images on page load
+    loadProductImages();
+
+    function loadProductImages() {
+        fetch(`/api/products/${productId}/images`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.images) {
+                    displayImages(data.images);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading images:', error);
+            });
+    }
+
+    function displayImages(images) {
+        const gallery = document.getElementById('imageGallery');
+        gallery.innerHTML = '';
+        
+        images.forEach(image => {
+            const imageCard = document.createElement('div');
+            imageCard.className = 'image-card';
+            imageCard.innerHTML = `
+                <img src="${image.imagePath}" alt="Product image" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found'">
+                <div class="image-card-actions">
+                    <button type="button" class="btn-delete-image" onclick="deleteProductImage(${image.id})">
+                        🗑️ Delete
+                    </button>
+                </div>
+            `;
+            gallery.appendChild(imageCard);
+        });
+    }
+
+    function uploadProductImage() {
+        const fileInput = document.getElementById('imageFile');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            showUploadMessage('Please select an image file', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const uploadBtn = document.getElementById('uploadBtn');
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Uploading...';
+
+        fetch(`/api/products/${productId}/images`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showUploadMessage('Image uploaded successfully!', 'success');
+                fileInput.value = '';
+                document.getElementById('fileName').textContent = 'No file chosen';
+                loadProductImages();
+            } else {
+                showUploadMessage(data.message || 'Upload failed', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading image:', error);
+            showUploadMessage('Error uploading image: ' + error.message, 'error');
+        })
+        .finally(() => {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Upload';
+        });
+    }
+
+    function deleteProductImage(imageId) {
+        if (!confirm('Are you sure you want to delete this image?')) {
+            return;
+        }
+
+        fetch(`/api/products/images/${imageId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showUploadMessage('Image deleted successfully', 'success');
+                loadProductImages();
+            } else {
+                showUploadMessage(data.message || 'Delete failed', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting image:', error);
+            showUploadMessage('Error deleting image: ' + error.message, 'error');
+        });
+    }
+
+    function showUploadMessage(message, type) {
+        const messageDiv = document.getElementById('uploadMessage');
+        messageDiv.textContent = message;
+        messageDiv.className = `upload-message ${type}`;
+        messageDiv.style.display = 'block';
+        
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, 3000);
+    }
 </script>
 </body>
 </html>

@@ -464,9 +464,14 @@
             <!-- LEFT: MEDIA -->
             <section class="product-media-card">
                 <div class="product-image-wrapper">
-                    <!-- Placeholder image (replace with real image if available later) -->
-                    <img src="https://placehold.co/400"
+                    <img id="mainProductImage" 
+                         src="https://via.placeholder.com/600x450.png?text=Product+Image"
                          alt="Product image">
+                </div>
+                
+                <!-- Image thumbnails -->
+                <div id="imageThumbnails" style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; overflow-x: auto;">
+                    <!-- Thumbnails will be loaded here dynamically -->
                 </div>
 
                 <div class="product-meta">
@@ -761,6 +766,53 @@
         // Update the file input with selected files before submission
         updateFileInput();
     });
+
+    // ===== LOAD PRODUCT IMAGES =====
+    const productId = [[${product.id}]];
+    
+    function loadProductImages() {
+        fetch(`/api/products/${productId}/images`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.images && data.images.length > 0) {
+                    const mainImage = document.getElementById('mainProductImage');
+                    const thumbnailsContainer = document.getElementById('imageThumbnails');
+                    
+                    // Set first image as main image
+                    mainImage.src = data.images[0].imagePath;
+                    mainImage.onerror = function() {
+                        this.src = 'https://via.placeholder.com/600x450.png?text=Product+Image';
+                    };
+                    
+                    // Create thumbnails
+                    thumbnailsContainer.innerHTML = '';
+                    data.images.forEach((image, index) => {
+                        const thumbnail = document.createElement('img');
+                        thumbnail.src = image.imagePath;
+                        thumbnail.alt = 'Product thumbnail';
+                        thumbnail.style.cssText = 'width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid ' + (index === 0 ? '#1a7c34' : '#e5e5e5');
+                        thumbnail.onclick = function() {
+                            mainImage.src = image.imagePath;
+                            // Update thumbnail borders
+                            thumbnailsContainer.querySelectorAll('img').forEach(img => {
+                                img.style.borderColor = '#e5e5e5';
+                            });
+                            thumbnail.style.borderColor = '#1a7c34';
+                        };
+                        thumbnail.onerror = function() {
+                            this.src = 'https://via.placeholder.com/80?text=N/A';
+                        };
+                        thumbnailsContainer.appendChild(thumbnail);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading product images:', error);
+            });
+    }
+    
+    // Load images on page load
+    loadProductImages();
 </script>
 
 </body>

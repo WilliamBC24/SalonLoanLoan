@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import service.sllbackend.entity.*;
+import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.repository.*;
@@ -12,6 +13,7 @@ import service.sllbackend.service.InventoryService;
 import service.sllbackend.service.OrderService;
 import service.sllbackend.web.dto.InStoreOrderItemDTO;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,53 +35,54 @@ public class OrderServiceImpl implements OrderService {
     private final InventoryService inventoryService;
     private final ObjectMapper objectMapper;
     private final ProductRepo productRepo;
+    private final VoucherRedemptionRepo voucherRedemptionRepo;
+    private final VoucherRepo voucherRepo;
 
     @Override
     @Transactional
-    public OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
-                                  String shippingAddress, String city, String ward,
-                                  String paymentTypeName, FulfillmentType fulfillmentType) {
+    public OrderInvoice placeOrder(String username, String customerName, String phoneNumber,
+                                   String shippingAddress, String city, String ward,
+                                   String paymentTypeName, FulfillmentType fulfillmentType,
+                                   String voucherCode) {
+
         // Get user account
         UserAccount userAccount = userAccountRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
         // Get cart items
         List<Cart> cartItems = cartRepo.findByUserAccount(userAccount);
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
-        
+
         // Check stock availability for all items first
         for (Cart cartItem : cartItems) {
             Integer productId = cartItem.getProduct().getId();
             Integer requiredQuantity = cartItem.getAmount();
-            
+
             if (!inventoryService.hasEnoughStock(productId, requiredQuantity)) {
                 Integer availableStock = inventoryService.getAvailableStock(productId);
-                throw new RuntimeException("Insufficient stock for product: " + 
-                        cartItem.getProduct().getProductName() + 
+                throw new RuntimeException("Insufficient stock for product: " +
+                        cartItem.getProduct().getProductName() +
                         ". Required: " + requiredQuantity + ", Available: " + availableStock);
             }
         }
-        
+
         // Calculate subtotal (product prices only)
         int subtotal = cartItems.stream()
                 .mapToInt(item -> item.getProduct().getCurrentPrice() * item.getAmount())
                 .sum();
-        
+
         // Validate delivery requirements and calculate shipping fee
         int shippingFee = 0;
         if (fulfillmentType == FulfillmentType.DELIVERY) {
-            // For delivery, require shipping address and city
             if (shippingAddress == null || shippingAddress.trim().isEmpty()) {
                 throw new RuntimeException("Shipping address is required for delivery orders");
             }
             if (city == null || city.trim().isEmpty()) {
                 throw new RuntimeException("City is required for delivery orders");
             }
-            
-            // Calculate shipping fee: 30,000 for Hanoi, 70,000 for all other cities
-            // Normalize city name: trim and convert to lowercase for comparison
+
             String normalizedCity = city.trim().toLowerCase();
             if (normalizedCity.equals("hanoi") || normalizedCity.equals("hà nội") || normalizedCity.equals("ha noi")) {
                 shippingFee = HANOI_SHIPPING_FEE;
@@ -87,14 +90,73 @@ public class OrderServiceImpl implements OrderService {
                 shippingFee = OTHER_CITIES_SHIPPING_FEE;
             }
         }
-        
-        // Calculate total price (subtotal + shipping fee)
-        int totalPrice = subtotal + shippingFee;
-        
-        // Create customer info for this order
-        // Note: Each order creates a new CustomerInfo record to maintain a snapshot of the
-        // delivery details at the time of order. This allows tracking different addresses
-        // used by the same customer over time and preserves historical order information.
+
+        // Validate payment method
+        if (fulfillmentType == FulfillmentType.IN_STORE_PICKUP) {
+            if (!paymentTypeName.equals("BANK_TRANSFER") && !paymentTypeName.equals("IN_STORE")) {
+                throw new RuntimeException("Invalid payment method for in-store pickup. Must be BANK_TRANSFER or IN_STORE");
+            }
+        } else {
+            if (!paymentTypeName.equals("BANK_TRANSFER") && !paymentTypeName.equals("COD")) {
+                throw new RuntimeException("Invalid payment method. Must be BANK_TRANSFER or COD");
+            }
+        }
+
+        // ===== Voucher logic =====
+        Voucher appliedVoucher = null;
+        int discountAmount = 0;
+
+        if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+            String code = voucherCode.trim();
+
+            // Lock row to prevent oversubscribe of max usage under concurrency
+            appliedVoucher = voucherRepo.findByVoucherCodeForUpdate(code)
+                    .orElseThrow(() -> new RuntimeException("Invalid voucher code"));
+
+            // Validate voucher time window
+            LocalDateTime now = LocalDateTime.now();
+            if (appliedVoucher.getEffectiveFrom() != null && now.isBefore(appliedVoucher.getEffectiveFrom())) {
+                throw new RuntimeException("Voucher is not active yet");
+            }
+            if (appliedVoucher.getEffectiveTo() != null && now.isAfter(appliedVoucher.getEffectiveTo())) {
+                throw new RuntimeException("Voucher has expired");
+            }
+
+            // Validate usage remaining
+            if (appliedVoucher.getUsedCount() >= appliedVoucher.getMaxUsage()) {
+                throw new RuntimeException("Voucher has reached maximum usage");
+            }
+
+            // Validate status (adjust this to your VoucherStatus structure)
+            // Example assumes voucherStatus has a "code" field = "ACTIVE"
+            if (appliedVoucher.getVoucherStatus() == null
+                    || appliedVoucher.getVoucherStatus().getName() == null
+                    || !appliedVoucher.getVoucherStatus().getName().equalsIgnoreCase("ACTIVE")) {
+                throw new RuntimeException("Voucher is not available");
+            }
+
+            // Compute discount based on type
+            if (appliedVoucher.getDiscountType() == DiscountType.PERCENTAGE) {
+                int pct = appliedVoucher.getDiscountAmount(); // 1..100
+                discountAmount = (int) Math.floor(subtotal * (pct / 100.0));
+            } else { // AMOUNT
+                discountAmount = appliedVoucher.getDiscountAmount();
+            }
+
+            // Clamp discount to [0..subtotal]
+            if (discountAmount < 0) discountAmount = 0;
+            if (discountAmount > subtotal) discountAmount = subtotal;
+        }
+
+        // Total after discount + shipping
+        int totalPrice = (subtotal - discountAmount) + shippingFee;
+
+        // Ensure DB check total_price > 0 passes
+        if (totalPrice <= 0) {
+            throw new RuntimeException("Total price must be greater than 0 after applying voucher");
+        }
+
+        // Create customer info snapshot
         CustomerInfo customerInfo;
         if (fulfillmentType == FulfillmentType.DELIVERY) {
             customerInfo = customerInfoRepo.save(CustomerInfo.builder()
@@ -105,37 +167,26 @@ public class OrderServiceImpl implements OrderService {
                     .ward(ward)
                     .build());
         } else {
-            // For in-store pickup, create customer info without shipping address
             customerInfo = customerInfoRepo.save(CustomerInfo.builder()
                     .name(customerName)
                     .phoneNumber(phoneNumber)
                     .build());
         }
-        
-        // Validate payment method
-        // For in-store pickup, only allow BANK_TRANSFER or IN_STORE (pay at pickup)
-        if (fulfillmentType == FulfillmentType.IN_STORE_PICKUP) {
-            if (!paymentTypeName.equals("BANK_TRANSFER") && !paymentTypeName.equals("IN_STORE")) {
-                throw new RuntimeException("Invalid payment method for in-store pickup. Must be BANK_TRANSFER or IN_STORE");
-            }
-        } else {
-            if (!paymentTypeName.equals("BANK_TRANSFER") && !paymentTypeName.equals("COD")) {
-                throw new RuntimeException("Invalid payment method. Must be BANK_TRANSFER or COD");
-            }
-        }
-        
-        // Create order invoice
+
+        // Create order invoice (attach voucher)
         OrderInvoice orderInvoice = OrderInvoice.builder()
                 .userAccount(userAccount)
                 .customerInfo(customerInfo)
+                .appliedVoucher(appliedVoucher)         // ✅ store voucher FK on order
                 .totalPrice(totalPrice)
                 .shippingFee(shippingFee)
                 .paymentMethod(paymentTypeName)
                 .fulfillmentType(fulfillmentType)
                 .orderStatus(OrderStatus.PENDING)
                 .build();
+
         orderInvoice = orderInvoiceRepo.save(orderInvoice);
-        
+
         // Create order details and reduce stock
         for (Cart cartItem : cartItems) {
             OrderInvoiceDetails details = OrderInvoiceDetails.builder()
@@ -145,20 +196,32 @@ public class OrderServiceImpl implements OrderService {
                     .priceAtSale(cartItem.getProduct().getCurrentPrice())
                     .build();
             orderInvoiceDetailsRepo.save(details);
-            
-            // Reduce stock for this product
+
             inventoryService.reduceStock(
-                    cartItem.getProduct().getId(), 
+                    cartItem.getProduct().getId(),
                     cartItem.getAmount(),
                     orderInvoice.getId()
             );
         }
-        
+
+        // If voucher applied -> increment used_count + create redemption record
+        if (appliedVoucher != null) {
+            appliedVoucher.setUsedCount(appliedVoucher.getUsedCount() + 1);
+            voucherRepo.save(appliedVoucher);
+
+            voucherRedemptionRepo.save(VoucherRedemption.builder()
+                    .voucher(appliedVoucher)
+                    .userAccount(userAccount)
+                    .redeemedDate(LocalDateTime.now())
+                    .build());
+        }
+
         // Clear cart
         cartRepo.deleteAll(cartItems);
-        
+
         return orderInvoice;
     }
+
 
     @Override
     @Transactional(readOnly = true)

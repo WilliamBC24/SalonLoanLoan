@@ -8,10 +8,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.entity.OrderInvoiceDetails;
+import service.sllbackend.entity.Voucher;
 import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.service.OrderService;
 import service.sllbackend.service.VietQrService;
+import service.sllbackend.service.VoucherService;
+import service.sllbackend.web.dto.VoucherPublicDTO;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -25,6 +28,7 @@ public class OrderController {
     
     private final OrderService orderService;
     private final VietQrService vietQrService;
+    private final VoucherService voucherService;
 
     @GetMapping("/checkout")
     @Transactional(readOnly = true)
@@ -55,6 +59,7 @@ public class OrderController {
             @RequestParam(required = false) String ward,
             @RequestParam String paymentMethod,
             @RequestParam String fulfillmentType,
+            @RequestParam(required = false) String voucherCode,
             Principal principal) {
         if (principal == null) {
             return "redirect:/auth/user/login";
@@ -70,7 +75,8 @@ public class OrderController {
                     city,
                     ward,
                     paymentMethod,
-                    fulfillment
+                    fulfillment,
+                    voucherCode
             );
             
             return "redirect:/order/details?orderId=" + order.getId();
@@ -99,30 +105,45 @@ public class OrderController {
         if (principal == null) {
             return "redirect:/auth/user/login";
         }
-        
+
         try {
             OrderInvoice order = orderService.getOrderDetails(orderId);
             List<OrderInvoiceDetails> orderItems = orderService.getOrderItems(orderId);
-            
+
+            int itemsSubtotal = orderItems.stream()
+                    .mapToInt(i -> i.getPriceAtSale() * i.getQuantity())
+                    .sum();
+
+            int shippingFee = order.getShippingFee() != null ? order.getShippingFee() : 0;
+            int total = order.getTotalPrice() != null ? order.getTotalPrice() : 0;
+
+            // discount = (subtotal + shipping) - total
+            int voucherDiscount = (itemsSubtotal + shippingFee) - total;
+            if (voucherDiscount < 0) voucherDiscount = 0; // safety
+
             model.addAttribute("order", order);
             model.addAttribute("orderItems", orderItems);
-            
+            model.addAttribute("itemsSubtotal", itemsSubtotal);
+            model.addAttribute("voucherDiscount", voucherDiscount);
+
             // Generate QR code URL on-the-fly for bank transfer orders
-            if ("BANK_TRANSFER".equals(order.getPaymentMethod()) && 
-                order.getOrderStatus() == OrderStatus.PENDING) {
+            if ("BANK_TRANSFER".equals(order.getPaymentMethod()) &&
+                    order.getOrderStatus() == OrderStatus.PENDING) {
+
                 String qrUrl = vietQrService.generateQrUrl(
-                    order.getId(), 
-                    order.getUserAccount().getUsername(), 
-                    order.getTotalPrice()
+                        order.getId(),
+                        order.getUserAccount().getUsername(),
+                        order.getTotalPrice()
                 );
                 model.addAttribute("paymentQrUrl", qrUrl);
             }
-            
+
             return "order-details";
         } catch (Exception e) {
             return "redirect:/order/history?error=" + e.getMessage();
         }
     }
+
 
     @GetMapping("/cancel")
     @Transactional
@@ -162,5 +183,11 @@ public class OrderController {
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    @GetMapping("/voucher")
+    @ResponseBody
+    public ResponseEntity<List<VoucherPublicDTO>> getVouchers() {
+        return ResponseEntity.ok(voucherService.getAvailableVouchersForCheckout());
     }
 }

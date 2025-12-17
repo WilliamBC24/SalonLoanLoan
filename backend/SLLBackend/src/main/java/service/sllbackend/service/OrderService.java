@@ -25,7 +25,7 @@ public interface OrderService {
      */
     OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
                            String shippingAddress, String city, String ward,
-                           String paymentTypeName, FulfillmentType fulfillmentType);
+                           String paymentTypeName, FulfillmentType fulfillmentType, String voucherCode);
     
     /**
      * Get order history for a user

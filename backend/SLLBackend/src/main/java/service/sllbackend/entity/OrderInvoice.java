@@ -38,6 +38,10 @@ public class OrderInvoice {
     @Column(name = "payment_method", nullable = false, columnDefinition = "TEXT")
     private String paymentMethod;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "applied_voucher_id")
+    private Voucher appliedVoucher;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "fulfillment_type", nullable = false, columnDefinition = "TEXT")
     @Builder.Default

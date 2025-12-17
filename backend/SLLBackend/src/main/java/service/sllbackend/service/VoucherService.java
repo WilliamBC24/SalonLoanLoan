@@ -4,6 +4,7 @@ import java.util.List;
 
 import service.sllbackend.entity.Voucher;
 import service.sllbackend.entity.VoucherStatus;
+import service.sllbackend.web.dto.VoucherPublicDTO;
 
 public interface VoucherService {
     List<Voucher> getVouchers(String code, String name, String discountType, Integer statusId);
@@ -15,4 +16,6 @@ public interface VoucherService {
     Voucher createVoucher(Voucher voucher);
     
     Voucher updateVoucher(Integer id, Voucher voucher);
+
+    List<VoucherPublicDTO> getAvailableVouchersForCheckout();
 }

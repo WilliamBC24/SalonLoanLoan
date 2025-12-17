@@ -1,5 +1,6 @@
 package service.sllbackend.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import service.sllbackend.enumerator.DiscountType;
 import service.sllbackend.repository.VoucherRepo;
 import service.sllbackend.repository.VoucherStatusRepo;
 import service.sllbackend.service.VoucherService;
+import service.sllbackend.web.dto.VoucherPublicDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -105,5 +107,25 @@ public class VoucherServiceImpl implements VoucherService {
         existingVoucher.setVoucherStatus(voucher.getVoucherStatus());
 
         return voucherRepo.save(existingVoucher);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VoucherPublicDTO> getAvailableVouchersForCheckout() {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Voucher> vouchers = voucherRepo.findAvailableVouchers("ACTIVE", now);
+
+        return vouchers.stream().map(v -> VoucherPublicDTO.builder()
+                .id(v.getId())
+                .voucherName(v.getVoucherName())
+                .voucherDescription(v.getVoucherDescription())
+                .voucherCode(v.getVoucherCode())
+                .discountType(v.getDiscountType())
+                .discountAmount(v.getDiscountAmount())
+                .effectiveFrom(v.getEffectiveFrom())
+                .effectiveTo(v.getEffectiveTo())
+                .build()
+        ).toList();
     }
 }

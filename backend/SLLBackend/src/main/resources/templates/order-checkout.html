@@ -372,6 +372,41 @@
                         </div>
                     </div>
 
+                    <!-- Voucher -->
+                    <div class="form-section">
+                        <h2>3. Voucher</h2>
+
+                        <div class="form-group">
+                            <label class="form-label" for="voucherCode">Voucher Code</label>
+
+                            <div style="display:flex; gap:0.6rem; align-items:center;">
+                                <input class="form-input"
+                                       type="text"
+                                       id="voucherCode"
+                                       name="voucherCode"
+                                       placeholder="Choose a voucher…"
+                                       readonly />
+
+                                <button type="button"
+                                        class="btn-primary"
+                                        style="border-radius:999px; padding:0.75rem 1.1rem; white-space:nowrap;"
+                                        onclick="openVoucherModal()">
+                                    Choose
+                                </button>
+
+                                <button type="button"
+                                        class="btn-secondary"
+                                        style="border-radius:999px; padding:0.75rem 1.1rem; white-space:nowrap;"
+                                        onclick="clearVoucher()">
+                                    Clear
+                                </button>
+                            </div>
+
+                            <span class="error" id="voucherError">Unable to load vouchers. Please try again.</span>
+                        </div>
+                    </div>
+
+
                     <!-- Delivery Information -->
                     <div class="form-section" id="deliverySection">
                         <h2>3. Delivery Address</h2>
@@ -549,6 +584,11 @@
                     <span th:text="${#numbers.formatDecimal(cartSummary.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
                 </div>
 
+                <div class="summary-item" id="voucherDiscountRow" style="display:none;">
+                    <span>Voucher Discount</span>
+                    <span id="voucherDiscountText">-0 VND</span>
+                </div>
+
                 <div class="summary-item" id="shippingFeeRow">
                     <span>Shipping Fee</span>
                     <span id="shippingFeeText">0 VND</span>
@@ -568,7 +608,28 @@
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>
 
+<!-- Voucher Modal -->
+<div id="voucherModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeVoucherModal()"></div>
+
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="voucherModalTitle">
+        <div class="modal-header">
+            <h3 id="voucherModalTitle" style="margin:0; font-size:1.1rem;">Choose a voucher</h3>
+            <button type="button" class="modal-close" onclick="closeVoucherModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+            <div id="voucherLoading" class="modal-loading">Loading vouchers…</div>
+            <div id="voucherEmpty" class="modal-empty hidden">No vouchers available.</div>
+            <div id="voucherList" class="voucher-list"></div>
+        </div>
+    </div>
+</div>
+
+
 <script>
+    let selectedVoucher = null; // { voucherCode, discountType, discountAmount, ... }
+    let currentShippingFee = 0;
     // Shipping fee constants
     const HANOI_SHIPPING_FEE = 30000;
     const OTHER_CITIES_SHIPPING_FEE = 70000;
@@ -617,18 +678,61 @@
             wardSelect.disabled = true;
         }
     }
+    function computeVoucherDiscount(subtotal, voucher) {
+        if (!voucher || !voucher.discountType || voucher.discountAmount == null) return 0;
+
+        const type = String(voucher.discountType).toUpperCase();
+        const amount = Number(voucher.discountAmount) || 0;
+
+        let discount = 0;
+
+        if (type === 'PERCENTAGE') {
+            // amount is 0..100
+            discount = Math.floor(subtotal * (amount / 100));
+        } else if (type === 'AMOUNT') {
+            discount = amount;
+        }
+
+        // clamp 0..subtotal
+        discount = Math.max(0, Math.min(discount, subtotal));
+        return discount;
+    }
+
+    function updateTotals() {
+        const discountRow = document.getElementById('voucherDiscountRow');
+        const discountText = document.getElementById('voucherDiscountText');
+        const totalPriceText = document.getElementById('totalPriceText');
+
+        const discount = computeVoucherDiscount(subtotalPrice, selectedVoucher);
+
+        if (discount > 0) {
+            discountRow.style.display = 'flex';
+
+            // Optionally show percent label
+            if (selectedVoucher && String(selectedVoucher.discountType).toUpperCase() === 'PERCENTAGE') {
+                discountText.textContent = `-${formatMoney(discount)} (${selectedVoucher.discountAmount}%)`;
+            } else {
+                discountText.textContent = `-${formatMoney(discount)}`;
+            }
+        } else {
+            discountRow.style.display = 'none';
+            discountText.textContent = '-0 VND';
+        }
+
+        const total = Math.max(0, (Number(subtotalPrice) || 0) - discount + (Number(currentShippingFee) || 0));
+        totalPriceText.textContent = formatMoney(total);
+    }
+
 
     function updateShippingFee() {
         const fulfillmentType = document.querySelector('input[name="fulfillmentType"]:checked');
         const citySelect = document.getElementById('city');
-        const shippingFeeText = document.getElementById('shippingFeeText');
-        const totalPriceText = document.getElementById('totalPriceText');
         const shippingFeeRow = document.getElementById('shippingFeeRow');
 
         let shippingFee = 0;
 
         if (fulfillmentType && fulfillmentType.value === 'DELIVERY') {
-            const city = citySelect.value.toLowerCase();
+            const city = (citySelect.value || '').toLowerCase();
             if (city === 'hanoi' || city === 'hà nội' || city === 'ha noi') {
                 shippingFee = HANOI_SHIPPING_FEE;
             } else if (city) {
@@ -639,10 +743,12 @@
             shippingFeeRow.style.display = 'none';
         }
 
-        shippingFeeText.textContent = formatMoney(shippingFee);
-        const totalPrice = subtotalPrice + shippingFee;
-        totalPriceText.textContent = formatMoney(totalPrice);
+        currentShippingFee = shippingFee;
+        document.getElementById('shippingFeeText').textContent = formatMoney(shippingFee);
+
+        updateTotals();
     }
+
 
     function selectFulfillment(element) {
         document.querySelectorAll('.fulfillment-option').forEach(opt => {
@@ -748,6 +854,129 @@
 
         return isValid;
     }
+
+    let vouchersLoadedOnce = false;
+
+    function openVoucherModal() {
+        const modal = document.getElementById('voucherModal');
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+
+        // Load vouchers on first open (or you can reload every time if you want)
+        if (!vouchersLoadedOnce) {
+            loadVouchers();
+        }
+    }
+
+    function closeVoucherModal() {
+        const modal = document.getElementById('voucherModal');
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function clearVoucher() {
+        selectedVoucher = null;
+        document.getElementById('voucherCode').value = '';
+        updateTotals();
+    }
+
+
+    async function loadVouchers() {
+        const loadingEl = document.getElementById('voucherLoading');
+        const emptyEl = document.getElementById('voucherEmpty');
+        const listEl = document.getElementById('voucherList');
+        const voucherError = document.getElementById('voucherError');
+
+        voucherError.style.display = 'none';
+        loadingEl.classList.remove('hidden');
+        emptyEl.classList.add('hidden');
+        listEl.innerHTML = '';
+
+        try {
+            const res = await fetch('/order/voucher', {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (!res.ok) {
+                throw new Error('HTTP ' + res.status);
+            }
+
+            const data = await res.json(); // expects array
+            vouchersLoadedOnce = true;
+
+            loadingEl.classList.add('hidden');
+
+            if (!Array.isArray(data) || data.length === 0) {
+                emptyEl.classList.remove('hidden');
+                return;
+            }
+
+            data.forEach(v => {
+                // Expected fields based on your entity:
+                // voucherCode, voucherName, voucherDescription, discountType, discountAmount
+                const code = v.voucherCode ?? '';
+                const name = v.voucherName ?? 'Voucher';
+                const desc = v.voucherDescription ?? '';
+                const type = v.discountType ?? '';
+                const amount = v.discountAmount ?? '';
+
+                const badgeText = (type && amount !== '') ? `${type}: ${amount}` : 'Voucher';
+
+                const item = document.createElement('div');
+                item.className = 'voucher-item';
+                item.onclick = () => selectVoucher(v);
+
+                item.innerHTML = `
+                    <div class="voucher-top">
+                        <div>
+                            <div class="voucher-code">${escapeHtml(code)}</div>
+                            <div style="font-weight:600; color:#333; margin-top:0.15rem;">${escapeHtml(name)}</div>
+                        </div>
+                        <div class="voucher-badge">${escapeHtml(badgeText)}</div>
+                    </div>
+                    <p class="voucher-desc">${escapeHtml(desc)}</p>
+                `;
+
+                listEl.appendChild(item);
+            });
+        } catch (e) {
+            loadingEl.classList.add('hidden');
+            voucherError.style.display = 'block';
+        }
+    }
+
+    function selectVoucher(voucherObj) {
+        selectedVoucher = voucherObj || null;
+
+        const code = voucherObj?.voucherCode || '';
+        document.getElementById('voucherCode').value = code;
+
+        updateTotals();
+        closeVoucherModal();
+    }
+
+
+    // basic XSS-safe render helper
+    function escapeHtml(str) {
+        return String(str ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    // Close modal on ESC
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('voucherModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeVoucherModal();
+            }
+        }
+    });
+
 
     document.getElementById('customerName').addEventListener('blur', function() {
         if (this.value.trim().length < 2) {

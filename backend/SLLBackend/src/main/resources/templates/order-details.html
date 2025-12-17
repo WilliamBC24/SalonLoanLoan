@@ -388,6 +388,20 @@
                                 BANK_TRANSFER
                             </span>
                         </div>
+                        <div class="info-item">
+                            <span class="info-label">Voucher</span>
+                            <span class="info-value"
+                                  th:text="${order.appliedVoucher != null ? order.appliedVoucher.voucherCode : 'None'}">
+        None
+    </span>
+                        </div>
+
+                        <div class="info-item" th:if="${order.appliedVoucher != null}">
+                            <span class="info-label">Voucher Name</span>
+                            <span class="info-value" th:text="${order.appliedVoucher.voucherName}">
+        Voucher Name
+    </span>
+                        </div>
                     </div>
                 </section>
 
@@ -466,10 +480,29 @@
                 <section class="order-summary-card">
                     <h2>Order Summary</h2>
 
+                    <div class="summary-item">
+                        <span>Items Subtotal</span>
+                        <span class="price" th:text="${#numbers.formatDecimal(itemsSubtotal, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
+                    </div>
+
+                    <div class="summary-item" th:if="${voucherDiscount != null and voucherDiscount > 0}">
+                        <span>Voucher Discount</span>
+                        <span class="price"
+                              th:text="'-' + ${#numbers.formatDecimal(voucherDiscount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+        -0 VND
+    </span>
+                    </div>
+
+                    <div class="summary-item" th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
+                        <span>Shipping Fee</span>
+                        <span class="price" th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
+                    </div>
+
                     <div class="summary-total">
                         <span>Total</span>
                         <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
                     </div>
+
 
                     <!-- QR Payment Box -->
                     <div th:if="${order.paymentMethod == 'BANK_TRANSFER' and order.orderStatus.name() == 'PENDING' and paymentQrUrl != null}"
@@ -528,4 +561,3 @@
 
 </body>
 </html>
-đồ ngu

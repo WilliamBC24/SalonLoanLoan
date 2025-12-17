@@ -1,9 +1,12 @@
 package service.sllbackend.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,4 +30,23 @@ public interface VoucherRepo extends JpaRepository<Voucher, Integer> {
                                   @Param("name") String name,
                                   @Param("discountType") DiscountType discountType,
                                   @Param("statusId") Integer statusId);
+
+    @Query("""
+        SELECT v
+        FROM Voucher v
+        WHERE v.voucherStatus.name = :statusCode
+          AND :now BETWEEN v.effectiveFrom AND v.effectiveTo
+          AND v.usedCount < v.maxUsage
+        ORDER BY v.effectiveTo ASC
+    """)
+    List<Voucher> findAvailableVouchers(
+            @Param("statusCode") String statusCode,
+            @Param("now") LocalDateTime now
+    );
+
+    Optional<Voucher> findByVoucherCodeIgnoreCase(String voucherCode);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT v FROM Voucher v WHERE LOWER(v.voucherCode) = LOWER(:code)")
+    Optional<Voucher> findByVoucherCodeForUpdate(@Param("code") String code);
 }

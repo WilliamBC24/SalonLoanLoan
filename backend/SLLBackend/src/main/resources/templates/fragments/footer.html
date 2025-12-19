@@ -7,22 +7,22 @@
                     <span class="logo-icon">✂</span>
                     <span class="logo-text">Salon Loan Loan</span>
                 </div>
-                <p>
+                <p th:utext="#{site-footer.address}">
                     91 Huỳnh Thúc Kháng, Thành Công<br />
                     Ba Đình, Hà Nội
                 </p>
 
                 <div class="footer-socials">
-                    <a href="#" aria-label="X">X</a>
-                    <a href="#" aria-label="Facebook">f</a>
-                    <a href="#" aria-label="Pinterest">P</a>
-                    <a href="#" aria-label="TikTok">t</a>
+                    <a href="#" th:aria-label="#{common.social.x}">X</a>
+                    <a href="#" th:aria-label="#{common.social.facebook}">f</a>
+                    <a href="#" th:aria-label="#{common.social.pinterest}">P</a>
+                    <a href="#" th:aria-label="#{common.social.tiktok}">t</a>
                 </div>
             </div>
 
             <!-- Contact -->
             <div class="footer-column">
-                <h4>Contact Info</h4>
+                <h4 th:text="#{site-footer.contactInfo}">Contact Info</h4>
                 <div class="footer-column-list">
                     <p>manager@loanloan.com</p>
                     <p>support@loanloan.com</p>
@@ -33,22 +33,22 @@
 
             <!-- Quick Links -->
             <div class="footer-column">
-                <h4>Quick Links</h4>
+                <h4 th:text="#{site-footer.quickLinks}">Quick Links</h4>
                 <ul class="footer-links">
-                    <li><a th:href="@{/}">Homepage</a></li>
-                    <li><a th:href="@{/services}">Services</a></li>
-                    <li><a th:href="@{/products}">Products</a></li>
-                    <li><a th:href="@{/news}">News</a></li>
+                    <li><a th:href="@{/}" th:text="#{common.homepage}">Homepage</a></li>
+                    <li><a th:href="@{/services}" th:text="#{common.services}">Services</a></li>
+                    <li><a th:href="@{/products}" th:text="#{common.products}">Products</a></li>
+                    <li><a th:href="@{/news}" th:text="#{common.news}">News</a></li>
                 </ul>
             </div>
 
             <!-- Opening Hours -->
             <div class="footer-column">
-                <h4>Opening Hours</h4>
+                <h4 th:text="#{site-footer.openingHours}">Opening Hours</h4>
                 <div class="footer-column-list">
-                    <p>Mon – Fri: 7:30 – 20:00</p>
-                    <p>Sat – Sun: 7:30 – 19:00</p>
-                    <p>Serve by appointment & walk-in.</p>
+                    <p th:text="#{site-footer.hours.weekday}">Mon – Fri: 7:30 – 20:00</p>
+                    <p th:text="#{site-footer.hours.weekend}">Sat – Sun: 7:30 – 19:00</p>
+                    <p th:text="#{site-footer.note}">Serve by appointment & walk-in.</p>
                 </div>
             </div>
         </div>
@@ -57,7 +57,10 @@
     <!-- Bottom bar -->
     <div class="footer-bottom">
         <div class="container footer-bottom-inner">
-            <span>© <span th:text="${#dates.year(#dates.createNow())}"></span> Salon Loan Loan. All rights reserved.</span>
+            <span>
+                © <span th:text="${#dates.year(#dates.createNow())}"></span>
+                <span th:text="#{site-footer.copyright}">Salon Loan Loan. All rights reserved.</span>
+            </span>
         </div>
     </div>
 </footer>

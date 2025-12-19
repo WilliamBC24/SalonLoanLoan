@@ -13,7 +13,8 @@
             <a th:if="${username == null}"
                th:href="@{/auth/user/login}"
                class="btn-outline"
-               style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.85rem;">
+               style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.85rem;"
+               th:text="#{common.login}">
                 Login
             </a>
 
@@ -26,14 +27,16 @@
                 <form th:action="@{/logout}" method="post" style="margin: 0;">
                     <button type="submit"
                             class="btn-outline"
-                            style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.8rem;">
+                            style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.8rem;"
+                            th:text="#{common.logout}">
                         Logout
                     </button>
                 </form>
             </div>
         </div>
 
-        <button class="mobile-menu-toggle" aria-label="Toggle navigation">
+        <button class="mobile-menu-toggle"
+                th:aria-label="#{site-header.toggleNavigation}">
             ☰
         </button>
     </div>

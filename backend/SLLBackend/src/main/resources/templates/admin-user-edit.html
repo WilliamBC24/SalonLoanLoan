@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Edit User Profile | Salon Loan Loan</title>
+    <title th:text="#{admin-edit-user-profile.pageTitle}">Admin - Edit User Profile | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -191,19 +191,22 @@
             <!-- Header -->
             <header class="admin-user-edit-header-row">
                 <div class="admin-user-edit-title-block section-heading">
-                    <p class="section-kicker">Account Management</p>
-                    <h2>Edit User Profile</h2>
+                    <p class="section-kicker" th:text="#{admin-edit-user-profile.kicker}">Account Management</p>
+                    <h2 th:text="#{admin-edit-user-profile.title}">Edit User Profile</h2>
                     <p class="admin-user-edit-meta">
-                        Username: <span th:text="${user.username}">username</span>
+                        <span th:text="#{admin-edit-user-profile.usernameLabel}">Username:</span>
+                        <span th:text="${user.username}">username</span>
                     </p>
                 </div>
             </header>
 
             <!-- Alerts (from redirect params) -->
-            <div th:if="${param.error}" class="alert alert-error">
+            <div th:if="${param.error}" class="alert alert-error"
+                 th:text="#{admin-edit-user-profile.alert.updateError}">
                 Update error. Please check the information and try again.
             </div>
-            <div th:if="${param.updated}" class="alert alert-success">
+            <div th:if="${param.updated}" class="alert alert-success"
+                 th:text="#{admin-edit-user-profile.alert.updated}">
                 Profile updated successfully.
             </div>
 
@@ -211,10 +214,10 @@
             <form th:action="@{/admin/profiles/user/update/{id}(id=${user.id})}" method="post">
 
                 <!-- Account Info -->
-                <div class="form-section-title">Account Info</div>
+                <div class="form-section-title" th:text="#{admin-edit-user-profile.section.accountInfo}">Account Info</div>
                 <div class="form-grid-2">
                     <div class="field-group">
-                        <label class="field-label">Username</label>
+                        <label class="field-label" th:text="#{admin-edit-user-profile.field.username}">Username</label>
                         <input type="text"
                                class="field-input"
                                th:value="${user.username}"
@@ -222,14 +225,16 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Active Status</label>
+                        <label class="field-label" th:text="#{admin-edit-user-profile.field.activeStatus}">Active Status</label>
                         <select name="accountStatus" class="field-select">
                             <option th:value="ACTIVE"
-                                    th:selected="${user != null and user.accountStatus.name() == 'ACTIVE'}">
+                                    th:selected="${user != null and user.accountStatus.name() == 'ACTIVE'}"
+                                    th:text="#{common.active}">
                                 Active
                             </option>
                             <option th:value="DEACTIVATED"
-                                    th:selected="${user != null and user.accountStatus.name() == 'DEACTIVATED'}">
+                                    th:selected="${user != null and user.accountStatus.name() == 'DEACTIVATED'}"
+                                    th:text="#{common.deactivated}">
                                 Deactivated
                             </option>
                         </select>
@@ -237,10 +242,10 @@
                 </div>
 
                 <!-- Personal Info -->
-                <div class="form-section-title">Personal Info</div>
+                <div class="form-section-title" th:text="#{admin-edit-user-profile.section.personalInfo}">Personal Info</div>
                 <div class="form-grid-2">
                     <div class="field-group">
-                        <label class="field-label">Email</label>
+                        <label class="field-label" th:text="#{admin-edit-user-profile.field.email}">Email</label>
                         <input type="email"
                                name="email"
                                class="field-input"
@@ -248,7 +253,7 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Phone Number</label>
+                        <label class="field-label" th:text="#{admin-edit-user-profile.field.phoneNumber}">Phone Number</label>
                         <input type="text"
                                name="phoneNumber"
                                class="field-input"
@@ -256,15 +261,15 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Gender</label>
+                        <label class="field-label" th:text="#{admin-edit-user-profile.field.gender}">Gender</label>
                         <input type="text"
                                class="field-input"
-                               th:value="${user.gender != null and user.gender.name() == 'MALE' ? 'Male' : 'Female'}"
+                               th:value="${user.gender != null and user.gender.name() == 'MALE' ? #{common.gender.male} : #{common.gender.female}}"
                                readonly />
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Birth Date</label>
+                        <label class="field-label" th:text="#{admin-edit-user-profile.field.birthDate}">Birth Date</label>
                         <input type="text"
                                class="field-input"
                                th:value="${#temporals.format(user.birthDate, 'yyyy-MM-dd')}"
@@ -275,10 +280,10 @@
                 <!-- Actions -->
                 <div class="form-actions">
                     <a href="/admin/profiles" class="btn btn-secondary">
-                        ✕ <span>Cancel</span>
+                        <span aria-hidden="true">✕</span> <span th:text="#{common.cancel}">Cancel</span>
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        💾 <span>Save Changes</span>
+                        <span aria-hidden="true">💾</span> <span th:text="#{common.saveChanges}">Save Changes</span>
                     </button>
                 </div>
 

@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Loyalty Accounts | Salon Loan Loan</title>
+    <title th:text="#{loyalty.accounts.pageTitle}">Manager - Loyalty Accounts | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -216,8 +216,8 @@
             <!-- Header -->
             <div class="loyalty-header-row">
                 <div class="loyalty-title-block section-heading">
-                    <p class="section-kicker">Customer Loyalty</p>
-                    <h2>Loyalty Accounts</h2>
+                    <p class="section-kicker" th:text="#{loyalty.accounts.kicker}">Customer Loyalty</p>
+                    <h2 th:text="#{loyalty.accounts.heading}">Loyalty Accounts</h2>
                 </div>
             </div>
 
@@ -226,18 +226,19 @@
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search Accounts</h3>
+                        <h3 th:text="#{loyalty.accounts.search.title}">Search Accounts</h3>
                     </div>
                 </div>
 
                 <form method="get" action="/manager/loyalty/list">
                     <div class="search-form">
                         <div class="filter-group">
-                            <label for="search-username">Search by Username</label>
+                            <label for="search-username" th:text="#{loyalty.accounts.search.label}">Search by Username</label>
                             <input type="text"
                                    id="search-username"
                                    name="username"
                                    th:value="${username}"
+                                   th:placeholder="#{loyalty.accounts.search.placeholder}"
                                    placeholder="Enter username..." />
                         </div>
                     </div>
@@ -245,13 +246,13 @@
                     <div class="search-buttons">
                         <button type="submit" class="btn btn-primary">
                             <span>🔎</span>
-                            <span>Search</span>
+                            <span th:text="#{loyalty.accounts.btn.search}">Search</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/manager/loyalty/list'">
                             <span>✕</span>
-                            <span>Reset</span>
+                            <span th:text="#{loyalty.accounts.btn.reset}">Reset</span>
                         </button>
                     </div>
                 </form>
@@ -262,10 +263,10 @@
                 <table>
                     <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Username</th>
-                        <th>Points</th>
-                        <th>Level</th>
+                        <th th:text="#{loyalty.accounts.table.col.no}">#</th>
+                        <th th:text="#{loyalty.accounts.table.col.username}">Username</th>
+                        <th th:text="#{loyalty.accounts.table.col.points}">Points</th>
+                        <th th:text="#{loyalty.accounts.table.col.level}">Level</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -276,7 +277,9 @@
                         <td th:text="${loyalty.level.name}">Bronze</td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(loyaltyList)}">
-                        <td colspan="4" class="empty-row">No records found.</td>
+                        <td colspan="4" class="empty-row" th:text="#{loyalty.accounts.table.empty}">
+                            No records found.
+                        </td>
                     </tr>
                     </tbody>
                 </table>

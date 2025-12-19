@@ -5,7 +5,7 @@
             <div class="staff-logo-icon">✂</div>
             <div class="staff-logo-text">
                 <span class="brand-name">Salon Loan Loan</span>
-                <span class="brand-tagline">Staff Console</span>
+                <span class="brand-tagline" th:text="#{staff-sidebar.brandTagline}">Staff Console</span>
             </div>
         </div>
 
@@ -15,36 +15,36 @@
             <!-- MY ACCOUNT -->
             <div class="staff-nav-group">
                 <div class="staff-nav-parent">
-                    My Account
+                    <span th:text="#{staff-sidebar.myAccount}">My Account</span>
                     <span class="caret">▾</span>
                 </div>
                 <div class="staff-nav-children">
-                    <a th:href="@{/staff/profile}" class="staff-nav-sublink">Profile</a>
-                    <a th:href="@{/staff/password}" class="staff-nav-sublink">Change Password</a>
+                    <a th:href="@{/staff/profile}" class="staff-nav-sublink" th:text="#{staff-sidebar.profile}">Profile</a>
+                    <a th:href="@{/staff/password}" class="staff-nav-sublink" th:text="#{staff-sidebar.changePassword}">Change Password</a>
                 </div>
             </div>
 
             <!-- ADMIN AREA -->
             <div class="staff-nav-group" sec:authorize="hasRole('ADMIN')">
                 <div class="staff-nav-parent">
-                    Admin Area
+                    <span th:text="#{staff-sidebar.adminArea}">Admin Area</span>
                     <span class="caret">▾</span>
                 </div>
                 <div class="staff-nav-children">
 
-                    <a th:href="@{/admin/invoices/pending}" class="staff-nav-sublink">Inventory Invoices</a>
-                    <a th:href="@{/admin/profiles}" class="staff-nav-sublink">Account Management</a>
-                    <a th:href="@{/admin/commission}" class="staff-nav-sublink">Commission Management</a>
+                    <a th:href="@{/admin/invoices/pending}" class="staff-nav-sublink" th:text="#{staff-sidebar.inventoryInvoices}">Inventory Invoices</a>
+                    <a th:href="@{/admin/profiles}" class="staff-nav-sublink" th:text="#{staff-sidebar.accountManagement}">Account Management</a>
+                    <a th:href="@{/admin/commission}" class="staff-nav-sublink" th:text="#{staff-sidebar.commissionManagement}">Commission Management</a>
 
                     <!-- Job Posting Management -->
                     <div class="staff-nav-group">
                         <div class="staff-nav-parent">
-                            Job Posting Management
+                            <span th:text="#{staff-sidebar.jobPostingManagement}">Job Posting Management</span>
                             <span class="caret">▾</span>
                         </div>
                         <div class="staff-nav-children">
-                            <a th:href="@{/admin/job-posting/list}" class="staff-nav-sublink">Job Posting List</a>
-                            <a th:href="@{/admin/job-posting/create-form}" class="staff-nav-sublink">Create Job Posting</a>
+                            <a th:href="@{/admin/job-posting/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.jobPostingList}">Job Posting List</a>
+                            <a th:href="@{/admin/job-posting/create-form}" class="staff-nav-sublink" th:text="#{staff-sidebar.createJobPosting}">Create Job Posting</a>
                         </div>
                     </div>
                 </div>
@@ -53,80 +53,81 @@
             <!-- MANAGER AREA -->
             <div class="staff-nav-group" sec:authorize="hasAnyRole('ADMIN', 'MANAGER')">
                 <div class="staff-nav-parent">
-                    Manager Area
+                    <span th:text="#{staff-sidebar.managerArea}">Manager Area</span>
                     <span class="caret">▾</span>
                 </div>
                 <div class="staff-nav-children">
                     <!-- Appointment & Orders -->
-                    <a th:href="@{/manager/report}" class="staff-nav-sublink">Store Report</a>
-                    <a th:href="@{/manager/schedule}" class="staff-nav-sublink">Schedule Management</a>
-                    <a th:href="@{/manager/payroll}" class="staff-nav-sublink">Payroll Management</a>
-                    <a th:href="@{/manager/loyalty/list}" class="staff-nav-sublink">Loyalty Management</a>
-                    <a th:href="@{/manager/promotion/list}" class="staff-nav-sublink">Promotion Management</a>
-                    <a th:href="@{/manager/voucher/list}" class="staff-nav-sublink">Voucher Management</a>
+                    <a th:href="@{/manager/report}" class="staff-nav-sublink" th:text="#{staff-sidebar.storeReport}">Store Report</a>
+                    <a th:href="@{/manager/schedule}" class="staff-nav-sublink" th:text="#{staff-sidebar.scheduleManagement}">Schedule Management</a>
+                    <a th:href="@{/manager/payroll}" class="staff-nav-sublink" th:text="#{staff-sidebar.payrollManagement}">Payroll Management</a>
+                    <a th:href="@{/manager/loyalty/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.loyaltyManagement}">Loyalty Management</a>
+                    <a th:href="@{/manager/promotion/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.promotionManagement}">Promotion Management</a>
+                    <a th:href="@{/manager/voucher/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.voucherManagement}">Voucher Management</a>
 
                     <!-- Product Management -->
                     <div class="staff-nav-group">
                         <div class="staff-nav-parent">
-                            Product Management
+                            <span th:text="#{staff-sidebar.productManagement}">Product Management</span>
                             <span class="caret">▾</span>
                         </div>
                         <div class="staff-nav-children">
-                            <a th:href="@{/manager/products/create}" class="staff-nav-sublink">Create Product</a>
-                            <a th:href="@{/manager/products/list}" class="staff-nav-sublink">Product List</a>
+                            <a th:href="@{/manager/products/create}" class="staff-nav-sublink" th:text="#{staff-sidebar.createProduct}">Create Product</a>
+                            <a th:href="@{/manager/products/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.productList}">Product List</a>
                         </div>
                     </div>
 
                     <!-- Service Management -->
                     <div class="staff-nav-group">
                         <div class="staff-nav-parent">
-                            Service Management
+                            <span th:text="#{staff-sidebar.serviceManagement}">Service Management</span>
                             <span class="caret">▾</span>
                         </div>
                         <div class="staff-nav-children">
-                            <a th:href="@{/manager/service/create}" class="staff-nav-sublink">Create Service</a>
-                            <a th:href="@{/manager/service/list}" class="staff-nav-sublink">Service List</a>
+                            <a th:href="@{/manager/service/create}" class="staff-nav-sublink" th:text="#{staff-sidebar.createService}">Create Service</a>
+                            <a th:href="@{/manager/service/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.serviceList}">Service List</a>
                         </div>
                     </div>
 
                     <!-- Provider Management -->
                     <div class="staff-nav-group">
                         <div class="staff-nav-parent">
-                            Provider Management
+                            <span th:text="#{staff-sidebar.providerManagement}">Provider Management</span>
                             <span class="caret">▾</span>
                         </div>
                         <div class="staff-nav-children">
-                            <a th:href="@{/manager/supplier/create}" class="staff-nav-sublink">Create Provider</a>
-                            <a th:href="@{/manager/supplier/list}" class="staff-nav-sublink">Provider List</a>
+                            <a th:href="@{/manager/supplier/create}" class="staff-nav-sublink" th:text="#{staff-sidebar.createProvider}">Create Provider</a>
+                            <a th:href="@{/manager/supplier/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.providerList}">Provider List</a>
                         </div>
                     </div>
+
                     <!-- Application Management -->
-                    <a th:href="@{/manager/job-application/list}" class="staff-nav-sublink">Application Management</a>
+                    <a th:href="@{/manager/job-application/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.applicationManagement}">Application Management</a>
                 </div>
             </div>
 
             <!-- STAFF AREA -->
             <div class="staff-nav-group" sec:authorize="hasAnyRole('ADMIN', 'MANAGER', 'STAFF')">
                 <div class="staff-nav-parent">
-                    Staff Area
+                    <span th:text="#{staff-sidebar.staffArea}">Staff Area</span>
                     <span class="caret">▾</span>
                 </div>
                 <div class="staff-nav-children">
-                    <a th:href="@{/assistant/schedule}" class="staff-nav-sublink">Work Schedule</a>
-                    <a th:href="@{/staff/order/list}" class="staff-nav-sublink">Order Management</a>
-                    <a th:href="@{/staff/registration/list}" class="staff-nav-sublink">Appointment Management</a>
-                    <a th:href="@{/staff/order/create}" class="staff-nav-sublink">Create Appointment</a>
-                    <a th:href="@{/staff/registration/create}" class="staff-nav-sublink">Create Order</a>
+                    <a th:href="@{/assistant/schedule}" class="staff-nav-sublink" th:text="#{staff-sidebar.workSchedule}">Work Schedule</a>
+                    <a th:href="@{/staff/order/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.orderManagement}">Order Management</a>
+                    <a th:href="@{/staff/registration/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.appointmentManagement}">Appointment Management</a>
+                    <a th:href="@{/staff/order/create}" class="staff-nav-sublink" th:text="#{staff-sidebar.createOrder}">Create Order</a>
+                    <a th:href="@{/staff/registration/create}" class="staff-nav-sublink" th:text="#{staff-sidebar.createAppointment}">Create Appointment</a>
 
                     <!-- Inventory Management -->
                     <div class="staff-nav-group">
                         <div class="staff-nav-parent">
-                            Inventory Management
+                            <span th:text="#{staff-sidebar.inventoryManagement}">Inventory Management</span>
                             <span class="caret">▾</span>
                         </div>
                         <div class="staff-nav-children">
-                            <a th:href="@{/staff/invoices/create}" class="staff-nav-sublink">Create Invoice</a>
-                            <a th:href="@{/staff/invoices/list}" class="staff-nav-sublink">Invoice List</a>
+                            <a th:href="@{/staff/invoices/create}" class="staff-nav-sublink" th:text="#{staff-sidebar.createInvoice}">Create Invoice</a>
+                            <a th:href="@{/staff/invoices/list}" class="staff-nav-sublink" th:text="#{staff-sidebar.invoiceList}">Invoice List</a>
                         </div>
                     </div>
                 </div>
@@ -143,7 +144,7 @@
             </div>
 
             <form th:action="@{/logout}" method="post" class="staff-logout-form">
-                <button type="submit" class="btn-outline staff-logout-btn">
+                <button type="submit" class="btn-outline staff-logout-btn" th:text="#{common.logout}">
                     Logout
                 </button>
             </form>

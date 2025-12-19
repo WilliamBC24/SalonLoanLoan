@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Staff Payroll Detail | Salon Loan Loan</title>
+    <title th:text="#{payroll.staffDetail.pageTitle}">Manager - Staff Payroll Detail | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global layout + styles -->
@@ -376,14 +376,14 @@
             <!-- HEADER -->
             <div class="staff-payroll-header-row">
                 <div class="staff-payroll-title-block section-heading">
-                    <p class="section-kicker">Manager View</p>
-                    <h2>Staff Payroll Detail</h2>
+                    <p class="section-kicker" th:text="#{payroll.staffDetail.kicker}">Manager View</p>
+                    <h2 th:text="#{payroll.staffDetail.title}">Staff Payroll Detail</h2>
 
                     <div class="staff-name-line">
                         <span th:text="${staffName}">Nguyen Van A</span>
                     </div>
                     <div class="staff-meta-line">
-                        <span th:text="${positionName != null ? positionName : 'No position'}">Senior Stylist</span>
+                        <span th:text="${positionName != null ? positionName : #{payroll.staffDetail.noPosition}}">Senior Stylist</span>
                         ·
                         <span th:text="${currentMonthLabel}">March 2025</span>
                     </div>
@@ -393,14 +393,13 @@
                     <!-- Back to main payroll list -->
                     <a th:href="@{/manager/payroll}" class="back-link-pill">
                         <span>←</span>
-                        <span>Back to Payroll</span>
+                        <span th:text="#{payroll.staffDetail.backToPayroll}">Back to Payroll</span>
                     </a>
 
                     <!-- Month / year selector -->
                     <form th:action="@{'/manager/payroll/staff/' + ${staffId}}" method="get" class="month-year-form">
 
-
-                    <label for="monthSelect">Month:</label>
+                        <label for="monthSelect" th:text="#{payroll.staffDetail.monthLabel}">Month:</label>
                         <select id="monthSelect" name="month">
                             <option th:each="m : ${monthOptions}"
                                     th:value="${m}"
@@ -410,7 +409,7 @@
                             </option>
                         </select>
 
-                        <label for="yearSelect">Year:</label>
+                        <label for="yearSelect" th:text="#{payroll.staffDetail.yearLabel}">Year:</label>
                         <select id="yearSelect" name="year">
                             <option th:each="y : ${yearOptions}"
                                     th:value="${y}"
@@ -420,7 +419,7 @@
                             </option>
                         </select>
 
-                        <button type="submit">Go</button>
+                        <button type="submit" th:text="#{payroll.staffDetail.goBtn}">Go</button>
                     </form>
                 </div>
             </div>
@@ -428,7 +427,7 @@
             <!-- SUMMARY STRIP -->
             <div class="staff-payroll-summary">
                 <div class="summary-chip">
-                    <span class="summary-chip-label">Base Salary</span>
+                    <span class="summary-chip-label" th:text="#{payroll.staffDetail.summary.baseSalary}">Base Salary</span>
                     <span class="summary-chip-value"
                           th:text="${#numbers.formatInteger(payrollRow.baseSalary, 3, 'COMMA')} + ' VND'">
                         0 VND
@@ -436,7 +435,7 @@
                 </div>
 
                 <div class="summary-chip">
-                    <span class="summary-chip-label">Commission</span>
+                    <span class="summary-chip-label" th:text="#{payroll.staffDetail.summary.commission}">Commission</span>
                     <span class="summary-chip-value positive"
                           th:text="${#numbers.formatInteger(payrollRow.commissionAmount, 3, 'COMMA')} + ' VND'">
                         0 VND
@@ -444,7 +443,7 @@
                 </div>
 
                 <div class="summary-chip">
-                    <span class="summary-chip-label">Bonus Adjustments</span>
+                    <span class="summary-chip-label" th:text="#{payroll.staffDetail.summary.bonusAdjustments}">Bonus Adjustments</span>
                     <span class="summary-chip-value positive"
                           th:text="${#numbers.formatInteger(payrollRow.bonusAmount, 3, 'COMMA')} + ' VND'">
                         0 VND
@@ -452,7 +451,7 @@
                 </div>
 
                 <div class="summary-chip">
-                    <span class="summary-chip-label">Deduction Adjustments</span>
+                    <span class="summary-chip-label" th:text="#{payroll.staffDetail.summary.deductionAdjustments}">Deduction Adjustments</span>
                     <span class="summary-chip-value negative"
                           th:text="${#numbers.formatInteger(payrollRow.deductionsAmount, 3, 'COMMA')} + ' VND'">
                         0 VND
@@ -460,7 +459,7 @@
                 </div>
 
                 <div class="summary-chip">
-                    <span class="summary-chip-label">Net Pay</span>
+                    <span class="summary-chip-label" th:text="#{payroll.staffDetail.summary.netPay}">Net Pay</span>
                     <span class="summary-chip-value"
                           th:classappend="${payrollRow.totalPay < 0} ? ' negative' : ' positive'"
                           th:text="${#numbers.formatInteger(payrollRow.totalPay, 3, 'COMMA')} + ' VND'">
@@ -472,8 +471,8 @@
             <!-- ADJUSTMENTS LIST -->
             <div class="adjustments-header-row">
                 <div>
-                    <h3>Payroll Adjustments</h3>
-                    <div class="adjustments-header-sub">
+                    <h3 th:text="#{payroll.staffDetail.adjustments.title}">Payroll Adjustments</h3>
+                    <div class="adjustments-header-sub" th:text="#{payroll.staffDetail.adjustments.subtitle}">
                         Bonuses and deductions applied in this month.
                     </div>
                 </div>
@@ -482,7 +481,7 @@
                         class="btn-primary-sm"
                         id="openAdjustmentModalBtn">
                     <span>＋</span>
-                    <span>New Adjustment</span>
+                    <span th:text="#{payroll.staffDetail.adjustments.newBtn}">New Adjustment</span>
                 </button>
             </div>
 
@@ -490,16 +489,16 @@
                 <table class="adjustments-table">
                     <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th class="amount-cell">Amount</th>
-                        <th>Note</th>
+                        <th th:text="#{payroll.staffDetail.adjustments.table.date}">Date</th>
+                        <th th:text="#{payroll.staffDetail.adjustments.table.type}">Type</th>
+                        <th class="amount-cell" th:text="#{payroll.staffDetail.adjustments.table.amount}">Amount</th>
+                        <th th:text="#{payroll.staffDetail.adjustments.table.note}">Note</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(adjustments)}">
                         <td colspan="4" class="no-data-row">
-                            No adjustments for this period.
+                            <span th:text="#{payroll.staffDetail.adjustments.empty}">No adjustments for this period.</span>
                         </td>
                     </tr>
 
@@ -508,11 +507,14 @@
                         <td>
                             <span th:switch="${adj.adjustmentType.name()}">
                                 <span th:case="'BONUS'"
-                                      class="tbadge tbadge-bonus">Bonus</span>
+                                      class="tbadge tbadge-bonus"
+                                      th:text="#{payroll.staffDetail.adjustments.type.bonus}">Bonus</span>
                                 <span th:case="'DEDUCTION'"
-                                      class="tbadge tbadge-deduction">Deduction</span>
+                                      class="tbadge tbadge-deduction"
+                                      th:text="#{payroll.staffDetail.adjustments.type.deduction}">Deduction</span>
                                 <span th:case="*"
-                                      class="tbadge">Unknown</span>
+                                      class="tbadge"
+                                      th:text="#{payroll.staffDetail.adjustments.type.unknown}">Unknown</span>
                             </span>
                         </td>
                         <td class="amount-cell"
@@ -520,7 +522,7 @@
                             th:text="${#numbers.formatInteger(adj.amount, 3, 'COMMA')} + ' VND'">
                             0 VND
                         </td>
-                        <td th:text="${adj.note != null ? adj.note : '—'}">
+                        <td th:text="${adj.note != null ? adj.note : #{payroll.staffDetail.adjustments.noNote}}">
                             —
                         </td>
                     </tr>
@@ -536,45 +538,47 @@
 <div class="modal-backdrop" id="adjustmentModal">
     <div class="modal-card">
         <div class="modal-header">
-            <h3>New Payroll Adjustment</h3>
+            <h3 th:text="#{payroll.staffDetail.modal.title}">New Payroll Adjustment</h3>
             <button type="button" class="modal-close-btn" id="closeAdjustmentModalBtn">×</button>
         </div>
 
         <form th:action="@{/manager/payroll/adjustment/create}" method="post">
             <div class="modal-body">
 
-
                 <!-- Staff ID -->
                 <input type="hidden" name="staffId" th:value="${staffId}" />
 
                 <div>
-                    <label class="modal-field-label" for="adjustmentType">Adjustment Type</label>
+                    <label class="modal-field-label" for="adjustmentType" th:text="#{payroll.staffDetail.modal.typeLabel}">Adjustment Type</label>
                     <select id="adjustmentType" name="adjustmentType" class="modal-select" required>
-                        <option value="" disabled selected>Select type…</option>
-                        <option value="BONUS">Bonus</option>
-                        <option value="DEDUCTION">Deduction</option>
+                        <option value="" disabled selected th:text="#{payroll.staffDetail.modal.typePlaceholder}">Select type…</option>
+                        <option value="BONUS" th:text="#{payroll.staffDetail.modal.typeBonus}">Bonus</option>
+                        <option value="DEDUCTION" th:text="#{payroll.staffDetail.modal.typeDeduction}">Deduction</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="modal-field-label" for="amount">Amount (VND)</label>
+                    <label class="modal-field-label" for="amount" th:text="#{payroll.staffDetail.modal.amountLabel}">Amount (VND)</label>
                     <input id="amount"
                            name="amount"
                            type="number"
                            min="1"
                            class="modal-input"
+                           th:placeholder="#{payroll.staffDetail.modal.amountPlaceholder}"
                            placeholder="Enter amount…"
                            required />
-                    <small style="font-size: 0.78rem; color: #6b7280;">
+                    <small style="font-size: 0.78rem; color: #6b7280;"
+                           th:text="#{payroll.staffDetail.modal.amountHelp}">
                         Positive value only; backend will treat BONUS as + and DEDUCTION as − in payroll calculation.
                     </small>
                 </div>
 
                 <div>
-                    <label class="modal-field-label" for="note">Note (optional)</label>
+                    <label class="modal-field-label" for="note" th:text="#{payroll.staffDetail.modal.noteLabel}">Note (optional)</label>
                     <textarea id="note"
                               name="note"
                               class="modal-textarea"
+                              th:placeholder="#{payroll.staffDetail.modal.notePlaceholder}"
                               placeholder="E.g. performance bonus, late arrival, etc."></textarea>
                 </div>
             </div>
@@ -582,10 +586,12 @@
             <input type="hidden" name="year" th:value="${selectedYear}">
 
             <div class="modal-footer">
-                <button type="button" class="btn-secondary-sm" id="cancelAdjustmentBtn">
+                <button type="button" class="btn-secondary-sm" id="cancelAdjustmentBtn"
+                        th:text="#{payroll.staffDetail.modal.cancelBtn}">
                     Cancel
                 </button>
-                <button type="submit" class="btn-primary-sm">
+                <button type="submit" class="btn-primary-sm"
+                        th:text="#{payroll.staffDetail.modal.saveBtn}">
                     Save Adjustment
                 </button>
             </div>

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Salon Loan Loan | Home</title>
+    <title th:text="#{home.title}">Salon Loan Loan | Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Main site styles -->
@@ -21,14 +21,18 @@
     <section class="hero">
         <div class="hero-inner container">
             <div class="hero-text">
-                <p class="hero-kicker">Beauty &amp; Style</p>
-                <h1>Welcome to<br/>Salon Loan Loan</h1>
-                <p class="hero-sub">
+                <p class="hero-kicker" th:text="#{home.hero.kicker}">Beauty &amp; Style</p>
+                <h1 th:utext="#{home.hero.title}">
+                    Welcome to<br/>Salon Loan Loan
+                </h1>
+                <p class="hero-sub" th:text="#{home.hero.subtitle}">
                     Professional hair styling, coloring and spa services to keep you confident
                     every day.
                 </p>
                 <a href="/services">
-                    <button class="btn-primary" type="button">View Our Services</button>
+                    <button class="btn-primary" type="button" th:text="#{home.hero.cta}">
+                        View Our Services
+                    </button>
                 </a>
             </div>
 
@@ -36,6 +40,7 @@
                 <div class="hero-image-circle">
                     <img
                             src="https://images.pexels.com/photos/3993446/pexels-photo-3993446.jpeg?auto=compress&cs=tinysrgb&w=800"
+                            th:alt="#{home.hero.image.alt}"
                             alt="Customer at Salon Loan Loan"/>
                 </div>
             </div>
@@ -46,34 +51,40 @@
     <section class="products" id="services">
         <div class="container">
             <div class="section-heading text-center">
-                <p class="section-kicker">What We Offer</p>
-                <h2>Our Services</h2>
+                <p class="section-kicker" th:text="#{home.services.kicker}">What We Offer</p>
+                <h2 th:text="#{home.services.title}">Our Services</h2>
             </div>
 
             <div th:if="${#lists.isEmpty(services)}" class="text-center">
-                <p>No services available at the moment.</p>
+                <p th:text="#{home.services.empty}">
+                    No services available at the moment.
+                </p>
             </div>
 
             <div class="product-grid" th:if="${!#lists.isEmpty(services)}">
-                <article class="product-card" th:each="service : ${services}" th:attr="data-service-id=${service.id}">
+                <article class="product-card"
+                         th:each="service : ${services}"
+                         th:attr="data-service-id=${service.id}">
                     <a th:href="@{/services/{id}(id=${service.id})}">
-                    <div class="product-image">
-                        <!-- Placeholder image for services -->
-                        <img th:id="'home-service-image-' + ${service.id}"
-                             src="https://via.placeholder.com/400x260.png?text=Loading..."
-                             alt="Service Image"
-                             onerror="this.src='https://via.placeholder.com/400x260.png?text=Service'">
-                    </div>
-                    <div class="product-body">
-                        <h3 th:text="${service.serviceName}">Service Name</h3>
-                        <p class="product-desc"
-                           th:text="${service.serviceDescription}">
-                            Service description goes here.
-                        </p>
-                        <p class="price">
-                            <span th:text="${#numbers.formatDecimal(service.servicePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
-                        </p>
-                    </div>
+                        <div class="product-image">
+                            <img th:id="'home-service-image-' + ${service.id}"
+                                 src="https://via.placeholder.com/400x260.png?text=Loading..."
+                                 th:alt="#{home.services.image.alt}"
+                                 alt="Service Image"
+                                 onerror="this.src='https://via.placeholder.com/400x260.png?text=Service'">
+                        </div>
+                        <div class="product-body">
+                            <h3 th:text="${service.serviceName}">Service Name</h3>
+                            <p class="product-desc"
+                               th:text="${service.serviceDescription}">
+                                Service description goes here.
+                            </p>
+                            <p class="price">
+                                <span th:text="${#numbers.formatDecimal(service.servicePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                    0 VND
+                                </span>
+                            </p>
+                        </div>
                     </a>
                 </article>
             </div>
@@ -84,35 +95,42 @@
     <section class="products" id="products">
         <div class="container">
             <div class="section-heading text-center">
-                <p class="section-kicker">Best Sellers</p>
-                <h2>Our Products</h2>
+                <p class="section-kicker" th:text="#{home.products.kicker}">Best Sellers</p>
+                <h2 th:text="#{home.products.title}">Our Products</h2>
             </div>
 
             <div th:if="${#lists.isEmpty(products)}" class="text-center">
-                <p>No products available at the moment.</p>
+                <p th:text="#{home.products.empty}">
+                    No products available at the moment.
+                </p>
             </div>
 
             <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
-                <article class="product-card" th:each="product : ${products}" th:attr="data-product-id=${product.id}">
-                    <a th:href="@{/products/{id}(id=${product.id})}" style="display:block; color:inherit;">
-                    <div class="product-image">
-                        <!-- Placeholder image for products -->
-                        <img th:id="'home-product-image-' + ${product.id}"
-                             src="https://via.placeholder.com/400x400.png?text=Loading..."
-                             alt="Product Image"
-                             onerror="this.src='https://via.placeholder.com/400x400.png?text=Product'">
-                    </div>
+                <article class="product-card"
+                         th:each="product : ${products}"
+                         th:attr="data-product-id=${product.id}">
+                    <a th:href="@{/products/{id}(id=${product.id})}"
+                       style="display:block; color:inherit;">
+                        <div class="product-image">
+                            <img th:id="'home-product-image-' + ${product.id}"
+                                 src="https://via.placeholder.com/400x400.png?text=Loading..."
+                                 th:alt="#{home.products.image.alt}"
+                                 alt="Product Image"
+                                 onerror="this.src='https://via.placeholder.com/400x400.png?text=Product'">
+                        </div>
 
-                    <div class="product-body">
-                        <h3 th:text="${product.productName}">Product Name</h3>
-                        <p class="product-desc"
-                           th:text="${product.productDescription}">
-                            Product description goes here.
-                        </p>
-                        <p class="price">
-                            <span th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
-                        </p>
-                    </div>
+                        <div class="product-body">
+                            <h3 th:text="${product.productName}">Product Name</h3>
+                            <p class="product-desc"
+                               th:text="${product.productDescription}">
+                                Product description goes here.
+                            </p>
+                            <p class="price">
+                                <span th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                    0 VND
+                                </span>
+                            </p>
+                        </div>
                     </a>
                 </article>
             </div>
@@ -123,8 +141,8 @@
     <section class="news" id="location">
         <div class="container">
             <div class="section-heading text-center">
-                <p class="section-kicker">Find Us</p>
-                <h2>Our Location</h2>
+                <p class="section-kicker" th:text="#{home.location.kicker}">Find Us</p>
+                <h2 th:text="#{home.location.title}">Our Location</h2>
             </div>
             <div id="map" style="height: 400px; border-radius: 24px; overflow: hidden;"></div>
         </div>
@@ -140,25 +158,23 @@
     var map = L.map('map').setView([lat, lng], 15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: /*[[#{home.map.attribution}]]*/ '© OpenStreetMap contributors'
     }).addTo(map);
 
     L.marker([lat, lng]).addTo(map)
-        .bindPopup('Here is Salon Loan Loan!')
+        .bindPopup(/*[[#{home.map.popup}]]*/ 'Here is Salon Loan Loan!')
         .openPopup();
     /*]]>*/
 </script>
 
 <!-- IMAGE LOADING SCRIPT -->
 <script>
-    // Load images for services and products on home page
     document.addEventListener('DOMContentLoaded', function() {
-        // Load service images
         const serviceCards = document.querySelectorAll('.product-card[data-service-id]');
         serviceCards.forEach(card => {
             const serviceId = card.getAttribute('data-service-id');
             const imgElement = document.getElementById('home-service-image-' + serviceId);
-            
+
             fetch(`/api/services/${serviceId}/images`)
                 .then(response => response.json())
                 .then(data => {
@@ -173,13 +189,12 @@
                     imgElement.src = 'https://via.placeholder.com/400x260.png?text=Service';
                 });
         });
-        
-        // Load product images
+
         const productCards = document.querySelectorAll('.product-card[data-product-id]');
         productCards.forEach(card => {
             const productId = card.getAttribute('data-product-id');
             const imgElement = document.getElementById('home-product-image-' + productId);
-            
+
             fetch(`/api/products/${productId}/images`)
                 .then(response => response.json())
                 .then(data => {

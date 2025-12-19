@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Admin - Edit Job Posting | Salon Loan Loan</title>
+    <title th:text="#{admin-edit-job-posting.pageTitle}">Admin - Edit Job Posting | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global layout + variables (sidebar, staff-main, colors, etc.) -->
@@ -198,9 +198,9 @@
             <!-- Header -->
             <div class="job-header-row">
                 <div class="job-title-block section-heading">
-                    <p class="section-kicker">Job Posting Management</p>
-                    <h2>Edit Job Posting</h2>
-                    <p class="section-subtitle">
+                    <p class="section-kicker" th:text="#{admin-edit-job-posting.kicker}">Job Posting Management</p>
+                    <h2 th:text="#{admin-edit-job-posting.title}">Edit Job Posting</h2>
+                    <p class="section-subtitle" th:text="#{admin-edit-job-posting.subtitle}">
                         Update job details, effective dates and status.
                     </p>
                 </div>
@@ -211,23 +211,25 @@
 
                 <div class="form-field">
                     <label for="jobPostingName" class="form-label">
-                        Job Title <span class="required">*</span>
+                        <span th:text="#{admin-edit-job-posting.jobTitle}">Job Title</span> <span class="required">*</span>
                     </label>
                     <input type="text"
                            id="jobPostingName"
                            name="jobPostingName"
                            class="form-control"
                            th:value="${jobPosting.jobPostingName}"
+                           th:placeholder="#{admin-edit-job-posting.jobTitle.placeholder}"
                            placeholder="Enter job title">
                 </div>
 
                 <div class="form-field">
                     <label for="jobPostingDescription" class="form-label">
-                        Description <span class="required">*</span>
+                        <span th:text="#{admin-edit-job-posting.description}">Description</span> <span class="required">*</span>
                     </label>
                     <textarea id="jobPostingDescription"
                               name="jobPostingDescription"
                               class="form-textarea"
+                              th:placeholder="#{admin-edit-job-posting.description.placeholder}"
                               placeholder="Enter job description"
                               th:text="${jobPosting.jobPostingDescription}"></textarea>
                 </div>
@@ -235,7 +237,7 @@
                 <div class="form-grid-2">
                     <div class="form-field">
                         <label for="maxApplication" class="form-label">
-                            Max Applications <span class="required">*</span>
+                            <span th:text="#{admin-edit-job-posting.maxApplications}">Max Applications</span> <span class="required">*</span>
                         </label>
                         <input type="number"
                                id="maxApplication"
@@ -243,19 +245,24 @@
                                min="1"
                                class="form-control"
                                th:value="${jobPosting.maxApplication}"
+                               th:placeholder="#{admin-edit-job-posting.maxApplications.placeholder}"
                                placeholder="Enter max applications">
-                        <p class="helper-text">Total number of applications allowed for this posting.</p>
+                        <p class="helper-text" th:text="#{admin-edit-job-posting.maxApplications.help}">
+                            Total number of applications allowed for this posting.
+                        </p>
                     </div>
 
                     <div class="form-field">
-                        <label for="status" class="form-label">
+                        <label for="status" class="form-label" th:text="#{common.status}">
                             Status
                         </label>
                         <select id="status" name="status" class="form-select">
                             <option value="ACTIVE"
-                                    th:selected="${jobPosting.status == 'ACTIVE'}">Active</option>
+                                    th:selected="${jobPosting.status == 'ACTIVE'}"
+                                    th:text="#{common.status.active}">Active</option>
                             <option value="DEACTIVATED"
-                                    th:selected="${jobPosting.status == 'DEACTIVATED'}">Deactivated</option>
+                                    th:selected="${jobPosting.status == 'DEACTIVATED'}"
+                                    th:text="#{common.status.deactivated}">Deactivated</option>
                         </select>
                     </div>
                 </div>
@@ -263,18 +270,20 @@
                 <div class="form-grid-2">
                     <div class="form-field">
                         <label for="effectiveFrom" class="form-label">
-                            Effective From <span class="required">*</span>
+                            <span th:text="#{admin-edit-job-posting.effectiveFrom}">Effective From</span> <span class="required">*</span>
                         </label>
                         <input type="date"
                                id="effectiveFrom"
                                name="effectiveFrom"
                                class="form-control"
                                th:value="${jobPosting.effectiveFrom}">
-                        <p class="helper-text">Date from which candidates can start applying.</p>
+                        <p class="helper-text" th:text="#{admin-edit-job-posting.effectiveFrom.help}">
+                            Date from which candidates can start applying.
+                        </p>
                     </div>
 
                     <div class="form-field">
-                        <label for="effectiveTo" class="form-label">
+                        <label for="effectiveTo" class="form-label" th:text="#{admin-edit-job-posting.effectiveToOptional}">
                             Effective To (optional)
                         </label>
                         <input type="date"
@@ -282,21 +291,23 @@
                                name="effectiveTo"
                                class="form-control"
                                th:value="${jobPosting.effectiveTo}">
-                        <p class="helper-text">Leave empty if the posting has no end date yet.</p>
+                        <p class="helper-text" th:text="#{admin-edit-job-posting.effectiveTo.help}">
+                            Leave empty if the posting has no end date yet.
+                        </p>
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        <span>💾</span>
-                        <span>Save Changes</span>
+                        <span aria-hidden="true">💾</span>
+                        <span th:text="#{common.saveChanges}">Save Changes</span>
                     </button>
 
                     <button type="button"
                             class="btn btn-secondary"
                             onclick="window.location.href='/admin/job-posting/list'">
-                        <span>↩</span>
-                        <span>Cancel</span>
+                        <span aria-hidden="true">↩</span>
+                        <span th:text="#{common.cancel}">Cancel</span>
                     </button>
                 </div>
             </form>

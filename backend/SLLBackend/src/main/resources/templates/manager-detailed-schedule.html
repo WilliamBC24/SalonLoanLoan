@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Day Schedule | Salon Loan Loan</title>
+    <title th:text="#{schedule.day.pageTitle}">Manager - Day Schedule | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -328,10 +328,10 @@
             <!-- Header -->
             <div class="schedule-header-row">
                 <div class="schedule-title-block section-heading">
-                    <p class="section-kicker">Staff Scheduling</p>
-                    <h2>Day Schedule</h2>
+                    <p class="section-kicker" th:text="#{schedule.day.kicker}">Staff Scheduling</p>
+                    <h2 th:text="#{schedule.day.heading}">Day Schedule</h2>
                     <p class="schedule-subtext">
-                        Shift assignments and appointments for
+                        <span th:text="#{schedule.day.subtitlePrefix}">Shift assignments and appointments for</span>
                         <span class="day-date-label"
                               th:text="${#temporals.format(date, 'EEEE, dd MMM yyyy')}">
                             Monday, 01 Jan 2025
@@ -341,7 +341,7 @@
 
                 <div class="schedule-controls">
                     <a th:href="@{/manager/schedule}" class="back-link">
-                        ← Back to month view
+                        ← <span th:text="#{schedule.day.backToMonth}">Back to month view</span>
                     </a>
                 </div>
             </div>
@@ -352,7 +352,7 @@
                 <!-- Shifts / staff section -->
                 <section class="shift-section">
                     <div class="shift-section-header">
-                        <div class="shift-section-title">Shifts &amp; Staff</div>
+                        <div class="shift-section-title" th:text="#{schedule.day.shiftsAndStaff}">Shifts &amp; Staff</div>
                     </div>
 
                     <div class="shift-list"
@@ -365,15 +365,17 @@
                                 <div>
                                     <!-- AM / PM label -->
                                     <span class="shift-name-pill">
-                    <span th:text="${shift.shiftName} + ' shift'">AM shift</span>
-                </span>
+                                        <span th:text="${shift.shiftName} + ' ' + #{schedule.day.shiftSuffix}">
+                                            AM shift
+                                        </span>
+                                    </span>
 
                                     <!-- Time range: prefer DTO’s timeRange; fallback to hardcoded AM/PM -->
                                     <span class="shift-time"
                                           th:text="${shift.timeRange != null ? shift.timeRange
                                 : (shift.shiftName == 'AM' ? '07:30 - 12:00' : '12:30 - 19:00')}">
-                    07:30 - 12:00
-                </span>
+                                        07:30 - 12:00
+                                    </span>
                                 </div>
                             </div>
 
@@ -389,10 +391,15 @@
                                     <input type="hidden" name="shiftInstanceId"
                                            th:value="${shift.shiftInstanceId}" />
 
-                                    <label style="font-size:0.78rem; color:#6b7280;">Add staff:</label>
+                                    <label style="font-size:0.78rem; color:#6b7280;"
+                                           th:text="#{schedule.day.addStaffLabel}">
+                                        Add staff:
+                                    </label>
 
                                     <select name="staffId" class="shift-staff-select">
-                                        <option value="">Select staff…</option>
+                                        <option value="" th:text="#{schedule.day.selectStaffPlaceholder}">
+                                            Select staff…
+                                        </option>
                                         <option th:each="staff : ${allStaff}"
                                                 th:value="${staff.id}"
                                                 th:text="${staff.name}">
@@ -400,56 +407,61 @@
                                         </option>
                                     </select>
 
-                                    <button type="submit">Add</button>
+                                    <button type="submit" th:text="#{schedule.day.addBtn}">Add</button>
                                 </form>
                             </div>
 
                             <!-- Assigned staff -->
                             <div>
-                                <span style="font-size: 0.8rem; color:#4b5563;">Assigned staff:</span>
-                                <div class="shift-staff-list">
-                <span class="staff-chip"
-                      th:each="s : ${shift.assignedStaff}">
-                    <span th:text="${s.staffName}">Staff Name</span>
+                                <span style="font-size: 0.8rem; color:#4b5563;"
+                                      th:text="#{schedule.day.assignedStaffLabel}">
+                                    Assigned staff:
+                                </span>
 
-                    <!-- REMOVE STAFF FORM -->
-                    <form th:action="@{/manager/shift/remove-staff}"
-                          method="post"
-                          style="display:inline;">
-                        <input type="hidden" name="date"
-                               th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
-                        <input type="hidden" name="shiftInstanceId"
-                               th:value="${shift.shiftInstanceId}" />
-                        <input type="hidden" name="staffId"
-                               th:value="${s.staffId}" />
-                        <button type="submit" title="Remove">&times;</button>
-                    </form>
-                </span>
+                                <div class="shift-staff-list">
+                                    <span class="staff-chip"
+                                          th:each="s : ${shift.assignedStaff}">
+                                        <span th:text="${s.staffName}">Staff Name</span>
+
+                                        <!-- REMOVE STAFF FORM -->
+                                        <form th:action="@{/manager/shift/remove-staff}"
+                                              method="post"
+                                              style="display:inline;">
+                                            <input type="hidden" name="date"
+                                                   th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
+                                            <input type="hidden" name="shiftInstanceId"
+                                                   th:value="${shift.shiftInstanceId}" />
+                                            <input type="hidden" name="staffId"
+                                                   th:value="${s.staffId}" />
+                                            <button type="submit" th:title="#{schedule.day.removeTitle}">&times;</button>
+                                        </form>
+                                    </span>
 
                                     <span th:if="${shift.assignedStaff == null or #lists.isEmpty(shift.assignedStaff)}"
-                                          style="font-size: 0.78rem; color:#9ca3af;">
-                    No staff assigned yet
-                </span>
+                                          style="font-size: 0.78rem; color:#9ca3af;"
+                                          th:text="#{schedule.day.noStaffAssigned}">
+                                        No staff assigned yet
+                                    </span>
                                 </div>
                             </div>
 
                             <!-- Suggestions -->
                             <div class="shift-suggestion"
                                  th:if="${shift.suggestedStaff != null and !#lists.isEmpty(shift.suggestedStaff)}">
-                                Suggestions:
+                                <span th:text="#{schedule.day.suggestionsPrefix}">Suggestions:</span>
                                 <span th:each="suggestion, iterStat : ${shift.suggestedStaff}">
-                <span class="suggestion-highlight"
-                      th:text="${suggestion.staffName}">Anna</span>
-                (<span th:text="${suggestion.preferenceCount}">0</span> prefs)
-                <span th:if="${!iterStat.last}"> · </span>
-            </span>
+                                    <span class="suggestion-highlight"
+                                          th:text="${suggestion.staffName}">Anna</span>
+                                    (<span th:text="${suggestion.preferenceCount}">0</span> <span th:text="#{schedule.day.suggestionsPrefsSuffix}">prefs</span>)
+                                    <span th:if="${!iterStat.last}"> · </span>
+                                </span>
                             </div>
                         </div>
                     </div>
 
-
                     <p th:if="${day.shifts == null or #lists.isEmpty(day.shifts)}"
-                       style="font-size: 0.8rem; color:#6b7280;">
+                       style="font-size: 0.8rem; color:#6b7280;"
+                       th:text="#{schedule.day.noShifts}">
                         No shifts defined for this day yet.
                     </p>
                 </section>
@@ -457,9 +469,12 @@
                 <!-- Appointments section -->
                 <section class="appointments-section">
                     <div class="appointments-section-header">
-                        <div class="appointments-section-title">Appointments</div>
+                        <div class="appointments-section-title" th:text="#{schedule.day.appointmentsHeading}">
+                            Appointments
+                        </div>
                         <div class="appointments-count">
-                            <span th:text="${#lists.size(day.appointments)}">0</span> total
+                            <span th:text="${#lists.size(day.appointments)}">0</span>
+                            <span th:text="#{schedule.day.totalSuffix}">total</span>
                         </div>
                     </div>
 
@@ -467,7 +482,7 @@
                     <div th:if="${day.shifts != null and !#lists.isEmpty(day.shifts)}">
                         <div th:each="shift : ${day.shifts}">
                             <h4 class="appointments-group-title"
-                                th:text="${shift.shiftName} + ' shift (' + shift.timeRange + ')'">
+                                th:text="${shift.shiftName} + ' ' + #{schedule.day.shiftSuffix} + ' (' + shift.timeRange + ')'">
                                 AM shift (07:30 - 12:00)
                             </h4>
 
@@ -475,10 +490,10 @@
                                 <table class="appointments-table">
                                     <thead>
                                     <tr>
-                                        <th>Time</th>
-                                        <th>Preferred staff</th>
-                                        <th>Assigned staff</th>
-                                        <th>Appointment ID</th>
+                                        <th th:text="#{schedule.day.table.time}">Time</th>
+                                        <th th:text="#{schedule.day.table.preferredStaff}">Preferred staff</th>
+                                        <th th:text="#{schedule.day.table.assignedStaff}">Assigned staff</th>
+                                        <th th:text="#{schedule.day.table.appointmentId}">Appointment ID</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -505,15 +520,17 @@
 
                     <!-- Appointments without shift (edge cases) -->
                     <div th:if="${day.appointments != null and !#lists.isEmpty(day.appointments)}">
-                        <h4 class="appointments-group-title">Other / Unmapped appointments</h4>
+                        <h4 class="appointments-group-title" th:text="#{schedule.day.otherAppointmentsHeading}">
+                            Other / Unmapped appointments
+                        </h4>
                         <div class="appointments-table-wrapper">
                             <table class="appointments-table">
                                 <thead>
                                 <tr>
-                                    <th>Time</th>
-                                    <th>Preferred staff</th>
-                                    <th>Assigned staff</th>
-                                    <th>Appointment ID</th>
+                                    <th th:text="#{schedule.day.table.time}">Time</th>
+                                    <th th:text="#{schedule.day.table.preferredStaff}">Preferred staff</th>
+                                    <th th:text="#{schedule.day.table.assignedStaff}">Assigned staff</th>
+                                    <th th:text="#{schedule.day.table.appointmentId}">Appointment ID</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -538,7 +555,8 @@
                     </div>
 
                     <p th:if="${day.appointments == null or #lists.isEmpty(day.appointments)}"
-                       class="no-appointments">
+                       class="no-appointments"
+                       th:text="#{schedule.day.noAppointments}">
                         No appointments for this day.
                     </p>
                 </section>
@@ -548,7 +566,6 @@
         </section>
     </div>
 </main>
-
 
 </body>
 </html>

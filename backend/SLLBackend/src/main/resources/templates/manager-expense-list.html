@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Expense Report | Salon Loan Loan</title>
+    <title th:text="#{expense.report.pageTitle}">Manager - Expense Report | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -316,9 +316,9 @@
             <!-- HEADER -->
             <div class="report-header-row">
                 <div class="report-header-title section-heading">
-                    <p class="section-kicker">Expense</p>
-                    <h2>Expense Report</h2>
-                    <p class="report-header-sub">
+                    <p class="section-kicker" th:text="#{expense.report.kicker}">Expense</p>
+                    <h2 th:text="#{expense.report.heading}">Expense Report</h2>
+                    <p class="report-header-sub" th:text="#{expense.report.subtitle}">
                         See how your expenses are distributed across categories in the selected period.
                     </p>
                 </div>
@@ -334,7 +334,7 @@
             <section class="filter-card">
                 <div class="filter-header">
                     <div class="filter-header-title">
-                        <span>Filter by time range</span>
+                        <span th:text="#{expense.report.filterTitle}">Filter by time range</span>
                     </div>
                 </div>
 
@@ -343,7 +343,7 @@
                       method="get">
                     <div class="filter-fields">
                         <div class="filter-group">
-                            <label for="month-select">Month</label>
+                            <label for="month-select" th:text="#{expense.report.filter.month}">Month</label>
                             <select id="month-select" name="month">
                                 <option th:each="m : ${monthOptions}"
                                         th:value="${m}"
@@ -355,7 +355,7 @@
                         </div>
 
                         <div class="filter-group">
-                            <label for="year-select">Year</label>
+                            <label for="year-select" th:text="#{expense.report.filter.year}">Year</label>
                             <select id="year-select" name="year">
                                 <option th:each="y : ${yearOptions}"
                                         th:value="${y}"
@@ -369,13 +369,13 @@
 
                     <div class="filter-actions">
                         <button type="submit" class="btn btn-primary">
-                            <span>Apply</span>
+                            <span th:text="#{expense.report.btn.apply}">Apply</span>
                         </button>
                         <a th:href="@{/manager/report/expense/list}" class="btn btn-secondary">
-                            <span>Reset</span>
+                            <span th:text="#{expense.report.btn.reset}">Reset</span>
                         </a>
                         <a th:href="@{/manager/report/expense}" class="btn btn-primary" style="background:#059669;">
-                            <span>Create New Expense</span>
+                            <span th:text="#{expense.report.btn.createNew}">Create New Expense</span>
                         </a>
                     </div>
                 </form>
@@ -385,13 +385,13 @@
             <section>
                 <div class="expense-table-section-header">
                     <div class="expense-table-title">
-                        <h3>Expenses overview</h3>
+                        <h3 th:text="#{expense.report.table.heading}">Expenses overview</h3>
                         <span>
-                        <span th:text="${#lists.size(expenseSummary)}">0</span>
-                        categories in this period
-                    </span>
+                            <span th:text="${#lists.size(expenseSummary)}">0</span>
+                            <span th:text="#{expense.report.table.categoriesSuffix}">categories in this period</span>
+                        </span>
                     </div>
-                    <div class="expense-meta">
+                    <div class="expense-meta" th:text="#{expense.report.table.meta}">
                         Amounts shown in VND.
                     </div>
                 </div>
@@ -400,10 +400,10 @@
                     <table class="expense-table">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Category</th>
-                            <th class="cell-number">Total Spent</th>
-                            <th class="cell-number">Share</th>
+                            <th th:text="#{expense.report.table.col.no}">#</th>
+                            <th th:text="#{expense.report.table.col.category}">Category</th>
+                            <th class="cell-number" th:text="#{expense.report.table.col.totalSpent}">Total Spent</th>
+                            <th class="cell-number" th:text="#{expense.report.table.col.share}">Share</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -421,7 +421,7 @@
                         </tr>
 
                         <tr th:if="${#lists.isEmpty(expenseSummary)}">
-                            <td colspan="4" class="empty-row">
+                            <td colspan="4" class="empty-row" th:text="#{expense.report.table.empty}">
                                 No expense data for the selected period.
                             </td>
                         </tr>

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Job Openings | Salon Loan Loan</title>
+    <title th:text="#{jobs.pageTitle}">Job Openings | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -85,14 +85,15 @@
 
         <section id="jobs">
             <div class="section-heading text-center">
-                <p class="section-kicker">Careers</p>
-                <h2>Active Job Postings</h2>
+                <p class="section-kicker" th:text="#{jobs.kicker}">Careers</p>
+                <h2 th:text="#{jobs.title}">Active Job Postings</h2>
             </div>
 
             <!-- Empty state -->
             <div th:if="${#lists.isEmpty(jobPostingList)}" class="job-empty">
-                No active job postings available at the moment.
-                Please check back later.
+                <span th:text="#{jobs.empty}">
+                    No active job postings available at the moment. Please check back later.
+                </span>
             </div>
 
             <!-- One job per line -->
@@ -105,7 +106,7 @@
                     </p>
 
                     <p class="job-meta">
-                        Effective from:
+                        <span th:text="#{jobs.effectiveFromLabel}">Effective from:</span>
                         <span th:text="${job.effectiveFrom}">
                             2025-10-15
                         </span>
@@ -113,7 +114,7 @@
 
                     <a th:href="@{/job/details/{id}(id=${job.id})}">
                         <button class="btn-primary" type="button">
-                            View &amp; Apply
+                            <span th:text="#{jobs.viewApply}">View &amp; Apply</span>
                         </button>
                     </a>
                 </div>

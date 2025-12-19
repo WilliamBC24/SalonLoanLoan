@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Create Product | Salon Loan Loan</title>
+    <title th:text="#{manager.productCreate.pageTitle}">Manager - Create Product | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -229,11 +229,15 @@
             <!-- Header -->
             <div class="product-create-header-row">
                 <div class="product-create-title-block section-heading">
-                    <p class="section-kicker">Inventory Management</p>
-                    <h2>Create New Product</h2>
+                    <p class="section-kicker" th:text="#{manager.productCreate.kicker}">Inventory Management</p>
+                    <h2 th:text="#{manager.productCreate.heading}">Create New Product</h2>
                 </div>
-                <div class="product-create-actions">
 
+                <div class="product-create-actions">
+                    <a class="back-link-pill" th:href="@{/manager/products/list}">
+                        <span class="icon">←</span>
+                        <span th:text="#{common.backToList}">Back to list</span>
+                    </a>
                 </div>
             </div>
 
@@ -241,44 +245,62 @@
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
             <!-- Form -->
-            <form id="createProductForm" method="post" action="/manager/products/create" class="form-grid">
+            <form id="createProductForm" method="post" th:action="@{/manager/products/create}" class="form-grid">
                 <div>
                     <div class="form-group">
-                        <label for="productName" class="required">Product Name</label>
+                        <label for="productName" class="required" th:text="#{manager.productCreate.field.productName}">
+                            Product Name
+                        </label>
                         <input type="text" id="productName" name="productName" required>
-                        <div class="error" id="productNameError">Product name is required</div>
-                        <div class="warning" id="productNameWarning">A product with this name already exists</div>
+                        <div class="error" id="productNameError"
+                             th:text="#{manager.productCreate.validation.productNameRequired}">
+                            Product name is required
+                        </div>
+                        <div class="warning" id="productNameWarning"
+                             th:text="#{manager.productCreate.validation.duplicateNameWarning}">
+                            A product with this name already exists
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="currentPrice" class="required">Current Price (VND)</label>
+                        <label for="currentPrice" class="required" th:text="#{manager.productCreate.field.currentPrice}">
+                            Current Price (VND)
+                        </label>
                         <input type="number" id="currentPrice" name="currentPrice" min="0" required>
-                        <div class="error" id="currentPriceError">Current price must be a positive number</div>
+                        <div class="error" id="currentPriceError"
+                             th:text="#{manager.productCreate.validation.pricePositive}">
+                            Current price must be a positive number
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="productDescription" class="required">Product Description</label>
+                        <label for="productDescription" class="required" th:text="#{manager.productCreate.field.description}">
+                            Product Description
+                        </label>
                         <textarea id="productDescription" name="productDescription" required></textarea>
-                        <div class="error" id="productDescriptionError">Product description is required</div>
+                        <div class="error" id="productDescriptionError"
+                             th:text="#{manager.productCreate.validation.descriptionRequired}">
+                            Product description is required
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="activeStatus" name="activeStatus" value="true">
-                            <span>Active Status</span>
+                            <span th:text="#{manager.productCreate.field.activeStatus}">Active Status</span>
                         </label>
                     </div>
 
                     <div class="button-group">
                         <button type="submit" class="btn btn-primary">
                             <span>➕</span>
-                            <span>Create Product</span>
+                            <span th:text="#{manager.productCreate.action.create}">Create Product</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/manager/products/list'">
+                                th:onclick="|window.location.href='@{/manager/products/list}'|">
                             <span>✕</span>
-                            <span>Cancel</span>
+                            <span th:text="#{common.cancel}">Cancel</span>
                         </button>
                     </div>
                 </div>
@@ -287,9 +309,11 @@
     </div>
 </main>
 
-<script>
+<script th:inline="javascript">
     let productNameCheckTimeout;
     let isDuplicateName = false;
+
+    const DUPLICATE_NAME_ALERT = /*[[#{manager.productCreate.alert.duplicateName}]]*/ 'A product with this name already exists. Please choose a different name.';
 
     // Check for duplicate product name
     function checkDuplicateProductName(productName) {
@@ -299,7 +323,7 @@
             return;
         }
 
-        fetch('/products?name=' + encodeURIComponent(productName.trim()))
+        fetch(/*[[@{/products(name=${'__NAME__'})}]]*/ '/products?name=__NAME__'.replace('__NAME__', encodeURIComponent(productName.trim())))
             .then(response => response.text())
             .then(html => {
                 // Parse the response to check if any products exist with exact name match (case-insensitive)
@@ -334,7 +358,7 @@
 
         // Check for duplicate name
         if (isDuplicateName) {
-            alert('A product with this name already exists. Please choose a different name.');
+            alert(DUPLICATE_NAME_ALERT);
             event.preventDefault();
             return;
         }
@@ -351,10 +375,10 @@
             productNameError.style.display = 'none';
         }
 
-        // Validate current price
+        // Validate current price (min=0 but your rule says > 0)
         const currentPrice = document.getElementById('currentPrice');
         const currentPriceError = document.getElementById('currentPriceError');
-        if (!currentPrice.value || currentPrice.value <= 0) {
+        if (!currentPrice.value || Number(currentPrice.value) <= 0) {
             currentPrice.classList.add('invalid');
             currentPriceError.style.display = 'block';
             isValid = false;
@@ -400,7 +424,7 @@
 
     document.getElementById('currentPrice').addEventListener('input', function() {
         const error = document.getElementById('currentPriceError');
-        if (this.value && this.value > 0) {
+        if (this.value && Number(this.value) > 0) {
             this.classList.remove('invalid');
             error.style.display = 'none';
         }

@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Create Staff Account | Salon Loan Loan</title>
+    <title th:text="#{admin-create-staff.pageTitle}">Create Staff Account | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles -->
@@ -173,19 +173,22 @@
         <section class="create-staff-card">
             <!-- Header -->
             <header class="create-staff-header">
-                <p class="section-kicker">Account Management</p>
-                <h2>Create Staff Account</h2>
-                <p style="color:#6b7280;font-size:0.85rem;">
+                <p class="section-kicker" th:text="#{admin-create-staff.kicker}">Account Management</p>
+                <h2 th:text="#{admin-create-staff.title}">Create Staff Account</h2>
+                <p style="color:#6b7280;font-size:0.85rem;"
+                   th:text="#{admin-create-staff.subtext}">
                     Fill out staff details below. An account will be automatically created.
                 </p>
             </header>
 
-            <div th:if="${successMessage}" class="alert alert-success">
+            <div th:if="${successMessage}" class="alert alert-success"
+                 th:text="#{admin-create-staff.flash.success}">
                 Staff created successfully.
             </div>
 
             <!-- ERROR -->
-            <div th:if="${errorMessage}" class="alert alert-error">
+            <div th:if="${errorMessage}" class="alert alert-error"
+                 th:text="#{admin-create-staff.flash.error}">
                 Something went wrong.
             </div>
 
@@ -194,16 +197,17 @@
 
                 <div class="form-grid">
                     <div class="input-group">
-                        <label class="input-label">Full Name</label>
+                        <label class="input-label" th:text="#{admin-create-staff.fullName}">Full Name</label>
                         <input type="text"
                                name="name"
                                class="input-text"
+                               th:placeholder="#{admin-create-staff.fullName.placeholder}"
                                placeholder="Enter staff full name"
                                required>
                     </div>
 
                     <div class="input-group">
-                        <label class="input-label">Birth Date</label>
+                        <label class="input-label" th:text="#{admin-create-staff.birthDate}">Birth Date</label>
                         <input type="date"
                                name="birthDate"
                                class="input-text"
@@ -211,18 +215,20 @@
                     </div>
 
                     <div class="input-group">
-                        <label class="input-label">Email</label>
+                        <label class="input-label" th:text="#{admin-create-staff.email}">Email</label>
                         <input type="email"
                                name="email"
                                class="input-text"
+                               th:placeholder="#{admin-create-staff.email.placeholder}"
                                placeholder="staff@example.com">
                     </div>
 
                     <div class="input-group">
-                        <label class="input-label">Social Security Number</label>
+                        <label class="input-label" th:text="#{admin-create-staff.ssn}">Social Security Number</label>
                         <input type="text"
                                name="socialSecurityNum"
                                class="input-text"
+                               th:placeholder="#{admin-create-staff.ssn.placeholder}"
                                placeholder="Enter SSN (will be stored securely)"
                                required>
                     </div>
@@ -231,10 +237,10 @@
                 <!-- Actions -->
                 <div class="action-row">
                     <a href="/admin/profiles" class="btn btn-secondary">
-                        ✕ <span>Cancel</span>
+                        ✕ <span th:text="#{common.cancel}">Cancel</span>
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        ✓ <span>Create Staff</span>
+                        ✓ <span th:text="#{admin-create-staff.createStaff}">Create Staff</span>
                     </button>
                 </div>
 

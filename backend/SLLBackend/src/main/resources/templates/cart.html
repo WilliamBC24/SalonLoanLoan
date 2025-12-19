@@ -2,16 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Shopping Cart | Salon Loan Loan</title>
+    <title th:text="#{cart.pageTitle}">Shopping Cart | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
 
     <style>
-        .cart-page {
-            padding: 2.5rem 0 3rem;
-        }
+        .cart-page { padding: 2.5rem 0 3rem; }
 
         .cart-header-row {
             display: flex;
@@ -21,10 +19,7 @@
             margin-bottom: 1.5rem;
         }
 
-        .cart-header-row h1 {
-            margin: 0;
-            font-size: 1.6rem;
-        }
+        .cart-header-row h1 { margin: 0; font-size: 1.6rem; }
 
         .cart-wrapper {
             display: grid;
@@ -33,13 +28,16 @@
             align-items: flex-start;
         }
 
-        .cart-card {
+        .cart-card,
+        .cart-summary-card {
             background: #ffffff;
             border-radius: 24px;
             border: 1px solid #e5e5e5;
             box-shadow: 0 10px 24px rgba(0,0,0,0.04);
-            padding: 1.6rem 1.8rem;
         }
+
+        .cart-card { padding: 1.6rem 1.8rem; }
+        .cart-summary-card { padding: 1.5rem 1.6rem; }
 
         .cart-empty {
             text-align: center;
@@ -48,22 +46,10 @@
             border: 1px dashed #dddddd;
             background: #fafafa;
         }
+        .cart-empty h2 { margin-top: 0; margin-bottom: 0.5rem; }
 
-        .cart-empty h2 {
-            margin-top: 0;
-            margin-bottom: 0.5rem;
-        }
-
-        .cart-table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .cart-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 640px;
-        }
+        .cart-table-wrapper { width: 100%; overflow-x: auto; }
+        .cart-table { width: 100%; border-collapse: collapse; min-width: 640px; }
 
         .cart-table th,
         .cart-table td {
@@ -73,25 +59,16 @@
             font-size: 0.9rem;
         }
 
-        .cart-table th {
-            background: #f6f6f6;
-            font-weight: 600;
-        }
+        .cart-table th { background: #f6f6f6; font-weight: 600; }
 
         .product-name {
             color: var(--accent, #ff8400);
             text-decoration: none;
             font-weight: 600;
         }
+        .product-name:hover { text-decoration: underline; }
 
-        .product-name:hover {
-            text-decoration: underline;
-        }
-
-        .price {
-            font-weight: 600;
-            color: #1c7c1c;
-        }
+        .price { font-weight: 600; color: #1c7c1c; }
 
         .quantity-input {
             width: 70px;
@@ -101,7 +78,6 @@
             font-size: 0.9rem;
             text-align: center;
         }
-
         .quantity-input:focus {
             outline: none;
             border-color: var(--accent, #ff8400);
@@ -117,31 +93,12 @@
             cursor: pointer;
             font-size: 0.8rem;
         }
-
-        .remove-btn:hover {
-            background: #c82333;
-        }
-
-        .cart-summary-card {
-            background: #ffffff;
-            border-radius: 24px;
-            border: 1px solid #e5e5e5;
-            box-shadow: 0 10px 24px rgba(0,0,0,0.04);
-            padding: 1.5rem 1.6rem;
-        }
+        .remove-btn:hover { background: #c82333; }
 
         .cart-summary-title {
             margin: 0 0 1rem;
             font-size: 1.1rem;
             font-weight: 700;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
         }
 
         .summary-total {
@@ -155,10 +112,7 @@
             align-items: baseline;
             color: #1c7c1c;
         }
-
-        .summary-total span:last-child {
-            font-size: 1.2rem;
-        }
+        .summary-total span:last-child { font-size: 1.2rem; }
 
         .cart-actions-bottom {
             margin-top: 1.4rem;
@@ -168,21 +122,11 @@
         }
 
         @media (max-width: 900px) {
-            .cart-wrapper {
-                grid-template-columns: minmax(0, 1fr);
-            }
+            .cart-wrapper { grid-template-columns: minmax(0, 1fr); }
         }
-
         @media (max-width: 600px) {
-            .cart-card,
-            .cart-summary-card {
-                padding: 1.3rem 1.2rem;
-            }
-
-            .cart-header-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+            .cart-card, .cart-summary-card { padding: 1.3rem 1.2rem; }
+            .cart-header-row { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -195,15 +139,17 @@
     <div class="container">
 
         <div class="cart-header-row">
-            <h1>Shopping Cart</h1>
-            <a th:href="@{/products}" class="btn-outline">← Back to Products</a>
+            <h1 th:text="#{cart.title}">Shopping Cart</h1>
+            <a th:href="@{/products}" class="btn-outline" th:text="#{cart.backToProducts}">
+                ← Back to Products
+            </a>
         </div>
 
         <!-- Empty Cart -->
         <div th:if="${#lists.isEmpty(cartItems)}" class="cart-empty">
-            <h2>Your cart is empty</h2>
-            <p>Start shopping to add items to your cart!</p>
-            <a th:href="@{/products}" class="btn-primary" style="margin-top:1rem;">
+            <h2 th:text="#{cart.empty.title}">Your cart is empty</h2>
+            <p th:text="#{cart.empty.subtitle}">Start shopping to add items to your cart!</p>
+            <a th:href="@{/products}" class="btn-primary" style="margin-top:1rem;" th:text="#{cart.empty.browse}">
                 Browse Products
             </a>
         </div>
@@ -217,11 +163,11 @@
                     <table class="cart-table">
                         <thead>
                         <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th style="width: 110px;">Quantity</th>
-                            <th>Total</th>
-                            <th>Actions</th>
+                            <th th:text="#{cart.table.product}">Product</th>
+                            <th th:text="#{cart.table.price}">Price</th>
+                            <th style="width: 110px;" th:text="#{cart.table.quantity}">Quantity</th>
+                            <th th:text="#{cart.table.total}">Total</th>
+                            <th th:text="#{cart.table.actions}">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -258,7 +204,9 @@
                             <td>
                                 <form th:action="@{/cart/remove}" method="post" style="display:inline;">
                                     <input type="hidden" name="productId" th:value="${item.product.id}"/>
-                                    <button type="submit" class="remove-btn">Remove</button>
+                                    <button type="submit" class="remove-btn" th:text="#{cart.action.remove}">
+                                        Remove
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -268,7 +216,7 @@
 
                 <!-- Bottom actions under table -->
                 <div class="cart-actions-bottom">
-                    <a th:href="@{/products}" class="btn-outline">
+                    <a th:href="@{/products}" class="btn-outline" th:text="#{cart.action.continueShopping}">
                         ← Continue Shopping
                     </a>
                 </div>
@@ -276,11 +224,10 @@
 
             <!-- RIGHT: SUMMARY -->
             <aside class="cart-summary-card">
-                <h3 class="cart-summary-title">Order Summary</h3>
+                <h3 class="cart-summary-title" th:text="#{cart.summary.title}">Order Summary</h3>
 
-                <!-- You can add more summary rows later if needed -->
                 <div class="summary-total">
-                    <span>Total:</span>
+                    <span th:text="#{cart.summary.totalLabel}">Total:</span>
                     <span id="total-price"
                           th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                         0 VND
@@ -289,7 +236,8 @@
 
                 <a th:href="@{/order/checkout}"
                    class="btn-primary"
-                   style="margin-top:1.1rem; display:block; text-align:center;">
+                   style="margin-top:1.1rem; display:block; text-align:center;"
+                   th:text="#{cart.summary.checkout}">
                     Proceed to Checkout
                 </a>
             </aside>
@@ -302,6 +250,11 @@
 <div th:replace="~{fragments/footer :: site-footer}"></div>
 
 <script>
+    // i18n strings for JS
+    const I18N = {
+        updateFailed: /*[[#{cart.js.updateFailed}]]*/ "Error updating quantity:"
+    };
+
     function formatMoney(value) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' VND';
     }
@@ -324,7 +277,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-
                     const itemTotalElement = document.getElementById('item-total-' + productId);
                     if (itemTotalElement && data.itemTotal !== undefined) {
                         itemTotalElement.textContent = formatMoney(data.itemTotal);
@@ -337,7 +289,7 @@
                 }
             })
             .catch(error => {
-                console.error('Error updating quantity:', error);
+                console.error(I18N.updateFailed, error);
             });
     }
 </script>

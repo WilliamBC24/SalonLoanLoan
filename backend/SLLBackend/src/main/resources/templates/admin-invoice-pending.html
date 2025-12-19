@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Admin - Pending Invoices | Salon Loan Loan</title>
+    <title th:text="#{admin-pending-invoices.pageTitle}">Admin - Pending Invoices | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles -->
@@ -230,8 +230,8 @@
             <!-- Header -->
             <div class="invoice-header-row">
                 <div class="invoice-title-block section-heading">
-                    <p class="section-kicker">Inventory Invoices</p>
-                    <h2>Pending Invoices</h2>
+                    <p class="section-kicker" th:text="#{admin-pending-invoices.kicker}">Inventory Invoices</p>
+                    <h2 th:text="#{admin-pending-invoices.title}">Pending Invoices</h2>
                 </div>
             </div>
 
@@ -241,60 +241,61 @@
 
             <!-- EMPTY STATE -->
             <div th:if="${#lists.isEmpty(invoices)}" class="empty-state">
-                <h2>No Pending Invoices</h2>
-                <p>All invoices have been processed.</p>
+                <h2 th:text="#{admin-pending-invoices.empty.title}">No Pending Invoices</h2>
+                <p th:text="#{admin-pending-invoices.empty.desc}">All invoices have been processed.</p>
             </div>
 
             <!-- INVOICE LIST -->
             <div th:if="${!#lists.isEmpty(invoices)}">
                 <p class="invoice-list-intro">
-                    <strong th:text="${invoices.size()}"></strong> invoice(s) awaiting approval
+                    <strong th:text="${invoices.size()}"></strong>
+                    <span th:text="#{admin-pending-invoices.awaitingApprovalSuffix}">invoice(s) awaiting approval</span>
                 </p>
 
                 <div th:each="invoice : ${invoices}" class="invoice-card">
 
                     <div class="invoice-header">
                         <span class="invoice-id">
-                            Invoice #<span th:text="${invoice.id}"></span>
+                            <span th:text="#{admin-pending-invoices.invoicePrefix}">Invoice #</span><span th:text="${invoice.id}"></span>
                         </span>
-                        <span class="status-badge">Awaiting Approval</span>
+                        <span class="status-badge" th:text="#{admin-pending-invoices.status.awaitingApproval}">Awaiting Approval</span>
                     </div>
 
                     <div class="invoice-details">
                         <div class="detail-item">
-                            <span class="detail-label">Staff</span>
+                            <span class="detail-label" th:text="#{common.staff}">Staff</span>
                             <span class="detail-value" th:text="${invoice.staffName}"></span>
                         </div>
 
                         <div class="detail-item">
-                            <span class="detail-label">Supplier</span>
+                            <span class="detail-label" th:text="#{common.supplier}">Supplier</span>
                             <span class="detail-value" th:text="${invoice.supplierName}"></span>
                         </div>
 
                         <div class="detail-item">
-                            <span class="detail-label">Created At</span>
+                            <span class="detail-label" th:text="#{common.createdAt}">Created At</span>
                             <span class="detail-value"
                                   th:text="${#temporals.format(invoice.createdAt,'yyyy-MM-dd HH:mm')}"></span>
                         </div>
 
                         <div class="detail-item">
-                            <span class="detail-label">Total Amount</span>
+                            <span class="detail-label" th:text="#{common.totalAmount}">Total Amount</span>
                             <span class="detail-value"
                                   th:text="${invoice.totalAmount} + ' VND'"></span>
                         </div>
                     </div>
 
                     <div class="detail-item" style="margin-bottom:1rem;">
-                        <span class="detail-label">Items</span>
+                        <span class="detail-label" th:text="#{common.items}">Items</span>
                         <span class="detail-value"
-                              th:text="${invoice.totalItems} + ' item(s)'"></span>
+                              th:text="${invoice.totalItems} + ' ' + #{common.itemsSuffix}"></span>
                     </div>
 
                     <div class="actions">
 
                         <a th:href="@{/staff/invoices/detail/{id}(id=${invoice.id})}"
                            class="btn btn-view">
-                            👁 <span>View</span>
+                            👁 <span th:text="#{common.view}">View</span>
                         </a>
 
                     </div>

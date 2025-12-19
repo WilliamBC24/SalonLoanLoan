@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Appointment Report | Salon Loan Loan</title>
+    <title th:text="#{report.appointment.pageTitle}">Manager - Appointment Report | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global layout styles (sidebar + main scroll) -->
@@ -365,9 +365,9 @@
             <!-- HEADER -->
             <div class="report-header-row">
                 <div class="report-header-title section-heading">
-                    <p class="section-kicker">Appointments</p>
-                    <h2>Appointment Revenue Report</h2>
-                    <p class="report-header-sub">
+                    <p class="section-kicker" th:text="#{report.appointment.kicker}">Appointments</p>
+                    <h2 th:text="#{report.appointment.title}">Appointment Revenue Report</h2>
+                    <p class="report-header-sub" th:text="#{report.appointment.subtitle}">
                         Detailed view of completed appointments, filtered by month, year and responsible staff.
                     </p>
                 </div>
@@ -383,7 +383,7 @@
             <section class="filter-card">
                 <div class="filter-header">
                     <div class="filter-header-title">
-                        <span>Filter by time and staff</span>
+                        <span th:text="#{report.appointment.filters.title}">Filter by time and staff</span>
                     </div>
                 </div>
 
@@ -392,7 +392,7 @@
                       method="get">
                     <div class="filter-fields">
                         <div class="filter-group">
-                            <label for="month-select">Month</label>
+                            <label for="month-select" th:text="#{report.appointment.filters.month}">Month</label>
                             <select id="month-select" name="month">
                                 <option th:each="m : ${monthOptions}"
                                         th:value="${m}"
@@ -404,7 +404,7 @@
                         </div>
 
                         <div class="filter-group">
-                            <label for="year-select">Year</label>
+                            <label for="year-select" th:text="#{report.appointment.filters.year}">Year</label>
                             <select id="year-select" name="year">
                                 <option th:each="y : ${yearOptions}"
                                         th:value="${y}"
@@ -416,10 +416,11 @@
                         </div>
 
                         <div class="filter-group">
-                            <label for="staff-select">Responsible staff</label>
+                            <label for="staff-select" th:text="#{report.appointment.filters.staff}">Responsible staff</label>
                             <select id="staff-select" name="staffId">
                                 <option value=""
-                                        th:selected="${selectedStaffId} == null">
+                                        th:selected="${selectedStaffId} == null"
+                                        th:text="#{report.appointment.filters.allStaff}">
                                     All staff
                                 </option>
                                 <option th:each="opt : ${staffOptions}"
@@ -434,10 +435,10 @@
 
                     <div class="filter-actions">
                         <button type="submit" class="btn btn-primary">
-                            <span>Apply</span>
+                            <span th:text="#{report.appointment.filters.applyBtn}">Apply</span>
                         </button>
                         <a th:href="@{/manager/report/appointment}" class="btn btn-secondary">
-                            <span>Reset</span>
+                            <span th:text="#{report.appointment.filters.resetBtn}">Reset</span>
                         </a>
                     </div>
                 </form>
@@ -446,28 +447,28 @@
             <!-- SUMMARY STRIP -->
             <section class="appointment-summary-strip">
                 <div class="summary-card">
-                    <div class="summary-label">Total appointment revenue</div>
+                    <div class="summary-label" th:text="#{report.appointment.summary.totalRevenue}">Total appointment revenue</div>
                     <div class="summary-main">
                         <span class="summary-value"
                               th:text="${#numbers.formatDecimal(report.totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                             0 VND
                         </span>
                     </div>
-                    <p class="summary-caption">
+                    <p class="summary-caption" th:text="#{report.appointment.summary.totalRevenue.caption}">
                         Sum of net prices for all appointments in the selected period and staff filter.
                     </p>
                 </div>
 
                 <div class="summary-card">
-                    <div class="summary-label">Number of appointments</div>
+                    <div class="summary-label" th:text="#{report.appointment.summary.count}">Number of appointments</div>
                     <div class="summary-main">
                         <span class="summary-value"
                               th:text="${report.appointmentCount}">
                             0
                         </span>
-                        <span class="summary-unit">appointments</span>
+                        <span class="summary-unit" th:text="#{report.appointment.summary.count.unit}">appointments</span>
                     </div>
-                    <p class="summary-caption">
+                    <p class="summary-caption" th:text="#{report.appointment.summary.count.caption}">
                         Total completed appointments included in this report.
                     </p>
                 </div>
@@ -477,12 +478,12 @@
             <section>
                 <div class="appointment-table-section-header">
                     <div class="appointment-table-title">
-                        <h3>Appointment details</h3>
-                        <span>
+                        <h3 th:text="#{report.appointment.table.title}">Appointment details</h3>
+                        <span th:text="#{report.appointment.table.subtitle}">
                             Each row represents one appointment invoice.
                         </span>
                     </div>
-                    <div class="appointment-meta">
+                    <div class="appointment-meta" th:text="#{report.appointment.table.meta}">
                         Amounts shown in VND.
                     </div>
                 </div>
@@ -491,21 +492,21 @@
                     <table class="appointment-table">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Appointment</th>
-                            <th>Date &amp; Time</th>
-                            <th>Customer</th>
-                            <th>Staff</th>
-                            <th class="cell-number">Total</th>
-                            <th class="cell-number">Discount</th>
-                            <th class="cell-number">Net</th>
+                            <th th:text="#{report.appointment.table.col.no}">#</th>
+                            <th th:text="#{report.appointment.table.col.appointment}">Appointment</th>
+                            <th th:text="#{report.appointment.table.col.datetime}">Date &amp; Time</th>
+                            <th th:text="#{report.appointment.table.col.customer}">Customer</th>
+                            <th th:text="#{report.appointment.table.col.staff}">Staff</th>
+                            <th class="cell-number" th:text="#{report.appointment.table.col.total}">Total</th>
+                            <th class="cell-number" th:text="#{report.appointment.table.col.discount}">Discount</th>
+                            <th class="cell-number" th:text="#{report.appointment.table.col.net}">Net</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="row, iterStat : ${report.rows}">
                             <td th:text="${iterStat.count}">1</td>
                             <td th:text="${row.appointmentCode}">APT-001</td>
-                            <td th:text="${row.scheduledAt != null ? #temporals.format(row.scheduledAt, 'dd/MM/yyyy HH:mm') : '-'}">
+                            <td th:text="${row.scheduledAt != null ? #temporals.format(row.scheduledAt, 'dd/MM/yyyy HH:mm') : #{report.appointment.table.value.na}}">
                                 01/01/2025 10:00
                             </td>
                             <td th:text="${row.customerName}">Customer Name</td>
@@ -525,7 +526,7 @@
                         </tr>
 
                         <tr th:if="${report == null or #lists.isEmpty(report.rows)}">
-                            <td colspan="8" class="empty-row">
+                            <td colspan="8" class="empty-row" th:text="#{report.appointment.table.empty}">
                                 No appointments found for the selected filters.
                             </td>
                         </tr>

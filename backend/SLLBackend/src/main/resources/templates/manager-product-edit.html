@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Edit Product | Salon Loan Loan</title>
+    <title th:text="#{manager.productEdit.pageTitle}">Manager - Edit Product | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -267,6 +267,7 @@
             display: flex;
             gap: 0.5rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .file-input-wrapper {
@@ -368,6 +369,7 @@
             margin-top: 0.5rem;
             border-radius: 6px;
             font-size: 0.85rem;
+            display: none;
         }
 
         .upload-message.success {
@@ -392,21 +394,23 @@
 <main class="staff-main product-edit-page">
     <div class="product-edit-layout-inner">
         <section class="product-edit-card">
+
             <!-- Header -->
             <div class="product-edit-header-row">
                 <div class="product-edit-title-block section-heading">
-                    <p class="section-kicker">Inventory Management</p>
+                    <p class="section-kicker" th:text="#{manager.productEdit.kicker}">Inventory Management</p>
                     <h2>
-                        Edit Product
+                        <span th:text="#{manager.productEdit.heading}">Edit Product</span>
                         <span class="product-id-badge">
                             #<span th:text="${product.id}">1</span>
                         </span>
                     </h2>
                 </div>
+
                 <div class="product-edit-actions">
-                    <a href="/manager/products/list" class="back-link-pill">
+                    <a class="back-link-pill" th:href="@{/manager/products/list}">
                         <span class="icon">←</span>
-                        <span>Back to Product List</span>
+                        <span th:text="#{common.backToList}">Back to list</span>
                     </a>
                 </div>
             </div>
@@ -421,53 +425,70 @@
                   class="form-grid">
                 <div>
                     <div class="form-group">
-                        <label for="productName" class="required">Product Name</label>
+                        <label for="productName" class="required" th:text="#{manager.productEdit.field.productName}">
+                            Product Name
+                        </label>
                         <input type="text"
                                id="productName"
                                name="productName"
                                th:value="${product.productName}"
-                               data-original-name="${product.productName}"
+                               th:attr="data-original-name=${product.productName}"
                                required>
-                        <div class="error" id="productNameError">Product name is required</div>
-                        <div class="warning" id="productNameWarning">
+                        <div class="error" id="productNameError" th:text="#{manager.productEdit.validation.productNameRequired}">
+                            Product name is required
+                        </div>
+                        <div class="warning" id="productNameWarning" th:text="#{manager.productEdit.validation.duplicateNameWarning}">
                             A product with this name already exists
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="currentPrice" class="required">Current Price (VND)</label>
+                        <label for="currentPrice" class="required" th:text="#{manager.productEdit.field.currentPrice}">
+                            Current Price (VND)
+                        </label>
                         <input type="number"
                                id="currentPrice"
                                name="currentPrice"
                                min="0"
                                th:value="${product.currentPrice}"
                                required>
-                        <div class="error" id="currentPriceError">
+                        <div class="error" id="currentPriceError" th:text="#{manager.productEdit.validation.pricePositive}">
                             Current price must be a positive number
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="productDescription" class="required">Product Description</label>
+                        <label for="productDescription" class="required" th:text="#{manager.productEdit.field.description}">
+                            Product Description
+                        </label>
                         <textarea id="productDescription"
                                   name="productDescription"
                                   required
                                   th:text="${product.productDescription}"></textarea>
-                        <div class="error" id="productDescriptionError">
+                        <div class="error" id="productDescriptionError" th:text="#{manager.productEdit.validation.descriptionRequired}">
                             Product description is required
                         </div>
                     </div>
 
                     <div class="form-group stock-info-block">
-                        <label>Available Stock</label>
+                        <label th:text="#{manager.productEdit.field.availableStock}">Available Stock</label>
                         <div class="info-text">
-                            <span th:text="${availableStock}">0</span> units available
+                            <span th:text="${availableStock}">0</span>
+                            <span th:text="#{manager.productEdit.stock.unitsAvailable}">units available</span>
+
                             <span th:if="${availableStock == 0}"
-                                  style="color: red; font-weight: bold;"> (Out of Stock)</span>
+                                  style="color: red; font-weight: bold;"
+                                  th:text="#{manager.productEdit.stock.outOfStock}">
+                                (Out of Stock)
+                            </span>
                             <span th:if="${availableStock > 0 && availableStock < 10}"
-                                  style="color: orange; font-weight: bold;"> (Low Stock)</span>
+                                  style="color: orange; font-weight: bold;"
+                                  th:text="#{manager.productEdit.stock.lowStock}">
+                                (Low Stock)
+                            </span>
                         </div>
-                        <div class="info-text" style="margin-top: 5px;">
+                        <div class="info-text" style="margin-top: 5px;"
+                             th:text="#{manager.productEdit.stock.managedNote}">
                             Stock is managed through inventory system
                         </div>
                     </div>
@@ -479,30 +500,38 @@
                                    name="activeStatus"
                                    value="true"
                                    th:checked="${product.activeStatus}">
-                            <span>Active Status</span>
+                            <span th:text="#{manager.productEdit.field.activeStatus}">Active Status</span>
                         </label>
                     </div>
 
                     <!-- Image Upload Section -->
                     <div class="image-section">
-                        <h3>📷 Product Images</h3>
+                        <h3 th:text="#{manager.productEdit.images.heading}">📷 Product Images</h3>
+
                         <div class="image-upload-area">
                             <div class="image-upload-input">
                                 <div class="file-input-wrapper">
                                     <input type="file" id="imageFile" accept="image/*">
                                     <label for="imageFile" class="file-input-label">
                                         <span>📁</span>
-                                        <span>Choose Image</span>
+                                        <span th:text="#{manager.productEdit.images.choose}">Choose Image</span>
                                     </label>
                                 </div>
-                                <span class="file-name" id="fileName">No file chosen</span>
+
+                                <span class="file-name" id="fileName" th:text="#{manager.productEdit.images.noFile}">
+                                    No file chosen
+                                </span>
+
                                 <button type="button" class="btn-upload" id="uploadBtn" disabled
-                                        onclick="uploadProductImage()">
+                                        onclick="uploadProductImage()"
+                                        th:text="#{manager.productEdit.images.upload}">
                                     Upload
                                 </button>
                             </div>
+
                             <div id="uploadMessage"></div>
                         </div>
+
                         <div class="image-gallery" id="imageGallery">
                             <!-- Images will be loaded here dynamically -->
                         </div>
@@ -510,25 +539,48 @@
 
                     <div class="button-group">
                         <button type="submit" class="btn btn-primary">
-                            <span>Update Product</span>
+                            <span th:text="#{manager.productEdit.action.update}">Update Product</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
-                                onclick="window.location.href='/manager/products/list'">
+                                th:onclick="|window.location.href='@{/manager/products/list}'|">
                             <span>✕</span>
-                            <span>Cancel</span>
+                            <span th:text="#{common.cancel}">Cancel</span>
                         </button>
                     </div>
                 </div>
             </form>
+
         </section>
     </div>
 </main>
 
-<script>
+<script th:inline="javascript">
     let productNameCheckTimeout;
     let isDuplicateName = false;
-    const originalProductName = document.getElementById('productName').getAttribute('data-original-name');
+
+    const originalProductName = document.getElementById('productName').getAttribute('data-original-name') || '';
+
+    // i18n strings
+    const DUPLICATE_NAME_ALERT = /*[[#{manager.productEdit.alert.duplicateName}]]*/ 'A product with this name already exists. Please choose a different name.';
+    const CONFIRM_DELETE_IMAGE = /*[[#{manager.productEdit.images.confirmDelete}]]*/ 'Are you sure you want to delete this image?';
+
+    const MSG_SELECT_IMAGE = /*[[#{manager.productEdit.images.msg.selectImage}]]*/ 'Please select an image file';
+    const MSG_UPLOAD_OK = /*[[#{manager.productEdit.images.msg.uploadSuccess}]]*/ 'Image uploaded successfully!';
+    const MSG_DELETE_OK = /*[[#{manager.productEdit.images.msg.deleteSuccess}]]*/ 'Image deleted successfully';
+    const MSG_UPLOAD_FAIL = /*[[#{manager.productEdit.images.msg.uploadFailed}]]*/ 'Upload failed';
+    const MSG_DELETE_FAIL = /*[[#{manager.productEdit.images.msg.deleteFailed}]]*/ 'Delete failed';
+
+    const LABEL_NO_FILE = /*[[#{manager.productEdit.images.noFile}]]*/ 'No file chosen';
+    const LABEL_UPLOADING = /*[[#{manager.productEdit.images.uploading}]]*/ 'Uploading...';
+    const LABEL_UPLOAD = /*[[#{manager.productEdit.images.upload}]]*/ 'Upload';
+    const LABEL_IMAGE_NOT_FOUND = /*[[#{manager.productEdit.images.imageNotFoundAlt}]]*/ 'Image Not Found';
+
+    // URLs (use Thymeleaf to avoid hardcoding)
+    const URL_PRODUCT_SEARCH_BY_NAME = /*[[@{/products(name=__NAME__)}]]*/ '/products?name=__NAME__';
+    const URL_LIST_IMAGES = /*[[@{/api/products/{id}/images(id=${product.id})}]]*/ '/api/products/1/images';
+    const URL_UPLOAD_IMAGE = /*[[@{/api/products/{id}/images(id=${product.id})}]]*/ '/api/products/1/images';
+    const URL_DELETE_IMAGE = /*[[@{/api/products/images/{imageId}(imageId=0)}]]*/ '/api/products/images/0';
 
     // Check for duplicate product name
     function checkDuplicateProductName(productName) {
@@ -539,16 +591,17 @@
         }
 
         // Don't check if name hasn't changed
-        if (productName.trim().toLowerCase() === originalProductName.toLowerCase()) {
+        if (productName.trim().toLowerCase() === originalProductName.trim().toLowerCase()) {
             document.getElementById('productNameWarning').style.display = 'none';
             isDuplicateName = false;
             return;
         }
 
-        fetch('/products?name=' + encodeURIComponent(productName.trim()))
+        const url = URL_PRODUCT_SEARCH_BY_NAME.replace('__NAME__', encodeURIComponent(productName.trim()));
+
+        fetch(url)
             .then(response => response.text())
             .then(html => {
-                // Parse the response to check if any products exist with exact name match (case-insensitive)
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const productElements = doc.querySelectorAll('[data-product-name]');
@@ -570,22 +623,18 @@
                     isDuplicateName = false;
                 }
             })
-            .catch(error => {
-                console.error('Error checking duplicate name:', error);
-            });
+            .catch(error => console.error('Error checking duplicate name:', error));
     }
 
     document.getElementById('editProductForm').addEventListener('submit', function(event) {
         let isValid = true;
 
-        // Check for duplicate name
         if (isDuplicateName) {
-            alert('A product with this name already exists. Please choose a different name.');
+            alert(DUPLICATE_NAME_ALERT);
             event.preventDefault();
             return;
         }
 
-        // Validate product name
         const productName = document.getElementById('productName');
         const productNameError = document.getElementById('productNameError');
         if (!productName.value.trim()) {
@@ -597,10 +646,9 @@
             productNameError.style.display = 'none';
         }
 
-        // Validate current price
         const currentPrice = document.getElementById('currentPrice');
         const currentPriceError = document.getElementById('currentPriceError');
-        if (!currentPrice.value || currentPrice.value <= 0) {
+        if (!currentPrice.value || Number(currentPrice.value) <= 0) {
             currentPrice.classList.add('invalid');
             currentPriceError.style.display = 'block';
             isValid = false;
@@ -609,7 +657,6 @@
             currentPriceError.style.display = 'none';
         }
 
-        // Validate product description
         const productDescription = document.getElementById('productDescription');
         const productDescriptionError = document.getElementById('productDescriptionError');
         if (!productDescription.value.trim()) {
@@ -621,23 +668,17 @@
             productDescriptionError.style.display = 'none';
         }
 
-        if (!isValid) {
-            event.preventDefault();
-        }
+        if (!isValid) event.preventDefault();
     });
 
-    // Real-time validation on input
     document.getElementById('productName').addEventListener('input', function() {
         const error = document.getElementById('productNameError');
         if (this.value.trim()) {
             this.classList.remove('invalid');
             error.style.display = 'none';
 
-            // Check for duplicate name with debounce
             clearTimeout(productNameCheckTimeout);
-            productNameCheckTimeout = setTimeout(() => {
-                checkDuplicateProductName(this.value);
-            }, 500);
+            productNameCheckTimeout = setTimeout(() => checkDuplicateProductName(this.value), 500);
         } else {
             document.getElementById('productNameWarning').style.display = 'none';
             isDuplicateName = false;
@@ -646,7 +687,7 @@
 
     document.getElementById('currentPrice').addEventListener('input', function() {
         const error = document.getElementById('currentPriceError');
-        if (this.value && this.value > 0) {
+        if (this.value && Number(this.value) > 0) {
             this.classList.remove('invalid');
             error.style.display = 'none';
         }
@@ -661,43 +702,43 @@
     });
 
     // ===== IMAGE UPLOAD FUNCTIONALITY =====
-    const productId = [[${product.id}]];
-    
-    // Handle file input change
     document.getElementById('imageFile').addEventListener('change', function() {
-        const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+        const fileName = this.files.length > 0 ? this.files[0].name : LABEL_NO_FILE;
         document.getElementById('fileName').textContent = fileName;
         document.getElementById('uploadBtn').disabled = this.files.length === 0;
     });
 
-    // Load existing images on page load
     loadProductImages();
 
     function loadProductImages() {
-        fetch(`/api/products/${productId}/images`)
+        fetch(URL_LIST_IMAGES)
             .then(response => response.json())
             .then(data => {
-                if (data.success && data.images) {
-                    displayImages(data.images);
-                }
+                if (data.success && data.images) displayImages(data.images);
             })
-            .catch(error => {
-                console.error('Error loading images:', error);
-            });
+            .catch(error => console.error('Error loading images:', error));
     }
 
     function displayImages(images) {
         const gallery = document.getElementById('imageGallery');
         gallery.innerHTML = '';
-        
+
         images.forEach(image => {
             const imageCard = document.createElement('div');
             imageCard.className = 'image-card';
+
+            const safePath = image.imagePath || '';
+            const safeId = image.id;
+
             imageCard.innerHTML = `
-                <img src="${image.imagePath}" alt="Product image" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found'">
+                <img src="${safePath}"
+                     alt="Product image"
+                     onerror="this.src='https://via.placeholder.com/150?text=${encodeURIComponent(LABEL_IMAGE_NOT_FOUND)}'">
                 <div class="image-card-actions">
-                    <button type="button" class="btn-delete-image" onclick="deleteProductImage(${image.id})">
-                        🗑️ Delete
+                    <button type="button"
+                            class="btn-delete-image"
+                            onclick="deleteProductImage(${safeId})">
+                        🗑️ ${/*[[#{manager.productEdit.images.delete}]]*/ 'Delete'}
                     </button>
                 </div>
             `;
@@ -708,9 +749,9 @@
     function uploadProductImage() {
         const fileInput = document.getElementById('imageFile');
         const file = fileInput.files[0];
-        
+
         if (!file) {
-            showUploadMessage('Please select an image file', 'error');
+            showUploadMessage(MSG_SELECT_IMAGE, 'error');
             return;
         }
 
@@ -719,54 +760,52 @@
 
         const uploadBtn = document.getElementById('uploadBtn');
         uploadBtn.disabled = true;
-        uploadBtn.textContent = 'Uploading...';
+        uploadBtn.textContent = LABEL_UPLOADING;
 
-        fetch(`/api/products/${productId}/images`, {
+        fetch(URL_UPLOAD_IMAGE, {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showUploadMessage('Image uploaded successfully!', 'success');
-                fileInput.value = '';
-                document.getElementById('fileName').textContent = 'No file chosen';
-                loadProductImages();
-            } else {
-                showUploadMessage(data.message || 'Upload failed', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error uploading image:', error);
-            showUploadMessage('Error uploading image: ' + error.message, 'error');
-        })
-        .finally(() => {
-            uploadBtn.disabled = false;
-            uploadBtn.textContent = 'Upload';
-        });
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showUploadMessage(MSG_UPLOAD_OK, 'success');
+                    fileInput.value = '';
+                    document.getElementById('fileName').textContent = LABEL_NO_FILE;
+                    loadProductImages();
+                } else {
+                    showUploadMessage(data.message || MSG_UPLOAD_FAIL, 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Error uploading image:', err);
+                showUploadMessage(err.message || MSG_UPLOAD_FAIL, 'error');
+            })
+            .finally(() => {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = LABEL_UPLOAD;
+            });
     }
 
     function deleteProductImage(imageId) {
-        if (!confirm('Are you sure you want to delete this image?')) {
-            return;
-        }
+        if (!confirm(CONFIRM_DELETE_IMAGE)) return;
 
-        fetch(`/api/products/images/${imageId}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showUploadMessage('Image deleted successfully', 'success');
-                loadProductImages();
-            } else {
-                showUploadMessage(data.message || 'Delete failed', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting image:', error);
-            showUploadMessage('Error deleting image: ' + error.message, 'error');
-        });
+        const url = URL_DELETE_IMAGE.replace('/0', '/' + encodeURIComponent(String(imageId)));
+
+        fetch(url, { method: 'DELETE' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showUploadMessage(MSG_DELETE_OK, 'success');
+                    loadProductImages();
+                } else {
+                    showUploadMessage(data.message || MSG_DELETE_FAIL, 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Error deleting image:', err);
+                showUploadMessage(err.message || MSG_DELETE_FAIL, 'error');
+            });
     }
 
     function showUploadMessage(message, type) {
@@ -774,10 +813,8 @@
         messageDiv.textContent = message;
         messageDiv.className = `upload-message ${type}`;
         messageDiv.style.display = 'block';
-        
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-        }, 3000);
+
+        setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
     }
 </script>
 </body>

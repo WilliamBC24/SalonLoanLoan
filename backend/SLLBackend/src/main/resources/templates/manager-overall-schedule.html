@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Staff Schedule | Salon Loan Loan</title>
+    <title th:text="#{manager.schedule.pageTitle}">Manager - Staff Schedule | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -334,9 +334,9 @@
             <!-- Header -->
             <div class="schedule-header-row">
                 <div class="schedule-title-block section-heading">
-                    <p class="section-kicker">Staff Scheduling</p>
-                    <h2>Overall Staff Schedule</h2>
-                    <p class="schedule-subtext">
+                    <p class="section-kicker" th:text="#{manager.schedule.kicker}">Staff Scheduling</p>
+                    <h2 th:text="#{manager.schedule.heading}">Overall Staff Schedule</h2>
+                    <p class="schedule-subtext" th:text="#{manager.schedule.subheading}">
                         View and manage staff shifts and appointment load by day.
                     </p>
                 </div>
@@ -347,7 +347,7 @@
                         <button type="submit"
                                 name="monthOffset"
                                 th:value="${monthOffset - 1}"
-                                title="Previous month">
+                                th:title="#{manager.schedule.nav.prevMonth}">
                             ◀
                         </button>
 
@@ -357,7 +357,7 @@
                         <button type="submit"
                                 name="monthOffset"
                                 th:value="${monthOffset + 1}"
-                                title="Next month">
+                                th:title="#{manager.schedule.nav.nextMonth}">
                             ▶
                         </button>
                     </form>
@@ -369,18 +369,18 @@
             <div class="schedule-legend">
                 <div class="legend-item">
                     <span class="legend-dot low"></span>
-                    <span>Low appointment load</span>
+                    <span th:text="#{manager.schedule.legend.low}">Low appointment load</span>
                 </div>
                 <div class="legend-item">
                     <span class="legend-dot medium"></span>
-                    <span>Medium load</span>
+                    <span th:text="#{manager.schedule.legend.medium}">Medium load</span>
                 </div>
                 <div class="legend-item">
                     <span class="legend-dot high"></span>
-                    <span>High load</span>
+                    <span th:text="#{manager.schedule.legend.high}">High load</span>
                 </div>
                 <div class="legend-item">
-                    <span>AM / PM: <strong>assigned / recommended</strong> staff</span>
+                    <span th:text="#{manager.schedule.legend.staffHint}">AM / PM: assigned / recommended staff</span>
                 </div>
             </div>
 
@@ -388,25 +388,17 @@
             <div class="calendar-wrapper">
                 <!-- Weekday header -->
                 <div class="calendar-header-row">
-                    <div class="calendar-header-cell">Mon</div>
-                    <div class="calendar-header-cell">Tue</div>
-                    <div class="calendar-header-cell">Wed</div>
-                    <div class="calendar-header-cell">Thu</div>
-                    <div class="calendar-header-cell">Fri</div>
-                    <div class="calendar-header-cell">Sat</div>
-                    <div class="calendar-header-cell">Sun</div>
+                    <div class="calendar-header-cell" th:text="#{manager.schedule.weekday.mon}">Mon</div>
+                    <div class="calendar-header-cell" th:text="#{manager.schedule.weekday.tue}">Tue</div>
+                    <div class="calendar-header-cell" th:text="#{manager.schedule.weekday.wed}">Wed</div>
+                    <div class="calendar-header-cell" th:text="#{manager.schedule.weekday.thu}">Thu</div>
+                    <div class="calendar-header-cell" th:text="#{manager.schedule.weekday.fri}">Fri</div>
+                    <div class="calendar-header-cell" th:text="#{manager.schedule.weekday.sat}">Sat</div>
+                    <div class="calendar-header-cell" th:text="#{manager.schedule.weekday.sun}">Sun</div>
                 </div>
 
                 <!-- Days -->
                 <div class="calendar-grid">
-                    <!--
-                        Expect something like:
-                        List<CalendarDayView> calendarDays
-                        CalendarDayView: date, inCurrentMonth, isToday,
-                        totalAppointments,
-                        amAssignedStaffCount, amRecommendedStaffCount, amLoadLevel,
-                                                                                                                                        pmAssignedStaffCount, pmRecommendedStaffCount, pmLoadLevel
-                    -->
                     <div class="calendar-day"
                          th:each="day : ${calendarDays}"
                          th:classappend="
@@ -414,7 +406,7 @@
         (${day.today} ? ' is-today' : '')
      ">
 
-                    <!-- Clickable link overlay -->
+                        <!-- Clickable link overlay -->
                         <a class="calendar-day-link"
                            th:href="@{/manager/schedule/day(date=${day.date})}"></a>
 
@@ -422,8 +414,9 @@
                             <div class="calendar-day-header">
                                 <span class="calendar-day-number"
                                       th:text="${day.date.dayOfMonth}">1</span>
+
                                 <span class="calendar-appointments-count"
-                                      th:text="${day.totalAppointments} + ' appts'">
+                                      th:text="${day.totalAppointments} + ' ' + #{manager.schedule.apptsSuffix}">
                                     0 appts
                                 </span>
                             </div>
@@ -433,9 +426,9 @@
                                 <div class="shift-pill"
                                      th:if="${day.hasMorningShift}">
                                     <div>
-                                        <span class="shift-name">AM</span>
+                                        <span class="shift-name" th:text="#{manager.schedule.shift.am}">AM</span>
                                         <span class="shift-staff"
-                                              th:text="${day.amAssignedStaffCount} + '/' + ${day.amRecommendedStaffCount} + ' staff'">
+                                              th:text="${day.amAssignedStaffCount} + '/' + ${day.amRecommendedStaffCount} + ' ' + #{manager.schedule.staffSuffix}">
                                             0/0 staff
                                         </span>
                                     </div>
@@ -448,9 +441,9 @@
                                 <div class="shift-pill"
                                      th:if="${day.hasAfternoonShift}">
                                     <div>
-                                        <span class="shift-name">PM</span>
+                                        <span class="shift-name" th:text="#{manager.schedule.shift.pm}">PM</span>
                                         <span class="shift-staff"
-                                              th:text="${day.pmAssignedStaffCount} + '/' + ${day.pmRecommendedStaffCount} + ' staff'">
+                                              th:text="${day.pmAssignedStaffCount} + '/' + ${day.pmRecommendedStaffCount} + ' ' + #{manager.schedule.staffSuffix}">
                                             0/0 staff
                                         </span>
                                     </div>

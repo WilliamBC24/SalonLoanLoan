@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Apply for Job | Salon Loan Loan</title>
+    <title th:text="#{job-apply.pageTitle}">Apply for Job | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global Styles -->
@@ -87,7 +87,7 @@
         <div class="job-apply-wrapper">
 
             <!-- Title + Job Info -->
-            <h2 th:text="'Apply for: ' + ${job.jobPostingName}">
+            <h2 th:text="#{job-apply.title(${job.jobPostingName})}">
                 Apply for: Job Name
             </h2>
             <p class="job-desc" th:text="${job.jobPostingDescription}">
@@ -97,18 +97,38 @@
             <!-- Form -->
             <form th:action="@{/job/apply/{id}(id=${job.id})}" method="post">
 
-                <label for="applicantName" class="form-label">Full Name</label>
-                <input class="form-input" type="text" id="applicantName" name="applicantName" required />
+                <label for="applicantName" class="form-label" th:text="#{job-apply.fullName}">
+                    Full Name
+                </label>
+                <input class="form-input"
+                       type="text"
+                       id="applicantName"
+                       name="applicantName"
+                       th:placeholder="#{job-apply.fullName.placeholder}"
+                       required />
 
-                <label for="applicantDob" class="form-label">Date of Birth</label>
-                <input class="form-input" type="date" id="applicantDob" name="applicantDob" required />
+                <label for="applicantDob" class="form-label" th:text="#{job-apply.dob}">
+                    Date of Birth
+                </label>
+                <input class="form-input"
+                       type="date"
+                       id="applicantDob"
+                       name="applicantDob"
+                       required />
 
-                <label for="applicantPhoneNumber" class="form-label">Phone Number</label>
-                <input class="form-input" type="text" id="applicantPhoneNumber" name="applicantPhoneNumber" required />
+                <label for="applicantPhoneNumber" class="form-label" th:text="#{job-apply.phone}">
+                    Phone Number
+                </label>
+                <input class="form-input"
+                       type="text"
+                       id="applicantPhoneNumber"
+                       name="applicantPhoneNumber"
+                       th:placeholder="#{job-apply.phone.placeholder}"
+                       required />
 
                 <div class="button-row">
                     <button type="submit" class="btn-primary" style="padding:0.75rem 2rem;">
-                        Submit Application
+                        <span th:text="#{job-apply.submit}">Submit Application</span>
                     </button>
                 </div>
 

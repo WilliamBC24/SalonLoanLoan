@@ -4,7 +4,7 @@
       lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Manager - Create Expense | Salon Loan Loan</title>
+    <title th:text="#{expense.create.pageTitle}">Manager - Create Expense | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -115,7 +115,7 @@
 <main class="staff-main expense-page">
     <div class="expense-layout-inner">
 
-        <h1 class="section-title">Create New Expense</h1>
+        <h1 class="section-title" th:text="#{expense.create.heading}">Create New Expense</h1>
 
         <!-- SUCCESS / ERROR ALERTS -->
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
@@ -126,9 +126,9 @@
 
                 <!-- CATEGORY -->
                 <div class="form-group">
-                    <label class="form-label">Expense Category *</label>
+                    <label class="form-label" th:text="#{expense.create.category.label}">Expense Category *</label>
                     <select class="form-select" th:field="*{expenseCategoryId}" required>
-                        <option value="">-- Select Category --</option>
+                        <option value="" th:text="#{expense.create.category.placeholder}">-- Select Category --</option>
                         <option th:each="cat : ${categories}"
                                 th:value="${cat.id}"
                                 th:text="${cat.name}">
@@ -140,11 +140,11 @@
 
                 <!-- AMOUNT -->
                 <div class="form-group">
-                    <label class="form-label">Amount (₫) *</label>
+                    <label class="form-label" th:text="#{expense.create.amount.label}">Amount (₫) *</label>
                     <input class="form-input"
                            type="number"
                            th:field="*{amount}"
-                           placeholder="Enter amount..."
+                           th:placeholder="#{expense.create.amount.placeholder}"
                            min="1"
                            required>
                     <p class="error" th:if="${#fields.hasErrors('amount')}"
@@ -153,7 +153,7 @@
 
                 <!-- DATE INCURRED -->
                 <div class="form-group">
-                    <label class="form-label">Date Incurred *</label>
+                    <label class="form-label" th:text="#{expense.create.date.label}">Date Incurred *</label>
                     <input class="form-input"
                            name="dateIncurred"
                            type="date"
@@ -165,25 +165,29 @@
                         <button type="button"
                                 class="btn-secondary"
                                 style="padding: 0.35rem 0.8rem; border-radius: 999px; font-size: 0.8rem;"
+                                th:text="#{expense.create.date.useTodayBtn}"
                                 onclick="document.querySelector('input[name=\'dateIncurred\']').value = new Date().toISOString().substring(0,10);">
                             Use Today
                         </button>
                     </div>
-
                 </div>
 
                 <!-- NOTE -->
                 <div class="form-group">
-                    <label class="form-label">Note (Optional)</label>
+                    <label class="form-label" th:text="#{expense.create.note.label}">Note (Optional)</label>
                     <textarea class="form-textarea"
                               th:field="*{note}"
-                              placeholder="Additional details..."></textarea>
+                              th:placeholder="#{expense.create.note.placeholder}">Additional details...</textarea>
                 </div>
 
                 <!-- ACTION BUTTONS -->
                 <div class="form-actions">
-                    <a th:href="@{/manager/report/expense/list}" class="btn-outline">Cancel</a>
-                    <button type="submit" class="btn-primary">Create Expense</button>
+                    <a th:href="@{/manager/report/expense/list}" class="btn-outline" th:text="#{common.cancel}">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn-primary" th:text="#{expense.create.submitBtn}">
+                        Create Expense
+                    </button>
                 </div>
 
             </form>

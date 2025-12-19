@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Admin - Accounts | Salon Loan Loan</title>
+    <title th:text="#{admin-accounts.pageTitle}">Admin - Accounts | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -242,12 +242,12 @@
             <!-- Header -->
             <div class="accounts-header-row">
                 <div class="accounts-title-block section-heading">
-                    <p class="section-kicker">Account Management</p>
-                    <h2>All Accounts</h2>
+                    <p class="section-kicker" th:text="#{admin-accounts.kicker}">Account Management</p>
+                    <h2 th:text="#{admin-accounts.title}">All Accounts</h2>
                 </div>
                 <div class="accounts-actions">
                     <a href="/admin/profiles/create-account" class="btn btn-primary btn-create">
-                        ➕ <span>Create Account</span>
+                        <span aria-hidden="true">➕</span> <span th:text="#{admin-accounts.createAccount}">Create Account</span>
                     </a>
                 </div>
             </div>
@@ -256,59 +256,62 @@
             <div class="accounts-search-bar">
                 <form method="get" action="/admin/profiles">
                     <div class="filter-group">
-                        <label for="search-username" class="filter-label">Search by Username</label>
+                        <label for="search-username" class="filter-label" th:text="#{admin-accounts.searchByUsername}">
+                            Search by Username
+                        </label>
                         <input type="text"
                                id="search-username"
                                name="username"
                                th:value="${searchUsername}"
+                               th:placeholder="#{admin-accounts.searchByUsername.placeholder}"
                                placeholder="Enter username..."
                                class="filter-input-text">
                     </div>
 
                     <div class="filter-group">
-                        <span class="filter-label">Account Status</span>
+                        <span class="filter-label" th:text="#{admin-accounts.accountStatus}">Account Status</span>
                         <div class="radio-group">
                             <label class="radio-item" for="status-all">
                                 <input type="radio" id="status-all" name="activeStatus" value=""
                                        th:checked="${selectedActiveStatus == null}">
-                                <span>All</span>
+                                <span th:text="#{common.all}">All</span>
                             </label>
 
                             <label class="radio-item" for="status-active">
                                 <input type="radio" id="status-active" name="activeStatus" value="ACTIVE"
                                        th:checked="${selectedActiveStatus != null and selectedActiveStatus == T(com.example.enums.AccountStatus).ACTIVE}">
-                                <span>Active only</span>
+                                <span th:text="#{admin-accounts.activeOnly}">Active only</span>
                             </label>
 
                             <label class="radio-item" for="status-inactive">
                                 <input type="radio" id="status-inactive" name="activeStatus" value="DEACTIVATED"
                                        th:checked="${selectedActiveStatus != null and selectedActiveStatus == T(com.example.enums.AccountStatus).DEACTIVATED}">
-                                <span>Inactive only</span>
+                                <span th:text="#{admin-accounts.inactiveOnly}">Inactive only</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="filter-group">
-                        <span class="filter-label">Account Type</span>
+                        <span class="filter-label" th:text="#{admin-accounts.accountType}">Account Type</span>
                         <div class="checkbox-group">
                             <label class="checkbox-item" for="staff-only">
                                 <input type="checkbox"
                                        id="staff-only"
                                        name="staffOnly"
                                        th:checked="${staffOnly != null and staffOnly}">
-                                <span>Staff List</span>
+                                <span th:text="#{admin-accounts.staffList}">Staff List</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="search-buttons">
                         <button type="submit" class="btn btn-primary">
-                            🔍 <span>Search</span>
+                            <span aria-hidden="true">🔍</span> <span th:text="#{common.search}">Search</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/admin/profiles'">
-                            ↺ <span>Reset</span>
+                            <span aria-hidden="true">↺</span> <span th:text="#{common.reset}">Reset</span>
                         </button>
                     </div>
                 </form>
@@ -319,9 +322,9 @@
                 <table>
                     <thead>
                     <tr>
-                        <th>Username</th>
-                        <th>Status</th>
-                        <th style="width: 1%;">Actions</th>
+                        <th th:text="#{admin-accounts.table.username}">Username</th>
+                        <th th:text="#{common.status}">Status</th>
+                        <th style="width: 1%;" th:text="#{common.actions}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -338,7 +341,7 @@
                         </td>
                         <td>
                             <a th:href="${editUrl}" class="view-link">
-                                👁 <span>View details</span>
+                                <span aria-hidden="true">👁</span> <span th:text="#{admin-accounts.viewDetails}">View details</span>
                             </a>
                         </td>
                     </tr>

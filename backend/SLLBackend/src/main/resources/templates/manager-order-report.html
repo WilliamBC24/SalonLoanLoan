@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Order Report | Salon Loan Loan</title>
+    <title th:text="#{order.report.pageTitle}">Manager - Order Report | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global layout styles (sidebar + main scroll) -->
@@ -365,9 +365,9 @@
             <!-- HEADER -->
             <div class="report-header-row">
                 <div class="report-header-title section-heading">
-                    <p class="section-kicker">Orders</p>
-                    <h2>Order Revenue Report</h2>
-                    <p class="report-header-sub">
+                    <p class="section-kicker" th:text="#{order.report.kicker}">Orders</p>
+                    <h2 th:text="#{order.report.heading}">Order Revenue Report</h2>
+                    <p class="report-header-sub" th:text="#{order.report.subheading}">
                         Detailed view of product orders revenue, filtered by month and year.
                     </p>
                 </div>
@@ -383,7 +383,7 @@
             <section class="filter-card">
                 <div class="filter-header">
                     <div class="filter-header-title">
-                        <span>Filter by time</span>
+                        <span th:text="#{order.report.filter.title}">Filter by time</span>
                     </div>
                 </div>
 
@@ -392,7 +392,7 @@
                       method="get">
                     <div class="filter-fields">
                         <div class="filter-group">
-                            <label for="month-select">Month</label>
+                            <label for="month-select" th:text="#{order.report.filter.month}">Month</label>
                             <select id="month-select" name="month">
                                 <option th:each="m : ${monthOptions}"
                                         th:value="${m}"
@@ -404,7 +404,7 @@
                         </div>
 
                         <div class="filter-group">
-                            <label for="year-select">Year</label>
+                            <label for="year-select" th:text="#{order.report.filter.year}">Year</label>
                             <select id="year-select" name="year">
                                 <option th:each="y : ${yearOptions}"
                                         th:value="${y}"
@@ -418,10 +418,10 @@
 
                     <div class="filter-actions">
                         <button type="submit" class="btn btn-primary">
-                            <span>Apply</span>
+                            <span th:text="#{order.report.btn.apply}">Apply</span>
                         </button>
                         <a th:href="@{/manager/report/order}" class="btn btn-secondary">
-                            <span>Reset</span>
+                            <span th:text="#{order.report.btn.reset}">Reset</span>
                         </a>
                     </div>
                 </form>
@@ -430,28 +430,28 @@
             <!-- SUMMARY STRIP -->
             <section class="order-summary-strip">
                 <div class="summary-card">
-                    <div class="summary-label">Total order revenue</div>
+                    <div class="summary-label" th:text="#{order.report.summary.totalRevenue.label}">Total order revenue</div>
                     <div class="summary-main">
                         <span class="summary-value"
                               th:text="${#numbers.formatDecimal(report.totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                             0 VND
                         </span>
                     </div>
-                    <p class="summary-caption">
+                    <p class="summary-caption" th:text="#{order.report.summary.totalRevenue.caption}">
                         Sum of net prices for all orders in the selected period.
                     </p>
                 </div>
 
                 <div class="summary-card">
-                    <div class="summary-label">Number of orders</div>
+                    <div class="summary-label" th:text="#{order.report.summary.orderCount.label}">Number of orders</div>
                     <div class="summary-main">
                         <span class="summary-value"
                               th:text="${report.orderCount}">
                             0
                         </span>
-                        <span class="summary-unit">orders</span>
+                        <span class="summary-unit" th:text="#{order.report.summary.orderCount.unit}">orders</span>
                     </div>
-                    <p class="summary-caption">
+                    <p class="summary-caption" th:text="#{order.report.summary.orderCount.caption}">
                         Total orders included in this report.
                     </p>
                 </div>
@@ -461,12 +461,12 @@
             <section>
                 <div class="order-table-section-header">
                     <div class="order-table-title">
-                        <h3>Order details</h3>
-                        <span>
+                        <h3 th:text="#{order.report.table.title}">Order details</h3>
+                        <span th:text="#{order.report.table.subtitle}">
                             Each row represents one order invoice.
                         </span>
                     </div>
-                    <div class="order-meta">
+                    <div class="order-meta" th:text="#{order.report.table.meta}">
                         Amounts shown in VND.
                     </div>
                 </div>
@@ -475,15 +475,15 @@
                     <table class="order-table">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Order</th>
-                            <th>Created At</th>
-                            <th>Customer</th>
-                            <th>Fulfillment</th>
-                            <th>Status</th>
-                            <th class="cell-number">Total</th>
-                            <th class="cell-number">Discount</th>
-                            <th class="cell-number">Net</th>
+                            <th th:text="#{order.report.table.col.no}">#</th>
+                            <th th:text="#{order.report.table.col.order}">Order</th>
+                            <th th:text="#{order.report.table.col.createdAt}">Created At</th>
+                            <th th:text="#{order.report.table.col.customer}">Customer</th>
+                            <th th:text="#{order.report.table.col.fulfillment}">Fulfillment</th>
+                            <th th:text="#{order.report.table.col.status}">Status</th>
+                            <th class="cell-number" th:text="#{order.report.table.col.total}">Total</th>
+                            <th class="cell-number" th:text="#{order.report.table.col.discount}">Discount</th>
+                            <th class="cell-number" th:text="#{order.report.table.col.net}">Net</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -511,7 +511,7 @@
                         </tr>
 
                         <tr th:if="${report == null or #lists.isEmpty(report.rows)}">
-                            <td colspan="9" class="empty-row">
+                            <td colspan="9" class="empty-row" th:text="#{order.report.table.empty}">
                                 No orders found for the selected filters.
                             </td>
                         </tr>

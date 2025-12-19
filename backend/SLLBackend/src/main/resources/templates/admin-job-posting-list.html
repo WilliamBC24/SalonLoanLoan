@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Admin - Manage Job Postings | Salon Loan Loan</title>
+    <title th:text="#{admin-manage-job-postings.pageTitle}">Admin - Manage Job Postings | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (sidebar + staff-main scroll behaviour) -->
@@ -301,13 +301,13 @@
             <!-- Header -->
             <div class="job-header-row">
                 <div class="job-title-block section-heading">
-                    <p class="section-kicker">Job Posting Management</p>
-                    <h2>Manage Job Postings</h2>
+                    <p class="section-kicker" th:text="#{admin-manage-job-postings.kicker}">Job Posting Management</p>
+                    <h2 th:text="#{admin-manage-job-postings.title}">Manage Job Postings</h2>
                 </div>
                 <div class="job-actions">
                     <a href="/admin/job-posting/create-form" class="create-btn-pill">
-                        <span class="icon">＋</span>
-                        <span>Create New Job Posting</span>
+                        <span class="icon" aria-hidden="true">＋</span>
+                        <span th:text="#{admin-manage-job-postings.createNew}">Create New Job Posting</span>
                     </a>
                 </div>
             </div>
@@ -320,8 +320,8 @@
             <div class="search-panel">
                 <div class="search-header">
                     <div class="search-header-title">
-                        <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <span class="emoji" aria-hidden="true">🔍</span>
+                        <h3 th:text="#{admin-manage-job-postings.searchFilters}">Search &amp; Filters</h3>
                     </div>
                 </div>
 
@@ -329,17 +329,18 @@
                     <div class="search-form">
                         <!-- Search by title -->
                         <div class="filter-group">
-                            <label for="search-title">Search by Job Title</label>
+                            <label for="search-title" th:text="#{admin-manage-job-postings.searchByTitle}">Search by Job Title</label>
                             <input type="text"
                                    id="search-title"
                                    name="title"
                                    th:value="${searchTitle}"
+                                   th:placeholder="#{admin-manage-job-postings.searchTitle.placeholder}"
                                    placeholder="Enter job title..." />
                         </div>
 
                         <!-- Status radios styled like filter pills -->
                         <div class="filter-group">
-                            <label>Status</label>
+                            <label th:text="#{common.status}">Status</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -347,7 +348,7 @@
                                            name="status"
                                            value=""
                                            th:checked="${selectedStatus == null}">
-                                    <label for="status-all">All</label>
+                                    <label for="status-all" th:text="#{common.all}">All</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -355,7 +356,7 @@
                                            name="status"
                                            value="ACTIVE"
                                            th:checked="${selectedStatus == 'ACTIVE'}">
-                                    <label for="status-active">Active Only</label>
+                                    <label for="status-active" th:text="#{admin-manage-job-postings.activeOnly}">Active Only</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -363,7 +364,7 @@
                                            name="status"
                                            value="DEACTIVATED"
                                            th:checked="${selectedStatus == 'DEACTIVATED'}">
-                                    <label for="status-deactivated">Deactivated Only</label>
+                                    <label for="status-deactivated" th:text="#{admin-manage-job-postings.deactivatedOnly}">Deactivated Only</label>
                                 </div>
                             </div>
                         </div>
@@ -371,14 +372,14 @@
 
                     <div class="search-buttons">
                         <button type="submit" class="btn btn-primary">
-                            <span>🔎</span>
-                            <span>Search</span>
+                            <span aria-hidden="true">🔎</span>
+                            <span th:text="#{common.search}">Search</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/admin/job-posting/list'">
-                            <span>✕</span>
-                            <span>Reset</span>
+                            <span aria-hidden="true">✕</span>
+                            <span th:text="#{common.reset}">Reset</span>
                         </button>
                     </div>
                 </form>
@@ -389,10 +390,10 @@
                 <table>
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Job Title</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th th:text="#{common.id}">ID</th>
+                        <th th:text="#{admin-manage-job-postings.table.jobTitle}">Job Title</th>
+                        <th th:text="#{common.status}">Status</th>
+                        <th th:text="#{common.actions}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -402,7 +403,7 @@
                         <td th:text="${job.status}">ACTIVE</td>
                         <td>
                             <a th:href="@{/admin/job-posting/view/{id}(id=${job.id})}" class="edit-link">
-                                <span>View Details</span>
+                                <span th:text="#{admin-manage-job-postings.viewDetails}">View Details</span>
                             </a>
                         </td>
                     </tr>

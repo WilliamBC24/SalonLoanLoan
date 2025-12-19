@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Edit Staff Profile | Salon Loan Loan</title>
+    <title th:text="#{admin-edit-staff-profile.pageTitle}">Admin - Edit Staff Profile | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -193,19 +193,22 @@
             <!-- Header -->
             <header class="admin-staff-edit-header-row">
                 <div class="admin-staff-edit-title-block section-heading">
-                    <p class="section-kicker">Account Management</p>
-                    <h2>Edit Staff Profile</h2>
+                    <p class="section-kicker" th:text="#{admin-edit-staff-profile.kicker}">Account Management</p>
+                    <h2 th:text="#{admin-edit-staff-profile.title}">Edit Staff Profile</h2>
                     <p class="admin-staff-edit-meta">
-                        Username: <span th:text="${staffAccount.username}">staff.username</span>
+                        <span th:text="#{admin-edit-staff-profile.usernameLabel}">Username:</span>
+                        <span th:text="${staffAccount.username}">staff.username</span>
                     </p>
                 </div>
             </header>
 
             <!-- Alerts -->
-            <div th:if="${param.error}" class="alert alert-error">
+            <div th:if="${param.error}" class="alert alert-error"
+                 th:text="#{admin-edit-staff-profile.alert.updateError}">
                 Update error. Please check the information and try again.
             </div>
-            <div th:if="${param.updated}" class="alert alert-success">
+            <div th:if="${param.updated}" class="alert alert-success"
+                 th:text="#{admin-edit-staff-profile.alert.updated}">
                 Staff profile updated successfully.
             </div>
 
@@ -213,10 +216,10 @@
             <form th:action="@{/admin/profiles/staff/update/{id}(id=${staffAccount.id})}" method="post">
 
                 <!-- Account Info -->
-                <div class="form-section-title">Account Info</div>
+                <div class="form-section-title" th:text="#{admin-edit-staff-profile.section.accountInfo}">Account Info</div>
                 <div class="form-grid-2">
                     <div class="field-group">
-                        <label class="field-label">Username</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.username}">Username</label>
                         <input type="text"
                                class="field-input"
                                th:value="${staffAccount.username}"
@@ -224,16 +227,18 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Account Status</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.accountStatus}">Account Status</label>
                         <select name="accountStatus"
                                 class="field-select"
                                 disabled>
                             <option th:value="ACTIVE"
-                                    th:selected="${staffAccount.accountStatus != null and staffAccount.accountStatus.name() == 'ACTIVE'}">
+                                    th:selected="${staffAccount.accountStatus != null and staffAccount.accountStatus.name() == 'ACTIVE'}"
+                                    th:text="#{common.active}">
                                 Active
                             </option>
                             <option th:value="DEACTIVATED"
-                                    th:selected="${staffAccount.accountStatus != null and staffAccount.accountStatus.name() == 'DEACTIVATED'}">
+                                    th:selected="${staffAccount.accountStatus != null and staffAccount.accountStatus.name() == 'DEACTIVATED'}"
+                                    th:text="#{common.deactivated}">
                                 Deactivated
                             </option>
                         </select>
@@ -241,10 +246,10 @@
                 </div>
 
                 <!-- Staff Details -->
-                <div class="form-section-title">Staff Details</div>
+                <div class="form-section-title" th:text="#{admin-edit-staff-profile.section.staffDetails}">Staff Details</div>
                 <div class="form-grid-2">
                     <div class="field-group">
-                        <label class="field-label">Name</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.name}">Name</label>
                         <input type="text"
                                name="name"
                                class="field-input"
@@ -252,7 +257,7 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Email</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.email}">Email</label>
                         <input type="email"
                                name="email"
                                class="field-input"
@@ -260,25 +265,28 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Staff Status</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.staffStatus}">Staff Status</label>
                         <select name="staffStatus" class="field-select">
                             <option th:value="ACTIVE"
-                                    th:selected="${staffAccount.staff.staffStatus.name() == 'ACTIVE'}">
+                                    th:selected="${staffAccount.staff.staffStatus.name() == 'ACTIVE'}"
+                                    th:text="#{common.active}">
                                 Active
                             </option>
                             <option th:value="ON_LEAVE"
-                                    th:selected="${staffAccount.staff.staffStatus.name() == 'ON_LEAVE'}">
+                                    th:selected="${staffAccount.staff.staffStatus.name() == 'ON_LEAVE'}"
+                                    th:text="#{admin-edit-staff-profile.staffStatus.onLeave}">
                                 On Leave
                             </option>
                             <option th:value="TERMINATED"
-                                    th:selected="${staffAccount.staff.staffStatus.name() == 'TERMINATED'}">
+                                    th:selected="${staffAccount.staff.staffStatus.name() == 'TERMINATED'}"
+                                    th:text="#{admin-edit-staff-profile.staffStatus.terminated}">
                                 Terminated
                             </option>
                         </select>
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Social Security Number</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.ssn}">Social Security Number</label>
                         <input type="text"
                                name="socialSecurityNum"
                                class="field-input"
@@ -286,7 +294,7 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Date Hired</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.dateHired}">Date Hired</label>
                         <input type="text"
                                class="field-input"
                                th:value="${#temporals.format(staffAccount.staff.dateHired, 'dd MMM yyyy')}"
@@ -294,7 +302,7 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Birth Date</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.birthDate}">Birth Date</label>
                         <input type="text"
                                name="birthDate"
                                class="field-input"
@@ -302,10 +310,10 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">End of Contract</label>
+                        <label class="field-label" th:text="#{admin-edit-staff-profile.field.endOfContract}">End of Contract</label>
                         <input type="text"
                                class="field-input"
-                               th:value="${staffAccount.staff.endOfContractDate != null ? #temporals.format(staffAccount.staff.endOfContractDate, 'yyyy-MM-dd') : '—'}"
+                               th:value="${staffAccount.staff.endOfContractDate != null ? #temporals.format(staffAccount.staff.endOfContractDate, 'yyyy-MM-dd') : #{common.emDash}}"
                                readonly />
                     </div>
                 </div>
@@ -313,10 +321,10 @@
                 <!-- Actions -->
                 <div class="form-actions">
                     <a href="/admin/profiles" class="btn btn-secondary">
-                        ✕ <span>Cancel</span>
+                        <span aria-hidden="true">✕</span> <span th:text="#{common.cancel}">Cancel</span>
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        💾 <span>Save Changes</span>
+                        <span aria-hidden="true">💾</span> <span th:text="#{common.saveChanges}">Save Changes</span>
                     </button>
                 </div>
 

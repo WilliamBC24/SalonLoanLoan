@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Appointment | Salon Loan Loan</title>
+    <title th:text="#{appointment-book.pageTitle}">Book Appointment | Salon Loan Loan</title>
 
     <!-- Global Styles -->
     <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -291,12 +291,16 @@
 
         <!-- Book Now header on top of main content -->
         <div class="section-heading text-center">
-            <p class="section-kicker">Book Now</p>
-            <h2>Appointment Registration</h2>
+            <p class="section-kicker" th:text="#{appointment-book.kicker}">Book Now</p>
+            <h2 th:text="#{appointment-book.title}">Appointment Registration</h2>
         </div>
 
-        <div th:if="${param.error}" class="message error">Invalid inputs</div>
-        <div th:if="${param.success}" class="message success">Registered successfully</div>
+        <div th:if="${param.error}" class="message error" th:text="#{appointment-book.flash.invalidInputs}">
+            Invalid inputs
+        </div>
+        <div th:if="${param.success}" class="message success" th:text="#{appointment-book.flash.success}">
+            Registered successfully
+        </div>
 
         <h2 id="error"></h2>
 
@@ -307,30 +311,32 @@
                 <div class="appointment-col">
                     <div class="appointment-card">
                         <!-- Full name (required) -->
-                        <label for="customer-name" class="form-label">Full Name *</label>
+                        <label for="customer-name" class="form-label" th:text="#{appointment-book.fullName}">Full Name *</label>
                         <input type="text"
                                id="customer-name"
                                name="name"
                                class="form-input"
                                th:value="${username != null ? username : ''}"
                                th:readonly="${username != null}"
+                               th:placeholder="#{appointment-book.fullName.placeholder}"
                                placeholder="Enter your name"
                                required>
 
                         <!-- Phone number (required) -->
-                        <label for="phone-number" class="form-label">Phone Number *</label>
+                        <label for="phone-number" class="form-label" th:text="#{appointment-book.phoneNumber}">Phone Number *</label>
                         <input type="tel"
                                id="phone-number"
                                name="phoneNumber"
                                class="form-input"
                                th:value="${userPhoneNumber != null ? userPhoneNumber : ''}"
                                th:readonly="${userPhoneNumber != null}"
+                               th:placeholder="#{appointment-book.phoneNumber.placeholder}"
                                placeholder="Enter your phone number"
                                required>
                         <div id="phone-warning" class="field-note"></div>
 
                         <!-- Date (required) -->
-                        <label for="appointment-date" class="form-label">Date *</label>
+                        <label for="appointment-date" class="form-label" th:text="#{appointment-book.date}">Date *</label>
                         <input type="date"
                                id="appointment-date"
                                name="appointmentDate"
@@ -340,7 +346,7 @@
                         <div id="date-warning" class="field-note"></div>
 
                         <!-- Time slot picker (required) -->
-                        <label class="form-label">Time Slot *</label>
+                        <label class="form-label" th:text="#{appointment-book.timeSlot}">Time Slot *</label>
                         <div id="time-slot-grid" class="time-slot-grid"></div>
                         <!-- Hidden input to keep existing backend DTO contract -->
                         <input type="hidden"
@@ -356,13 +362,16 @@
                     <div class="appointment-card">
                         <!-- Service search + scroll list -->
                         <div class="service-search-wrapper">
-                            <label for="service-search" class="form-label">Search Services *</label>
+                            <label for="service-search" class="form-label" th:text="#{appointment-book.searchServices}">
+                                Search Services *
+                            </label>
                             <input type="text"
                                    id="service-search"
                                    class="form-input"
+                                   th:placeholder="#{appointment-book.searchServices.placeholder}"
                                    placeholder="Type to search services...">
                             <!-- EXPLANATION LINE UNDER SERVICE SEARCH -->
-                            <div class="field-note">
+                            <div class="field-note" th:text="#{appointment-book.searchServices.note}">
                                 Time slots update automatically based on your selected services so that all appointments finish by 22:00.
                             </div>
                             <div class="service-list" id="service-list"></div>
@@ -370,9 +379,11 @@
 
                         <!-- Staff selection (optional) -->
                         <div class="staff-select-wrapper">
-                            <label for="staff-select" class="form-label">Choose Staff (optional)</label>
+                            <label for="staff-select" class="form-label" th:text="#{appointment-book.chooseStaffOptional}">
+                                Choose Staff (optional)
+                            </label>
                             <select id="staff-select" name="staffId" class="form-input">
-                                <option value="">Assign automatically</option>
+                                <option value="" th:text="#{appointment-book.staff.autoAssign}">Assign automatically</option>
                             </select>
                             <div id="staff-warning" class="field-note"></div>
                         </div>
@@ -383,9 +394,13 @@
                 <div class="appointment-col">
                     <div class="appointment-card">
                         <!-- Selected services (scrolls inside itself) -->
-                        <label class="form-label">Selected Services *</label>
+                        <label class="form-label" th:text="#{appointment-book.selectedServices}">
+                            Selected Services *
+                        </label>
                         <div class="selected-services">
-                            <div class="selected-services-header">Selected Services:</div>
+                            <div class="selected-services-header" th:text="#{appointment-book.selectedServices.header}">
+                                Selected Services:
+                            </div>
                             <div class="selected-services-inner">
                                 <ul id="selected-services-list"></ul>
                             </div>
@@ -395,13 +410,22 @@
 
                         <!-- Summary -->
                         <div class="summary">
-                            <p>Estimated Duration: <strong><span id="total-duration">0</span> min</strong></p>
+                            <p>
+                                <span th:text="#{appointment-book.summary.duration}">Estimated Duration:</span>
+                                <strong><span id="total-duration">0</span> <span th:text="#{common.minutes}">min</span></strong>
+                            </p>
                             <input type="hidden" id="total-duration-input" name="totalDuration" th:value="${totalDuration}">
 
-                            <p>Estimated Price: <strong><span id="total-price">0 VND</span></strong></p>
+                            <p>
+                                <span th:text="#{appointment-book.summary.price}">Estimated Price:</span>
+                                <strong><span id="total-price">0 VND</span></strong>
+                            </p>
                             <input type="hidden" id="total-price-input" name="totalPrice" th:value="${totalPrice}">
 
-                            <p>End Time: <strong><span id="end-time">--:--</span></strong></p>
+                            <p>
+                                <span th:text="#{appointment-book.summary.endTime}">End Time:</span>
+                                <strong><span id="end-time">--:--</span></strong>
+                            </p>
                             <input type="hidden" id="end-time-input" name="endTime" th:value="${endTime}">
                             <div id="end-time-warning" class="field-note"></div>
                         </div>
@@ -411,7 +435,7 @@
 
             <!-- Submit -->
             <div class="submit-row">
-                <button type="submit" class="btn-primary" id="submit-btn">
+                <button type="submit" class="btn-primary" id="submit-btn" th:text="#{appointment-book.submit}">
                     Book Appointment
                 </button>
             </div>
@@ -436,6 +460,23 @@
         function updateSubmitState() {
             $submitBtn.prop("disabled", submitBlocked);
         }
+
+        // ===== i18n strings for JS =====
+        const I18N = {
+            timeChoose: /*[[#{appointment-book.validation.chooseTime}]]*/ "Please choose a time slot.",
+            timeStartRange: /*[[#{appointment-book.validation.startRange}]]*/ "Appointments can only start between 07:30 and 19:00.",
+            endBy22: /*[[#{appointment-book.validation.endBy22}]]*/ "Appointments must end by 22:00. Please adjust your time or remove some services.",
+            dateFuture: /*[[#{appointment-book.validation.futureDate}]]*/ "Please choose a future date for your appointment.",
+            dateChoose: /*[[#{appointment-book.validation.chooseDate}]]*/ "Please choose a date.",
+            servicesTooLong: /*[[#{appointment-book.validation.servicesTooLong}]]*/ "Selected services are too long to finish by 22:00. Please remove some services.",
+            staffNoneAvailable: /*[[#{appointment-book.validation.noStaff}]]*/ "No staff available at this time. Please choose a different time slot.",
+            staffLoadFailed: /*[[#{appointment-book.validation.staffLoadFailed}]]*/ "Could not load staff availability. You can still continue and staff will be assigned automatically.",
+            servicePickOne: /*[[#{appointment-book.validation.pickService}]]*/ "Please select at least one service.",
+            phoneEnter: /*[[#{appointment-book.validation.enterPhone}]]*/ "Please enter your phone number.",
+            staffAuto: /*[[#{appointment-book.staff.autoAssign}]]*/ "Assign automatically",
+            serviceRemove: /*[[#{common.remove}]]*/ "Remove",
+            itemsSuffix: /*[[#{common.itemsSuffix}]]*/ "item(s)"
+        };
 
         /* ====== TIME SLOT GENERATION (07:30 - 19:00) ====== */
         function generateTimeSlots(totalDurationMinutes = 0, preserveTime = null) {
@@ -518,7 +559,7 @@
             // If no enabled slots at all, show a message & block submit
             if (enabledCount === 0) {
                 $("#time-warning")
-                    .text("Selected services are too long to finish by 22:00. Please remove some services.")
+                    .text(I18N.servicesTooLong)
                     .addClass("error");
                 submitBlocked = true;
             } else {
@@ -606,7 +647,7 @@
                 $("#selected-services-list").append(`
                     <li data-id="${id}" data-name="${name}">
                         ${name} - ${priceFormatted} - ${duration} min
-                        <button class="remove-service">Remove</button>
+                        <button class="remove-service">${I18N.serviceRemove}</button>
                     </li>
                 `);
                 updateSummary();
@@ -695,18 +736,14 @@
             const hardCloseMinutes = 22 * 60;    // 22:00 (end time limit)
 
             if (!startTime && !fromService) {
-                $("#time-warning")
-                    .text("Please choose a time slot.")
-                    .addClass("error");
+                $("#time-warning").text(I18N.timeChoose).addClass("error");
                 submitBlocked = true;
             } else if (startTime) {
                 const [h, m] = startTime.split(":").map(Number);
                 const minutesFromMidnight = h * 60 + m;
 
                 if (minutesFromMidnight < openMinutes || minutesFromMidnight > visibleCloseMinutes) {
-                    $("#time-warning")
-                        .text("Appointments can only start between 07:30 and 19:00.")
-                        .addClass("error");
+                    $("#time-warning").text(I18N.timeStartRange).addClass("error");
                     submitBlocked = true;
                 }
             }
@@ -717,9 +754,7 @@
                 const endMinutes = eh * 60 + em;
 
                 if (crossesNextDay || endMinutes > hardCloseMinutes) {
-                    $("#end-time-warning")
-                        .text("Appointments must end by 22:00. Please adjust your time or remove some services.")
-                        .addClass("error");
+                    $("#end-time-warning").text(I18N.endBy22).addClass("error");
                     submitBlocked = true;
                 }
             }
@@ -731,15 +766,11 @@
 
                 const selectedDate = new Date(dateStr + "T00:00:00");
                 if (selectedDate <= today) {
-                    $("#date-warning")
-                        .text("Please choose a future date for your appointment.")
-                        .addClass("error");
+                    $("#date-warning").text(I18N.dateFuture).addClass("error");
                     submitBlocked = true;
                 }
             } else if (!fromService) {
-                $("#date-warning")
-                    .text("Please choose a date.")
-                    .addClass("error");
+                $("#date-warning").text(I18N.dateChoose).addClass("error");
                 submitBlocked = true;
             }
 
@@ -765,7 +796,7 @@
             const duration = parseInt($("#total-duration-input").val()) || 0;
 
             if (!date || !startTime || duration <= 0) {
-                $("#staff-select").empty().append('<option value="">Assign automatically</option>');
+                $("#staff-select").empty().append(`<option value="">${I18N.staffAuto}</option>`);
                 $("#staff-warning").text("").removeClass("error");
                 updateSubmitState();
                 return;
@@ -784,8 +815,7 @@
                 },
                 error: function(err) {
                     console.error("Error fetching available staff", err);
-                    $("#staff-warning")
-                        .text("Could not load staff availability. You can still continue and staff will be assigned automatically.");
+                    $("#staff-warning").text(I18N.staffLoadFailed);
                     submitBlocked = false;
                     updateSubmitState();
                 }
@@ -795,12 +825,10 @@
         function renderStaffOptions(list) {
             const $select = $("#staff-select");
             $select.empty();
-            $select.append('<option value="">Assign automatically</option>');
+            $select.append(`<option value="">${I18N.staffAuto}</option>`);
 
             if (!list || list.length === 0) {
-                $("#staff-warning")
-                    .text("No staff available at this time. Please choose a different time slot.")
-                    .addClass("error");
+                $("#staff-warning").text(I18N.staffNoneAvailable).addClass("error");
                 submitBlocked = true;
                 updateSubmitState();
                 return;
@@ -822,17 +850,13 @@
             validateTimes(false);
 
             if (selectedServices.length === 0) {
-                $("#service-warning")
-                    .text("Please select at least one service.")
-                    .addClass("error");
+                $("#service-warning").text(I18N.servicePickOne).addClass("error");
                 submitBlocked = true;
             }
 
             const phoneVal = $("#phone-number").val().trim();
             if (!phoneVal) {
-                $("#phone-warning")
-                    .text("Please enter your phone number.")
-                    .addClass("error");
+                $("#phone-warning").text(I18N.phoneEnter).addClass("error");
                 submitBlocked = true;
             } else {
                 $("#phone-warning").text("").removeClass("error");
@@ -846,7 +870,6 @@
         });
     });
 </script>
-
 
 </body>
 </html>

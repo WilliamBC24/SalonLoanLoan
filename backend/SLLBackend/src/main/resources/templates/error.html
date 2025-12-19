@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Error | Salon Loan Loan</title>
+    <title th:text="#{error.pageTitle}">Error | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -121,25 +123,25 @@
     <div class="container">
         <div class="error-wrapper">
             <div class="section-heading text-center" style="margin-bottom:1.2rem;">
-                <p class="section-kicker">Oops...</p>
-                <h1 class="error-title">Something went wrong</h1>
+                <p class="section-kicker" th:text="#{error.kicker}">Oops...</p>
+                <h1 class="error-title" th:text="#{error.title}">Something went wrong</h1>
             </div>
 
-            <p class="error-subtitle">
+            <p class="error-subtitle" th:text="#{error.subtitle}">
                 An unexpected error occurred while processing your request.
             </p>
 
             <!-- Friendly error message -->
             <div class="error-message">
-                <strong>Error message:</strong>
-                <span th:text="${message} ?: 'An unknown error has occurred.'">
-                    Error message goes here
+                <strong th:text="#{error.message.label}">Error message:</strong>
+                <span th:text="${message} ?: #{error.message.fallback}">
+                    An unknown error has occurred.
                 </span>
             </div>
 
             <!-- Technical details (collapsible) -->
             <details class="error-details" th:if="${exception != null}">
-                <summary>Show technical details</summary>
+                <summary th:text="#{error.technicalDetails.toggle}">Show technical details</summary>
                 <pre th:text="${exception}">Stack trace here</pre>
             </details>
 
@@ -147,20 +149,23 @@
                 <!-- When user is admin, manager, or staff -->
                 <a th:href="@{/staff/profile}"
                    class="btn-primary"
-                   sec:authorize="hasAnyRole('ADMIN', 'MANAGER', 'STAFF')">
+                   sec:authorize="hasAnyRole('ADMIN', 'MANAGER', 'STAFF')"
+                   th:text="#{error.action.returnHome}">
                     Return to Home
                 </a>
 
                 <!-- When user is NOT admin, manager, or staff -->
                 <a th:href="@{/}"
                    class="btn-primary"
-                   sec:authorize="!hasAnyRole('ADMIN', 'MANAGER', 'STAFF')">
+                   sec:authorize="!hasAnyRole('ADMIN', 'MANAGER', 'STAFF')"
+                   th:text="#{error.action.returnHome}">
                     Return to Home
                 </a>
 
                 <button type="button"
                         class="btn-outline"
-                        onclick="window.history.back()">
+                        onclick="window.history.back()"
+                        th:text="#{error.action.goBack}">
                     Go Back
                 </button>
             </div>

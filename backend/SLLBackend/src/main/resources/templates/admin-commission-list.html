@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Admin - Commission Settings | Salon Loan Loan</title>
+    <title th:text="#{admin-commission.pageTitle}">Admin - Commission Settings | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global layout + styles -->
@@ -280,16 +280,17 @@
             <!-- HEADER -->
             <div class="commission-header-row">
                 <div class="commission-title-block section-heading">
-                    <p class="section-kicker">Admin Settings</p>
-                    <h2>Commission Configuration</h2>
-                    <p class="commission-subtext">
+                    <p class="section-kicker" th:text="#{admin-commission.kicker}">Admin Settings</p>
+                    <h2 th:text="#{admin-commission.title}">Commission Configuration</h2>
+                    <p class="commission-subtext" th:text="#{admin-commission.subtext}">
                         View and update commission percentages by staff position and commission type.
                     </p>
                 </div>
 
                 <div class="commission-actions">
                     <!-- Placeholder for future filters, if needed -->
-                    <span style="font-size: 0.85rem; color: #6b7280;">
+                    <span style="font-size: 0.85rem; color: #6b7280;"
+                          th:text="#{admin-commission.realtimeNote}">
                         All commissions are stored in real time.
                     </span>
                 </div>
@@ -307,17 +308,17 @@
 
             <!-- FORM -->
             <form th:action="@{/admin/commission}" method="post">
-<!--                <input type="hidden"-->
-<!--                       th:name="${_csrf.parameterName}"-->
-<!--                       th:value="${_csrf.token}" />-->
+                <!--                <input type="hidden"-->
+                <!--                       th:name="${_csrf.parameterName}"-->
+                <!--                       th:value="${_csrf.token}" />-->
 
                 <div class="commission-table-wrapper">
                     <table class="commission-table">
                         <thead>
                         <tr>
-                            <th>Position</th>
-                            <th>Commission Type</th>
-                            <th>Commission (%)</th>
+                            <th th:text="#{common.position}">Position</th>
+                            <th th:text="#{common.commissionType}">Commission Type</th>
+                            <th th:text="#{common.commissionPercent}">Commission (%)</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -326,13 +327,13 @@
                             <input type="hidden" name="id" th:value="${c.id}" />
 
                             <!-- Position -->
-                            <td data-label="Position">
+                            <td th:attr="data-label=#{common.position}">
                                 <div class="position-cell-main"
                                      th:text="${c.position.positionName}">Stylist</div>
                             </td>
 
                             <!-- Commission Type -->
-                            <td data-label="Commission Type">
+                            <td th:attr="data-label=#{common.commissionType}">
                                 <span class="commission-type-tag"
                                       th:text="${#strings.replace(c.commissionType.name(), '_', ' ')}">
                                     SERVICE
@@ -340,14 +341,14 @@
                             </td>
 
                             <!-- Commission % -->
-                            <td data-label="Commission (%)">
+                            <td th:attr="data-label=#{common.commissionPercent}">
                                 <div style="display: flex; align-items: center;">
                                     <input class="commission-input"
                                            type="number"
                                            name="commission"
                                            min="0" max="100" step="1"
                                            th:value="${c.commission}" />
-                                    <span class="commission-percent-suffix">%</span>
+                                    <span class="commission-percent-suffix" th:text="#{common.percentSymbol}">%</span>
                                 </div>
                             </td>
                         </tr>
@@ -357,11 +358,12 @@
 
                 <!-- FOOTER BUTTONS -->
                 <div class="commission-footer">
-                    <button type="reset" class="btn-secondary-link">
+                    <button type="reset" class="btn-secondary-link"
+                            th:text="#{common.resetChanges}">
                         Reset changes
                     </button>
                     <button type="submit" class="btn-primary">
-                        Save changes
+                        <span th:text="#{common.saveChanges}">Save changes</span>
                         <span aria-hidden="true">💾</span>
                     </button>
                 </div>

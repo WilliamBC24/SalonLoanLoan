@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Payroll | Salon Loan Loan</title>
+    <title th:text="#{manager.payroll.pageTitle}">Manager - Payroll | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global layout + styles -->
@@ -266,6 +266,7 @@
                 flex: 1;
             }
         }
+
         /* ===== MAKE TABLE ROWS CLICKABLE ===== */
         .row-link {
             display: block;
@@ -279,7 +280,6 @@
             background: #eef2ff;
             cursor: pointer;
         }
-
     </style>
 </head>
 <body class="staff-layout">
@@ -295,9 +295,9 @@
             <!-- HEADER -->
             <div class="payroll-header-row">
                 <div class="payroll-title-block section-heading">
-                    <p class="section-kicker">Manager View</p>
-                    <h2>Monthly Payroll</h2>
-                    <p class="payroll-subtext">
+                    <p class="section-kicker" th:text="#{manager.payroll.kicker}">Manager View</p>
+                    <h2 th:text="#{manager.payroll.heading}">Monthly Payroll</h2>
+                    <p class="payroll-subtext" th:text="#{manager.payroll.subheading}">
                         Overview of staff commission, bonuses and deductions for this month.
                     </p>
                 </div>
@@ -308,7 +308,7 @@
                         <button type="submit"
                                 name="monthOffset"
                                 th:value="${monthOffset - 1}"
-                                title="Previous month">
+                                th:title="#{manager.payroll.nav.prevMonth}">
                             ◀
                         </button>
 
@@ -318,7 +318,7 @@
                         <button type="submit"
                                 name="monthOffset"
                                 th:value="${monthOffset + 1}"
-                                title="Next month">
+                                th:title="#{manager.payroll.nav.nextMonth}">
                             ▶
                         </button>
                     </form>
@@ -328,9 +328,9 @@
                         <input type="text"
                                name="searchName"
                                class="payroll-search-input"
-                               placeholder="Search staff by name..."
+                               th:placeholder="#{manager.payroll.search.placeholder}"
                                th:value="${searchName}">
-                        <button type="submit" class="payroll-search-button">
+                        <button type="submit" class="payroll-search-button" th:text="#{common.search}">
                             Search
                         </button>
                     </form>
@@ -340,24 +340,24 @@
             <!-- SUMMARY -->
             <div class="payroll-summary" th:if="${payrollRows != null}">
                 <div>
-                    <span class="summary-item-label">Staff count:</span>
+                    <span class="summary-item-label" th:text="#{manager.payroll.summary.staffCount}">Staff count:</span>
                     <span th:text="${#lists.size(payrollRows)}">0</span>
                 </div>
                 <div>
-                    <span class="summary-item-label">Total commission:</span>
-                    <span th:text="${#numbers.formatInteger(totalCommission, 3, 'COMMA')} + ' VND'">
+                    <span class="summary-item-label" th:text="#{manager.payroll.summary.totalCommission}">Total commission:</span>
+                    <span th:text="${#numbers.formatInteger(totalCommission, 3, 'COMMA')} + ' ' + #{common.vnd}">
                         0 VND
                     </span>
                 </div>
                 <div>
-                    <span class="summary-item-label">Total bonus:</span>
-                    <span th:text="${#numbers.formatInteger(totalBonus, 3, 'COMMA')} + ' VND'">
+                    <span class="summary-item-label" th:text="#{manager.payroll.summary.totalBonus}">Total bonus:</span>
+                    <span th:text="${#numbers.formatInteger(totalBonus, 3, 'COMMA')} + ' ' + #{common.vnd}">
                         0 VND
                     </span>
                 </div>
                 <div>
-                    <span class="summary-item-label">Total deductions:</span>
-                    <span th:text="${#numbers.formatInteger(totalDeductions, 3, 'COMMA')} + ' VND'">
+                    <span class="summary-item-label" th:text="#{manager.payroll.summary.totalDeductions}">Total deductions:</span>
+                    <span th:text="${#numbers.formatInteger(totalDeductions, 3, 'COMMA')} + ' ' + #{common.vnd}">
                         0 VND
                     </span>
                 </div>
@@ -368,18 +368,19 @@
                 <table class="payroll-table">
                     <thead>
                     <tr>
-                        <th>Staff</th>
-                        <th>Position</th>
-                        <th class="money-cell">Base Salary</th>
-                        <th class="money-cell">Commission</th>
-                        <th class="money-cell">Bonus</th>
-                        <th class="money-cell">Deductions</th>
-                        <th class="money-cell">Total Pay</th>
+                        <th th:text="#{manager.payroll.table.staff}">Staff</th>
+                        <th th:text="#{manager.payroll.table.position}">Position</th>
+                        <th class="money-cell" th:text="#{manager.payroll.table.baseSalary}">Base Salary</th>
+                        <th class="money-cell" th:text="#{manager.payroll.table.commission}">Commission</th>
+                        <th class="money-cell" th:text="#{manager.payroll.table.bonus}">Bonus</th>
+                        <th class="money-cell" th:text="#{manager.payroll.table.deductions}">Deductions</th>
+                        <th class="money-cell" th:text="#{manager.payroll.table.totalPay}">Total Pay</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(payrollRows)}">
-                        <td colspan="7" style="text-align: center; padding: 1.2rem;">
+                        <td colspan="7" style="text-align: center; padding: 1.2rem;"
+                            th:text="#{manager.payroll.empty}">
                             No payroll data for this month.
                         </td>
                     </tr>
@@ -387,83 +388,90 @@
                     <tr th:each="row : ${payrollRows}">
 
                         <!-- STAFF -->
-                        <td data-label="Staff">
+                        <td data-label="Staff" th:attr="data-label=#{manager.payroll.table.staff}">
                             <a th:href="@{'/manager/payroll/staff/' + ${row.staffId}}" class="row-link">
                                 <div class="staff-cell-main" th:text="${row.staffName}">Nguyen Van A</div>
                                 <div class="staff-cell-sub">
-                                    ID: <span th:text="${row.staffId}">1</span>
+                                    <span th:text="#{common.idLabel}">ID:</span>
+                                    <span th:text="${row.staffId}">1</span>
                                 </div>
                             </a>
                         </td>
 
                         <!-- POSITION -->
-                        <td data-label="Position">
+                        <td data-label="Position" th:attr="data-label=#{manager.payroll.table.position}">
                             <a th:href="@{'/manager/payroll/staff/' + ${row.staffId}}" class="row-link"
-                               th:text="${row.positionName != null ? row.positionName : '—'}">
+                               th:text="${row.positionName != null ? row.positionName : #{common.dash}}">
+                                —
                             </a>
                         </td>
 
                         <!-- BASE SALARY -->
-                        <td class="money-cell" data-label="Base Salary">
+                        <td class="money-cell" data-label="Base Salary" th:attr="data-label=#{manager.payroll.table.baseSalary}">
                             <a th:href="@{'/manager/payroll/staff/' + ${row.staffId}}" class="row-link"
-                               th:text="${#numbers.formatInteger(row.baseSalary, 3, 'COMMA')} + ' VND'">
+                               th:text="${#numbers.formatInteger(row.baseSalary, 3, 'COMMA')} + ' ' + #{common.vnd}">
+                                0 VND
                             </a>
                         </td>
 
                         <!-- COMMISSION -->
-                        <td class="money-cell money-positive" data-label="Commission">
+                        <td class="money-cell money-positive" data-label="Commission" th:attr="data-label=#{manager.payroll.table.commission}">
                             <a th:href="@{'/manager/payroll/staff/' + ${row.staffId}}" class="row-link"
-                               th:text="${#numbers.formatInteger(row.commissionAmount, 3, 'COMMA')} + ' VND'">
+                               th:text="${#numbers.formatInteger(row.commissionAmount, 3, 'COMMA')} + ' ' + #{common.vnd}">
+                                0 VND
                             </a>
                         </td>
 
                         <!-- BONUS -->
-                        <td class="money-cell money-positive" data-label="Bonus">
+                        <td class="money-cell money-positive" data-label="Bonus" th:attr="data-label=#{manager.payroll.table.bonus}">
                             <a th:href="@{'/manager/payroll/staff/' + ${row.staffId}}" class="row-link"
-                               th:text="${#numbers.formatInteger(row.bonusAmount, 3, 'COMMA')} + ' VND'">
+                               th:text="${#numbers.formatInteger(row.bonusAmount, 3, 'COMMA')} + ' ' + #{common.vnd}">
+                                0 VND
                             </a>
                         </td>
 
                         <!-- DEDUCTIONS -->
-                        <td class="money-cell money-negative" data-label="Deductions">
+                        <td class="money-cell money-negative" data-label="Deductions" th:attr="data-label=#{manager.payroll.table.deductions}">
                             <a th:href="@{'/manager/payroll/staff/' + ${row.staffId}}" class="row-link"
-                               th:text="${#numbers.formatInteger(row.deductionsAmount, 3, 'COMMA')} + ' VND'">
+                               th:text="${#numbers.formatInteger(row.deductionsAmount, 3, 'COMMA')} + ' ' + #{common.vnd}">
+                                0 VND
                             </a>
                         </td>
 
                         <!-- TOTAL PAY -->
                         <td class="money-cell"
                             th:classappend="${row.totalPay < 0} ? ' money-negative' : ' money-positive'"
-                            data-label="Total Pay">
+                            data-label="Total Pay"
+                            th:attr="data-label=#{manager.payroll.table.totalPay}">
                             <a th:href="@{'/manager/payroll/staff/' + ${row.staffId}}" class="row-link"
-                               th:text="${#numbers.formatInteger(row.totalPay, 3, 'COMMA')} + ' VND'">
+                               th:text="${#numbers.formatInteger(row.totalPay, 3, 'COMMA')} + ' ' + #{common.vnd}">
+                                0 VND
                             </a>
                         </td>
 
                     </tr>
 
-
                     <!-- Optional total row at bottom -->
                     <tr class="total-row" th:if="${!#lists.isEmpty(payrollRows)}">
-                        <td colspan="2">Total</td>
+                        <td colspan="2" th:text="#{common.total}">Total</td>
                         <td class="money-cell"
-                            th:text="${#numbers.formatInteger(totalBaseSalary, 3, 'COMMA')} + ' VND'">
+                            th:text="${#numbers.formatInteger(totalBaseSalary, 3, 'COMMA')} + ' ' + #{common.vnd}">
                             0 VND
                         </td>
                         <td class="money-cell"
-                            th:text="${#numbers.formatInteger(totalCommission, 3, 'COMMA')} + ' VND'">
+                            th:text="${#numbers.formatInteger(totalCommission, 3, 'COMMA')} + ' ' + #{common.vnd}">
                             0 VND
                         </td>
                         <td class="money-cell"
-                            th:text="${#numbers.formatInteger(totalBonus, 3, 'COMMA')} + ' VND'">
+                            th:text="${#numbers.formatInteger(totalBonus, 3, 'COMMA')} + ' ' + #{common.vnd}">
                             0 VND
                         </td>
                         <td class="money-cell"
-                            th:text="${#numbers.formatInteger(totalDeductions, 3, 'COMMA')} + ' VND'">
+                            th:text="${#numbers.formatInteger(totalDeductions, 3, 'COMMA')} + ' ' + #{common.vnd}">
                             0 VND
                         </td>
                         <td class="money-cell"
-                            th:text="${#numbers.formatInteger(totalTotalPay, 3, 'COMMA')} + ' VND'">
+                            th:text="${#numbers.formatInteger(totalTotalPay, 3, 'COMMA')} + ' ' + #{common.vnd}">
                             0 VND
                         </td>
                     </tr>

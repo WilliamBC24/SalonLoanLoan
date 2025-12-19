@@ -40,6 +40,9 @@ spring:
           auth: true
           starttls:
             enable: true
+  messages:
+    basename: messages
+    encoding: UTF-8
 
   servlet:
     multipart:

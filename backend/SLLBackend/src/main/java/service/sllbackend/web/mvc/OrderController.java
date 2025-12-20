@@ -138,6 +138,20 @@ public class OrderController {
                 model.addAttribute("paymentQrUrl", qrUrl);
             }
 
+            // Generate QR code URL for COD orders (20% deposit)
+            if ("COD".equals(order.getPaymentMethod()) &&
+                    order.getOrderStatus() == OrderStatus.PENDING) {
+
+                int depositAmount = (int) Math.ceil(order.getTotalPrice() * 0.2);
+                String qrUrl = vietQrService.generateQrUrl(
+                        order.getId(),
+                        order.getUserAccount().getUsername(),
+                        depositAmount
+                );
+                model.addAttribute("codDepositQrUrl", qrUrl);
+                model.addAttribute("codDepositAmount", depositAmount);
+            }
+
             return "order-details";
         } catch (Exception e) {
             return "redirect:/order/history?error=" + e.getMessage();

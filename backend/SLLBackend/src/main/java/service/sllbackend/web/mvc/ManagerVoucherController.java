@@ -40,7 +40,11 @@ public class ManagerVoucherController {
         model.addAttribute("allStatuses", allStatuses);
         
         // Get vouchers with filters applied in service layer
-        List<Voucher> vouchers = voucherService.getVouchers(code, name, discountType, statusId);
+        List<Voucher> vouchers = voucherService.getVouchers(
+                code != null ? code.trim().replaceAll("\\s+", " ") : null,
+                name != null ? name.trim().replaceAll("\\s+", " ") : null,
+                discountType,
+                statusId);
         
         model.addAttribute("vouchers", vouchers);
         model.addAttribute("searchCode", code);

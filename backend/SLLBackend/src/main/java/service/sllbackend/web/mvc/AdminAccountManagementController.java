@@ -35,10 +35,10 @@ public class AdminAccountManagementController {
                            Model model) {
         List<?> accounts;
         if (Boolean.TRUE.equals(staffOnly)) {
-            accounts = profileService.getStaffAccount(username.trim(), activeStatus);
+            accounts = profileService.getStaffAccount(username != null ? username.trim().replaceAll("\\s+", " ") : null, activeStatus);
             model.addAttribute("type", "staff");
         } else {
-            accounts = profileService.getUserAccount(username == null ? username : username.trim(), activeStatus);
+            accounts = profileService.getUserAccount(username != null ? username.trim().replaceAll("\\s+", " ") : null, activeStatus);
             model.addAttribute("type", "user");
         }
         model.addAttribute("accounts", accounts);

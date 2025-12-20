@@ -39,7 +39,7 @@ public class ManagerProviderController {
         model.addAttribute("allCategories", allCategories);
         
         // Get suppliers based on filters
-        List<Supplier> suppliers = supplierService.getSuppliers(categories, name);
+        List<Supplier> suppliers = supplierService.getSuppliers(categories, name != null ? name.trim().replaceAll("\\s+", " ") : null);
         
         model.addAttribute("suppliers", suppliers);
         model.addAttribute("selectedCategories", categories);

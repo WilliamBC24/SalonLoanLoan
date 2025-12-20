@@ -26,7 +26,7 @@ public class ProductsController {
     public String listProducts(
             @RequestParam(required = false) String name,
             Model model) {
-        List<Product> products = productsService.getProducts(name, true);
+        List<Product> products = productsService.getProducts(name != null ? name.trim().replaceAll("\\s+", " ") : null, true);
 
         model.addAttribute("products", products);
         model.addAttribute("searchName", name);
@@ -81,7 +81,7 @@ public class ProductsController {
     public List<Map<String, Object>> searchProducts(@RequestParam String query) {
 
         // Get list of products that match the name/code
-        List<Product> products = productsService.getProducts(query, true);
+        List<Product> products = productsService.getProducts(query != null ? query.trim().replaceAll("\\s+", " ") : null, true);
 
         // Return minimal JSON objects for the AJAX frontend
         return products.stream()

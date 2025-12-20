@@ -38,7 +38,7 @@ public class ManagerProductController {
             @RequestParam(required = false) Boolean activeStatus,
             Model model) {
         
-        List<Product> products = productsService.getProducts(name, activeStatus);
+        List<Product> products = productsService.getProducts(name != null ? name.trim().replaceAll("\\s+", " ") : null, activeStatus);
         
         // Add stock information for each product
         Map<Integer, Integer> stockMap = new HashMap<>();

@@ -46,10 +46,11 @@ public class StaffRegistrationManagementController {
             Model model) {
 
         List<Appointment> registrations;
-        if (name == null) {
-             registrations = appointmentService.getByNameAndStatus(name, statuses);
+        String trimmedName = name != null ? name.trim().replaceAll("\\s+", " ") : null;
+        if (trimmedName == null) {
+             registrations = appointmentService.getByNameAndStatus(trimmedName, statuses);
         } else {
-            registrations = appointmentService.getByPhoneNumberAndStatus(name, statuses);
+            registrations = appointmentService.getByPhoneNumberAndStatus(trimmedName, statuses);
         }
 
         model.addAttribute("registrations", registrations);

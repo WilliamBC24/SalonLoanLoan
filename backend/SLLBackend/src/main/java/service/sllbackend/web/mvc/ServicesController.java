@@ -34,7 +34,7 @@ public class ServicesController {
         List<ServiceCategory> allCategories = servicesService.getAllCategories();
 
         // Get services based on filters
-        List<Service> services = servicesService.getFilteredServices(types, categories, name);
+        List<Service> services = servicesService.getFilteredServices(types, categories, name != null ? name.trim().replaceAll("\\s+", " ") : null);
 
         model.addAttribute("allCategories", allCategories);
         model.addAttribute("services", services);
@@ -64,7 +64,7 @@ public class ServicesController {
     @GetMapping("/search")
     @ResponseBody
     public List<SimpleServiceDTO> searchServices(@RequestParam String query) {
-        List<Service> serviceList = servicesService.getServices(query, 5);
+        List<Service> serviceList = servicesService.getServices(query != null ? query.trim().replaceAll("\\s+", " ") : null, 5);
         List<SimpleServiceDTO> simpleServiceDTOList = new ArrayList<>();
         for(Service service : serviceList) {
             simpleServiceDTOList.add(dtoMapper.toSimpleServiceDTO(service));

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Products | Salon Loan Loan</title>
+    <title th:text="#{products.pageTitle}">Products | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Global styles -->
@@ -77,8 +77,8 @@
 
             <!-- PAGE TITLE -->
             <div class="section-heading text-center">
-                <p class="section-kicker">Product Management</p>
-                <h2>All Products</h2>
+                <p class="section-kicker" th:text="#{products.kicker}">Product Management</p>
+                <h2 th:text="#{products.title}">All Products</h2>
             </div>
 
             <!-- SEARCH / FILTER BAR -->
@@ -87,18 +87,18 @@
 
                     <!-- NAME SEARCH -->
                     <div class="filter-group">
-                        <label for="product-search-name">Search by Name</label>
+                        <label for="product-search-name" th:text="#{products.searchByName}">Search by Name</label>
                         <input type="text"
                                id="product-search-name"
                                name="name"
                                class="search-input"
                                th:value="${searchName}"
-                               placeholder="Enter product name...">
+                               th:placeholder="#{products.searchByName.placeholder}">
                     </div>
 
                     <!-- BUTTONS -->
                     <div class="search-buttons">
-                        <button type="submit" class="btn-primary">Search</button>
+                        <button type="submit" class="btn-primary" th:text="#{common.search}">Search</button>
                         <button type="button" class="btn-outline"
                                 onclick="window.location.href='/products'">
                             Reset

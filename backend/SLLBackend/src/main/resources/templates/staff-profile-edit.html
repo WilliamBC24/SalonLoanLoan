@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Staff Profile | Salon Loan Loan</title>
+    <title th:text="#{staff-profile-edit.pageTitle}">Edit Staff Profile | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -139,8 +139,8 @@
 
         <section class="edit-card">
             <div class="edit-title">
-                <h2>Edit Staff Profile</h2>
-                <p>Update staff details below.</p>
+                <h2 th:text="#{staff-profile-edit.title}">Edit Staff Profile</h2>
+                <p th:text="#{staff-profile-edit.description}">Update staff details below.</p>
             </div>
             <div th:if="${param.error}" class="message error">
                 Invalid inputs

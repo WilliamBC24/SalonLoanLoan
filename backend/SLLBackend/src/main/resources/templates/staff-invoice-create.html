@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Create Invoice | Salon Loan Loan</title>
+    <title th:text="#{staff-invoice-create.pageTitle}">Staff - Create Invoice | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (same as other staff pages) -->
@@ -501,7 +501,7 @@
                 <!-- Actions -->
                 <div class="form-actions" style="grid-column: 1 / -1;">
                     <a href="/staff/invoices/list" class="btn-secondary">Cancel</a>
-                    <button type="submit" class="btn-primary">Create Invoice</button>
+                    <button type="submit" class="btn-primary" th:text="#{staff-invoice-create.submitButton}">Create Invoice</button>
                 </div>
             </form>
         </section>
@@ -557,7 +557,7 @@
 
             <div class="modal-actions">
                 <button type="button" class="btn-secondary" onclick="closeProductModal()">Cancel</button>
-                <button type="submit" class="btn-primary">Create &amp; Add to Invoice</button>
+                <button type="submit" class="btn-primary" th:text="#{staff-invoice-create.addProductButton}">Add Product</button>
             </div>
         </form>
     </div>

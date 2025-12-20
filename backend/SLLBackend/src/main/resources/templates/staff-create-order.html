@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Staff - Create In-store Order | Salon Loan Loan</title>
+    <title th:text="#{staff-create-order.pageTitle}">Staff - Create In-store Order | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
@@ -327,7 +327,7 @@
             <div class="staff-order-header-row">
                 <div>
                     <p class="section-kicker">In-store Sale</p>
-                    <h2>Create Order</h2>
+                    <h2 th:text="#{staff-create-order.title}">Create Order</h2>
                 </div>
                 <div class="staff-order-actions">
                     <a href="/staff/order/list" class="back-link-pill">

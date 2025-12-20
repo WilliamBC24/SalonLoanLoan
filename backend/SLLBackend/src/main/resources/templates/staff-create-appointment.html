@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Staff - Create Appointment | Salon Loan Loan</title>
+    <title th:text="#{staff-create-appointment.pageTitle}">Staff - Create Appointment | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes staff sidebar + staff-main scroll behaviour) -->
@@ -354,7 +354,7 @@
             <div class="staff-appointment-header-row">
                 <div class="staff-appointment-title-block section-heading">
                     <p class="section-kicker">Walk-in Customer</p>
-                    <h2>Create Appointment</h2>
+                    <h2 th:text="#{staff-create-appointment.title}">Create Appointment</h2>
                 </div>
                 <div class="staff-appointment-actions">
                     <a href="/staff/registration/list" class="back-link-pill">

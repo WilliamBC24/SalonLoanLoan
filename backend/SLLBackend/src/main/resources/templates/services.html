@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Services | Salon Loan Loan</title>
+    <title th:text="#{services.pageTitle}">Services | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -78,8 +78,8 @@
 
             <!-- Page title -->
             <div class="section-heading text-center">
-                <p class="section-kicker">Service Management</p>
-                <h2>All Services</h2>
+                <p class="section-kicker" th:text="#{services.kicker}">Service Management</p>
+                <h2 th:text="#{services.title}">All Services</h2>
             </div>
 
             <!-- SEARCH + FILTER BAR -->
@@ -88,13 +88,13 @@
 
                     <!-- NAME SEARCH -->
                     <div class="filter-group">
-                        <label for="search-name">Search by Name</label>
+                        <label for="search-name" th:text="#{services.searchByName}">Search by Name</label>
                         <input type="text"
                                id="search-name"
                                name="name"
                                class="search-input"
                                th:value="${searchName}"
-                               placeholder="Enter service name...">
+                               th:placeholder="#{services.searchByName.placeholder}">
                     </div>
 
                     <!-- TYPE FILTER -->

@@ -277,9 +277,10 @@
                                id="phoneNumber"
                                name="phoneNumber"
                                maxlength="20"
-                               th:value="${supplier.phoneNumber}">
+                               th:value="${supplier.phoneNumber}"
+                               placeholder="7-15 digits, optional + prefix">
                         <div class="error" id="phoneNumberError">
-                            Phone number must be max 20 characters
+                            Phone number must be 7-15 digits (optional + prefix)
                         </div>
                     </div>
 
@@ -347,13 +348,19 @@
             supplierCategoryIdError.style.display = 'none';
         }
 
-        // Validate phone number (optional but max 20 chars)
+        // Validate phone number (optional but must match pattern if provided)
         const phoneNumber = document.getElementById('phoneNumber');
         const phoneNumberError = document.getElementById('phoneNumberError');
-        if (phoneNumber.value && phoneNumber.value.length > 20) {
-            phoneNumber.classList.add('invalid');
-            phoneNumberError.style.display = 'block';
-            isValid = false;
+        if (phoneNumber.value) {
+            const phonePattern = /^\+?[0-9]{7,15}$/;
+            if (!phonePattern.test(phoneNumber.value)) {
+                phoneNumber.classList.add('invalid');
+                phoneNumberError.style.display = 'block';
+                isValid = false;
+            } else {
+                phoneNumber.classList.remove('invalid');
+                phoneNumberError.style.display = 'none';
+            }
         } else {
             phoneNumber.classList.remove('invalid');
             phoneNumberError.style.display = 'none';
@@ -399,7 +406,7 @@
 
     document.getElementById('phoneNumber').addEventListener('input', function() {
         const error = document.getElementById('phoneNumberError');
-        if (!this.value || this.value.length <= 20) {
+        if (!this.value || /^\+?[0-9]{7,15}$/.test(this.value)) {
             this.classList.remove('invalid');
             error.style.display = 'none';
         }

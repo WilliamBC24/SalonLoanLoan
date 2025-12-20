@@ -156,7 +156,8 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
     @Transactional(readOnly = true)
     public List<InventoryInvoiceListDTO> searchInvoices(Integer supplierId, InventoryInvoiceStatus status,
                                                          LocalDateTime fromDate, LocalDateTime toDate) {
-        List<InventoryInvoice> invoices = inventoryInvoiceRepo.searchInvoices(supplierId, status, fromDate, toDate);
+        String statusStr = status != null ? status.toString() : null;
+        List<InventoryInvoice> invoices = inventoryInvoiceRepo.searchInvoices(supplierId, statusStr, fromDate, toDate);
         return convertToListDTOs(invoices);
     }
     

@@ -34,3 +34,8 @@ Thumbs.db
 
 # === Uploads ===
 uploads/
+
+# === Environment files ===
+.env
+database/.env
+

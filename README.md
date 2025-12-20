@@ -35,12 +35,19 @@ Salon LoanLoan includes, but is not limited to, the following features, covering
    cd database
    ```
 
-2. Build the Docker image:
+2. Create the `.env` file from the example:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   The .env file contains the database credentials that match the defaults in `backend/SLLBackend/src/main/resources/application.yml`.
+
+3. Build the Docker image:
    ```bash
    docker build -t sll .
    ```
 
-3. Run the Docker container with the environment file:
+4. Run the Docker container with the environment file:
    ```bash
    docker run -d --network host --env-file .env sll
    ```

@@ -10,10 +10,11 @@ import service.sllbackend.repository.*;
 import service.sllbackend.service.InventoryInvoiceService;
 import service.sllbackend.web.dto.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,9 +52,30 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
         
         invoice = inventoryInvoiceRepo.save(invoice);
         
-        // Create invoice details
+        // Group invoice items by product ID and unit price to consolidate duplicates
         if (dto.getItems() != null && !dto.getItems().isEmpty()) {
+            // Create a map to group items: key = "productId_unitPrice", value = accumulated quantity
+            Map<String, InventoryInvoiceItemDTO> consolidatedItems = new LinkedHashMap<>();
+            
             for (InventoryInvoiceItemDTO itemDTO : dto.getItems()) {
+                String key = itemDTO.getProductId() + "_" + itemDTO.getUnitPrice();
+                
+                if (consolidatedItems.containsKey(key)) {
+                    // If same product with same price exists, merge quantities
+                    InventoryInvoiceItemDTO existingItem = consolidatedItems.get(key);
+                    existingItem.setOrderedQuantity(existingItem.getOrderedQuantity() + itemDTO.getOrderedQuantity());
+                } else {
+                    // Otherwise, add new item
+                    consolidatedItems.put(key, new InventoryInvoiceItemDTO(
+                            itemDTO.getProductId(),
+                            itemDTO.getOrderedQuantity(),
+                            itemDTO.getUnitPrice()
+                    ));
+                }
+            }
+            
+            // Create invoice details from consolidated items
+            for (InventoryInvoiceItemDTO itemDTO : consolidatedItems.values()) {
                 Product product = productRepo.findById(itemDTO.getProductId())
                         .orElseThrow(() -> new RuntimeException("Product not found with id: " + itemDTO.getProductId()));
                 

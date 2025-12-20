@@ -67,6 +67,36 @@
             margin-top: 0.6rem;
         }
 
+        .alert {
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .btn-disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-disabled:hover {
+            background: #9ca3af;
+        }
+
         @media (max-width: 600px) {
             .job-apply-wrapper {
                 padding: 1.8rem 1.4rem;
@@ -94,6 +124,10 @@
                 Job description goes here...
             </p>
 
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
             <!-- Form -->
             <form th:action="@{/job/apply/{id}(id=${job.id})}" method="post">
 
@@ -105,6 +139,7 @@
                        id="applicantName"
                        name="applicantName"
                        th:placeholder="#{job-apply.fullName.placeholder}"
+                       th:disabled="${hasAlreadyApplied}"
                        required />
 
                 <label for="applicantDob" class="form-label" th:text="#{job-apply.dob}">
@@ -114,6 +149,7 @@
                        type="date"
                        id="applicantDob"
                        name="applicantDob"
+                       th:disabled="${hasAlreadyApplied}"
                        required />
 
                 <label for="applicantPhoneNumber" class="form-label" th:text="#{job-apply.phone}">
@@ -123,12 +159,18 @@
                        type="text"
                        id="applicantPhoneNumber"
                        name="applicantPhoneNumber"
+                       th:value="${userPhoneNumber}"
                        th:placeholder="#{job-apply.phone.placeholder}"
+                       th:disabled="${hasAlreadyApplied}"
                        required />
 
                 <div class="button-row">
-                    <button type="submit" class="btn-primary" style="padding:0.75rem 2rem;">
-                        <span th:text="#{job-apply.submit}">Submit Application</span>
+                    <button type="submit" 
+                            th:classappend="${hasAlreadyApplied} ? 'btn-disabled' : ''"
+                            th:disabled="${hasAlreadyApplied}"
+                            class="btn-primary" 
+                            style="padding:0.75rem 2rem;">
+                        <span th:text="${hasAlreadyApplied} ? 'Already Applied' : #{job-apply.submit}">Submit Application</span>
                     </button>
                 </div>
 

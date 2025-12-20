@@ -23,6 +23,12 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     public void saveApplication(Long jobId, JobApplicationDTO jobApplicationDTO) {
         JobPosting job = jobPostingRepo.findById(jobId)
                 .orElseThrow(() -> new IllegalArgumentException("Job posting not found"));
+        
+        // Check if applicant has already applied
+        if (jobPostingApplicationRepo.existsByJobPostingAndApplicantPhoneNumber(job, jobApplicationDTO.getApplicantPhoneNumber())) {
+            throw new IllegalArgumentException("You have already applied for this job posting");
+        }
+        
         jobPostingApplicationRepo.save(JobPostingApplication.builder()
                 .jobPosting(job)
                 .applicantName(jobApplicationDTO.getApplicantName())
@@ -52,6 +58,14 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                 .orElseThrow(() -> new IllegalArgumentException("Application not found"));
         jobPostingApplication.setStatus(JobPostingApplicationStatus.REJECTED);
         jobPostingApplicationRepo.save(jobPostingApplication);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasAlreadyApplied(Long jobId, String phoneNumber) {
+        JobPosting job = jobPostingRepo.findById(jobId)
+                .orElseThrow(() -> new IllegalArgumentException("Job posting not found"));
+        return jobPostingApplicationRepo.existsByJobPostingAndApplicantPhoneNumber(job, phoneNumber);
     }
 
 

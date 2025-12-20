@@ -219,7 +219,8 @@
                            class="form-control"
                            th:value="${jobPosting.jobPostingName}"
                            th:placeholder="#{admin-edit-job-posting.jobTitle.placeholder}"
-                           placeholder="Enter job title">
+                           placeholder="Enter job title"
+                           required>
                 </div>
 
                 <div class="form-field">
@@ -231,7 +232,8 @@
                               class="form-textarea"
                               th:placeholder="#{admin-edit-job-posting.description.placeholder}"
                               placeholder="Enter job description"
-                              th:text="${jobPosting.jobPostingDescription}"></textarea>
+                              th:text="${jobPosting.jobPostingDescription}"
+                              required></textarea>
                 </div>
 
                 <div class="form-grid-2">

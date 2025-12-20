@@ -8,10 +8,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.OrderInvoice;
 import service.sllbackend.entity.OrderInvoiceDetails;
+import service.sllbackend.entity.UserAccount;
 import service.sllbackend.entity.Voucher;
 import service.sllbackend.enumerator.FulfillmentType;
 import service.sllbackend.enumerator.OrderStatus;
 import service.sllbackend.service.OrderService;
+import service.sllbackend.service.UserAccountService;
 import service.sllbackend.service.VietQrService;
 import service.sllbackend.service.VoucherService;
 import service.sllbackend.web.dto.VoucherPublicDTO;
@@ -29,6 +31,7 @@ public class OrderController {
     private final OrderService orderService;
     private final VietQrService vietQrService;
     private final VoucherService voucherService;
+    private final UserAccountService userAccountService;
 
     @GetMapping("/checkout")
     @Transactional(readOnly = true)
@@ -45,6 +48,13 @@ public class OrderController {
         }
         
         model.addAttribute("cartSummary", cartSummary);
+        
+        // Get user phone number for auto-fill
+        UserAccount userAccount = userAccountService.findByUsername(principal.getName());
+        if (userAccount != null && userAccount.getPhoneNumber() != null) {
+            model.addAttribute("userPhoneNumber", userAccount.getPhoneNumber());
+            model.addAttribute("userName", userAccount.getUsername());
+        }
         
         return "order-checkout";
     }

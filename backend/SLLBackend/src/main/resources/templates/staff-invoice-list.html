@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Invoice List | Salon Loan Loan</title>
+    <title th:text="#{staff-invoice-list.pageTitle}">Staff - Invoice List | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles + layout (sidebar, staff-main scroll, etc.) -->
@@ -372,7 +372,7 @@
             <div class="invoice-list-header-row">
                 <div class="invoice-list-title-block section-heading">
                     <p class="section-kicker">Inventory Management</p>
-                    <h2>Invoice List</h2>
+                    <h2 th:text="#{staff-invoice-list.heading.invoice-list}">Invoice List</h2>
                 </div>
                 <div class="invoice-list-actions">
                     <a href="/staff/invoices/create" class="create-btn-pill">
@@ -387,18 +387,16 @@
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search Filters</h3>
+                        <h3 th:text="#{staff-invoice-list.heading.search-filters}">Search Filters</h3>
                     </div>
-                    <button class="toggle-btn" type="button" onclick="toggleSearch()" id="toggleBtn">
-                        Hide
-                    </button>
+                    <button class="toggle-btn" type="button" onclick="toggleSearch()" id="toggleBtn" th:text="#{staff-invoice-list.btn.hide}">Hide</button>
                 </div>
 
                 <div id="searchForm">
                     <form method="get" action="/staff/invoices/list">
                         <div class="search-form">
                             <div class="form-group">
-                                <label for="supplierId">Supplier</label>
+                                <label for="supplierId" th:text="#{staff-invoice-list.label.supplier}">Supplier</label>
                                 <select id="supplierId" name="supplierId">
                                     <option value="">All Suppliers</option>
                                     <option th:each="supplier : ${suppliers}"
@@ -409,7 +407,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="status">Status</label>
+                                <label for="status" th:text="#{staff-invoice-list.label.status}">Status</label>
                                 <select id="status" name="status">
                                     <option value="">All Statuses</option>
                                     <option th:each="statusOption : ${statuses}"
@@ -420,13 +418,13 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="fromDate">From Date</label>
+                                <label for="fromDate" th:text="#{staff-invoice-list.label.from-date}">From Date</label>
                                 <input type="date" id="fromDate" name="fromDate"
                                        th:value="${fromDate != null ? #temporals.format(fromDate, 'yyyy-MM-dd') : ''}"/>
                             </div>
 
                             <div class="form-group">
-                                <label for="toDate">To Date</label>
+                                <label for="toDate" th:text="#{staff-invoice-list.label.to-date}">To Date</label>
                                 <input type="date" id="toDate" name="toDate"
                                        th:value="${toDate != null ? #temporals.format(toDate, 'yyyy-MM-dd') : ''}"/>
                             </div>
@@ -448,7 +446,7 @@
 
             <!-- Empty State -->
             <div th:if="${invoices.empty}" class="empty-state">
-                <h2>No Invoices Found</h2>
+                <h2 th:text="#{staff-invoice-list.heading.no-invoices-found}">No Invoices Found</h2>
                 <p>Create your first invoice to get started.</p>
                 <a href="/staff/invoices/create" class="create-btn-pill">
                     <span class="icon">＋</span>

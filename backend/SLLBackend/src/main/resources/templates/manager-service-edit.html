@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Edit Service | Salon Loan Loan</title>
+    <title th:text="#{manager-service-edit.pageTitle}">Manager - Edit Service | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (sidebar + staff-main scroll behaviour) -->
@@ -417,7 +417,7 @@
                   class="form-grid">
                 <div>
                     <div class="form-group">
-                        <label for="serviceName" class="required">Service Name</label>
+                        <label for="serviceName" class="required" th:text="#{manager-service-edit.label.service-name}">Service Name</label>
                         <input type="text"
                                id="serviceName"
                                name="serviceName"
@@ -431,7 +431,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceCategoryId" class="required">Service Category</label>
+                        <label for="serviceCategoryId" class="required" th:text="#{manager-service-edit.label.service-category}">Service Category</label>
                         <select id="serviceCategoryId" name="serviceCategoryId" required>
                             <option value="">-- Select Category --</option>
                             <option th:each="category : ${categories}"
@@ -447,7 +447,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceType" class="required">Service Type</label>
+                        <label for="serviceType" class="required" th:text="#{manager-service-edit.label.service-type}">Service Type</label>
                         <select id="serviceType" name="serviceType" required>
                             <option value="">-- Select Type --</option>
                             <option value="SINGLE" th:selected="${service.serviceType.name() == 'SINGLE'}">Single</option>
@@ -459,7 +459,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="servicePrice" class="required">Service Price (VND)</label>
+                        <label for="servicePrice" class="required" th:text="#{manager-service-edit.label.service-price-vnd}">Service Price (VND)</label>
                         <input type="number"
                                id="servicePrice"
                                name="servicePrice"
@@ -472,7 +472,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="durationMinutes" class="required">Duration (minutes)</label>
+                        <label for="durationMinutes" class="required" th:text="#{manager-service-edit.label.duration-minutes}">Duration (minutes)</label>
                         <input type="number"
                                id="durationMinutes"
                                name="durationMinutes"
@@ -486,7 +486,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceDescription">Service Description</label>
+                        <label for="serviceDescription" th:text="#{manager-service-edit.label.service-description}">Service Description</label>
                         <textarea id="serviceDescription"
                                   name="serviceDescription"
                                   th:text="${service.serviceDescription}"></textarea>
@@ -499,13 +499,13 @@
                                    name="activeStatus"
                                    value="true"
                                    th:checked="${service.activeStatus}">
-                            <label for="activeStatus">Active Status</label>
+                            <label for="activeStatus" th:text="#{manager-service-edit.label.active-status}">Active Status</label>
                         </div>
                     </div>
 
                     <!-- Image Upload Section -->
                     <div class="image-section">
-                        <h3>📷 Service Images</h3>
+                        <h3 th:text="#{manager-service-edit.heading.-service-images}">📷 Service Images</h3>
                         <div class="image-upload-area">
                             <div class="image-upload-input">
                                 <div class="file-input-wrapper">
@@ -517,9 +517,7 @@
                                 </div>
                                 <span class="file-name" id="fileName">No file chosen</span>
                                 <button type="button" class="btn-upload" id="uploadBtn" disabled
-                                        onclick="uploadServiceImage()">
-                                    Upload
-                                </button>
+                                        onclick="uploadServiceImage()" th:text="#{manager-service-edit.btn.upload}">Upload</button>
                             </div>
                             <div id="uploadMessage"></div>
                         </div>
@@ -756,9 +754,7 @@
             imageCard.innerHTML = `
                 <img src="${image.imagePath}" alt="Service image" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found'">
                 <div class="image-card-actions">
-                    <button type="button" class="btn-delete-image" onclick="deleteServiceImage(${image.id})">
-                        🗑️ Delete
-                    </button>
+                    <button type="button" class="btn-delete-image" onclick="deleteServiceImage(${image.id})" th:text="#{manager-service-edit.btn.-delete}">🗑️ Delete</button>
                 </div>
             `;
             gallery.appendChild(imageCard);

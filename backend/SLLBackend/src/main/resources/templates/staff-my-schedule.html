@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - My Schedule | Salon Loan Loan</title>
+    <title th:text="#{staff-my-schedule.pageTitle}">Staff - My Schedule | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -299,7 +299,7 @@
             <div class="schedule-header-row">
                 <div class="schedule-title-block section-heading">
                     <p class="section-kicker">My Shifts</p>
-                    <h2>My Monthly Schedule</h2>
+                    <h2 th:text="#{staff-my-schedule.heading.my-monthly-schedule}">My Monthly Schedule</h2>
                     <p class="schedule-subtext">
                         See which days you are scheduled to work this month.
                         <span th:text="${staffName != null ? '(' + staffName + ')' : ''}"></span>

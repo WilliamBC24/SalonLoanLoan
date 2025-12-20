@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>User Appointment History | Salon Loan Loan</title>
+    <title th:text="#{user-appointment-history.pageTitle}">User Appointment History | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -171,14 +171,14 @@
 
         <div class="section-heading text-center">
             <p class="section-kicker">Your Appointments</p>
-            <h2>Appointment History</h2>
+            <h2 th:text="#{user-appointment-history.heading.appointment-history}">Appointment History</h2>
         </div>
 
         <!-- Search & Filter -->
         <div class="search-bar">
             <form method="get" th:action="@{/user/appointment-history}">
                 <div class="filter-group">
-                    <label>Appointment Status:</label>
+                    <label th:text="#{user-appointment-history.label.appointment-status}">Appointment Status:</label>
                     <div class="checkbox-group">
                         <label class="checkbox-item">
                             <input type="checkbox"
@@ -202,12 +202,10 @@
                 </div>
 
                 <div class="search-buttons">
-                    <button type="submit" class="btn-primary">Search</button>
+                    <button type="submit" class="btn-primary" th:text="#{user-appointment-history.btn.search}">Search</button>
                     <button type="button"
                             class="btn-outline"
-                            onclick="window.location.href='/user/appointment-history'">
-                        Reset
-                    </button>
+                            onclick="window.location.href='/user/appointment-history'" th:text="#{user-appointment-history.btn.reset}">Reset</button>
                 </div>
             </form>
         </div>

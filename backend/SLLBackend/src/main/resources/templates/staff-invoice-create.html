@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Create Invoice | Salon Loan Loan</title>
+    <title th:text="#{staff-invoice-create.pageTitle}">Staff - Create Invoice | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (same as other staff pages) -->
@@ -428,7 +428,7 @@
             <div class="invoice-header-row">
                 <div class="invoice-title-block section-heading">
                     <p class="section-kicker">Inventory Management</p>
-                    <h2>Create New Invoice</h2>
+                    <h2 th:text="#{staff-invoice-create.heading.create-new-invoice}">Create New Invoice</h2>
                 </div>
             </div>
 
@@ -448,9 +448,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="note" class="form-group-label">Note</label>
+                        <label for="note" class="form-group-label" th:text="#{staff-invoice-create.label.note}">Note</label>
                         <textarea id="note" name="note" class="form-textarea"
-                                  placeholder="Add any notes about this invoice..."></textarea>
+                                 th:placeholder="#{staff-invoice-create.placeholder.add-any-notes-about-this-}" placeholder="Add any notes about this invoice..."></textarea>
                     </div>
                 </div>
 
@@ -469,7 +469,7 @@
                     <div class="items-container" id="itemsContainer">
                         <div class="item-row">
                             <div>
-                                <label>Product</label>
+                                <label th:text="#{staff-invoice-create.label.product}">Product</label>
                                 <select name="productId[]" required id="productSelect0" class="form-control">
                                     <option value="">Select Product</option>
                                     <option th:each="product : ${products}"
@@ -478,16 +478,16 @@
                                 </select>
                             </div>
                             <div>
-                                <label>Quantity</label>
+                                <label th:text="#{staff-invoice-create.label.quantity}">Quantity</label>
                                 <input type="number" name="quantity[]" min="1" value="1" required class="form-control" />
                             </div>
                             <div>
-                                <label>Unit Price (VND)</label>
+                                <label th:text="#{staff-invoice-create.label.unit-price-vnd}">Unit Price (VND)</label>
                                 <input type="number" name="unitPrice[]" min="1" value="1000" required class="form-control" />
                             </div>
                             <div>
-                                <label>&nbsp;</label>
-                                <button type="button" class="remove-btn" onclick="removeItem(this)" style="visibility: hidden;">×</button>
+                                <label th:text="#{staff-invoice-create.label.nbsp}">&nbsp;</label>
+                                <button type="button" class="remove-btn" onclick="removeItem(this)" style="visibility: hidden;" th:text="#{staff-invoice-create.btn.}">×</button>
                             </div>
                         </div>
                     </div>
@@ -501,7 +501,7 @@
                 <!-- Actions -->
                 <div class="form-actions" style="grid-column: 1 / -1;">
                     <a href="/staff/invoices/list" class="btn-secondary">Cancel</a>
-                    <button type="submit" class="btn-primary">Create Invoice</button>
+                    <button type="submit" class="btn-primary" th:text="#{staff-invoice-create.btn.create-invoice}">Create Invoice</button>
                 </div>
             </form>
         </section>
@@ -512,7 +512,7 @@
 <div id="productModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Create New Product</h2>
+            <h2 th:text="#{staff-invoice-create.heading.create-new-product}">Create New Product</h2>
             <span class="close" onclick="closeProductModal()">&times;</span>
         </div>
 
@@ -548,7 +548,7 @@
             </div>
 
             <div class="form-group">
-                <label class="form-group-label" style="margin-bottom: 0.4rem;">Status</label>
+                <label class="form-group-label" style="margin-bottom: 0.4rem;" th:text="#{staff-invoice-create.label.status}">Status</label>
                 <label class="checkbox-label" style="font-size: 0.9rem; display:flex; align-items:center; gap:0.35rem;">
                     <input type="checkbox" id="modalActiveStatus" value="true" checked style="width:auto;">
                     <span>Active Status</span>
@@ -556,8 +556,8 @@
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="btn-secondary" onclick="closeProductModal()">Cancel</button>
-                <button type="submit" class="btn-primary">Create &amp; Add to Invoice</button>
+                <button type="button" class="btn-secondary" onclick="closeProductModal()" th:text="#{staff-invoice-create.btn.cancel}">Cancel</button>
+                <button type="submit" class="btn-primary" th:text="#{staff-invoice-create.btn.create-amp-add-to-}">Create &amp; Add to Invoice</button>
             </div>
         </form>
     </div>
@@ -575,23 +575,23 @@
         newRow.className = 'item-row';
         newRow.innerHTML = `
             <div>
-                <label>Product</label>
+                <label th:text="#{staff-invoice-create.label.product}">Product</label>
                 <select name="productId[]" required class="form-control">
                     <option value="">Select Product</option>
                     ${options.map(opt => `<option value="${opt.value}">${opt.textContent}</option>`).join('')}
                 </select>
             </div>
             <div>
-                <label>Quantity</label>
+                <label th:text="#{staff-invoice-create.label.quantity}">Quantity</label>
                 <input type="number" name="quantity[]" min="1" value="1" required class="form-control" />
             </div>
             <div>
-                <label>Unit Price (VND)</label>
+                <label th:text="#{staff-invoice-create.label.unit-price-vnd}">Unit Price (VND)</label>
                 <input type="number" name="unitPrice[]" min="1" value="1000" required class="form-control" />
             </div>
             <div>
-                <label>&nbsp;</label>
-                <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+                <label th:text="#{staff-invoice-create.label.nbsp}">&nbsp;</label>
+                <button type="button" class="remove-btn" onclick="removeItem(this)" th:text="#{staff-invoice-create.btn.}">×</button>
             </div>
         `;
         container.appendChild(newRow);

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Product Details | Salon Loan Loan</title>
+    <title th:text="#{product-details.pageTitle}">Product Details | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Global styles -->
@@ -518,7 +518,7 @@
                     <form th:action="@{/cart/add}" method="post" style="display:flex; flex-wrap:wrap; gap:0.8rem; align-items:center;">
                         <input type="hidden" name="productId" th:value="${product.id}"/>
 
-                        <label for="amount" style="font-size:0.9rem;">Quantity:</label>
+                        <label for="amount" style="font-size:0.9rem;" th:text="#{product-details.label.quantity}">Quantity:</label>
                         <input type="number"
                                id="amount"
                                name="amount"
@@ -526,9 +526,7 @@
                                min="1"
                                class="quantity-input"/>
 
-                        <button type="submit" class="btn-primary">
-                            Add to Cart
-                        </button>
+                        <button type="submit" class="btn-primary" th:text="#{product-details.btn.add-to-cart}">Add to Cart</button>
                     </form>
                 </div>
             </section>
@@ -536,7 +534,7 @@
 
         <!-- RATING & REVIEWS -->
         <section class="rating-card">
-            <h2>Product Ratings &amp; Reviews</h2>
+            <h2 th:text="#{product-details.heading.product-ratings-andamp-review}">Product Ratings &amp; Reviews</h2>
 
             <!-- Success/Error messages -->
             <div th:if="${param.ratingSuccess}" class="alert alert-success">
@@ -581,7 +579,7 @@
                     <input type="hidden" name="productId" th:value="${product.id}"/>
 
                     <div>
-                        <label style="font-size:0.9rem;">Rating:</label>
+                        <label style="font-size:0.9rem;" th:text="#{product-details.label.rating}">Rating:</label>
                         <div class="star-rating">
                             <input type="radio" name="rating" value="5" id="star5"
                                    th:checked="${userFeedback?.rating == 5}" required/>
@@ -606,18 +604,16 @@
                     </div>
 
                     <div>
-                        <label for="comment" style="font-size:0.9rem;">Comment (optional):</label>
+                        <label for="comment" style="font-size:0.9rem;" th:text="#{product-details.label.comment-optional}">Comment (optional):</label>
                         <textarea id="comment"
                                   name="comment"
                                   class="comment-input"
-                                  placeholder="Share your thoughts about this product..."
+                                 th:placeholder="#{product-details.placeholder.share-your-thoughts-about}" placeholder="Share your thoughts about this product..."
                                   th:text="${userFeedback?.comment}"></textarea>
                     </div>
 
                     <div class="image-upload-section">
-                        <label for="imageUpload" class="image-upload-label">
-                            📷 Add Photos (Max 5)
-                        </label>
+                        <label for="imageUpload" class="image-upload-label" th:text="#{product-details.label.-add-photos-max-5}">📷 Add Photos (Max 5)</label>
                         <input type="file" 
                                id="imageUpload" 
                                name="images" 
@@ -649,7 +645,7 @@
 
             <!-- Feedback list -->
             <div class="feedback-list" th:if="${totalReviews > 0}">
-                <h3 style="margin-bottom:0.8rem;">Customer Reviews</h3>
+                <h3 style="margin-bottom:0.8rem;" th:text="#{product-details.heading.customer-reviews}">Customer Reviews</h3>
 
                 <div th:each="feedback : ${feedbackList}" class="feedback-item">
                     <div class="feedback-header">

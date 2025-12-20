@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Profile | Salon Loan Loan</title>
+    <title th:text="#{user-profile-edit.pageTitle}">Edit Profile | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -299,7 +299,7 @@
         <section class="edit-card">
             <div class="edit-title">
                 <div>
-                    <h2>Edit Profile</h2>
+                    <h2 th:text="#{user-profile-edit.heading.edit-profile}">Edit Profile</h2>
                     <p class="edit-sub">Update your information below.</p>
                 </div>
 
@@ -315,17 +315,17 @@
 
                 <!-- Account -->
                 <div class="form-section">
-                    <h3>Account</h3>
+                    <h3 th:text="#{user-profile-edit.heading.account}">Account</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label" for="username">Username</label>
+                            <label class="form-label" for="username" th:text="#{user-profile-edit.label.username}">Username</label>
                             <input type="text" id="username" name="username"
                                    class="form-input"
                                    th:value="${user.username}"/>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="email">Email</label>
+                            <label class="form-label" for="email" th:text="#{user-profile-edit.label.email}">Email</label>
                             <input type="email" id="email" name="email"
                                    class="form-input"
                                    th:value="${user.email}"/>
@@ -336,10 +336,10 @@
 
                 <!-- Personal -->
                 <div class="form-section">
-                    <h3>Personal</h3>
+                    <h3 th:text="#{user-profile-edit.heading.personal}">Personal</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label" for="gender">Gender</label>
+                            <label class="form-label" for="gender" th:text="#{user-profile-edit.label.gender}">Gender</label>
                             <select id="gender" name="gender" class="form-select">
                                 <option th:selected="${user.gender == 'MALE'}" value="MALE">Male</option>
                                 <option th:selected="${user.gender == 'FEMALE'}" value="FEMALE">Female</option>
@@ -347,7 +347,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="birthDate">Birth Date</label>
+                            <label class="form-label" for="birthDate" th:text="#{user-profile-edit.label.birth-date}">Birth Date</label>
                             <input type="date" id="birthDate" name="birthDate"
                                    class="form-input"
                                    th:value="${#temporals.format(user.birthDate, 'yyyy-MM-dd')}"/>
@@ -357,10 +357,10 @@
 
                 <!-- Contact -->
                 <div class="form-section">
-                    <h3>Contact</h3>
+                    <h3 th:text="#{user-profile-edit.heading.contact}">Contact</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label" for="phoneNumber">Phone Number</label>
+                            <label class="form-label" for="phoneNumber" th:text="#{user-profile-edit.label.phone-number}">Phone Number</label>
                             <input type="text" id="phoneNumber" name="phoneNumber"
                                    class="form-input"
                                    th:value="${user.phoneNumber}"/>
@@ -371,7 +371,7 @@
                 <!-- Buttons -->
                 <div class="button-row">
                     <a th:href="@{/user/profile}" class="btn-outline" style="padding:.6rem 1.3rem;">Cancel</a>
-                    <button type="submit" class="btn-primary" style="padding:.6rem 1.3rem;">Save Changes</button>
+                    <button type="submit" class="btn-primary" style="padding:.6rem 1.3rem;" th:text="#{user-profile-edit.btn.save-changes}">Save Changes</button>
                 </div>
 
             </form>
@@ -404,7 +404,7 @@
                 </div>
             </div>
             <div class="loyalty-card">
-                <h3>Loyalty Program</h3>
+                <h3 th:text="#{user-profile-edit.heading.loyalty-program}">Loyalty Program</h3>
 
                 <div class="loyalty-row">
                     <span class="loyalty-label">Level</span>

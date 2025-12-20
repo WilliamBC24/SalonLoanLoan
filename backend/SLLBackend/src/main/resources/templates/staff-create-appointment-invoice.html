@@ -4,7 +4,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Appointment Invoice | Salon Loan Loan</title>
+    <title th:text="#{staff-create-appointment-invoice.pageTitle}">Staff - Appointment Invoice | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Global staff layout + styles -->
@@ -466,7 +466,7 @@
             <div class="invoice-header-row">
                 <div class="invoice-title-block section-heading">
                     <p class="section-kicker">Billing &amp; Payments</p>
-                    <h2>Create Appointment Invoice</h2>
+                    <h2 th:text="#{staff-create-appointment-invoice.heading.create-appointment-invoice}">Create Appointment Invoice</h2>
                 </div>
 
                 <div style="display:flex; gap:0.6rem; align-items:center;">
@@ -490,7 +490,7 @@
 
                     <!-- Appointment Information -->
                     <section class="invoice-section-card">
-                        <h3>Appointment Information</h3>
+                        <h3 th:text="#{staff-create-appointment-invoice.heading.appointment-information}">Appointment Information</h3>
                         <div class="info-grid">
                             <div class="info-item">
                                 <span class="info-label">Date &amp; Time</span>
@@ -525,7 +525,7 @@
 
                     <!-- Services Performed -->
                     <section class="invoice-section-card">
-                        <h3>Services Performed</h3>
+                        <h3 th:text="#{staff-create-appointment-invoice.heading.services-performed}">Services Performed</h3>
                         <table class="services-table">
                             <thead>
                             <tr>
@@ -578,7 +578,7 @@
                           method="post"
                           th:action="@{/staff/registration/invoice/{id}/complete(id=${appointment.id})}"
                           th:attr="data-completed=${completed}">
-                        <h3>Finalize Invoice</h3>
+                        <h3 th:text="#{staff-create-appointment-invoice.heading.finalize-invoice}">Finalize Invoice</h3>
 
                         <!-- Hidden IDs -->
                         <input type="hidden" name="appointmentId" th:value="${appointment.id}" />
@@ -586,7 +586,7 @@
 
                         <!-- Satisfaction rating -->
                         <div class="form-group">
-                            <label for="satisfactionRating">Customer Satisfaction</label>
+                            <label for="satisfactionRating" th:text="#{staff-create-appointment-invoice.label.customer-satisfactio}">Customer Satisfaction</label>
                             <div class="star-rating"
                                  th:classappend="${completed} ? ' readonly'">
                                 <!-- value 5 down to 1 so hover behaves nicely -->
@@ -622,17 +622,17 @@
 
                         <!-- Public notes -->
                         <div class="form-group">
-                            <label for="customerNotes">Customer Notes</label>
+                            <label for="customerNotes" th:text="#{staff-create-appointment-invoice.label.customer-notes}">Customer Notes</label>
                             <textarea id="customerNotes"
                                       name="customerNotes"
-                                      placeholder="Notes about the customer's experience, hair condition, aftercare advice, etc."
+                                     th:placeholder="#{staff-create-appointment-invoice.placeholder.notes-about-the-customer}" placeholder="Notes about the customer's experience, hair condition, aftercare advice, etc."
                                       th:text="${satisfactionComment}"
                                       th:readonly="${completed}"></textarea>
                         </div>
 
                         <!-- Payment method (hidden if completed) -->
                         <div class="form-group" th:if="${!completed}">
-                            <label>Payment Method</label>
+                            <label th:text="#{staff-create-appointment-invoice.label.payment-method}">Payment Method</label>
                             <div class="payment-methods" id="paymentMethods">
                                 <label class="payment-option"
                                        data-value="CASH">
@@ -676,7 +676,7 @@
                              th:if="${!completed} and paymentQrUrl != null"
                              class="payment-box"
                              style="display:none;">
-                            <h4>Bank Transfer Payment</h4>
+                            <h4 th:text="#{staff-create-appointment-invoice.heading.bank-transfer-payment}">Bank Transfer Payment</h4>
                             <p>Scan this VietQR code to pay for the appointment.</p>
                             <img th:src="${paymentQrUrl}" alt="VietQR Payment Code" />
                             <p>After successful payment, click "Complete Invoice" to confirm.</p>

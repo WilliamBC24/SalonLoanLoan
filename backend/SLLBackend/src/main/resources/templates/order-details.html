@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Order Details | Salon Loan Loan</title>
+    <title th:text="#{order-details.pageTitle}">Order Details | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Global styles -->
@@ -355,7 +355,7 @@
 
                 <!-- Order Information -->
                 <section class="order-card">
-                    <h2>Order Information</h2>
+                    <h2 th:text="#{order-details.heading.order-information}">Order Information</h2>
                     <div class="info-grid">
                         <div class="info-item">
                             <span class="info-label">Order ID</span>
@@ -407,7 +407,7 @@
 
                 <!-- Customer Information -->
                 <section class="order-card">
-                    <h2>Customer Information</h2>
+                    <h2 th:text="#{order-details.heading.customer-information}">Customer Information</h2>
                     <div class="info-grid">
                         <div class="info-item">
                             <span class="info-label">Name</span>
@@ -436,7 +436,7 @@
 
                 <!-- Order Items -->
                 <section class="order-card">
-                    <h2>Order Items</h2>
+                    <h2 th:text="#{order-details.heading.order-items}">Order Items</h2>
                     <table class="items-table">
                         <thead>
                         <tr>
@@ -478,7 +478,7 @@
             <!-- RIGHT: summary + actions -->
             <aside>
                 <section class="order-summary-card">
-                    <h2>Order Summary</h2>
+                    <h2 th:text="#{order-details.heading.order-summary}">Order Summary</h2>
 
                     <div class="summary-item">
                         <span>Items Subtotal</span>
@@ -507,7 +507,7 @@
                     <!-- QR Payment Box -->
                     <div th:if="${order.paymentMethod == 'BANK_TRANSFER' and order.orderStatus.name() == 'PENDING' and paymentQrUrl != null}"
                          class="payment-box">
-                        <h3>Payment Required</h3>
+                        <h3 th:text="#{order-details.heading.payment-required}">Payment Required</h3>
                         <p>⚠️ Please complete the payment to confirm your order.</p>
                         <img th:src="${paymentQrUrl}" alt="Payment QR Code" />
                         <p>Scan this QR code to complete your payment.</p>

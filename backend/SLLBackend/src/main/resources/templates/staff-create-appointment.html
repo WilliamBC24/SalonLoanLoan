@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Staff - Create Appointment | Salon Loan Loan</title>
+    <title th:text="#{staff-create-appointment.pageTitle}">Staff - Create Appointment | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes staff sidebar + staff-main scroll behaviour) -->
@@ -354,7 +354,7 @@
             <div class="staff-appointment-header-row">
                 <div class="staff-appointment-title-block section-heading">
                     <p class="section-kicker">Walk-in Customer</p>
-                    <h2>Create Appointment</h2>
+                    <h2 th:text="#{staff-create-appointment.heading.create-appointment}">Create Appointment</h2>
                 </div>
                 <div class="staff-appointment-actions">
                     <a href="/staff/registration/list" class="back-link-pill">
@@ -382,26 +382,26 @@
                     <div class="appointment-col">
                         <div class="appointment-card-inner">
                             <!-- Customer name -->
-                            <label for="customer-name" class="form-label">Customer Name *</label>
+                            <label for="customer-name" class="form-label" th:text="#{staff-create-appointment.label.customer-name-}">Customer Name *</label>
                             <input type="text"
                                    id="customer-name"
                                    name="name"
                                    class="form-input"
-                                   placeholder="Enter customer name"
+                                  th:placeholder="#{staff-create-appointment.placeholder.enter-customer-name}" placeholder="Enter customer name"
                                    required>
 
                             <!-- Phone number -->
-                            <label for="phone-number" class="form-label">Phone Number *</label>
+                            <label for="phone-number" class="form-label" th:text="#{staff-create-appointment.label.phone-number-}">Phone Number *</label>
                             <input type="tel"
                                    id="phone-number"
                                    name="phoneNumber"
                                    class="form-input"
-                                   placeholder="Enter phone number"
+                                  th:placeholder="#{staff-create-appointment.placeholder.enter-phone-number}" placeholder="Enter phone number"
                                    required>
                             <div id="phone-warning" class="field-note"></div>
 
                             <!-- Date -->
-                            <label for="appointment-date" class="form-label">Date *</label>
+                            <label for="appointment-date" class="form-label" th:text="#{staff-create-appointment.label.date-}">Date *</label>
                             <input type="date"
                                    id="appointment-date"
                                    name="appointmentDate"
@@ -410,7 +410,7 @@
                             <div id="date-warning" class="field-note"></div>
 
                             <!-- Time slot picker -->
-                            <label class="form-label">Time Slot *</label>
+                            <label class="form-label" th:text="#{staff-create-appointment.label.time-slot-}">Time Slot *</label>
                             <div id="time-slot-grid" class="time-slot-grid"></div>
 
                             <!-- Hidden input to store selected time -->
@@ -426,11 +426,11 @@
                     <div class="appointment-col">
                         <div class="appointment-card-inner">
                             <div class="service-search-wrapper">
-                                <label for="service-search" class="form-label">Search Services *</label>
+                                <label for="service-search" class="form-label" th:text="#{staff-create-appointment.label.search-services-}">Search Services *</label>
                                 <input type="text"
                                        id="service-search"
                                        class="form-input"
-                                       placeholder="Type to search services...">
+                                      th:placeholder="#{staff-create-appointment.placeholder.type-to-search-services}" placeholder="Type to search services...">
                                 <div class="field-note">
                                     Time slots update automatically so that the appointment finishes by 22:00.
                                 </div>
@@ -439,7 +439,7 @@
 
                             <!-- Staff selection -->
                             <div class="staff-select-wrapper">
-                                <label for="staff-select" class="form-label">Assign Staff (optional)</label>
+                                <label for="staff-select" class="form-label" th:text="#{staff-create-appointment.label.assign-staff-option}">Assign Staff (optional)</label>
                                 <select id="staff-select" name="staffId" class="form-input">
                                     <option value="">Assign automatically</option>
                                 </select>
@@ -452,7 +452,7 @@
                     <div class="appointment-col">
                         <div class="appointment-card-inner">
                             <!-- Selected services -->
-                            <label class="form-label">Selected Services *</label>
+                            <label class="form-label" th:text="#{staff-create-appointment.label.selected-services-}">Selected Services *</label>
                             <div class="selected-services">
                                 <div class="selected-services-header">Selected Services:</div>
                                 <div class="selected-services-inner">
@@ -486,9 +486,7 @@
 
                 <!-- Submit -->
                 <div class="submit-row">
-                    <button type="submit" class="btn-primary" id="submit-btn">
-                        Create Appointment
-                    </button>
+                    <button type="submit" class="btn-primary" id="submit-btn" th:text="#{staff-create-appointment.btn.create-appointment}">Create Appointment</button>
                 </div>
             </form>
         </section>
@@ -670,7 +668,7 @@
                 $("#selected-services-list").append(`
                     <li data-id="${id}" data-name="${name}">
                         ${name} - ${priceFormatted} - ${duration} min
-                        <button class="remove-service">Remove</button>
+                        <button class="remove-service" th:text="#{staff-create-appointment.btn.remove}">Remove</button>
                     </li>
                 `);
                 updateSummary();

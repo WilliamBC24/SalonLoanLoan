@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Create Provider | Salon Loan Loan</title>
+    <title th:text="#{manager-provider-create.pageTitle}">Manager - Create Provider | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (sidebar + layout) -->
@@ -211,7 +211,7 @@
             <div class="provider-header-row">
                 <div class="provider-title-block section-heading">
                     <p class="section-kicker">Provider Management</p>
-                    <h2>Create New Provider</h2>
+                    <h2 th:text="#{manager-provider-create.heading.create-new-provider}">Create New Provider</h2>
                 </div>
                 <div class="provider-actions">
                 </div>
@@ -227,7 +227,7 @@
                   class="form-grid">
                 <div>
                     <div class="form-group">
-                        <label for="supplierName" class="required">Provider Name</label>
+                        <label for="supplierName" class="required" th:text="#{manager-provider-create.label.provider-name}">Provider Name</label>
                         <input type="text"
                                id="supplierName"
                                name="supplierName"
@@ -239,7 +239,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="supplierCategoryId" class="required">Provider Category</label>
+                        <label for="supplierCategoryId" class="required" th:text="#{manager-provider-create.label.provider-category}">Provider Category</label>
                         <select id="supplierCategoryId" name="supplierCategoryId" required>
                             <option value="">-- Select Category --</option>
                             <option th:each="category : ${categories}"
@@ -254,7 +254,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="phoneNumber">Phone Number</label>
+                        <label for="phoneNumber" th:text="#{manager-provider-create.label.phone-number}">Phone Number</label>
                         <input type="text"
                                id="phoneNumber"
                                name="phoneNumber"
@@ -265,7 +265,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email" th:text="#{manager-provider-create.label.email}">Email</label>
                         <input type="email"
                                id="email"
                                name="email"
@@ -276,7 +276,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="note">Note</label>
+                        <label for="note" th:text="#{manager-provider-create.label.note}">Note</label>
                         <textarea id="note" name="note"></textarea>
                     </div>
 

@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Reports Dashboard | Salon Loan Loan</title>
+    <title th:text="#{manager-report-overall.pageTitle}">Manager - Reports Dashboard | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -338,7 +338,7 @@
             <div class="report-header-row">
                 <div class="report-title-block section-heading">
                     <p class="section-kicker">Manager Reports</p>
-                    <h2>Monthly Performance Overview</h2>
+                    <h2 th:text="#{manager-report-overall.heading.monthly-performance-overview}">Monthly Performance Overview</h2>
                     <p class="report-subtext">
                         Track this month’s revenue, costs, and key reports across appointments and orders.
                     </p>
@@ -445,7 +445,7 @@
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
-                                <h3 class="report-tile-title">Supplier Report</h3>
+                                <h3 class="report-tile-title" th:text="#{manager-report-overall.heading.supplier-report}">Supplier Report</h3>
                                 <span class="report-tile-meta">
                                     How much you spent on each supplier this month.
                                 </span>
@@ -499,7 +499,7 @@
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
-                                <h3 class="report-tile-title">Satisfaction Report</h3>
+                                <h3 class="report-tile-title" th:text="#{manager-report-overall.heading.satisfaction-report}">Satisfaction Report</h3>
                                 <span class="report-tile-meta">
                                     Customer satisfaction across appointments and product orders.
                                 </span>
@@ -550,7 +550,7 @@
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
-                                <h3 class="report-tile-title">Sales Report</h3>
+                                <h3 class="report-tile-title" th:text="#{manager-report-overall.heading.sales-report}">Sales Report</h3>
                                 <span class="report-tile-meta">
                                     See how much you made from appointments vs. product orders.
                                 </span>
@@ -604,7 +604,7 @@
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
-                                <h3 class="report-tile-title">Expense Report</h3>
+                                <h3 class="report-tile-title" th:text="#{manager-report-overall.heading.expense-report}">Expense Report</h3>
                                 <span class="report-tile-meta">
                                     Breakdown of expenses by category for this month.
                                 </span>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Edit Order Status</title>
+    <title th:text="#{order-edit.pageTitle}">Edit Order Status</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -181,7 +181,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Edit Order Status</h1>
+        <h1 th:text="#{order-edit.heading.edit-order-status}">Edit Order Status</h1>
         <a th:href="@{/order/details(orderId=${order.id})}" class="back-link">← Back to Order Details</a>
     </div>
 
@@ -192,7 +192,7 @@
     <div class="card">
         <!-- Current Order Information -->
         <div class="form-section">
-            <h2>Order Information</h2>
+            <h2 th:text="#{order-edit.heading.order-information}">Order Information</h2>
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">Order ID</span>
@@ -227,9 +227,9 @@
             <input type="hidden" name="orderId" th:value="${order.id}" />
             
             <div class="form-section">
-                <h2>Update Order Status</h2>
+                <h2 th:text="#{order-edit.heading.update-order-status}">Update Order Status</h2>
                 <div class="form-group">
-                    <label for="orderStatus">New Status *</label>
+                    <label for="orderStatus" th:text="#{order-edit.label.new-status-}">New Status *</label>
                     <select id="orderStatus" name="orderStatus" required>
                         <option value="">-- Select New Status --</option>
                         <option th:each="status : ${orderStatuses}" 
@@ -245,7 +245,7 @@
             </div>
 
             <div class="actions">
-                <button type="submit" class="btn btn-primary">Update Status</button>
+                <button type="submit" class="btn btn-primary" th:text="#{order-edit.btn.update-status}">Update Status</button>
                 <a th:href="@{/order/details(orderId=${order.id})}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>

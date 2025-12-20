@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Checkout | Salon Loan Loan</title>
+    <title th:text="#{order-checkout.pageTitle}">Checkout | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -311,7 +311,7 @@
     <div class="container">
 
         <div class="checkout-header-row">
-            <h1 class="checkout-title">Checkout</h1>
+            <h1 class="checkout-title" th:text="#{order-checkout.heading.checkout}">Checkout</h1>
             <a href="/cart" class="back-link">← Back to Cart</a>
         </div>
 
@@ -329,7 +329,7 @@
 
                     <!-- Fulfillment Type Selection -->
                     <div class="form-section">
-                        <h2>1. How would you like to receive your order?</h2>
+                        <h2 th:text="#{order-checkout.heading.1-how-would-you-like-to-recei}">1. How would you like to receive your order?</h2>
 
                         <div class="fulfillment-options">
                             <label class="fulfillment-option selected" onclick="selectFulfillment(this)">
@@ -356,50 +356,46 @@
 
                     <!-- Customer Information -->
                     <div class="form-section">
-                        <h2>2. Customer Information</h2>
+                        <h2 th:text="#{order-checkout.heading.2-customer-information}">2. Customer Information</h2>
 
                         <div class="form-group">
-                            <label class="form-label" for="customerName">Full Name *</label>
+                            <label class="form-label" for="customerName" th:text="#{order-checkout.label.full-name-}">Full Name *</label>
                             <input class="form-input" type="text" id="customerName" name="customerName" required />
                             <span class="error" id="nameError">Please enter your full name</span>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="phoneNumber">Phone Number *</label>
+                            <label class="form-label" for="phoneNumber" th:text="#{order-checkout.label.phone-number-}">Phone Number *</label>
                             <input class="form-input" type="tel" id="phoneNumber" name="phoneNumber"
-                                   placeholder="0123456789" required />
+                                  th:placeholder="#{order-checkout.placeholder.0123456789}" placeholder="0123456789" required />
                             <span class="error" id="phoneError">Please enter a valid phone number</span>
                         </div>
                     </div>
 
                     <!-- Voucher -->
                     <div class="form-section">
-                        <h2>3. Voucher</h2>
+                        <h2 th:text="#{order-checkout.heading.3-voucher}">3. Voucher</h2>
 
                         <div class="form-group">
-                            <label class="form-label" for="voucherCode">Voucher Code</label>
+                            <label class="form-label" for="voucherCode" th:text="#{order-checkout.label.voucher-code}">Voucher Code</label>
 
                             <div style="display:flex; gap:0.6rem; align-items:center;">
                                 <input class="form-input"
                                        type="text"
                                        id="voucherCode"
                                        name="voucherCode"
-                                       placeholder="Choose a voucher…"
+                                      th:placeholder="#{order-checkout.placeholder.choose-a-voucher}" placeholder="Choose a voucher…"
                                        readonly />
 
                                 <button type="button"
                                         class="btn-primary"
                                         style="border-radius:999px; padding:0.75rem 1.1rem; white-space:nowrap;"
-                                        onclick="openVoucherModal()">
-                                    Choose
-                                </button>
+                                        onclick="openVoucherModal()" th:text="#{order-checkout.btn.choose}">Choose</button>
 
                                 <button type="button"
                                         class="btn-secondary"
                                         style="border-radius:999px; padding:0.75rem 1.1rem; white-space:nowrap;"
-                                        onclick="clearVoucher()">
-                                    Clear
-                                </button>
+                                        onclick="clearVoucher()" th:text="#{order-checkout.btn.clear}">Clear</button>
                             </div>
 
                             <span class="error" id="voucherError">Unable to load vouchers. Please try again.</span>
@@ -409,10 +405,10 @@
 
                     <!-- Delivery Information -->
                     <div class="form-section" id="deliverySection">
-                        <h2>3. Delivery Address</h2>
+                        <h2 th:text="#{order-checkout.heading.3-delivery-address}">3. Delivery Address</h2>
 
                         <div class="form-group">
-                            <label class="form-label" for="city">City *</label>
+                            <label class="form-label" for="city" th:text="#{order-checkout.label.city-}">City *</label>
                             <select class="form-select" id="city" name="city" required>
                                 <option value="">Select a city</option>
                                 <option value="Hanoi">Hanoi</option>
@@ -500,25 +496,25 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="ward">Ward/District (Optional)</label>
+                            <label class="form-label" for="ward" th:text="#{order-checkout.label.warddistrict-optio}">Ward/District (Optional)</label>
                             <select class="form-select" id="ward" name="ward">
                                 <option value="">Select city first</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="shippingAddress">Street Address *</label>
+                            <label class="form-label" for="shippingAddress" th:text="#{order-checkout.label.street-address-}">Street Address *</label>
                             <textarea class="form-textarea"
                                       id="shippingAddress"
                                       name="shippingAddress"
-                                      placeholder="Enter your street address (house number, street name)"></textarea>
+                                     th:placeholder="#{order-checkout.placeholder.enter-your-street-address}" placeholder="Enter your street address (house number, street name)"></textarea>
                             <span class="error" id="addressError">Please enter your street address</span>
                         </div>
                     </div>
 
                     <!-- Pickup Information (shown only for in-store pickup) -->
                     <div class="form-section hidden" id="pickupSection">
-                        <h2>3. Pickup Information</h2>
+                        <h2 th:text="#{order-checkout.heading.3-pickup-information}">3. Pickup Information</h2>
                         <div class="pickup-info">
                             <p><strong>📍 Pickup Location:</strong> Salon Loan Loan</p>
                             <p style="margin-top: 0.5rem;">We will notify you by email when your order is ready for pickup.</p>
@@ -527,7 +523,7 @@
 
                     <!-- Payment Method -->
                     <div class="form-section">
-                        <h2 id="paymentSectionTitle">4. Payment Method</h2>
+                        <h2 id="paymentSectionTitle" th:text="#{order-checkout.heading.4-payment-method}">4. Payment Method</h2>
 
                         <div class="payment-options" id="paymentOptions">
                             <label class="payment-option" id="bankTransferOption" onclick="selectPayment(this)">
@@ -564,15 +560,13 @@
                         <span class="error" id="paymentError">Please select a payment method</span>
                     </div>
 
-                    <button type="submit" class="btn-primary place-order-btn">
-                        Place Order
-                    </button>
+                    <button type="submit" class="btn-primary place-order-btn" th:text="#{order-checkout.btn.place-order}">Place Order</button>
                 </form>
             </div>
 
             <!-- Right: Summary -->
             <div class="summary-card">
-                <h2>Order Summary</h2>
+                <h2 th:text="#{order-checkout.heading.order-summary}">Order Summary</h2>
 
                 <div class="summary-item">
                     <span>Items</span>
@@ -614,8 +608,8 @@
 
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="voucherModalTitle">
         <div class="modal-header">
-            <h3 id="voucherModalTitle" style="margin:0; font-size:1.1rem;">Choose a voucher</h3>
-            <button type="button" class="modal-close" onclick="closeVoucherModal()">✕</button>
+            <h3 id="voucherModalTitle" style="margin:0; font-size:1.1rem;" th:text="#{order-checkout.heading.choose-a-voucher}">Choose a voucher</h3>
+            <button type="button" class="modal-close" onclick="closeVoucherModal()" th:text="#{order-checkout.btn.}">✕</button>
         </div>
 
         <div class="modal-body">

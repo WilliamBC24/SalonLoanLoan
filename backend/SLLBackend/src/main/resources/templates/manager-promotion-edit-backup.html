@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Edit Promotion</title>
+    <title th:text="#{manager-promotion-edit-backup.pageTitle}">Edit Promotion</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -72,7 +72,7 @@
     </style>
 </head>
 <body>
-    <h1>Edit Promotion</h1>
+    <h1 th:text="#{manager-promotion-edit-backup.heading.edit-promotion}">Edit Promotion</h1>
     
     <form id="promotionForm" method="post" th:action="@{/manager/promotion/edit/{id}(id=${promotion.id})}">
         <div class="form-group">
@@ -82,7 +82,7 @@
         </div>
 
         <div class="form-group">
-            <label for="promotionDescription">Description:</label>
+            <label for="promotionDescription" th:text="#{manager-promotion-edit-backup.label.description}">Description:</label>
             <textarea id="promotionDescription" name="promotionDescription" th:text="${promotion.promotionDescription}"></textarea>
         </div>
 
@@ -129,8 +129,8 @@
         </div>
 
         <div class="buttons">
-            <button type="submit" class="submit-btn">Update Promotion</button>
-            <button type="button" class="cancel-btn" onclick="window.location.href='/manager/promotion/list'">Cancel</button>
+            <button type="submit" class="submit-btn" th:text="#{manager-promotion-edit-backup.btn.update-promotion}">Update Promotion</button>
+            <button type="button" class="cancel-btn" onclick="window.location.href='/manager/promotion/list'" th:text="#{manager-promotion-edit-backup.btn.cancel}">Cancel</button>
         </div>
     </form>
 

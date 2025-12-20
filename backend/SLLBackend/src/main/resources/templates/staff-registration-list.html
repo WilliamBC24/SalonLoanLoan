@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Manage Registrations | Salon Loan Loan</title>
+    <title th:text="#{staff-registration-list.pageTitle}">Staff - Manage Registrations | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -296,7 +296,7 @@
             <div class="registration-header-row">
                 <div class="registration-title-block section-heading">
                     <p class="section-kicker">Appointment Management</p>
-                    <h2>Staff Registrations</h2>
+                    <h2 th:text="#{staff-registration-list.heading.staff-registrations}">Staff Registrations</h2>
                 </div>
                 <div class="registration-actions">
                 </div>
@@ -311,7 +311,7 @@
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <h3 th:text="#{staff-registration-list.heading.search-andamp-filters}">Search &amp; Filters</h3>
                     </div>
                 </div>
 
@@ -319,17 +319,17 @@
                     <div class="search-form">
                         <!-- Name search -->
                         <div class="filter-group">
-                            <label for="search-name">Search by Phone Number</label>
+                            <label for="search-name" th:text="#{staff-registration-list.label.search-by-phone-numb}">Search by Phone Number</label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter phone number..." />
+                                  th:placeholder="#{staff-registration-list.placeholder.enter-phone-number}" placeholder="Enter phone number..." />
                         </div>
 
                         <!-- Appointment status checkboxes -->
                         <div class="filter-group">
-                            <label>Registration Status</label>
+                            <label th:text="#{staff-registration-list.label.registration-status}">Registration Status</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item" th:each="status : ${allStatuses}">
                                     <input type="checkbox"

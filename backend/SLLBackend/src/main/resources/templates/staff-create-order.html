@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Staff - Create In-store Order | Salon Loan Loan</title>
+    <title th:text="#{staff-create-order.pageTitle}">Staff - Create In-store Order | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
@@ -327,7 +327,7 @@
             <div class="staff-order-header-row">
                 <div>
                     <p class="section-kicker">In-store Sale</p>
-                    <h2>Create Order</h2>
+                    <h2 th:text="#{staff-create-order.heading.create-order}">Create Order</h2>
                 </div>
                 <div class="staff-order-actions">
                     <a href="/staff/order/list" class="back-link-pill">
@@ -356,7 +356,7 @@
                     <div class="order-col">
                         <div class="order-card-inner">
 
-                            <label class="form-label">Assigned User (optional)</label>
+                            <label class="form-label" th:text="#{staff-create-order.label.assigned-user-optio}">Assigned User (optional)</label>
                             <div class="user-search-wrapper">
                                 <!-- Hidden: username of system user -->
                                 <input type="hidden" name="username" id="username"/>
@@ -365,7 +365,7 @@
                                 <input type="text"
                                        id="userSearch"
                                        class="form-input"
-                                       placeholder="Search user by phone or username..."/>
+                                      th:placeholder="#{staff-create-order.placeholder.search-user-by-phone-or-u}" placeholder="Search user by phone or username..."/>
 
                                 <div id="userResults"></div>
                             </div>
@@ -374,7 +374,7 @@
                                 If no user is chosen, this order will not be linked to any account.
                             </div>
 
-                            <label class="form-label" for="paymentMethod">Payment Method *</label>
+                            <label class="form-label" for="paymentMethod" th:text="#{staff-create-order.label.payment-method-}">Payment Method *</label>
                             <select id="paymentMethod" name="paymentMethod" class="form-select" required>
                                 <!-- in-store pickup allowed: BANK_TRANSFER, IN_STORE -->
                                 <option value="IN_STORE">Pay at counter (IN_STORE)</option>
@@ -391,17 +391,17 @@
                     <div class="order-col">
                         <div class="order-card-inner">
                             <div class="product-search-wrapper">
-                                <label class="form-label" for="productSearch">Add Products *</label>
+                                <label class="form-label" for="productSearch" th:text="#{staff-create-order.label.add-products-}">Add Products *</label>
                                 <input type="text" id="productSearch"
                                        class="form-input"
-                                       placeholder="Search products by name or code...">
+                                      th:placeholder="#{staff-create-order.placeholder.search-products-by-name-o}" placeholder="Search products by name or code...">
 
                                 <div id="productResults"></div>
                             </div>
 
                             <div class="order-items-wrapper">
                                 <div class="order-items-header">
-                                    <h4>Order Items</h4>
+                                    <h4 th:text="#{staff-create-order.heading.order-items}">Order Items</h4>
                                     <span id="items-count-label" class="field-note">No items yet</span>
                                 </div>
 
@@ -452,9 +452,7 @@
                 </div>
 
                 <div class="submit-row">
-                    <button type="submit" class="btn-primary">
-                        Create Order
-                    </button>
+                    <button type="submit" class="btn-primary" th:text="#{staff-create-order.btn.create-order}">Create Order</button>
                 </div>
             </form>
         </section>
@@ -495,7 +493,7 @@
                         </td>
                         <td class="subtotal-cell">${formatMoney(lineSubtotal)}</td>
                         <td>
-                            <button type="button" class="remove-item-btn">Remove</button>
+                            <button type="button" class="remove-item-btn" th:text="#{staff-create-order.btn.remove}">Remove</button>
                         </td>
                     </tr>
                 `;

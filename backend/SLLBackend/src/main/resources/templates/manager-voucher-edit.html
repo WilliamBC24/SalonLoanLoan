@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Edit Voucher | Salon Loan Loan</title>
+    <title th:text="#{manager-voucher-edit.pageTitle}">Manager - Edit Voucher | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles -->
@@ -215,7 +215,7 @@
             <header class="voucher-edit-header">
                 <div class="voucher-edit-title-block section-heading">
                     <p class="section-kicker">Voucher Management</p>
-                    <h2>Edit Voucher</h2>
+                    <h2 th:text="#{manager-voucher-edit.heading.edit-voucher}">Edit Voucher</h2>
                 </div>
                 <div class="voucher-edit-actions">
                     <a href="/manager/voucher/list" class="back-link-pill">
@@ -234,7 +234,7 @@
                 <div class="voucher-form-grid">
 
                     <div class="form-group">
-                        <label for="voucherName" class="form-label required">Voucher Name</label>
+                        <label for="voucherName" class="form-label required" th:text="#{manager-voucher-edit.label.voucher-name}">Voucher Name</label>
                         <input type="text"
                                id="voucherName"
                                name="voucherName"
@@ -245,7 +245,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="voucherCode" class="form-label required">Voucher Code</label>
+                        <label for="voucherCode" class="form-label required" th:text="#{manager-voucher-edit.label.voucher-code}">Voucher Code</label>
                         <input type="text"
                                id="voucherCode"
                                name="voucherCode"
@@ -256,7 +256,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="discountType" class="form-label required">Discount Type</label>
+                        <label for="discountType" class="form-label required" th:text="#{manager-voucher-edit.label.discount-type}">Discount Type</label>
                         <select id="discountType" name="discountType" class="form-control" required>
                             <option value="">Select Discount Type</option>
                             <option value="AMOUNT" th:selected="${voucher.discountType.toString() == 'AMOUNT'}">Amount</option>
@@ -266,7 +266,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="discountAmount" class="form-label required">Discount Amount</label>
+                        <label for="discountAmount" class="form-label required" th:text="#{manager-voucher-edit.label.discount-amount}">Discount Amount</label>
                         <input type="number"
                                id="discountAmount"
                                name="discountAmount"
@@ -278,7 +278,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="effectiveFrom" class="form-label required">Effective From</label>
+                        <label for="effectiveFrom" class="form-label required" th:text="#{manager-voucher-edit.label.effective-from}">Effective From</label>
                         <input type="datetime-local"
                                id="effectiveFrom"
                                name="effectiveFrom"
@@ -289,7 +289,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="effectiveTo" class="form-label required">Effective To</label>
+                        <label for="effectiveTo" class="form-label required" th:text="#{manager-voucher-edit.label.effective-to}">Effective To</label>
                         <input type="datetime-local"
                                id="effectiveTo"
                                name="effectiveTo"
@@ -302,7 +302,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="maxUsage" class="form-label required">Max Usage</label>
+                        <label for="maxUsage" class="form-label required" th:text="#{manager-voucher-edit.label.max-usage}">Max Usage</label>
                         <input type="number"
                                id="maxUsage"
                                name="maxUsage"
@@ -314,7 +314,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Used Count</label>
+                        <label class="form-label" th:text="#{manager-voucher-edit.label.used-count}">Used Count</label>
                         <input type="number"
                                class="form-control"
                                th:value="${voucher.usedCount}"
@@ -322,7 +322,7 @@
                     </div>
 
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <label for="voucherDescription" class="form-label required">Voucher Description</label>
+                        <label for="voucherDescription" class="form-label required" th:text="#{manager-voucher-edit.label.voucher-description}">Voucher Description</label>
                         <textarea id="voucherDescription"
                                   name="voucherDescription"
                                   class="form-control"
@@ -332,7 +332,7 @@
                     </div>
 
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <label for="voucherStatusId" class="form-label required">Voucher Status</label>
+                        <label for="voucherStatusId" class="form-label required" th:text="#{manager-voucher-edit.label.voucher-status}">Voucher Status</label>
                         <select id="voucherStatusId" name="voucherStatusId" class="form-control" required>
                             <option value="">Select Status</option>
                             <option th:each="status : ${statuses}"

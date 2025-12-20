@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Appointment Details | Salon Loan Loan</title>
+    <title th:text="#{user-appointment-history-detail.pageTitle}">Appointment Details | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -253,7 +253,7 @@
             <!-- Top header -->
             <div class="appointment-header-row">
                 <div class="appointment-title">
-                    <h2>Appointment Details</h2>
+                    <h2 th:text="#{user-appointment-history-detail.heading.appointment-details}">Appointment Details</h2>
                     <p class="appointment-sub">
                         Review your booking information and services.
                     </p>
@@ -273,7 +273,7 @@
             </div>
 
             <!-- Appointment meta -->
-            <h3 class="meta-section-title">Appointment Summary</h3>
+            <h3 class="meta-section-title" th:text="#{user-appointment-history-detail.heading.appointment-summary}">Appointment Summary</h3>
 
             <div class="appointment-meta-grid">
                 <div class="meta-item">
@@ -351,7 +351,7 @@
 
             <!-- Services -->
             <div class="services-section" th:if="${requestedServices != null and !#lists.isEmpty(requestedServices)}">
-                <h3 class="meta-section-title">Requested Services</h3>
+                <h3 class="meta-section-title" th:text="#{user-appointment-history-detail.heading.requested-services}">Requested Services</h3>
 
                 <div class="services-header-row">
                     <span>Service</span>

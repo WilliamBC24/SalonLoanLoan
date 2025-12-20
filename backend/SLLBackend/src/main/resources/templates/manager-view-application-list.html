@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Job Applications | Salon Loan Loan</title>
+    <title th:text="#{manager-view-application-list.pageTitle}">Manager - Job Applications | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -248,7 +248,7 @@
             <div class="job-app-header-row">
                 <div class="job-app-title-block section-heading">
                     <p class="section-kicker">HR &amp; Staffing</p>
-                    <h2>Job Applications</h2>
+                    <h2 th:text="#{manager-view-application-list.heading.job-applications}">Job Applications</h2>
                 </div>
                 <div class="job-app-actions">
                 </div>
@@ -260,7 +260,7 @@
 
             <!-- Empty state -->
             <div th:if="${#lists.isEmpty(applications)}" class="empty-state">
-                <h2>No Applications Found</h2>
+                <h2 th:text="#{manager-view-application-list.heading.no-applications-found}">No Applications Found</h2>
                 <p>There are currently no job applications to review.</p>
             </div>
 

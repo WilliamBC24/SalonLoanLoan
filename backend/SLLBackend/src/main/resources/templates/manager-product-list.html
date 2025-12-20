@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Manage Products | Salon Loan Loan</title>
+    <title th:text="#{manager-product-list.pageTitle}">Manager - Manage Products | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -331,7 +331,7 @@
             <div class="products-header-row">
                 <div class="products-title-block section-heading">
                     <p class="section-kicker">Inventory Management</p>
-                    <h2>Manage Products</h2>
+                    <h2 th:text="#{manager-product-list.heading.manage-products}">Manage Products</h2>
                 </div>
                 <div class="products-actions">
                     <a href="/manager/products/create" class="create-btn-pill">
@@ -350,23 +350,23 @@
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <h3 th:text="#{manager-product-list.heading.search-andamp-filters}">Search &amp; Filters</h3>
                     </div>
                 </div>
 
                 <form method="get" action="/manager/products/list">
                     <div class="search-form">
                         <div class="filter-group">
-                            <label for="search-name">Search by Name</label>
+                            <label for="search-name" th:text="#{manager-product-list.label.search-by-name}">Search by Name</label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter product name..." />
+                                  th:placeholder="#{manager-product-list.placeholder.enter-product-name}" placeholder="Enter product name..." />
                         </div>
 
                         <div class="filter-group">
-                            <label>Active Status</label>
+                            <label th:text="#{manager-product-list.label.active-status}">Active Status</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -374,7 +374,7 @@
                                            name="activeStatus"
                                            value=""
                                            th:checked="${selectedActiveStatus == null}">
-                                    <label for="status-all">All</label>
+                                    <label for="status-all" th:text="#{manager-product-list.label.all}">All</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -382,7 +382,7 @@
                                            name="activeStatus"
                                            value="true"
                                            th:checked="${selectedActiveStatus != null and selectedActiveStatus == true}">
-                                    <label for="status-active">Active Only</label>
+                                    <label for="status-active" th:text="#{manager-product-list.label.active-only}">Active Only</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -390,7 +390,7 @@
                                            name="activeStatus"
                                            value="false"
                                            th:checked="${selectedActiveStatus != null and selectedActiveStatus == false}">
-                                    <label for="status-inactive">Inactive Only</label>
+                                    <label for="status-inactive" th:text="#{manager-product-list.label.inactive-only}">Inactive Only</label>
                                 </div>
                             </div>
                         </div>

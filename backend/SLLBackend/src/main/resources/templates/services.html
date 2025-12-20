@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Services | Salon Loan Loan</title>
+    <title th:text="#{services.pageTitle}">Services | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -79,7 +79,7 @@
             <!-- Page title -->
             <div class="section-heading text-center">
                 <p class="section-kicker">Service Management</p>
-                <h2>All Services</h2>
+                <h2 th:text="#{services.heading.all-services}">All Services</h2>
             </div>
 
             <!-- SEARCH + FILTER BAR -->
@@ -88,18 +88,18 @@
 
                     <!-- NAME SEARCH -->
                     <div class="filter-group">
-                        <label for="search-name">Search by Name</label>
+                        <label for="search-name" th:text="#{services.label.search-by-name}">Search by Name</label>
                         <input type="text"
                                id="search-name"
                                name="name"
                                class="search-input"
                                th:value="${searchName}"
-                               placeholder="Enter service name...">
+                              th:placeholder="#{services.placeholder.enter-service-name}" placeholder="Enter service name...">
                     </div>
 
                     <!-- TYPE FILTER -->
                     <div class="filter-group">
-                        <label>Service Type</label>
+                        <label th:text="#{services.label.service-type}">Service Type</label>
                         <div class="checkbox-group">
                             <label class="checkbox-item">
                                 <input type="checkbox" value="SINGLE" name="types"
@@ -117,7 +117,7 @@
 
                     <!-- CATEGORY FILTER -->
                     <div class="filter-group">
-                        <label>Service Category</label>
+                        <label th:text="#{services.label.service-category}">Service Category</label>
                         <div class="checkbox-group">
                             <label class="checkbox-item" th:each="category : ${allCategories}">
                                 <input type="checkbox"
@@ -132,11 +132,9 @@
 
                     <!-- BUTTONS -->
                     <div class="search-buttons">
-                        <button class="btn-primary" type="submit">Search</button>
+                        <button class="btn-primary" type="submit" th:text="#{services.btn.search}">Search</button>
                         <button class="btn-outline" type="button"
-                                onclick="window.location.href='/services'">
-                            Reset
-                        </button>
+                                onclick="window.location.href='/services'" th:text="#{services.btn.reset}">Reset</button>
                     </div>
 
                 </form>

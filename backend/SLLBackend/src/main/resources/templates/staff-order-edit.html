@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Edit Order Status | Salon Loan Loan</title>
+    <title th:text="#{staff-order-edit.pageTitle}">Staff - Edit Order Status | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (sidebar + staff-main behaviour) -->
@@ -358,7 +358,7 @@
             <div class="orders-edit-header-row">
                 <div class="orders-edit-title-block section-heading">
                     <p class="section-kicker">Online Orders</p>
-                    <h2>Edit Order Status</h2>
+                    <h2 th:text="#{staff-order-edit.heading.edit-order-status}">Edit Order Status</h2>
                 </div>
                 <div class="orders-edit-actions">
                     <a th:href="@{/staff/order/list(orderId=${order.id})}" class="back-link-pill">
@@ -441,7 +441,7 @@
                     </h3>
 
                     <div class="form-group">
-                        <label for="orderStatus">New Status *</label>
+                        <label for="orderStatus" th:text="#{staff-order-edit.label.new-status-}">New Status *</label>
                         <select id="orderStatus"
                                 name="orderStatus"
                                 th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'PICKED_UP' and order.orderStatus.name() != 'CANCELLED'}"

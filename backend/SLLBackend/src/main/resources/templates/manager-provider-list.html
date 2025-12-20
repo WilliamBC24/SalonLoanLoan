@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Manage Providers | Salon Loan Loan</title>
+    <title th:text="#{manager-provider-list.pageTitle}">Manager - Manage Providers | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -328,7 +328,7 @@
             <div class="providers-header-row">
                 <div class="providers-title-block section-heading">
                     <p class="section-kicker">Supplier Management</p>
-                    <h2>Manage Providers</h2>
+                    <h2 th:text="#{manager-provider-list.heading.manage-providers}">Manage Providers</h2>
                 </div>
                 <div class="providers-actions">
                     <a href="/manager/supplier/create" class="create-btn-pill">
@@ -347,23 +347,23 @@
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <h3 th:text="#{manager-provider-list.heading.search-andamp-filters}">Search &amp; Filters</h3>
                     </div>
                 </div>
 
                 <form method="get" action="/manager/supplier/list">
                     <div class="search-form">
                         <div class="filter-group">
-                            <label for="search-name">Search by Name</label>
+                            <label for="search-name" th:text="#{manager-provider-list.label.search-by-name}">Search by Name</label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter provider name..." />
+                                  th:placeholder="#{manager-provider-list.placeholder.enter-provider-name}" placeholder="Enter provider name..." />
                         </div>
 
                         <div class="filter-group">
-                            <label>Provider Categories</label>
+                            <label th:text="#{manager-provider-list.label.provider-categories}">Provider Categories</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item" th:each="category : ${allCategories}">
                                     <input type="checkbox"

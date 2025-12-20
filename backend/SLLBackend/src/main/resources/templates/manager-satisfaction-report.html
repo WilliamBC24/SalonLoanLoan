@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Satisfaction Report | Salon Loan Loan</title>
+    <title th:text="#{manager-satisfaction-report.pageTitle}">Manager - Satisfaction Report | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -363,7 +363,7 @@
             <div class="report-header-row">
                 <div class="report-header-title section-heading">
                     <p class="section-kicker">Satisfaction</p>
-                    <h2>Satisfaction Report</h2>
+                    <h2 th:text="#{manager-satisfaction-report.heading.satisfaction-report}">Satisfaction Report</h2>
                     <p class="report-header-sub">
                         Track how satisfied customers are with appointments and product orders.
                     </p>
@@ -389,7 +389,7 @@
                       method="get">
                     <div class="filter-fields">
                         <div class="filter-group">
-                            <label for="month-select">Month</label>
+                            <label for="month-select" th:text="#{manager-satisfaction-report.label.month}">Month</label>
                             <select id="month-select" name="month">
                                 <option th:each="m : ${monthOptions}"
                                         th:value="${m}"
@@ -401,7 +401,7 @@
                         </div>
 
                         <div class="filter-group">
-                            <label for="year-select">Year</label>
+                            <label for="year-select" th:text="#{manager-satisfaction-report.label.year}">Year</label>
                             <select id="year-select" name="year">
                                 <option th:each="y : ${yearOptions}"
                                         th:value="${y}"
@@ -469,7 +469,7 @@
             <section>
                 <div class="satisfaction-table-section-header">
                     <div class="satisfaction-table-title">
-                        <h3>Satisfaction by segment</h3>
+                        <h3 th:text="#{manager-satisfaction-report.heading.satisfaction-by-segment}">Satisfaction by segment</h3>
                         <span>
                             Overview of ratings and response counts.
                         </span>

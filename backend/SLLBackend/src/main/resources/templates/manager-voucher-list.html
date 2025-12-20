@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Manage Vouchers | Salon Loan Loan</title>
+    <title th:text="#{manager-voucher-list.pageTitle}">Manager - Manage Vouchers | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -295,7 +295,7 @@
             <div class="voucher-header-row">
                 <div class="voucher-title-block section-heading">
                     <p class="section-kicker">Marketing &amp; Offers</p>
-                    <h2>Manage Vouchers</h2>
+                    <h2 th:text="#{manager-voucher-list.heading.manage-vouchers}">Manage Vouchers</h2>
                 </div>
                 <a href="/manager/voucher/create" class="create-btn-pill">
                     ✚ <span>Create New Voucher</span>
@@ -311,25 +311,25 @@
                 <form method="get" action="/manager/voucher/list">
                     <div class="filter-grid">
                         <div class="filter-group">
-                            <label for="search-code">Search by Code</label>
+                            <label for="search-code" th:text="#{manager-voucher-list.label.search-by-code}">Search by Code</label>
                             <input type="text"
                                    id="search-code"
                                    name="code"
                                    th:value="${searchCode}"
-                                   placeholder="Enter voucher code...">
+                                  th:placeholder="#{manager-voucher-list.placeholder.enter-voucher-code}" placeholder="Enter voucher code...">
                         </div>
 
                         <div class="filter-group">
-                            <label for="search-name">Search by Name</label>
+                            <label for="search-name" th:text="#{manager-voucher-list.label.search-by-name}">Search by Name</label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter voucher name...">
+                                  th:placeholder="#{manager-voucher-list.placeholder.enter-voucher-name}" placeholder="Enter voucher name...">
                         </div>
 
                         <div class="filter-group">
-                            <label for="discount-type">Discount Type</label>
+                            <label for="discount-type" th:text="#{manager-voucher-list.label.discount-type}">Discount Type</label>
                             <select id="discount-type" name="discountType">
                                 <option value="">All types</option>
                                 <option value="AMOUNT"
@@ -344,7 +344,7 @@
                         </div>
 
                         <div class="filter-group">
-                            <label for="status">Status</label>
+                            <label for="status" th:text="#{manager-voucher-list.label.status}">Status</label>
                             <select id="status" name="statusId">
                                 <option value="">All statuses</option>
                                 <option th:each="status : ${allStatuses}"

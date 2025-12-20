@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Create Service | Salon Loan Loan</title>
+    <title th:text="#{manager-service-create.pageTitle}">Manager - Create Service | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (includes sidebar + staff-main scroll behaviour) -->
@@ -234,7 +234,7 @@
             <div class="service-create-header-row">
                 <div class="service-create-title-block section-heading">
                     <p class="section-kicker">Service Management</p>
-                    <h2>Create New Service</h2>
+                    <h2 th:text="#{manager-service-create.heading.create-new-service}">Create New Service</h2>
                 </div>
                 <div class="service-create-actions">
 
@@ -251,7 +251,7 @@
                   class="form-grid">
                 <div>
                     <div class="form-group">
-                        <label for="serviceName" class="required">Service Name</label>
+                        <label for="serviceName" class="required" th:text="#{manager-service-create.label.service-name}">Service Name</label>
                         <input type="text" id="serviceName" name="serviceName" required>
                         <div class="error" id="serviceNameError">Service name is required</div>
                         <div class="warning" id="serviceNameWarning">
@@ -260,7 +260,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceCategoryId" class="required">Service Category</label>
+                        <label for="serviceCategoryId" class="required" th:text="#{manager-service-create.label.service-category}">Service Category</label>
                         <select id="serviceCategoryId" name="serviceCategoryId" required>
                             <option value="">-- Select Category --</option>
                             <option th:each="category : ${categories}"
@@ -273,7 +273,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceType" class="required">Service Type</label>
+                        <label for="serviceType" class="required" th:text="#{manager-service-create.label.service-type}">Service Type</label>
                         <select id="serviceType" name="serviceType" required>
                             <option value="">-- Select Type --</option>
                             <option value="SINGLE">Single</option>
@@ -285,7 +285,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="servicePrice" class="required">Service Price (VND)</label>
+                        <label for="servicePrice" class="required" th:text="#{manager-service-create.label.service-price-vnd}">Service Price (VND)</label>
                         <input type="number" id="servicePrice" name="servicePrice" min="0" required>
                         <div class="error" id="servicePriceError">
                             Service price is required and must be a positive number
@@ -293,7 +293,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="durationMinutes" class="required">Duration (minutes)</label>
+                        <label for="durationMinutes" class="required" th:text="#{manager-service-create.label.duration-minutes}">Duration (minutes)</label>
                         <input type="number" id="durationMinutes" name="durationMinutes" min="1" max="32767" required>
                         <div class="error" id="durationMinutesError">
                             Duration is required and must be between 1 and 32767 minutes
@@ -301,14 +301,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceDescription">Service Description</label>
+                        <label for="serviceDescription" th:text="#{manager-service-create.label.service-description}">Service Description</label>
                         <textarea id="serviceDescription" name="serviceDescription"></textarea>
                     </div>
 
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="activeStatus" name="activeStatus" value="true">
-                            <label for="activeStatus">Active Status</label>
+                            <label for="activeStatus" th:text="#{manager-service-create.label.active-status}">Active Status</label>
                         </div>
                     </div>
 

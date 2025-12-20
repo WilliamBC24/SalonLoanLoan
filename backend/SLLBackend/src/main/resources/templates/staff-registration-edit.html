@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8"/>
-    <title>Staff - Edit Appointment | Salon Loan Loan</title>
+    <title th:text="#{staff-registration-edit.pageTitle}">Staff - Edit Appointment | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Global staff layout styles -->
@@ -452,7 +452,7 @@
             <div class="header-row">
                 <div class="header-title-block">
                     <p class="section-kicker">Appointment Management</p>
-                    <h2>Edit Appointment</h2>
+                    <h2 th:text="#{staff-registration-edit.heading.edit-appointment}">Edit Appointment</h2>
                 </div>
                 <a class="back-link-pill" onclick="window.history.back()">← Back</a>
             </div>
@@ -481,21 +481,21 @@
                             </div>
 
                             <div class="field">
-                                <label>Name</label>
+                                <label th:text="#{staff-registration-edit.label.name}">Name</label>
                                 <input type="text"
                                        th:placeholder="${appointment.name}"
                                        readonly />
                             </div>
 
                             <div class="field">
-                                <label>Phone Number</label>
+                                <label th:text="#{staff-registration-edit.label.phone-number}">Phone Number</label>
                                 <input type="text" name="phoneNumber"
                                        th:value="${appointment.phoneNumber}"
                                        th:readonly="${finalized}" />
                             </div>
 
                             <div class="field">
-                                <label>Status</label>
+                                <label th:text="#{staff-registration-edit.label.status}">Status</label>
                                 <select name="status" id="statusSelect"
                                         th:disabled="${finalized}">
                                     <option th:each="s : ${allStatuses}"
@@ -507,7 +507,7 @@
                             </div>
 
                             <div class="field">
-                                <label>Preferred Staff</label>
+                                <label th:text="#{staff-registration-edit.label.preferred-staff}">Preferred Staff</label>
                                 <!-- informational only, not editable -->
                                 <input type="text"
                                        th:value="${appointment.preferredStaffId != null ? appointment.preferredStaffId.name : 'No preference'}"
@@ -518,7 +518,7 @@
                             </div>
 
                             <div class="field">
-                                <label>Assigned Staff</label>
+                                <label th:text="#{staff-registration-edit.label.assigned-staff}">Assigned Staff</label>
                                 <select name="assignedStaffId"
                                         sec:authorize="hasAnyRole('MANAGER', 'ADMIN')"
                                         th:disabled="${finalized}">
@@ -542,7 +542,7 @@
 
 
                             <div class="field">
-                                <label>Registered Start</label>
+                                <label th:text="#{staff-registration-edit.label.registered-start}">Registered Start</label>
                                 <input type="datetime-local"
                                        id="registeredAt"
                                        readonly
@@ -550,7 +550,7 @@
                             </div>
 
                             <div class="field">
-                                <label>Scheduled At (Staff Assigned)</label>
+                                <label th:text="#{staff-registration-edit.label.scheduled-at-staff-}">Scheduled At (Staff Assigned)</label>
                                 <!-- editable, default to existing scheduledAt or registered start -->
                                 <input type="datetime-local" name="scheduledAt" id="scheduledAt"
                                        th:value="${appointment.scheduledAt != null ?
@@ -558,9 +558,7 @@
                                                  #temporals.format(appointmentDetails.scheduledStart,'yyyy-MM-dd''T''HH:mm')}"
                                        th:readonly="${finalized}" />
                                 <button type="button" class="btn-inline" id="btnUseRegistered"
-                                        th:disabled="${finalized}">
-                                    Use Registered Start
-                                </button>
+                                        th:disabled="${finalized}" th:text="#{staff-registration-edit.btn.use-registered-start}">Use Registered Start</button>
                             </div>
                         </div>
                     </div>
@@ -585,11 +583,11 @@
 
                             <!-- Search + add services (hide when finalized) -->
                             <div class="service-search-wrapper" th:if="${!finalized}">
-                                <label for="service-search" class="form-label">Search Services</label>
+                                <label for="service-search" class="form-label" th:text="#{staff-registration-edit.label.search-services}">Search Services</label>
                                 <input type="text"
                                        id="service-search"
                                        class="form-input"
-                                       placeholder="Type to search services...">
+                                      th:placeholder="#{staff-registration-edit.placeholder.type-to-search-services}" placeholder="Type to search services...">
                                 <div class="field-note">
                                     Type to search and click a service to add it to this appointment.
                                 </div>
@@ -623,7 +621,7 @@
                                     </div>
 
                                     <div class="service-assignee">
-                                        <label>Staff</label>
+                                        <label th:text="#{staff-registration-edit.label.staff}">Staff</label>
                                         <select class="rs-staff-select"
                                                 th:name="${'requestedServices[' + iterStat.index + '].responsibleStaffId'}"
                                                 th:disabled="${disableDetails or finalized}">
@@ -642,7 +640,7 @@
                                     </div>
 
                                     <div class="service-row-footer" th:if="${!disableDetails and !finalized}">
-                                        <button type="button" class="service-remove-btn">Remove</button>
+                                        <button type="button" class="service-remove-btn" th:text="#{staff-registration-edit.btn.remove}">Remove</button>
                                     </div>
                                 </div>
                             </div>
@@ -665,7 +663,7 @@
                             </div>
 
                             <div class="field">
-                                <label>Assigned User</label>
+                                <label th:text="#{staff-registration-edit.label.assigned-user}">Assigned User</label>
                                 <div class="user-search-wrapper">
                                     <input type="hidden" name="username" id="username"
                                            th:disabled="${disableDetails or finalized}" />
@@ -679,7 +677,7 @@
                             </div>
 
                             <div class="field">
-                                <label>Actual Start</label>
+                                <label th:text="#{staff-registration-edit.label.actual-start}">Actual Start</label>
                                 <input type="datetime-local" name="actualStart" id="actualStart"
                                        th:readonly="${disableDetails or appointmentDetails.actualStart != null or finalized}"
                                        th:value="${appointmentDetails.actualStart != null ?
@@ -687,13 +685,11 @@
                                 <button type="button"
                                         class="btn-inline"
                                         id="btnStartNow"
-                                        th:disabled="${disableDetails or appointmentDetails.actualEnd != null or finalized}">
-                                    Start Now (set & save)
-                                </button>
+                                        th:disabled="${disableDetails or appointmentDetails.actualEnd != null or finalized}" th:text="#{staff-registration-edit.btn.start-now-set--sav}">Start Now (set & save)</button>
                             </div>
 
                             <div class="field">
-                                <label>Actual End</label>
+                                <label th:text="#{staff-registration-edit.label.actual-end}">Actual End</label>
                                 <input type="datetime-local" name="actualEnd" id="actualEnd"
                                        th:readonly="${disableDetails or appointmentDetails.actualEnd != null or appointmentDetails.actualStart == null or finalized}"
                                        th:value="${appointmentDetails.actualEnd != null ?
@@ -701,16 +697,12 @@
                                 <button type="button"
                                         class="btn-inline"
                                         id="btnCompleteNow"
-                                        th:disabled="${disableDetails or appointmentDetails.actualStart == null or appointmentDetails.actualEnd != null or finalized}">
-                                    Complete Now (set & save)
-                                </button>
+                                        th:disabled="${disableDetails or appointmentDetails.actualStart == null or appointmentDetails.actualEnd != null or finalized}" th:text="#{staff-registration-edit.btn.complete-now-set--}">Complete Now (set & save)</button>
                             </div>
                             <button type="button"
                                     class="btn-inline"
                                     th:disabled="${appointmentDetails.actualEnd == null}"
-                                    th:onclick="|window.location.href='@{/staff/registration/invoice/{id}(id=${appointment.id})}'|">
-                                View Invoice
-                            </button>
+                                    th:onclick="|window.location.href='@{/staff/registration/invoice/{id}(id=${appointment.id})}'|" th:text="#{staff-registration-edit.btn.view-invoice}">View Invoice</button>
                         </div>
                     </div>
 
@@ -720,9 +712,7 @@
                 <div class="form-buttons">
                     <button type="submit"
                             class="btn btn-primary"
-                            th:disabled="${finalized}">
-                        Save Changes
-                    </button>
+                            th:disabled="${finalized}" th:text="#{staff-registration-edit.btn.save-changes}">Save Changes</button>
                 </div>
             </form>
 
@@ -741,7 +731,7 @@
                     <!-- BEFORE IMAGES -->
                     <div class="edit-col">
                         <div class="card-block">
-                            <h4 style="margin-bottom: 1rem;">Before Service</h4>
+                            <h4 style="margin-bottom: 1rem;" th:text="#{staff-registration-edit.heading.before-service}">Before Service</h4>
 
                             <!-- Upload Form -->
                             <form th:action="@{/staff/registration/view/{id}/upload-before-image(id=${appointment.id})}"
@@ -749,20 +739,18 @@
                                   enctype="multipart/form-data"
                                   style="margin-bottom: 1.5rem;">
                                 <div class="field">
-                                    <label>Upload Before Image</label>
+                                    <label th:text="#{staff-registration-edit.label.upload-before-image}">Upload Before Image</label>
                                     <input type="file"
                                            name="beforeImage"
                                            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                                            required />
                                 </div>
-                                <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
-                                    Upload Before Image
-                                </button>
+                                <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;" th:text="#{staff-registration-edit.btn.upload-before-image}">Upload Before Image</button>
                             </form>
 
                             <!-- Display Uploaded Images -->
                             <div th:if="${beforeImages != null and !beforeImages.isEmpty()}">
-                                <h5 style="margin-bottom: 0.8rem;">Uploaded Images:</h5>
+                                <h5 style="margin-bottom: 0.8rem;" th:text="#{staff-registration-edit.heading.uploaded-images}">Uploaded Images:</h5>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">
                                     <div th:each="img : ${beforeImages}" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
                                         <img th:src="@{'/uploads/appointment-images/' + ${img.imagePath.substring(img.imagePath.lastIndexOf('/') + 1)}}"
@@ -782,7 +770,7 @@
                     <!-- AFTER IMAGES -->
                     <div class="edit-col">
                         <div class="card-block">
-                            <h4 style="margin-bottom: 1rem;">After Service</h4>
+                            <h4 style="margin-bottom: 1rem;" th:text="#{staff-registration-edit.heading.after-service}">After Service</h4>
 
                             <!-- Upload Form -->
                             <form th:action="@{/staff/registration/view/{id}/upload-after-image(id=${appointment.id})}"
@@ -790,20 +778,18 @@
                                   enctype="multipart/form-data"
                                   style="margin-bottom: 1.5rem;">
                                 <div class="field">
-                                    <label>Upload After Image</label>
+                                    <label th:text="#{staff-registration-edit.label.upload-after-image}">Upload After Image</label>
                                     <input type="file"
                                            name="afterImage"
                                            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                                            required />
                                 </div>
-                                <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
-                                    Upload After Image
-                                </button>
+                                <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;" th:text="#{staff-registration-edit.btn.upload-after-image}">Upload After Image</button>
                             </form>
 
                             <!-- Display Uploaded Images -->
                             <div th:if="${afterImages != null and !afterImages.isEmpty()}">
-                                <h5 style="margin-bottom: 0.8rem;">Uploaded Images:</h5>
+                                <h5 style="margin-bottom: 0.8rem;" th:text="#{staff-registration-edit.heading.uploaded-images}">Uploaded Images:</h5>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">
                                     <div th:each="img : ${afterImages}" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
                                         <img th:src="@{'/uploads/appointment-images/' + ${img.imagePath.substring(img.imagePath.lastIndexOf('/') + 1)}}"
@@ -1029,12 +1015,12 @@
                     </div>
 
                     <div class="service-assignee">
-                        <label>Staff</label>
+                        <label th:text="#{staff-registration-edit.label.staff}">Staff</label>
                         <select class="rs-staff-select"></select>
                     </div>
 
                     <div class="service-row-footer">
-                        <button type="button" class="service-remove-btn">Remove</button>
+                        <button type="button" class="service-remove-btn" th:text="#{staff-registration-edit.btn.remove}">Remove</button>
                     </div>
                 </div>
             `);

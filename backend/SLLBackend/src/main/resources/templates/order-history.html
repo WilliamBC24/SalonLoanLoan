@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Order History | Salon Loan Loan</title>
+    <title th:text="#{order-history.pageTitle}">Order History | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 
@@ -200,7 +200,7 @@
         <div class="orders-header-row">
             <div class="section-heading">
                 <p class="section-kicker">Your Activity</p>
-                <h1 class="orders-title">Order History</h1>
+                <h1 class="orders-title" th:text="#{order-history.heading.order-history}">Order History</h1>
             </div>
             <a href="/products" class="orders-back">← Back to Products</a>
         </div>
@@ -212,7 +212,7 @@
 
         <!-- Empty state -->
         <section th:if="${#lists.isEmpty(orders)}" class="orders-empty">
-            <h2>No Orders Yet</h2>
+            <h2 th:text="#{order-history.heading.no-orders-yet}">No Orders Yet</h2>
             <p>You haven't placed any orders. Start shopping now!</p>
             <a href="/products" class="btn-primary" style="display:inline-block;">Browse Products</a>
         </section>

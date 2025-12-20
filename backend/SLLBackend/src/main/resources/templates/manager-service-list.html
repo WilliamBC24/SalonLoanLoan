@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Manage Services | Salon Loan Loan</title>
+    <title th:text="#{manager-service-list.pageTitle}">Manager - Manage Services | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (sidebar + staff-main scroll behaviour) -->
@@ -324,7 +324,7 @@
             <div class="services-header-row">
                 <div class="services-title-block section-heading">
                     <p class="section-kicker">Service Management</p>
-                    <h2>Manage Services</h2>
+                    <h2 th:text="#{manager-service-list.heading.manage-services}">Manage Services</h2>
                 </div>
                 <div class="services-actions">
                     <a href="/manager/service/create" class="create-btn-pill">
@@ -343,23 +343,23 @@
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <h3 th:text="#{manager-service-list.heading.search-andamp-filters}">Search &amp; Filters</h3>
                     </div>
                 </div>
 
                 <form method="get" action="/manager/service/list">
                     <div class="search-form">
                         <div class="filter-group">
-                            <label for="search-name">Search by Name</label>
+                            <label for="search-name" th:text="#{manager-service-list.label.search-by-name}">Search by Name</label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter service name..." />
+                                  th:placeholder="#{manager-service-list.placeholder.enter-service-name}" placeholder="Enter service name..." />
                         </div>
 
                         <div class="filter-group">
-                            <label>Service Type</label>
+                            <label th:text="#{manager-service-list.label.service-type}">Service Type</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item">
                                     <input type="checkbox"
@@ -367,7 +367,7 @@
                                            name="types"
                                            value="SINGLE"
                                            th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
-                                    <label for="type-single">Single</label>
+                                    <label for="type-single" th:text="#{manager-service-list.label.single}">Single</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="checkbox"
@@ -375,13 +375,13 @@
                                            name="types"
                                            value="COMBO"
                                            th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
-                                    <label for="type-combo">Combo</label>
+                                    <label for="type-combo" th:text="#{manager-service-list.label.combo}">Combo</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="filter-group">
-                            <label>Service Category</label>
+                            <label th:text="#{manager-service-list.label.service-category}">Service Category</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item" th:each="category : ${allCategories}">
                                     <input type="checkbox"

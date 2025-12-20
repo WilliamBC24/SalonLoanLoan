@@ -212,6 +212,26 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @Transactional
     public void adminCreateStaff(AdminCreateStaffDTO dto) throws Exception {
+        // Check for duplicate email
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            boolean emailExists = staffRepo.findAll().stream()
+                    .anyMatch(s -> s.getEmail() != null && 
+                                   s.getEmail().equalsIgnoreCase(dto.getEmail().trim()));
+            if (emailExists) {
+                throw new RuntimeException("Email already exists");
+            }
+        }
+        
+        // Check for duplicate SSN (encrypted)
+        if (org.springframework.util.StringUtils.hasText(dto.getSocialSecurityNum())) {
+            String encrypted = EncryptSSN.encrypt(dto.getSocialSecurityNum().trim());
+            boolean ssnExists = staffRepo.findAll().stream()
+                    .anyMatch(s -> encrypted.equals(s.getSocialSecurityNum()));
+            if (ssnExists) {
+                throw new RuntimeException("SSN already exists");
+            }
+        }
+        
         Staff staff = new Staff();
 
         staff.setName(dto.getName().trim());

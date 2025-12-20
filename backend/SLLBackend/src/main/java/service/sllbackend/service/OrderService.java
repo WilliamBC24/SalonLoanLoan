@@ -11,42 +11,22 @@ import java.util.Map;
 
 public interface OrderService {
     
-    /**
-     * Place an order from user's cart
-     * @param username User's username
-     * @param customerName Customer's name
-     * @param phoneNumber Delivery phone number
-     * @param shippingAddress Delivery address (optional for in-store pickup)
-     * @param city City for delivery (required for DELIVERY orders)
-     * @param ward Ward for delivery (optional)
-     * @param paymentTypeName Payment method name (e.g., "BANK_TRANSFER", "COD")
-     * @param fulfillmentType Fulfillment type (DELIVERY or IN_STORE_PICKUP)
-     * @return Created order invoice
-     */
+
     OrderInvoice placeOrder(String username, String customerName, String phoneNumber, 
                            String shippingAddress, String city, String ward,
                            String paymentTypeName, FulfillmentType fulfillmentType, String voucherCode);
     
-    /**
-     * Get order history for a user
-     * @param username User's username
-     * @return List of order invoices
-     */
     List<OrderInvoice> getOrderHistory(String username);
     
-    /**
-     * Get order details by ID
-     * @param orderId Order ID
-     * @return Order invoice with details
-     */
-    OrderInvoice getOrderDetails(Integer orderId);
+    OrderInvoice getOrderDetails(Integer orderId, String username);
     
     /**
      * Get order items/details
      * @param orderId Order ID
+     * @param username User's username for verification
      * @return List of order items
      */
-    List<OrderInvoiceDetails> getOrderItems(Integer orderId);
+    List<OrderInvoiceDetails> getOrderItems(Integer orderId, String username);
     
     /**
      * Cancel an order
@@ -74,6 +54,13 @@ public interface OrderService {
      * @return List of all order invoices
      */
     List<OrderInvoice> getAllOrders();
+    
+    /**
+     * Get order details for staff/admin (no ownership verification)
+     * @param orderId Order ID
+     * @return Order invoice with details
+     */
+    OrderInvoice getOrderDetailsForStaff(Integer orderId);
 
     long countByUser(UserAccount user);
 

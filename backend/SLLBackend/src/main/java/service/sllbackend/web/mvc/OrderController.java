@@ -107,8 +107,8 @@ public class OrderController {
         }
 
         try {
-            OrderInvoice order = orderService.getOrderDetails(orderId);
-            List<OrderInvoiceDetails> orderItems = orderService.getOrderItems(orderId);
+            OrderInvoice order = orderService.getOrderDetails(orderId, principal.getName());
+            List<OrderInvoiceDetails> orderItems = orderService.getOrderItems(orderId, principal.getName());
 
             int itemsSubtotal = orderItems.stream()
                     .mapToInt(i -> i.getPriceAtSale() * i.getQuantity())

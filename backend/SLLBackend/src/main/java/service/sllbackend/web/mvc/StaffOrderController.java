@@ -45,7 +45,7 @@ public class StaffOrderController {
         }
         
         try {
-            OrderInvoice order = orderService.getOrderDetails(orderId);
+            OrderInvoice order = orderService.getOrderDetailsForStaff(orderId);
             model.addAttribute("order", order);
             OrderStatus[] orderStatuses;
 

@@ -303,7 +303,7 @@
 
                     <div class="field-group">
                         <label class="field-label" th:text="#{admin-edit-staff-profile.field.birthDate}">Birth Date</label>
-                        <input type="text"
+                        <input type="date"
                                name="birthDate"
                                class="field-input"
                                th:value="${#temporals.format(staffAccount.staff.birthDate, 'yyyy-MM-dd')}" />

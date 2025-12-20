@@ -35,7 +35,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendOrderPickupNotice(Integer orderId) throws MessagingException {
-        OrderInvoice orderInvoice = orderService.getOrderDetails(orderId);
+        OrderInvoice orderInvoice = orderService.getOrderDetailsForStaff(orderId);
         String mail = orderInvoice.getUserAccount().getEmail();
         String subject = "Your Order #" + orderId + " Is Ready for Pickup!";
         List<OrderInvoiceDetails> details = orderInvoiceDetailsRepo.findByOrderInvoice(orderInvoice);

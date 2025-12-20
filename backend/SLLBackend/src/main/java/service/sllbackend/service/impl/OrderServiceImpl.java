@@ -234,22 +234,41 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public OrderInvoice getOrderDetails(Integer orderId) {
+    public OrderInvoice getOrderDetails(Integer orderId, String username) {
+        UserAccount userAccount = userAccountRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        OrderInvoice order = orderInvoiceRepo.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        
+        // Verify user owns this order
+        if (!order.getUserAccount().getId().equals(userAccount.getId())) {
+            throw new RuntimeException("Unauthorized to view this order");
+        }
+        
+        return order;
+    }
+    
+    /**
+     * Internal method to get order details without ownership verification
+     * Used by staff/admin operations
+     */
+    private OrderInvoice getOrderDetailsInternal(Integer orderId) {
         return orderInvoiceRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderInvoiceDetails> getOrderItems(Integer orderId) {
-        OrderInvoice orderInvoice = getOrderDetails(orderId);
+    public List<OrderInvoiceDetails> getOrderItems(Integer orderId, String username) {
+        OrderInvoice orderInvoice = getOrderDetails(orderId, username);
         return orderInvoiceDetailsRepo.findByOrderInvoice(orderInvoice);
     }
 
     @Override
     @Transactional
     public void cancelOrder(Integer orderId, String username) {
-        OrderInvoice order = getOrderDetails(orderId);
+        OrderInvoice order = getOrderDetailsInternal(orderId);
         
         // Verify user owns this order
         UserAccount userAccount = userAccountRepo.findByUsername(username)
@@ -275,7 +294,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void updateOrderStatus(Integer orderId, OrderStatus newStatus) {
-        OrderInvoice order = getOrderDetails(orderId);
+        OrderInvoice order = getOrderDetailsInternal(orderId);
         order.setOrderStatus(newStatus);
         orderInvoiceRepo.save(order);
     }
@@ -308,6 +327,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public List<OrderInvoice> getAllOrders() {
         return orderInvoiceRepo.findAll();
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public OrderInvoice getOrderDetailsForStaff(Integer orderId) {
+        return getOrderDetailsInternal(orderId);
     }
 
     @Override

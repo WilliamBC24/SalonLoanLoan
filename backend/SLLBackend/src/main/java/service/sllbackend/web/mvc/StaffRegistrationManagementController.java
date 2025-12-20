@@ -230,6 +230,14 @@ public class StaffRegistrationManagementController {
 
         // 1. Load base data
         Appointment appointment = appointmentService.findById((long) id);
+        
+        // Block access if appointment is REJECTED or CANCELLED
+        if (appointment.getStatus() == AppointmentStatus.REJECTED || 
+            appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Cannot access invoice for appointments with status " + appointment.getStatus());
+        }
         AppointmentDetails appointmentDetail =
                 appointmentDetailsService.findByAppointmentId(id);
         List<RequestedService> requestedServices =
@@ -309,6 +317,14 @@ public class StaffRegistrationManagementController {
 
         // 1. Load appointment
         Appointment appointment = appointmentService.findById((long) id);
+        
+        // Block payment completion if appointment is REJECTED or CANCELLED
+        if (appointment.getStatus() == AppointmentStatus.REJECTED || 
+            appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Cannot complete payment for appointments with status " + appointment.getStatus());
+        }
 
         // 2. Load requested services and compute total price (server-side, ignore any client values)
         List<RequestedService> requestedServices =
@@ -338,7 +354,7 @@ public class StaffRegistrationManagementController {
                 .responsibleStaff(responsibleStaff)
                 .build();
 
-        AppointmentInvoice savedInvoice = appointmentInvoiceService.save(invoice);
+        appointmentInvoiceService.save(invoice);
 
         // 6. Optionally create/update SatisfactionRating
         // - rating is optional

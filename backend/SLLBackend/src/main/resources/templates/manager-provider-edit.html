@@ -373,6 +373,15 @@
                 emailError.style.display = 'none';
             }
         }
+        
+        // Validate that at least one contact method is provided
+        if ((!phoneNumber.value || phoneNumber.value.trim() === '') && 
+            (!email.value || email.value.trim() === '')) {
+            phoneNumber.classList.add('invalid');
+            email.classList.add('invalid');
+            alert('At least one contact method (phone number or email) is required');
+            isValid = false;
+        }
 
         if (!isValid) {
             event.preventDefault();

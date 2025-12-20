@@ -79,6 +79,13 @@ public class InventoryInvoiceServiceImpl implements InventoryInvoiceService {
                 Product product = productRepo.findById(itemDTO.getProductId())
                         .orElseThrow(() -> new RuntimeException("Product not found with id: " + itemDTO.getProductId()));
                 
+                // Validate that unit price (purchase price) is not greater than current price (selling price)
+                if (itemDTO.getUnitPrice() > product.getCurrentPrice()) {
+                    throw new RuntimeException("Purchase price (" + itemDTO.getUnitPrice() + 
+                        " VND) cannot be greater than selling price (" + product.getCurrentPrice() + 
+                        " VND) for product: " + product.getProductName());
+                }
+                
                 InventoryInvoiceDetail detail = InventoryInvoiceDetail.builder()
                         .inventoryInvoice(invoice)
                         .product(product)

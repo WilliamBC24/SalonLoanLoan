@@ -65,6 +65,14 @@ public class ManagerProviderController {
             RedirectAttributes redirectAttributes) {
         
         try {
+            // Validate that at least one of phone or email is provided
+            if ((phoneNumber == null || phoneNumber.trim().isEmpty()) && 
+                (email == null || email.trim().isEmpty())) {
+                redirectAttributes.addFlashAttribute("errorMessage", 
+                    "At least one contact method (phone number or email) is required");
+                return "redirect:/manager/supplier/create";
+            }
+            
             SupplierCategory category = supplierCategoryRepo.findById(supplierCategoryId)
                 .orElseThrow(() -> new RuntimeException("Supplier category not found"));
             
@@ -110,6 +118,14 @@ public class ManagerProviderController {
             RedirectAttributes redirectAttributes) {
         
         try {
+            // Validate that at least one of phone or email is provided
+            if ((phoneNumber == null || phoneNumber.trim().isEmpty()) && 
+                (email == null || email.trim().isEmpty())) {
+                redirectAttributes.addFlashAttribute("errorMessage", 
+                    "At least one contact method (phone number or email) is required");
+                return "redirect:/manager/supplier/edit/" + id;
+            }
+            
             SupplierCategory category = supplierCategoryRepo.findById(supplierCategoryId)
                 .orElseThrow(() -> new RuntimeException("Supplier category not found"));
             

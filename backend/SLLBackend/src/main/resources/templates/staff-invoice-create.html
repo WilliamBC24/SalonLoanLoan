@@ -474,7 +474,8 @@
                                     <option value="">Select Product</option>
                                     <option th:each="product : ${products}"
                                             th:value="${product.id}"
-                                            th:text="${product.productName}"></option>
+                                            th:text="${product.productName}"
+                                            th:attr="data-current-price=${product.currentPrice}"></option>
                                 </select>
                             </div>
                             <div>
@@ -578,7 +579,7 @@
                 <label>Product</label>
                 <select name="productId[]" required class="form-control">
                     <option value="">Select Product</option>
-                    ${options.map(opt => `<option value="${opt.value}">${opt.textContent}</option>`).join('')}
+                    ${options.map(opt => `<option value="${opt.value}" data-current-price="${opt.getAttribute('data-current-price')}">${opt.textContent}</option>`).join('')}
                 </select>
             </div>
             <div>
@@ -678,6 +679,7 @@
                                 const option = document.createElement('option');
                                 option.value = newProduct.id;
                                 option.textContent = newProduct.productName;
+                                option.setAttribute('data-current-price', newProduct.currentPrice);
                                 select.appendChild(option);
                             });
 
@@ -726,15 +728,39 @@
         }
 
         let hasEmptyProduct = false;
-        productSelects.forEach(select => {
+        let hasInvalidPrice = false;
+        let invalidPriceMessage = '';
+        
+        productSelects.forEach((select, index) => {
             if (!select.value) {
                 hasEmptyProduct = true;
+            } else {
+                // Get the selected option's current price
+                const selectedOption = select.options[select.selectedIndex];
+                const currentPrice = parseInt(selectedOption.getAttribute('data-current-price'));
+                
+                // Get the unit price input in the same row
+                const row = select.closest('.item-row');
+                const unitPriceInput = row.querySelector('input[name="unitPrice[]"]');
+                const unitPrice = parseInt(unitPriceInput.value);
+                
+                // Validate that unit price (purchase price) is not greater than current price (selling price)
+                if (unitPrice > currentPrice) {
+                    hasInvalidPrice = true;
+                    invalidPriceMessage = `Purchase price (${unitPrice.toLocaleString()} VND) cannot be greater than selling price (${currentPrice.toLocaleString()} VND) for product: ${selectedOption.textContent}`;
+                }
             }
         });
 
         if (hasEmptyProduct) {
             e.preventDefault();
             alert('Please select a product for all items.');
+            return false;
+        }
+        
+        if (hasInvalidPrice) {
+            e.preventDefault();
+            alert(invalidPriceMessage);
             return false;
         }
     });

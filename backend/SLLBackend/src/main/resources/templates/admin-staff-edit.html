@@ -137,6 +137,16 @@
             box-shadow: 0 0 0 1px rgba(100,179,255,0.35);
         }
 
+        .field-input:invalid {
+            border-color: #dc2626;
+        }
+
+        .field-error {
+            font-size: 0.75rem;
+            color: #dc2626;
+            margin-top: 0.25rem;
+        }
+
         /* ===== ACTIONS ===== */
         .form-actions {
             margin-top: 2rem;
@@ -288,9 +298,15 @@
                     <div class="field-group">
                         <label class="field-label" th:text="#{admin-edit-staff-profile.field.ssn}">Social Security Number</label>
                         <input type="text"
+                               id="ssnInput"
                                name="socialSecurityNum"
                                class="field-input"
+                               pattern="^\d{12}$"
+                               placeholder="12 digits"
+                               maxlength="12"
+                               title="SSN must be 12 digits"
                                th:value="${staffAccount.staff.socialSecurityNum}" />
+                        <span id="ssnError" class="field-error" style="display: none;">SSN must be 12 digits</span>
                     </div>
 
                     <div class="field-group">
@@ -304,9 +320,12 @@
                     <div class="field-group">
                         <label class="field-label" th:text="#{admin-edit-staff-profile.field.birthDate}">Birth Date</label>
                         <input type="date"
+                               id="birthDateInput"
                                name="birthDate"
                                class="field-input"
+                               th:attr="max=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
                                th:value="${#temporals.format(staffAccount.staff.birthDate, 'yyyy-MM-dd')}" />
+                        <span id="birthDateError" class="field-error" style="display: none;">Birth date cannot be in the future</span>
                     </div>
 
                     <div class="field-group">
@@ -332,6 +351,84 @@
         </section>
     </div>
 </main>
+
+<script>
+    // SSN validation and formatting
+    const ssnInput = document.getElementById('ssnInput');
+    const ssnError = document.getElementById('ssnError');
+    const birthDateInput = document.getElementById('birthDateInput');
+    const birthDateError = document.getElementById('birthDateError');
+
+    if (ssnInput) {
+        ssnInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        ssnInput.addEventListener('blur', function(e) {
+            const pattern = /^\d{12}$/;
+            if (e.target.value && !pattern.test(e.target.value)) {
+                ssnError.style.display = 'block';
+                e.target.style.borderColor = '#dc2626';
+            } else {
+                ssnError.style.display = 'none';
+                e.target.style.borderColor = '#d1d5db';
+            }
+        });
+    }
+
+    if (birthDateInput) {
+        birthDateInput.addEventListener('change', function(e) {
+            const selectedDate = new Date(e.target.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate > today) {
+                birthDateError.style.display = 'block';
+                e.target.style.borderColor = '#dc2626';
+                e.target.value = '';
+            } else {
+                birthDateError.style.display = 'none';
+                e.target.style.borderColor = '#d1d5db';
+            }
+        });
+    }
+
+    // Form submission validation
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+
+            // Validate SSN
+            if (ssnInput && ssnInput.value) {
+                const pattern = /^\d{12}$/;
+                if (!pattern.test(ssnInput.value)) {
+                    ssnError.style.display = 'block';
+                    ssnInput.style.borderColor = '#dc2626';
+                    isValid = false;
+                }
+            }
+
+            // Validate birth date
+            if (birthDateInput && birthDateInput.value) {
+                const selectedDate = new Date(birthDateInput.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate > today) {
+                    birthDateError.style.display = 'block';
+                    birthDateInput.style.borderColor = '#dc2626';
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

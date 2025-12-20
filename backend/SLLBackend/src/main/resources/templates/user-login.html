@@ -142,11 +142,9 @@
                 <button type="submit" class="btn-primary login-button" th:text="#{user-login.loginButton}">Login</button>
 
                 <div th:if="${param.error}" class="message" th:text="#{user-login.error}">
-                    Invalid username or password.
                 </div>
 
                 <div th:if="${param.logout}" class="message logout-message" th:text="#{user-login.logout}">
-                    You have been logged out successfully.
                 </div>
             </form>
 

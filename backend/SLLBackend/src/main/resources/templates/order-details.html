@@ -504,13 +504,25 @@
                     </div>
 
 
-                    <!-- QR Payment Box -->
+                    <!-- QR Payment Box for Bank Transfer -->
                     <div th:if="${order.paymentMethod == 'BANK_TRANSFER' and order.orderStatus.name() == 'PENDING' and paymentQrUrl != null}"
                          class="payment-box">
-                        <h3>Payment Required</h3>
-                        <p>⚠️ Please complete the payment to confirm your order.</p>
+                        <h3 th:text="#{order.details.payment.bankTransfer.title}">Payment Required</h3>
+                        <p>⚠️ <span th:text="#{order.details.payment.bankTransfer.warning}">Please complete the payment to confirm your order.</span></p>
                         <img th:src="${paymentQrUrl}" alt="Payment QR Code" />
-                        <p>Scan this QR code to complete your payment.</p>
+                        <p th:text="#{order.details.payment.bankTransfer.instruction}">Scan this QR code to complete your payment.</p>
+                    </div>
+
+                    <!-- QR Payment Box for COD (20% Deposit) -->
+                    <div th:if="${order.paymentMethod == 'COD' and order.orderStatus.name() == 'PENDING' and codDepositQrUrl != null}"
+                         class="payment-box">
+                        <h3 th:text="#{order.details.payment.cod.title}">COD Deposit Required</h3>
+                        <p>⚠️ <span th:text="#{order.details.payment.cod.warning}">You need to pay 20% of the order total before the order gets confirmed for COD.</span></p>
+                        <p style="font-weight: 700; font-size: 1.1rem; margin-top: 0.5rem;">
+                            <span th:text="#{order.details.payment.cod.depositAmount}">Deposit Amount:</span> <span th:text="${#numbers.formatDecimal(codDepositAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
+                        </p>
+                        <img th:src="${codDepositQrUrl}" alt="COD Deposit QR Code" />
+                        <p th:text="#{order.details.payment.cod.instruction}">Scan this QR code to pay the deposit and confirm your order.</p>
                     </div>
 
                     <!-- Actions -->

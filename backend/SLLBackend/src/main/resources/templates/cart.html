@@ -189,6 +189,7 @@
                                 <input type="number"
                                        class="quantity-input"
                                        min="1"
+                                       th:max="${availableStock[item.product.id]}"
                                        th:data-product-id="${item.product.id}"
                                        th:data-price="${item.product.currentPrice}"
                                        th:value="${item.amount}"

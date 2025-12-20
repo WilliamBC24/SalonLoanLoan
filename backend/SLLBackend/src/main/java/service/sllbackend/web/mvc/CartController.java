@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.sllbackend.entity.Cart;
 import service.sllbackend.service.CartService;
+import service.sllbackend.service.InventoryService;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CartController {
     private final CartService cartService;
+    private final InventoryService inventoryService;
 
     @GetMapping
     @Transactional(readOnly = true)
@@ -28,13 +30,21 @@ public class CartController {
         
         List<Cart> cartItems = cartService.getCartByUser(principal.getName());
         
-        // Calculate totals
+        // Calculate totals and add available stock for each product
         int totalPrice = cartItems.stream()
                 .mapToInt(item -> item.getProduct().getCurrentPrice() * item.getAmount())
                 .sum();
         
+        // Create a map of product IDs to their available stock
+        Map<Integer, Integer> availableStockMap = new HashMap<>();
+        for (Cart item : cartItems) {
+            availableStockMap.put(item.getProduct().getId(), 
+                    inventoryService.getAvailableStock(item.getProduct().getId()));
+        }
+        
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("availableStock", availableStockMap);
         
         return "cart";
     }

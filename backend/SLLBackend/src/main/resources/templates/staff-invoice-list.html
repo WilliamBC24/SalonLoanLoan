@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Staff - Invoice List | Salon Loan Loan</title>
+    <title th:text="#{staff-invoice-list.pageTitle}">Staff - Invoice List | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles + layout (sidebar, staff-main scroll, etc.) -->
@@ -372,7 +372,7 @@
             <div class="invoice-list-header-row">
                 <div class="invoice-list-title-block section-heading">
                     <p class="section-kicker">Inventory Management</p>
-                    <h2>Invoice List</h2>
+                    <h2 th:text="#{staff-invoice-list.title}">Invoice List</h2>
                 </div>
                 <div class="invoice-list-actions">
                     <a href="/staff/invoices/create" class="create-btn-pill">

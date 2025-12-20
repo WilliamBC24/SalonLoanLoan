@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>User Appointment History | Salon Loan Loan</title>
+    <title th:text="#{user-appointment-history.pageTitle}">User Appointment History | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -202,7 +202,7 @@
                 </div>
 
                 <div class="search-buttons">
-                    <button type="submit" class="btn-primary">Search</button>
+                    <button type="submit" class="btn-primary" th:text="#{common.search}">Search</button>
                     <button type="button"
                             class="btn-outline"
                             onclick="window.location.href='/user/appointment-history'">

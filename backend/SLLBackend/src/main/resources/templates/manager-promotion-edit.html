@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Edit Promotion | Salon Loan Loan</title>
+    <title th:text="#{manager-promotion-edit.pageTitle}">Manager - Edit Promotion | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles (sidebar + main scroll) -->
@@ -250,7 +250,7 @@
             <header class="promo-edit-header">
                 <div class="promo-edit-title-block">
                     <p class="section-kicker">Marketing &amp; Offers</p>
-                    <h2>Edit Promotion</h2>
+                    <h2 th:text="#{manager-promotion-edit.title}">Edit Promotion</h2>
                     <p style="color:#6b7280;font-size:0.85rem;margin:0.25rem 0 0;">
                         Update promotion details and scheduling information.
                     </p>

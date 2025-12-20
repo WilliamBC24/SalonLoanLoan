@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>User Profile | Salon Loan Loan</title>
+    <title th:text="#{user-profile.pageTitle}">User Profile | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -258,7 +258,7 @@
         <section class="profile-card">
             <div class="profile-title section-heading text-center">
                 <p class="section-kicker">Your Account</p>
-                <h2>User Profile</h2>
+                <h2 th:text="#{user-profile.title}">User Profile</h2>
             </div>
 
             <h3 class="profile-section-title">Account Information</h3>

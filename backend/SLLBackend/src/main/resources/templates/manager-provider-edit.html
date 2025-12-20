@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Edit Provider | Salon Loan Loan</title>
+    <title th:text="#{manager-provider-edit.pageTitle}">Manager - Edit Provider | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles (sidebar + layout) -->
@@ -219,7 +219,7 @@
             <div class="provider-header-row">
                 <div class="provider-title-block section-heading">
                     <p class="section-kicker">Provider Management</p>
-                    <h2>Edit Provider</h2>
+                    <h2 th:text="#{manager-provider-edit.title}">Edit Provider</h2>
                     <p class="provider-subtext">
                         ID:
                         <span th:text="${supplier.id}">1</span>

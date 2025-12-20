@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Profile | Salon Loan Loan</title>
+    <title th:text="#{user-profile-edit.pageTitle}">Edit Profile | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global styles -->
@@ -299,7 +299,7 @@
         <section class="edit-card">
             <div class="edit-title">
                 <div>
-                    <h2>Edit Profile</h2>
+                    <h2 th:text="#{user-profile-edit.title}">Edit Profile</h2>
                     <p class="edit-sub">Update your information below.</p>
                 </div>
 

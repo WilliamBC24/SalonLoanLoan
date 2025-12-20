@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
-    <title>Manager - Edit Voucher | Salon Loan Loan</title>
+    <title th:text="#{manager-voucher-edit.pageTitle}">Manager - Edit Voucher | Salon Loan Loan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Global staff layout styles -->
@@ -215,7 +215,7 @@
             <header class="voucher-edit-header">
                 <div class="voucher-edit-title-block section-heading">
                     <p class="section-kicker">Voucher Management</p>
-                    <h2>Edit Voucher</h2>
+                    <h2 th:text="#{manager-voucher-edit.title}">Edit Voucher</h2>
                 </div>
                 <div class="voucher-edit-actions">
                     <a href="/manager/voucher/list" class="back-link-pill">

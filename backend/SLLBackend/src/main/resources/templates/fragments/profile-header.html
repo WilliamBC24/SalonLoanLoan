@@ -15,8 +15,8 @@
         <div class="header-actions">
             <!-- Cart -->
             <a th:href="@{/cart}" style="text-decoration:none;">
-                <button class="icon-button" aria-label="Cart">
-                    Cart
+                <button class="icon-button" th:aria-label="#{common.cart}">
+                    <span th:text="#{common.cart}">Cart</span>
                     <span class="cart-count" th:text="${cartCount} ?: 0">0</span>
                 </button>
             </a>
@@ -26,7 +26,7 @@
                th:href="@{/auth/user/login}"
                class="btn-outline"
                style="padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.85rem;">
-                Login
+                <span th:text="#{common.login}">Login</span>
             </a>
 
             <!-- When logged in: username + dropdown -->
@@ -37,19 +37,19 @@
                 </div>
 
                 <div class="user-menu-dropdown">
-                    <a th:href="@{/user/profile}" class="user-menu-item">Profile</a>
-                    <a th:href="@{/user/password}" class="user-menu-item">Change Password</a>
-                    <a th:href="@{/user/appointment-history}" class="user-menu-item">Appointment History</a>
-                    <a th:href="@{/order/history}" class="user-menu-item">Order History</a>
+                    <a th:href="@{/user/profile}" class="user-menu-item" th:text="#{common.profile}">Profile</a>
+                    <a th:href="@{/user/password}" class="user-menu-item" th:text="#{common.changePassword}">Change Password</a>
+                    <a th:href="@{/user/appointment-history}" class="user-menu-item" th:text="#{site-header.appointmentHistory}">Appointment History</a>
+                    <a th:href="@{/order/history}" class="user-menu-item" th:text="#{site-header.orderHistory}">Order History</a>
 
                     <form th:action="@{/logout}" method="post" class="user-menu-item logout-item">
-                        <button type="submit">Logout</button>
+                        <button type="submit" th:text="#{common.logout}">Logout</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <button class="mobile-menu-toggle" aria-label="Toggle navigation">
+        <button class="mobile-menu-toggle" th:aria-label="#{site-header.toggleNavigation}">
             ☰
         </button>
     </div>

@@ -136,7 +136,7 @@
         <div class="register-card">
             <div class="register-title">
                 <h2 th:text="#{user-register.title}">Create Account</h2>
-                <p>Sign up to book appointments and manage your profile.</p>
+                <p th:text="#{user-register.subtitle}">Sign up to book appointments and manage your profile.</p>
             </div>
 
             <form th:action="@{/auth/user/register/create}" method="post">

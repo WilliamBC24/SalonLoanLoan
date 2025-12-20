@@ -123,7 +123,7 @@
         <div class="login-card">
             <div class="login-title">
                 <h2 th:text="#{staff-login.title}">Staff Login</h2>
-                <p>Sign in to access the staff dashboard and manage bookings.</p>
+                <p th:text="#{staff-login.subtitle}">Sign in to access the staff dashboard and manage bookings.</p>
             </div>
 
             <form th:action="@{/auth/staff/login}" method="post">
@@ -142,15 +142,15 @@
                 <button type="submit" class="btn-primary login-button" th:text="#{staff-login.loginButton}">Login</button>
 
                 <div class="register-link">
-                    You are a customer?
-                    <a th:href="@{/auth/user/login}">Login here</a>
+                    <span th:text="#{staff-login.customerQuestion}">You are a customer?</span>
+                    <a th:href="@{/auth/user/login}" th:text="#{staff-login.customerLoginLink}">Login here</a>
                 </div>
 
-                <div th:if="${param.error}" class="message">
+                <div th:if="${param.error}" class="message" th:text="#{staff-login.error}">
                     Invalid username or password.
                 </div>
 
-                <div th:if="${param.logout}" class="message logout-message">
+                <div th:if="${param.logout}" class="message logout-message" th:text="#{staff-login.logoutSuccess}">
                     You have been logged out successfully.
                 </div>
             </form>

@@ -20,11 +20,7 @@ Salon LoanLoan includes, but is not limited to, the following features, covering
 - **Backend (OLTP):** Spring Boot (Java)
 - **Frontend:** HTML, CSS, JavaScript
 - **Database:** PostgreSQL
-- **Analytics & Data Pipelines (OLAP):**
-  - Python
-  - Apache Airflow
-- **Containerization & Orchestration:** Docker, Kubernetes
-- **Cloud Platform:** Amazon Web Services (AWS)
+- **Containerization & Orchestration:** Docker
 
 ## How to Run  
 Instructions will be updated once implementation begins.

@@ -79,7 +79,9 @@ public class StaffRegistrationManagementController {
         }
 
         List<RequestedService> requestedServices = requestedServicesService.findByAppointmentId(id);
-        List<StaffAccount> allStaff = staffAccountService.findAllActive();
+        //TODO: filter staff in shift only
+//        List<StaffAccount> allStaff = staffAccountService.findAllActive();
+        List<StaffAccount> allStaff = staffAccountService.findActiveStaffInShiftByScheduledAt(appointment.getScheduledAt());
 
         // ==== NEW: check if this appointment already has an invoice ====
         // e.g. service method: Optional<AppointmentInvoice> findByAppointmentId(Integer appointmentId)

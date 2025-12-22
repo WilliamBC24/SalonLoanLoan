@@ -446,21 +446,21 @@ CREATE TRIGGER create_appointment_detail_trigger
     WHEN (NEW.scheduled_at IS NOT NULL)
     EXECUTE FUNCTION create_appointment_detail();
 
-CREATE TRIGGER update_service_combo_details_trigger
-    AFTER INSERT ON service
-    FOR EACH ROW
-    WHEN (NEW.service_type = 'COMBO')
-    EXECUTE FUNCTION update_service_combo_details();
+-- CREATE TRIGGER update_service_combo_details_trigger
+--     AFTER INSERT ON service
+--     FOR EACH ROW
+--     WHEN (NEW.service_type = 'COMBO')
+--     EXECUTE FUNCTION update_service_combo_details();
+--
+-- CREATE TRIGGER refresh_service_combo_details_trigger
+--     AFTER INSERT OR DELETE OR UPDATE ON service_combo
+--     FOR EACH ROW
+--     EXECUTE FUNCTION refresh_service_combo_details();
 
-CREATE TRIGGER refresh_service_combo_details_trigger
-    AFTER INSERT OR DELETE OR UPDATE ON service_combo
-    FOR EACH ROW
-    EXECUTE FUNCTION refresh_service_combo_details();
-
-CREATE TRIGGER propagate_service_details_to_combo_trigger
-    AFTER UPDATE OF service_price, duration_minutes ON service
-    FOR EACH ROW
-    EXECUTE FUNCTION propagate_service_details_to_combo();
+-- CREATE TRIGGER propagate_service_details_to_combo_trigger
+--     AFTER UPDATE OF service_price, duration_minutes ON service
+--     FOR EACH ROW
+--     EXECUTE FUNCTION propagate_service_details_to_combo();
 
 CREATE TRIGGER credit_loyalty_on_order_invoice_status_trigger
     AFTER UPDATE OF order_status ON order_invoice

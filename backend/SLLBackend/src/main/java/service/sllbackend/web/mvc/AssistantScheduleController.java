@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import service.sllbackend.entity.Staff;
+import service.sllbackend.entity.StaffAccount;
+import service.sllbackend.repository.StaffAccountRepo;
 import service.sllbackend.service.ShiftScheduleService;
 import service.sllbackend.service.StaffService;
 import service.sllbackend.web.dto.CalendarDayViewDTO;
@@ -24,6 +26,7 @@ public class AssistantScheduleController {
 
     private final ShiftScheduleService shiftScheduleService;
     private final StaffService staffService;
+    private final StaffAccountRepo staffAccountRepo;
 
     @GetMapping
     public String getMyMonthSchedule(
@@ -37,7 +40,8 @@ public class AssistantScheduleController {
 
         // Find the currently logged-in staff
         String username = authentication.getName();
-        Staff staff = staffService.findByName(username);
+        StaffAccount staffAccount = staffAccountRepo.findByUsername(username).get();
+        Staff staff = staffAccount.getStaff();
         Integer staffId = staff.getId();
 
         // Build calendar only for this staff member's assigned shifts

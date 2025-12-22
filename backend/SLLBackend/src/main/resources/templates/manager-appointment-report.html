@@ -506,9 +506,18 @@
                         <tr th:each="row, iterStat : ${report.rows}">
                             <td th:text="${iterStat.count}">1</td>
                             <td th:text="${row.appointmentCode}">APT-001</td>
-                            <td th:text="${row.scheduledAt != null ? #temporals.format(row.scheduledAt, 'dd/MM/yyyy HH:mm') : #{report.appointment.table.value.na}}">
-                                01/01/2025 10:00
+                            <td>
+    <span th:if="${row.scheduledAt != null}"
+          th:text="${#temporals.format(row.scheduledAt, 'dd/MM/yyyy HH:mm')}">
+        01/01/2025 10:00
+    </span>
+
+                                <span th:unless="${row.scheduledAt != null}"
+                                      th:text="#{report.appointment.table.value.na}">
+        N/A
+    </span>
                             </td>
+
                             <td th:text="${row.customerName}">Customer Name</td>
                             <td th:text="${row.staffName}">Staff Name</td>
                             <td class="cell-number"

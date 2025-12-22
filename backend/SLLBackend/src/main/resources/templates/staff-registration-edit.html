@@ -626,7 +626,7 @@
                                         <label>Staff</label>
                                         <select class="rs-staff-select"
                                                 th:name="${'requestedServices[' + iterStat.index + '].responsibleStaffId'}"
-                                                th:disabled="${disableDetails or finalized}">
+                                                th:disabled="${disableDetails or finalized or !#authorization.expression('hasAnyRole(''ADMIN'',''MANAGER'')')}">
                                             <option th:each="staff : ${allStaff}"
                                                     th:value="${staff.id}"
                                                     th:text="${staff.staff.name}"

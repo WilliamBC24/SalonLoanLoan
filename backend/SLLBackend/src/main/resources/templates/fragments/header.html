@@ -14,7 +14,21 @@
             <a th:href="@{/appointment}" th:text="#{site-header.bookAppointment}">Book Appointment</a>
             <a th:href="@{/job/list}" th:text="#{site-header.jobList}">Job List</a>
         </nav>
+        <div class="lang-switch">
+            <!-- VN -->
+            <a th:href="@{?lang=vi}"
+               class="lang-btn"
+               th:classappend="${#locale.language == 'vi'} ? ' active' : ''">
+                VI
+            </a>
 
+            <!-- EN -->
+            <a th:href="@{?lang=en}"
+               class="lang-btn"
+               th:classappend="${#locale.language == 'en'} ? ' active' : ''">
+                EN
+            </a>
+        </div>
         <div class="header-actions">
             <!-- Cart -->
             <div th:if="${username != null}">

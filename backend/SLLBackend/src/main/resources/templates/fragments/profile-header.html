@@ -11,7 +11,21 @@
         <nav class="main-nav">
             <!-- left empty, or put generic links here -->
         </nav>
+        <div class="lang-switch">
+            <!-- VN -->
+            <a th:href="@{${#httpServletRequest.requestURI}(lang='vi')}"
+               class="lang-btn"
+               th:classappend="${#locale.language == 'vi'} ? ' active' : ''">
+                VI
+            </a>
 
+            <!-- EN -->
+            <a th:href="@{${#httpServletRequest.requestURI}(lang='en')}"
+               class="lang-btn"
+               th:classappend="${#locale.language == 'en'} ? ' active' : ''">
+                EN
+            </a>
+        </div>
         <div class="header-actions">
             <!-- Cart -->
             <a th:href="@{/cart}" style="text-decoration:none;">

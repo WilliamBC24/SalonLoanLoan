@@ -8,7 +8,19 @@
                 <span class="brand-tagline" th:text="#{staff-sidebar.brandTagline}">Staff Console</span>
             </div>
         </div>
+        <div class="staff-lang-switch">
+            <a th:href="@{?lang=vi}"
+               class="staff-lang-btn"
+               th:classappend="${#locale.language == 'vi'} ? ' active' : ''">
+                VI
+            </a>
 
+            <a th:href="@{?lang=en}"
+               class="staff-lang-btn"
+               th:classappend="${#locale.language == 'en'} ? ' active' : ''">
+                EN
+            </a>
+        </div>
         <!-- Nav -->
         <nav class="staff-nav">
 

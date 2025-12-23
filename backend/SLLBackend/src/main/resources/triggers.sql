@@ -373,95 +373,81 @@ END IF;
 RETURN NULL;
 END;
     $$ LANGUAGE plpgsql;
-
+DROP TRIGGER IF EXISTS create_staff_account_trigger ON staff;
 CREATE TRIGGER create_staff_account_trigger
     AFTER INSERT
     ON staff
     FOR EACH ROW
     EXECUTE FUNCTION create_staff_account();
-
+DROP TRIGGER IF EXISTS add_loyalty_record_trigger ON user_account;
 CREATE TRIGGER add_loyalty_record_trigger
     AFTER INSERT ON user_account
     FOR EACH ROW
     EXECUTE FUNCTION add_loyalty_record();
-
+DROP TRIGGER IF EXISTS assign_loyalty_rank_trigger ON loyalty;
 CREATE TRIGGER assign_loyalty_rank_trigger
     AFTER UPDATE OF point ON loyalty
     FOR EACH ROW
     WHEN (NEW.point <> OLD.point)
     EXECUTE FUNCTION assign_loyalty_rank();
-
+DROP TRIGGER IF EXISTS record_product_change_trigger ON product;
 CREATE TRIGGER record_product_change_trigger
     BEFORE UPDATE ON product
     FOR EACH ROW
     EXECUTE FUNCTION record_product_change();
-
+DROP TRIGGER IF EXISTS record_service_change_trigger ON service;
 CREATE TRIGGER record_service_change_trigger
     BEFORE UPDATE ON service
     FOR EACH ROW
     EXECUTE FUNCTION record_service_change();
+DROP TRIGGER IF EXISTS prevent_taking_expired_product_trigger ON inventory_request_detail;
 
 CREATE TRIGGER prevent_taking_expired_product_trigger
     BEFORE INSERT ON inventory_request_detail
     FOR EACH ROW
     EXECUTE FUNCTION prevent_taking_expired_product();
 
+DROP TRIGGER IF EXISTS create_inventory_consignment_trigger ON inventory_invoice_detail;
 CREATE TRIGGER create_inventory_consignment_trigger
     AFTER INSERT ON inventory_invoice_detail
     FOR EACH ROW
     EXECUTE FUNCTION create_inventory_consignment();
-
+DROP TRIGGER IF EXISTS update_appointment_status_registered_trigger ON appointment;
 CREATE TRIGGER update_appointment_status_registered_trigger
     BEFORE UPDATE ON appointment
     FOR EACH ROW
     WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NULL)
     EXECUTE FUNCTION update_appointment_status_registered();
-
+DROP TRIGGER IF EXISTS update_appointment_status_rescheduled_trigger ON appointment;
 CREATE TRIGGER update_appointment_status_rescheduled_trigger
     BEFORE UPDATE ON appointment
     FOR EACH ROW
     WHEN (NEW.scheduled_at IS NOT NULL AND OLD.scheduled_at IS NOT NULL AND OLD.scheduled_at <> NEW.scheduled_at)
     EXECUTE FUNCTION update_appointment_status_rescheduled();
-
+DROP TRIGGER IF EXISTS update_appointment_actual_start_trigger ON appointment;
 CREATE TRIGGER update_appointment_actual_start_trigger
     AFTER UPDATE OF status ON appointment
     FOR EACH ROW
     WHEN (NEW.status = 'STARTED')
     EXECUTE FUNCTION update_appointment_actual_start();
-
+DROP TRIGGER IF EXISTS update_appointment_actual_end_trigger ON appointment;
 CREATE TRIGGER update_appointment_actual_end_trigger
     AFTER UPDATE OF status ON appointment
     FOR EACH ROW
     WHEN (NEW.status = 'COMPLETED')
     EXECUTE FUNCTION update_appointment_actual_end();
-
+DROP TRIGGER IF EXISTS credit_loyalty_point_trigger ON appointment_invoice;
 CREATE TRIGGER credit_loyalty_point_trigger
     AFTER INSERT ON appointment_invoice
     FOR EACH ROW
     EXECUTE FUNCTION credit_loyalty_point();
-
+DROP TRIGGER IF EXISTS create_appointment_detail_trigger ON appointment;
 CREATE TRIGGER create_appointment_detail_trigger
     AFTER UPDATE OF scheduled_at ON appointment
     FOR EACH ROW
     WHEN (NEW.scheduled_at IS NOT NULL)
     EXECUTE FUNCTION create_appointment_detail();
-
--- CREATE TRIGGER update_service_combo_details_trigger
---     AFTER INSERT ON service
---     FOR EACH ROW
---     WHEN (NEW.service_type = 'COMBO')
---     EXECUTE FUNCTION update_service_combo_details();
---
--- CREATE TRIGGER refresh_service_combo_details_trigger
---     AFTER INSERT OR DELETE OR UPDATE ON service_combo
---     FOR EACH ROW
---     EXECUTE FUNCTION refresh_service_combo_details();
-
--- CREATE TRIGGER propagate_service_details_to_combo_trigger
---     AFTER UPDATE OF service_price, duration_minutes ON service
---     FOR EACH ROW
---     EXECUTE FUNCTION propagate_service_details_to_combo();
-
+DROP TRIGGER IF EXISTS credit_loyalty_on_order_invoice_status_trigger ON order_invoice;
 CREATE TRIGGER credit_loyalty_on_order_invoice_status_trigger
     AFTER UPDATE OF order_status ON order_invoice
     FOR EACH ROW

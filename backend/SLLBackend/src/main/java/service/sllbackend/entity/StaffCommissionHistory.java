@@ -36,7 +36,7 @@ public class StaffCommissionHistory {
     @Column(nullable = false)
     private Short commission;
 
-    @Column(name = "effective_from", nullable = false, columnDefinition = "DATE DEFAULT CURRENT_DATE")
+    @Column(name = "effective_from", nullable = false)
     @Builder.Default
     private LocalDateTime effectiveFrom = LocalDateTime.now();
 

@@ -51,35 +51,21 @@ public class DataLoader implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		log.info("############ \n            Loading initial data\n############");
-		registerLoyaltyLevel();
-		registerUser();
-		registerStaff();
-		registerServices();
-		registerProducts();
-		registerVouchers();
-		registerPromotions();
-		registerProviders();
-		registerInventory();
-		registerJobPosting();
-		registerJobApplication();
-		registerAppointments();
-		registerShiftTemplates();
-		registerPaymentTypes();
-		registerExpenseCategories();
-		registerStaffPositions();
-		registerStaffCommissions();
-		registerProductImages();
-		registerServiceImages();
+//		registerLoyaltyLevel();
+//		registerUser();
+//		registerStaff();
+//		registerVouchers();
+//		registerPromotions();
+//		registerProviders();
+//		registerInventory();
+//		registerJobPosting();
+//		registerJobApplication();
+//		registerShiftTemplates();
+//		registerPaymentTypes();
+//		registerExpenseCategories();
+//		registerStaffCommissions();
 	}
 
-	public void registerStaffPositions() {
-		StaffPosition staffPosition = StaffPosition.builder().positionName("staff").build();
-		StaffPosition assistantPosition = StaffPosition.builder().positionName("assistant").build();
-		StaffPosition managerPosition = StaffPosition.builder().positionName("manager").build();
-		staffPositionRepo.save(staffPosition);
-		staffPositionRepo.save(assistantPosition);
-		staffPositionRepo.save(managerPosition);
-	}
 
 	public void registerStaffCommissions() {
 		StaffCommission mainStylistCommission = StaffCommission.builder()
@@ -106,7 +92,9 @@ public class DataLoader implements CommandLineRunner {
 
 	public void registerExpenseCategories() {
 		ExpenseCategory expenseCategory = ExpenseCategory.builder().name("Bills").build();
+		ExpenseCategory expenseCategory2 = ExpenseCategory.builder().name("Others").build();
 		expenseCategoryRepo.save(expenseCategory);
+		expenseCategoryRepo.save(expenseCategory2);
 	}
 
 	public void registerPaymentTypes(){
@@ -217,556 +205,50 @@ public class DataLoader implements CommandLineRunner {
 				.position(staffPosition)
 				.build());
 
+		Staff staff2 = staffRepo.save(Staff.builder()
+				.name("staff")
+				.birthDate(LocalDate.of(2004, 1, 1))
+				.build());
+
+		StaffPosition staffPosition2 = staffPositionRepo.save(StaffPosition.builder()
+				.positionName("staff")
+				.build());
+
+		staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
+				.staff(staff2)
+				.position(staffPosition2)
+				.build());
+
+		Staff staff3 = staffRepo.save(Staff.builder()
+				.name("assistant")
+				.birthDate(LocalDate.of(2004, 1, 1))
+				.build());
+
+		StaffPosition staffPosition3 = staffPositionRepo.save(StaffPosition.builder()
+				.positionName("assistant")
+				.build());
+
+		staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
+				.staff(staff3)
+				.position(staffPosition3)
+				.build());
+
+		Staff staff4 = staffRepo.save(Staff.builder()
+				.name("manager")
+				.birthDate(LocalDate.of(2004, 1, 1))
+				.build());
+
+		StaffPosition staffPosition4 = staffPositionRepo.save(StaffPosition.builder()
+				.positionName("manager")
+				.build());
+
+		staffCurrentPositionRepo.save(StaffCurrentPosition.builder()
+				.staff(staff4)
+				.position(staffPosition4)
+				.build());
 		log.info("Staff registered: " + name + " with role: " + role);
 	}
 
-	public void registerServices() {
-		// Create service categories
-		ServiceCategory hairCategory = serviceCategoryRepo.save(ServiceCategory.builder()
-				.name("Hair Care")
-				.build());
-		
-		ServiceCategory nailsCategory = serviceCategoryRepo.save(ServiceCategory.builder()
-				.name("Nails")
-				.build());
-		
-		ServiceCategory skinCategory = serviceCategoryRepo.save(ServiceCategory.builder()
-				.name("Skin Care")
-				.build());
-		
-		ServiceCategory massageCategory = serviceCategoryRepo.save(ServiceCategory.builder()
-				.name("Massage & Spa")
-				.build());
-		
-		ServiceCategory makeupCategory = serviceCategoryRepo.save(ServiceCategory.builder()
-				.name("Makeup")
-				.build());
-
-		// Hair Care Services (10 services)
-		serviceRepo.save(Service.builder()
-				.serviceName("Classic Haircut")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(150000)
-				.durationMinutes((short) 30)
-				.serviceDescription("Professional haircut with styling")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Hair Coloring")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(350000)
-				.durationMinutes((short) 90)
-				.serviceDescription("Full hair coloring service with premium products")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Hair Highlights")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(400000)
-				.durationMinutes((short) 120)
-				.serviceDescription("Partial or full highlights for stunning hair")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Hair Perm")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(500000)
-				.durationMinutes((short) 150)
-				.serviceDescription("Long-lasting curls or waves")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Hair Straightening")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(600000)
-				.durationMinutes((short) 180)
-				.serviceDescription("Keratin treatment for smooth, straight hair")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Deep Conditioning Treatment")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(200000)
-				.durationMinutes((short) 45)
-				.serviceDescription("Intensive hair repair and moisture treatment")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Scalp Treatment")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(250000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Rejuvenating scalp massage and treatment")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Hair Extensions")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(800000)
-				.durationMinutes((short) 180)
-				.serviceDescription("Premium quality hair extensions application")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Blowdry and Style")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(120000)
-				.durationMinutes((short) 40)
-				.serviceDescription("Professional blowdry with styling")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Hair Spa Treatment")
-				.serviceCategory(hairCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(300000)
-				.durationMinutes((short) 90)
-				.serviceDescription("Complete hair spa with relaxation")
-				.activeStatus(true)
-				.build());
-
-		// Nails Services (7 services)
-		serviceRepo.save(Service.builder()
-				.serviceName("Basic Manicure")
-				.serviceCategory(nailsCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(100000)
-				.durationMinutes((short) 30)
-				.serviceDescription("Classic manicure with polish")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Gel Manicure")
-				.serviceCategory(nailsCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(180000)
-				.durationMinutes((short) 45)
-				.serviceDescription("Long-lasting gel nail polish")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Basic Pedicure")
-				.serviceCategory(nailsCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(120000)
-				.durationMinutes((short) 45)
-				.serviceDescription("Foot care with polish")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Gel Pedicure")
-				.serviceCategory(nailsCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(200000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Spa pedicure with gel polish")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Nail Art Design")
-				.serviceCategory(nailsCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(150000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Custom nail art and designs")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Acrylic Nails")
-				.serviceCategory(nailsCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(300000)
-				.durationMinutes((short) 90)
-				.serviceDescription("Full set of acrylic nail extensions")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Nail Removal Service")
-				.serviceCategory(nailsCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(80000)
-				.durationMinutes((short) 30)
-				.serviceDescription("Safe removal of gel or acrylic nails")
-				.activeStatus(true)
-				.build());
-
-		// Skin Care Services (6 services)
-		serviceRepo.save(Service.builder()
-				.serviceName("Basic Facial")
-				.serviceCategory(skinCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(200000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Deep cleansing facial treatment")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Anti-Aging Facial")
-				.serviceCategory(skinCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(400000)
-				.durationMinutes((short) 90)
-				.serviceDescription("Premium anti-aging treatment with collagen")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Acne Treatment")
-				.serviceCategory(skinCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(250000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Specialized treatment for acne-prone skin")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Brightening Facial")
-				.serviceCategory(skinCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(350000)
-				.durationMinutes((short) 75)
-				.serviceDescription("Vitamin C facial for radiant skin")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Hydrating Facial")
-				.serviceCategory(skinCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(300000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Deep moisture treatment for dry skin")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Microdermabrasion")
-				.serviceCategory(skinCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(450000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Exfoliation treatment for smooth skin")
-				.activeStatus(true)
-				.build());
-
-		// Massage & Spa Services (4 services)
-		serviceRepo.save(Service.builder()
-				.serviceName("Swedish Massage")
-				.serviceCategory(massageCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(300000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Relaxing full body massage")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Deep Tissue Massage")
-				.serviceCategory(massageCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(350000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Therapeutic massage for muscle tension")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Hot Stone Massage")
-				.serviceCategory(massageCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(400000)
-				.durationMinutes((short) 75)
-				.serviceDescription("Relaxing massage with heated stones")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Aromatherapy Massage")
-				.serviceCategory(massageCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(380000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Massage with essential oils")
-				.activeStatus(true)
-				.build());
-
-		// Makeup Services (3 services)
-		serviceRepo.save(Service.builder()
-				.serviceName("Event Makeup")
-				.serviceCategory(makeupCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(250000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Professional makeup for special events")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Bridal Makeup")
-				.serviceCategory(makeupCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(500000)
-				.durationMinutes((short) 90)
-				.serviceDescription("Complete bridal makeup package")
-				.activeStatus(true)
-				.build());
-
-		serviceRepo.save(Service.builder()
-				.serviceName("Makeup Lesson")
-				.serviceCategory(makeupCategory)
-				.serviceType(ServiceType.SINGLE)
-				.servicePrice(200000)
-				.durationMinutes((short) 60)
-				.serviceDescription("Learn professional makeup techniques")
-				.activeStatus(true)
-				.build());
-
-		log.info("Successfully loaded 30 services across 5 categories");
-	}
-
-	public void registerProducts() {
-		// Hair Care Products (8 products)
-		productRepo.save(Product.builder()
-				.productName("Professional Shampoo")
-				.currentPrice(250000)
-				.productDescription("Premium salon-grade shampoo for all hair types")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Luxury Conditioner")
-				.currentPrice(280000)
-				.productDescription("Deep conditioning formula for silky smooth hair")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Hair Serum")
-				.currentPrice(350000)
-				.productDescription("Anti-frizz serum for shiny, manageable hair")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Hair Oil Treatment")
-				.currentPrice(320000)
-				.productDescription("Nourishing oil for damaged hair repair")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Styling Gel")
-				.currentPrice(180000)
-				.productDescription("Strong hold gel for long-lasting styles")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Hair Spray")
-				.currentPrice(220000)
-				.productDescription("Professional finishing spray for all-day hold")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Hair Mask")
-				.currentPrice(400000)
-				.productDescription("Intensive repair mask for damaged hair")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Dry Shampoo")
-				.currentPrice(200000)
-				.productDescription("Quick refresh between washes")
-				.activeStatus(true)
-				.build());
-
-		// Skin Care Products (8 products)
-		productRepo.save(Product.builder()
-				.productName("Facial Cleanser")
-				.currentPrice(300000)
-				.productDescription("Gentle cleansing for all skin types")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Vitamin C Serum")
-				.currentPrice(550000)
-				.productDescription("Brightening serum with antioxidants")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Hyaluronic Acid Moisturizer")
-				.currentPrice(480000)
-				.productDescription("Intense hydration for plump, youthful skin")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Retinol Night Cream")
-				.currentPrice(620000)
-				.productDescription("Anti-aging night treatment")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("SPF 50 Sunscreen")
-				.currentPrice(350000)
-				.productDescription("Broad spectrum sun protection")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Exfoliating Scrub")
-				.currentPrice(280000)
-				.productDescription("Gentle exfoliation for smooth skin")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Eye Cream")
-				.currentPrice(420000)
-				.productDescription("Reduces dark circles and fine lines")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Face Mask Set")
-				.currentPrice(380000)
-				.productDescription("5-piece variety mask collection")
-				.activeStatus(true)
-				.build());
-
-		// Nail Care Products (7 products)
-		productRepo.save(Product.builder()
-				.productName("Gel Polish Set")
-				.currentPrice(450000)
-				.productDescription("12 colors long-lasting gel polish")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Nail Strengthener")
-				.currentPrice(250000)
-				.productDescription("Protein treatment for weak nails")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Cuticle Oil")
-				.currentPrice(180000)
-				.productDescription("Nourishing oil for healthy cuticles")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Top Coat")
-				.currentPrice(200000)
-				.productDescription("Quick-dry glossy finish")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Base Coat")
-				.currentPrice(200000)
-				.productDescription("Protective base for nail polish")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Nail File Set")
-				.currentPrice(150000)
-				.productDescription("Professional quality nail files")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Nail Art Kit")
-				.currentPrice(500000)
-				.productDescription("Complete nail art design tools")
-				.activeStatus(true)
-				.build());
-
-		// Makeup Products (7 products)
-		productRepo.save(Product.builder()
-				.productName("Foundation")
-				.currentPrice(580000)
-				.productDescription("Full coverage matte foundation")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Eyeshadow Palette")
-				.currentPrice(650000)
-				.productDescription("24-color professional palette")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Mascara")
-				.currentPrice(320000)
-				.productDescription("Volumizing and lengthening mascara")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Lipstick Set")
-				.currentPrice(480000)
-				.productDescription("6 shades long-lasting lipstick")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Makeup Brushes")
-				.currentPrice(550000)
-				.productDescription("15-piece professional brush set")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Setting Spray")
-				.currentPrice(350000)
-				.productDescription("All-day makeup setting spray")
-				.activeStatus(true)
-				.build());
-
-		productRepo.save(Product.builder()
-				.productName("Makeup Remover")
-				.currentPrice(280000)
-				.productDescription("Gentle oil-free makeup remover")
-				.activeStatus(true)
-				.build());
-
-		log.info("Successfully loaded 30 products");
-	}
 
 	public void registerInventory() {
 		// Get all products
@@ -1097,22 +579,14 @@ public class DataLoader implements CommandLineRunner {
 
 	public void registerJobPosting() {
 		jobPostingRepo.save(JobPosting.builder()
-				.jobPostingName("abc")
-				.jobPostingDescription("abc")
+				.jobPostingName("Hair Stylist")
+				.jobPostingDescription("Become a hair stylist for our salon")
 				.maxApplication(10)
 				.effectiveFrom(LocalDate.now())
 				.effectiveTo(LocalDate.now())
 				.status(JobPostingStatus.ACTIVE)
 				.build());
 
-		jobPostingRepo.save(JobPosting.builder()
-				.jobPostingName("a1bc")
-				.jobPostingDescription("a1bc")
-				.maxApplication(1)
-				.effectiveFrom(LocalDate.now())
-				.effectiveTo(LocalDate.now())
-				.status(JobPostingStatus.ACTIVE)
-				.build());
 	}
 
 	public void registerJobApplication() {
@@ -1125,96 +599,17 @@ public class DataLoader implements CommandLineRunner {
 	}
 
 	public void registerLoyaltyLevel() {
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Bronze", 1000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Bronze", 10000));
 		// Silver
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Silver", 2000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Silver", 20000));
 		// Gold
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 5000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Gold", 500000));
 		// Platinum
-		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 10000));
+		loyaltyLevelRepo.save(new LoyaltyLevel(null, "Platinum", 1000000));
 	}
 
-	public void registerAppointments() {
-		appointmentRepo.save(Appointment.builder()
-				.name("Alice")
-				.phoneNumber("0999111222")
-				.registeredAt(LocalDateTime.now().minusDays(3))
-				.scheduledAt(LocalDateTime.now().plusDays(2))
-				.status(AppointmentStatus.REGISTERED)
-				.build());
 
-		appointmentRepo.save(Appointment.builder()
-				.name("Bob")
-				.phoneNumber("0888222333")
-				.registeredAt(LocalDateTime.now().minusDays(5))
-				.scheduledAt(LocalDateTime.now().plusDays(1))
-				.status(AppointmentStatus.PENDING)
-				.build());
 
-		appointmentRepo.save(Appointment.builder()
-				.name("Charlie")
-				.phoneNumber("0777333444")
-				.registeredAt(LocalDateTime.now().minusDays(1))
-				.scheduledAt(null) // not scheduled yet
-				.status(AppointmentStatus.PENDING)
-				.build());
 
-		appointmentRepo.save(Appointment.builder()
-				.name("David")
-				.phoneNumber("0666444555")
-				.registeredAt(LocalDateTime.now().minusDays(7))
-				.scheduledAt(LocalDateTime.now().minusDays(2))
-				.status(AppointmentStatus.COMPLETED)
-				.build());
-	}
 
-	public void registerProductImages() {
-		log.info("Loading product images...");
-		
-		// Get all products
-		List<Product> products = productRepo.findAll();
-		
-		// Add placeholder images for products using placeholder service
-		// Using picsum.photos for random placeholder images
-		int imageIndex = 100;
-		for (Product product : products) {
-			// Add 2-3 images per product
-			int numImages = 2 + (product.getId() % 2); // 2 or 3 images
-			for (int i = 0; i < numImages; i++) {
-				String imagePath = "https://picsum.photos/seed/product-" + product.getId() + "-" + i + "/800/600";
-				productImageRepo.save(ProductImage.builder()
-						.product(product)
-						.imagePath(imagePath)
-						.build());
-				imageIndex++;
-			}
-		}
-		
-		log.info("Successfully loaded images for {} products", products.size());
-	}
-
-	public void registerServiceImages() {
-		log.info("Loading service images...");
-		
-		// Get all services
-		List<Service> services = serviceRepo.findAll();
-		
-		// Add placeholder images for services using placeholder service
-		// Using picsum.photos for random placeholder images
-		int imageIndex = 200;
-		for (Service service : services) {
-			// Add 1-2 images per service
-			int numImages = 1 + (service.getId() % 2); // 1 or 2 images
-			for (int i = 0; i < numImages; i++) {
-				String imagePath = "https://picsum.photos/seed/service-" + service.getId() + "-" + i + "/800/600";
-				serviceImageRepo.save(ServiceImage.builder()
-						.service(service)
-						.imagePath(imagePath)
-						.build());
-				imageIndex++;
-			}
-		}
-		
-		log.info("Successfully loaded images for {} services", services.size());
-	}
 }

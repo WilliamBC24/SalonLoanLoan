@@ -90,9 +90,9 @@ public class ManagerServiceController {
                 .activeStatus(activeStatus)
                 .build();
             
-            serviceRepo.save(service);
-            redirectAttributes.addFlashAttribute("successMessage", "Service created successfully!");
-            return "redirect:/manager/service/list";
+            Service createdService = serviceRepo.save(service);
+            redirectAttributes.addFlashAttribute("successMessage", "Service created successfully! You can now add images below.");
+            return "redirect:/manager/service/edit/" + createdService.getId();
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating service: " + e.getMessage());
             return "redirect:/manager/service/create";

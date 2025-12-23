@@ -461,52 +461,55 @@
             </div>
         </div>
 
-        <!-- MAIN LAYOUT: IMAGE LEFT, DETAILS RIGHT -->
         <div class="product-layout">
 
-            <!-- LEFT: MEDIA -->
             <section class="product-media-card">
                 <div class="product-image-wrapper">
-                    <img id="mainProductImage" 
+                    <img id="mainProductImage"
                          src="https://via.placeholder.com/600x450.png?text=Product+Image"
-                         alt="Product image">
+                         th:alt="#{product.image.alt}">
                 </div>
-                
-                <!-- Image thumbnails -->
-                <div id="imageThumbnails" style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; overflow-x: auto;">
-                    <!-- Thumbnails will be loaded here dynamically -->
+
+                <div id="imageThumbnails"
+                     style="display:flex; gap:0.5rem; margin-top:1rem; flex-wrap:wrap; overflow-x:auto;">
                 </div>
 
                 <div class="product-meta">
                     <div class="product-meta-row">
-                        <span>Product ID:</span>
+                        <span th:text="#{product.id}">Product ID:</span>
                         <span th:text="${product.id}">1</span>
                     </div>
                     <div class="product-meta-row">
-                        <span>Status:</span>
-                        <span th:text="${product.activeStatus} ? 'Active' : 'Inactive'">Active</span>
+                        <span th:text="#{product.status}">Status:</span>
+                        <span th:text="${product.activeStatus} ? #{product.status.active} : #{product.status.inactive}">
+                            Active
+                        </span>
                     </div>
                 </div>
             </section>
 
-            <!-- RIGHT: INFO -->
             <section class="product-info-card">
                 <h2 th:text="${product.productName}">Product Name</h2>
 
                 <p class="product-price"
-                th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-
+                   th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                     0 VND
                 </p>
 
                 <div class="product-stock">
-                    Available Stock:
-                    <span th:text="${availableStock}">0</span> units
-                    <span th:if="${availableStock == 0}" class="product-stock-status-out">
+                    <span th:text="#{product.stock.available}">Available Stock:</span>
+                    <span th:text="${availableStock}">0</span>
+                    <span th:text="#{product.stock.unit}">units</span>
+
+                    <span th:if="${availableStock == 0}"
+                          class="product-stock-status-out"
+                          th:text="#{product.stock.out}">
                         (Out of Stock)
                     </span>
+
                     <span th:if="${availableStock > 0 && availableStock < 10}"
-                          class="product-stock-status-low">
+                          class="product-stock-status-low"
+                          th:text="#{product.stock.low}">
                         (Low Stock)
                     </span>
                 </div>
@@ -516,12 +519,17 @@
                     Description goes here.
                 </p>
 
-                <!-- Add to cart (only if active) -->
                 <div class="add-to-cart-box" th:if="${product.activeStatus}">
-                    <form th:action="@{/cart/add}" method="post" style="display:flex; flex-wrap:wrap; gap:0.8rem; align-items:center;">
+                    <form th:action="@{/cart/add}" method="post"
+                          style="display:flex; flex-wrap:wrap; gap:0.8rem; align-items:center;">
                         <input type="hidden" name="productId" th:value="${product.id}"/>
 
-                        <label for="amount" style="font-size:0.9rem;">Quantity:</label>
+                        <label for="amount"
+                               style="font-size:0.9rem;"
+                               th:text="#{product.quantity}">
+                            Quantity:
+                        </label>
+
                         <input type="number"
                                id="amount"
                                name="amount"
@@ -529,7 +537,9 @@
                                min="1"
                                class="quantity-input"/>
 
-                        <button type="submit" class="btn-primary">
+                        <button type="submit"
+                                class="btn-primary"
+                                th:text="#{product.addToCart}">
                             Add to Cart
                         </button>
                     </form>
@@ -537,19 +547,21 @@
             </section>
         </div>
 
-        <!-- RATING & REVIEWS -->
         <section class="rating-card">
-            <h2>Product Ratings &amp; Reviews</h2>
+            <h2 th:text="#{product.rating.title}">
+                Product Ratings &amp; Reviews
+            </h2>
 
-            <!-- Success/Error messages -->
-            <div th:if="${param.ratingSuccess}" class="alert alert-success">
+            <div th:if="${param.ratingSuccess}"
+                 class="alert alert-success"
+                 th:text="#{product.rating.success}">
                 Rating submitted successfully!
             </div>
+
             <div th:if="${param.ratingError}" class="alert alert-error">
                 <span th:text="${param.ratingError}">Error submitting rating</span>
             </div>
 
-            <!-- Rating summary -->
             <div class="rating-summary" th:if="${totalReviews > 0}">
                 <div class="rating-average"
                      th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">
@@ -557,34 +569,41 @@
                 </div>
                 <div class="rating-details">
                     <div class="stars">
-                        <span th:each="i : ${#numbers.sequence(1, 5)}"
+                        <span th:each="i : ${#numbers.sequence(1,5)}"
                               class="star"
                               th:classappend="${i <= averageRating} ? ' filled' : ' empty'">
                             ★
                         </span>
                     </div>
                     <div class="rating-count"
-                         th:text="${totalReviews} + ' review(s)'">
+                         th:text="${totalReviews} + ' ' + #{product.rating.reviews}">
                         0 review(s)
                     </div>
                 </div>
             </div>
 
-            <div th:if="${totalReviews == 0}" class="alert alert-info">
-                No reviews yet. Be the first to review this product!
+            <div th:if="${totalReviews == 0}"
+                 class="alert alert-info"
+                 th:text="#{product.rating.empty}">
+                No reviews yet.
             </div>
 
-            <!-- Rating form (user can rate) -->
             <div th:if="${canRate}" class="rating-form">
-                <h3 th:text="${userFeedback != null ? 'Update Your Review' : 'Write a Review'}">
+                <h3 th:text="${userFeedback != null ? #{product.rating.update} : #{product.rating.write}}">
                     Write a Review
                 </h3>
 
-                <form th:action="@{/products/rate}" method="post" enctype="multipart/form-data" id="reviewForm">
+                <form th:action="@{/products/rate}"
+                      method="post"
+                      enctype="multipart/form-data"
+                      id="reviewForm">
                     <input type="hidden" name="productId" th:value="${product.id}"/>
 
                     <div>
-                        <label style="font-size:0.9rem;">Rating:</label>
+                        <label style="font-size:0.9rem;"
+                               th:text="#{product.rating.label}">
+                            Rating:
+                        </label>
                         <div class="star-rating">
                             <input type="radio" name="rating" value="5" id="star5"
                                    th:checked="${userFeedback?.rating == 5}" required/>
@@ -609,50 +628,65 @@
                     </div>
 
                     <div>
-                        <label for="comment" style="font-size:0.9rem;">Comment (optional):</label>
+                        <label for="comment"
+                               style="font-size:0.9rem;"
+                               th:text="#{product.rating.comment}">
+                            Comment (optional):
+                        </label>
                         <textarea id="comment"
                                   name="comment"
                                   class="comment-input"
-                                  placeholder="Share your thoughts about this product..."
-                                  th:text="${userFeedback?.comment}"></textarea>
+                                  th:placeholder="#{product.rating.placeholder}"
+                                  th:text="${userFeedback?.comment}">
+                        </textarea>
                     </div>
 
                     <div class="image-upload-section">
-                        <label for="imageUpload" class="image-upload-label">
+                        <label for="imageUpload"
+                               class="image-upload-label"
+                               th:text="#{product.rating.images}">
                             📷 Add Photos (Max 5)
                         </label>
-                        <input type="file" 
-                               id="imageUpload" 
-                               name="images" 
-                               accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                        <input type="file"
+                               id="imageUpload"
+                               name="images"
                                multiple
-                               class="image-upload-input"
-                               onchange="previewImages(event)">
-                        <div id="imagePreviewContainer" class="image-preview-container"></div>
+                               accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                               class="image-upload-input">
+                        <div id="imagePreviewContainer"
+                             class="image-preview-container">
+                        </div>
                     </div>
 
                     <button type="submit"
                             class="btn-primary submit-rating-btn"
-                            th:text="${userFeedback != null ? 'Update Review' : 'Submit Review'}">
+                            th:text="${userFeedback != null ? #{product.rating.updateBtn} : #{product.rating.submit}}">
                         Submit Review
                     </button>
                 </form>
             </div>
 
-            <!-- Login prompt if not logged in -->
             <div th:if="${!canRate and !isLoggedIn}" class="login-prompt">
-                <a th:href="@{/auth/user/login}" class="login-link">Log in</a>
-                to rate this product after purchasing it.
+                <a th:href="@{/auth/user/login}"
+                   class="login-link"
+                   th:text="#{product.rating.login}">
+                    Log in
+                </a>
+                <span th:text="#{product.rating.loginHint}">
+                    to rate this product after purchasing it.
+                </span>
             </div>
 
-            <!-- Message if logged in but cannot rate yet -->
-            <div th:if="${!canRate and isLoggedIn}" class="alert alert-info">
-                You can rate this product after purchasing and receiving it.
+            <div th:if="${!canRate and isLoggedIn}"
+                 class="alert alert-info"
+                 th:text="#{product.rating.notAllowed}">
+                You can rate this product after purchasing it.
             </div>
 
-            <!-- Feedback list -->
             <div class="feedback-list" th:if="${totalReviews > 0}">
-                <h3 style="margin-bottom:0.8rem;">Customer Reviews</h3>
+                <h3 th:text="#{product.rating.customer}">
+                    Customer Reviews
+                </h3>
 
                 <div th:each="feedback : ${feedbackList}" class="feedback-item">
                     <div class="feedback-header">
@@ -661,21 +695,24 @@
                             Username
                         </span>
                         <span class="feedback-rating">
-                            <span th:each="i : ${#numbers.sequence(1, 5)}"
+                            <span th:each="i : ${#numbers.sequence(1,5)}"
                                   th:text="${i <= feedback.rating} ? '★' : '☆'">
                                 ★
                             </span>
                         </span>
                     </div>
+
                     <div class="feedback-comment"
                          th:if="${feedback.comment != null and !#strings.isEmpty(feedback.comment)}"
                          th:text="${feedback.comment}">
                         Great product!
                     </div>
-                    <div class="feedback-images" th:if="${feedback.images != null and !feedback.images.isEmpty()}">
+
+                    <div class="feedback-images"
+                         th:if="${feedback.images != null and !feedback.images.isEmpty()}">
                         <img th:each="image : ${feedback.images}"
                              th:src="@{'/uploads/product-feedback-images/' + ${image.imagePath}}"
-                             th:alt="'Review image'"
+                             th:alt="#{product.rating.imageAlt}"
                              class="feedback-image"
                              onclick="window.open(this.src, '_blank')">
                     </div>
@@ -685,6 +722,7 @@
 
     </div>
 </main>
+
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

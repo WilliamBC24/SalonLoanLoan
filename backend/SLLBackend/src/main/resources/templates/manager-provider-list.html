@@ -324,46 +324,56 @@
 <main class="staff-main providers-page">
     <div class="providers-layout-inner">
         <section class="providers-card">
-            <!-- Header -->
             <div class="providers-header-row">
                 <div class="providers-title-block section-heading">
-                    <p class="section-kicker">Supplier Management</p>
-                    <h2>Manage Providers</h2>
+                    <p class="section-kicker" th:text="#{manager-provider-list.kicker}">
+                        Supplier Management
+                    </p>
+                    <h2 th:text="#{manager-provider-list.title}">
+                        Manage Providers
+                    </h2>
                 </div>
                 <div class="providers-actions">
                     <a href="/manager/supplier/create" class="create-btn-pill">
                         <span class="icon">＋</span>
-                        <span>New Provider</span>
+                        <span th:text="#{manager-provider-list.create}">
+                            New Provider
+                        </span>
                     </a>
                 </div>
             </div>
 
-            <!-- Success/Error Messages -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Search and Filter Card -->
             <div class="search-panel">
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <h3 th:text="#{common.searchFilters}">
+                            Search &amp; Filters
+                        </h3>
                     </div>
                 </div>
 
                 <form method="get" action="/manager/supplier/list">
                     <div class="search-form">
                         <div class="filter-group">
-                            <label for="search-name">Search by Name</label>
+                            <label for="search-name"
+                                   th:text="#{manager-provider-list.searchByName}">
+                                Search by Name
+                            </label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter provider name..." />
+                                   th:placeholder="#{manager-provider-list.searchPlaceholder}" />
                         </div>
 
                         <div class="filter-group">
-                            <label>Provider Categories</label>
+                            <label th:text="#{manager-provider-list.categories}">
+                                Provider Categories
+                            </label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item" th:each="category : ${allCategories}">
                                     <input type="checkbox"
@@ -372,7 +382,9 @@
                                            th:value="${category.id}"
                                            th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
                                     <label th:for="'category-' + ${category.id}"
-                                           th:text="${category.name}">Category</label>
+                                           th:text="${category.name}">
+                                        Category
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -381,30 +393,33 @@
                     <div class="search-buttons">
                         <button type="submit" class="btn btn-primary">
                             <span>🔎</span>
-                            <span>Search</span>
+                            <span th:text="#{common.search}">
+                                Search
+                            </span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/manager/supplier/list'">
                             <span>✕</span>
-                            <span>Reset</span>
+                            <span th:text="#{common.reset}">
+                                Reset
+                            </span>
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Providers Table -->
             <div class="providers-table-wrapper">
                 <table>
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Provider Name</th>
-                        <th>Category</th>
-                        <th>Phone Number</th>
-                        <th>Email</th>
-                        <th>Note</th>
-                        <th>Actions</th>
+                        <th th:text="#{common.id}">ID</th>
+                        <th th:text="#{manager-provider-list.name}">Provider Name</th>
+                        <th th:text="#{manager-provider-list.category}">Category</th>
+                        <th th:text="#{manager-provider-list.phone}">Phone Number</th>
+                        <th th:text="#{manager-provider-list.email}">Email</th>
+                        <th th:text="#{common.note}">Note</th>
+                        <th th:text="#{common.actions}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -417,7 +432,7 @@
                         <td th:text="${supplier.note}">Note</td>
                         <td>
                             <a th:href="@{/manager/supplier/edit/{id}(id=${supplier.id})}" class="edit-link">
-                                <span>Edit</span>
+                                <span th:text="#{common.edit}">Edit</span>
                             </a>
                         </td>
                     </tr>
@@ -427,5 +442,6 @@
         </section>
     </div>
 </main>
+
 </body>
 </html>

@@ -359,12 +359,16 @@
     <div class="satisfaction-report-layout-inner">
         <section class="satisfaction-report-card">
 
-            <!-- HEADER -->
             <div class="report-header-row">
                 <div class="report-header-title section-heading">
-                    <p class="section-kicker">Satisfaction</p>
-                    <h2>Satisfaction Report</h2>
-                    <p class="report-header-sub">
+                    <p class="section-kicker" th:text="#{manager-satisfaction-report.kicker}">
+                        Satisfaction
+                    </p>
+                    <h2 th:text="#{manager-satisfaction-report.title}">
+                        Satisfaction Report
+                    </h2>
+                    <p class="report-header-sub"
+                       th:text="#{manager-satisfaction-report.subtitle}">
                         Track how satisfied customers are with appointments and product orders.
                     </p>
                 </div>
@@ -376,11 +380,12 @@
                 </div>
             </div>
 
-            <!-- FILTERS -->
             <section class="filter-card">
                 <div class="filter-header">
                     <div class="filter-header-title">
-                        <span>Filter by time range</span>
+                        <span th:text="#{common.filterByTime}">
+                            Filter by time range
+                        </span>
                     </div>
                 </div>
 
@@ -389,7 +394,7 @@
                       method="get">
                     <div class="filter-fields">
                         <div class="filter-group">
-                            <label for="month-select">Month</label>
+                            <label for="month-select" th:text="#{common.month}">Month</label>
                             <select id="month-select" name="month">
                                 <option th:each="m : ${monthOptions}"
                                         th:value="${m}"
@@ -401,7 +406,7 @@
                         </div>
 
                         <div class="filter-group">
-                            <label for="year-select">Year</label>
+                            <label for="year-select" th:text="#{common.year}">Year</label>
                             <select id="year-select" name="year">
                                 <option th:each="y : ${yearOptions}"
                                         th:value="${y}"
@@ -415,16 +420,15 @@
 
                     <div class="filter-actions">
                         <button type="submit" class="btn btn-primary">
-                            <span>Apply</span>
+                            <span th:text="#{common.apply}">Apply</span>
                         </button>
                         <a th:href="@{/manager/report/satisfaction}" class="btn btn-secondary">
-                            <span>Reset</span>
+                            <span th:text="#{common.reset}">Reset</span>
                         </a>
                     </div>
                 </form>
             </section>
 
-            <!-- SUMMARY CARDS (Appointments / Product Orders) -->
             <section class="satisfaction-summary-grid">
                 <div class="satisfaction-summary-card"
                      th:if="${!#lists.isEmpty(satisfactionSummary)}"
@@ -437,11 +441,15 @@
                         <span th:text="${row.averageRating != null ? #numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA') : '-'}">
                             4.5
                         </span>
-                        <span class="unit">/ 5</span>
+                        <span class="unit" th:text="#{manager-satisfaction-report.outOfFive}">
+                            / 5
+                        </span>
                     </div>
                     <div class="satisfaction-summary-meta">
-                        <span th:text="${row.responseCount}">0</span> responses
-                        for this segment.
+                        <span th:text="${row.responseCount}">0</span>
+                        <span th:text="#{manager-satisfaction-report.responsesForSegment}">
+                            responses for this segment.
+                        </span>
                     </div>
                 </div>
 
@@ -456,25 +464,31 @@
                         <span th:text="${row.averageRating != null ? #numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA') : '-'}">
                             4.3
                         </span>
-                        <span class="unit">/ 5</span>
+                        <span class="unit" th:text="#{manager-satisfaction-report.outOfFive}">
+                            / 5
+                        </span>
                     </div>
                     <div class="satisfaction-summary-meta">
-                        <span th:text="${row.responseCount}">0</span> responses
-                        for this segment.
+                        <span th:text="${row.responseCount}">0</span>
+                        <span th:text="#{manager-satisfaction-report.responsesForSegment}">
+                            responses for this segment.
+                        </span>
                     </div>
                 </div>
             </section>
 
-            <!-- TABLE SECTION -->
             <section>
                 <div class="satisfaction-table-section-header">
                     <div class="satisfaction-table-title">
-                        <h3>Satisfaction by segment</h3>
-                        <span>
+                        <h3 th:text="#{manager-satisfaction-report.tableTitle}">
+                            Satisfaction by segment
+                        </h3>
+                        <span th:text="#{manager-satisfaction-report.tableSubtitle}">
                             Overview of ratings and response counts.
                         </span>
                     </div>
-                    <div class="satisfaction-meta">
+                    <div class="satisfaction-meta"
+                         th:text="#{manager-satisfaction-report.scaleNote}">
                         Ratings are shown on a 1–5 scale.
                     </div>
                 </div>
@@ -483,10 +497,16 @@
                     <table class="satisfaction-table">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Segment</th>
-                            <th class="cell-number">Average Rating</th>
-                            <th class="cell-number">Responses</th>
+                            <th th:text="#{common.no}">#</th>
+                            <th th:text="#{manager-satisfaction-report.segment}">Segment</th>
+                            <th class="cell-number"
+                                th:text="#{manager-satisfaction-report.avgRating}">
+                                Average Rating
+                            </th>
+                            <th class="cell-number"
+                                th:text="#{manager-satisfaction-report.responses}">
+                                Responses
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -502,7 +522,8 @@
                         </tr>
 
                         <tr th:if="${#lists.isEmpty(satisfactionSummary)}">
-                            <td colspan="4" class="empty-row">
+                            <td colspan="4" class="empty-row"
+                                th:text="#{manager-satisfaction-report.noData}">
                                 No satisfaction data for the selected period.
                             </td>
                         </tr>
@@ -514,5 +535,6 @@
         </section>
     </div>
 </main>
+
 </body>
 </html>

@@ -195,49 +195,58 @@
     <div class="promo-layout-inner">
         <section class="promo-card">
 
-            <!-- Header -->
             <div class="promo-header-row">
                 <div class="promo-title-block section-heading">
-                    <p class="section-kicker">Marketing &amp; Offers</p>
-                    <h2>Manage Promotions</h2>
+                    <p class="section-kicker" th:text="#{manager-promotion-list.kicker}">
+                        Marketing &amp; Offers
+                    </p>
+                    <h2 th:text="#{manager-promotion-list.title}">
+                        Manage Promotions
+                    </h2>
                 </div>
                 <div class="promo-actions">
                     <a href="/manager/promotion/create" class="btn-create">
-                        ➕ <span>Create Promotion</span>
+                        ➕ <span th:text="#{manager-promotion-list.create}">
+                            Create Promotion
+                        </span>
                     </a>
                 </div>
             </div>
 
-            <!-- Success/Error Messages -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Promotions Table -->
             <div class="promo-table-wrapper">
                 <table>
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Discount Type</th>
-                        <th>Discount Amount</th>
-                        <th>Effective From</th>
-                        <th>Effective To</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th th:text="#{common.id}">ID</th>
+                        <th th:text="#{common.name}">Name</th>
+                        <th th:text="#{common.description}">Description</th>
+                        <th th:text="#{manager-promotion-list.discountType}">Discount Type</th>
+                        <th th:text="#{manager-promotion-list.discountAmount}">Discount Amount</th>
+                        <th th:text="#{manager-promotion-list.effectiveFrom}">Effective From</th>
+                        <th th:text="#{manager-promotion-list.effectiveTo}">Effective To</th>
+                        <th th:text="#{common.status}">Status</th>
+                        <th th:text="#{common.actions}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="promotion : ${promotions}">
                         <td th:text="${promotion.id}">1</td>
-                        <td class="promo-name" th:text="${promotion.promotionName}">Promotion name</td>
-                        <td th:text="${promotion.promotionDescription}">Description</td>
-                        <td th:text="${promotion.discountType}">AMOUNT</td>
+                        <td class="promo-name" th:text="${promotion.promotionName}">
+                            Promotion name
+                        </td>
+                        <td th:text="${promotion.promotionDescription}">
+                            Description
+                        </td>
+                        <td th:text="${promotion.discountType}">
+                            AMOUNT
+                        </td>
 
                         <td th:text="${promotion.discountType.name() == 'AMOUNT'
-                ? #numbers.formatDecimal(promotion.discountAmount, 0, 'COMMA', 0, 'POINT') + ' VND'
-                : promotion.discountAmount + '%'}">
+                            ? #numbers.formatDecimal(promotion.discountAmount, 0, 'COMMA', 0, 'POINT') + ' ' + #{common.vnd}
+                            : promotion.discountAmount + '%'}">
                             0
                         </td>
 
@@ -250,13 +259,13 @@
                         <td>
                             <span class="status-badge"
                                   th:class="'status-badge ' + (${promotion.promotionStatus != null && promotion.promotionStatus.name == 'ACTIVE'} ? 'status-active' : 'status-inactive')"
-                                  th:text="${promotion.promotionStatus != null ? promotion.promotionStatus.name : 'N/A'}">
+                                  th:text="${promotion.promotionStatus != null ? promotion.promotionStatus.name : #{common.na}}">
                                 Active
                             </span>
                         </td>
                         <td>
                             <a th:href="@{/manager/promotion/edit/{id}(id=${promotion.id})}" class="edit-link">
-                                ✏️ <span>Edit</span>
+                                ✏️ <span th:text="#{common.edit}">Edit</span>
                             </a>
                         </td>
                     </tr>
@@ -267,6 +276,7 @@
         </section>
     </div>
 </main>
+
 
 </body>
 </html>

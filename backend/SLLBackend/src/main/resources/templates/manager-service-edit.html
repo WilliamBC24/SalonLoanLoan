@@ -385,55 +385,68 @@
 <main class="staff-main service-edit-page">
     <div class="service-edit-layout-inner">
         <section class="service-edit-card">
-            <!-- Header -->
             <div class="service-edit-header-row">
                 <div class="service-edit-title-block section-heading">
-                    <p class="section-kicker">Service Management</p>
+                    <p class="section-kicker" th:text="#{manager-service-edit.kicker}">
+                        Service Management
+                    </p>
                     <h2>
-                        Edit Service
+                        <span th:text="#{manager-service-edit.title}">Edit Service</span>
                         <span class="service-id-badge">
                             #<span th:text="${service.id}">1</span>
                         </span>
                     </h2>
-                    <p class="info-text">
+                    <p class="info-text" th:text="#{manager-service-edit.subtitle}">
                         You can update service information and availability here.
                     </p>
                 </div>
                 <div class="service-edit-actions">
                     <a href="/manager/service/list" class="back-link-pill">
                         <span class="icon">←</span>
-                        <span>Back to Service List</span>
+                        <span th:text="#{manager-service-edit.back}">
+                            Back to Service List
+                        </span>
                     </a>
                 </div>
             </div>
 
-            <!-- Error Messages -->
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Form -->
             <form id="editServiceForm"
                   method="post"
                   th:action="@{/manager/service/edit/{id}(id=${service.id})}"
                   class="form-grid">
                 <div>
                     <div class="form-group">
-                        <label for="serviceName" class="required">Service Name</label>
+                        <label for="serviceName" class="required"
+                               th:text="#{manager-service-edit.name}">
+                            Service Name
+                        </label>
                         <input type="text"
                                id="serviceName"
                                name="serviceName"
                                th:value="${service.serviceName}"
                                data-original-name="${service.serviceName}"
                                required>
-                        <div class="error" id="serviceNameError">Service name is required</div>
-                        <div class="warning" id="serviceNameWarning">
+                        <div class="error" id="serviceNameError"
+                             th:text="#{manager-service-edit.nameRequired}">
+                            Service name is required
+                        </div>
+                        <div class="warning" id="serviceNameWarning"
+                             th:text="#{manager-service-edit.nameDuplicate}">
                             A service with this name already exists
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceCategoryId" class="required">Service Category</label>
+                        <label for="serviceCategoryId" class="required"
+                               th:text="#{manager-service-edit.category}">
+                            Service Category
+                        </label>
                         <select id="serviceCategoryId" name="serviceCategoryId" required>
-                            <option value="">-- Select Category --</option>
+                            <option value="" th:text="#{common.selectCategory}">
+                                -- Select Category --
+                            </option>
                             <option th:each="category : ${categories}"
                                     th:value="${category.id}"
                                     th:text="${category.name}"
@@ -441,38 +454,60 @@
                                 Category
                             </option>
                         </select>
-                        <div class="error" id="serviceCategoryIdError">
+                        <div class="error" id="serviceCategoryIdError"
+                             th:text="#{manager-service-edit.categoryRequired}">
                             Service category is required
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceType" class="required">Service Type</label>
+                        <label for="serviceType" class="required"
+                               th:text="#{manager-service-edit.type}">
+                            Service Type
+                        </label>
                         <select id="serviceType" name="serviceType" required>
-                            <option value="">-- Select Type --</option>
-                            <option value="SINGLE" th:selected="${service.serviceType.name() == 'SINGLE'}">Single</option>
-                            <option value="COMBO" th:selected="${service.serviceType.name() == 'COMBO'}">Combo</option>
+                            <option value="" th:text="#{common.selectType}">
+                                -- Select Type --
+                            </option>
+                            <option value="SINGLE"
+                                    th:selected="${service.serviceType.name() == 'SINGLE'}"
+                                    th:text="#{manager-service-edit.type.single}">
+                                Single
+                            </option>
+                            <option value="COMBO"
+                                    th:selected="${service.serviceType.name() == 'COMBO'}"
+                                    th:text="#{manager-service-edit.type.combo}">
+                                Combo
+                            </option>
                         </select>
-                        <div class="error" id="serviceTypeError">
+                        <div class="error" id="serviceTypeError"
+                             th:text="#{manager-service-edit.typeRequired}">
                             Service type is required
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="servicePrice" class="required">Service Price (VND)</label>
+                        <label for="servicePrice" class="required"
+                               th:text="#{manager-service-edit.price}">
+                            Service Price (VND)
+                        </label>
                         <input type="number"
                                id="servicePrice"
                                name="servicePrice"
                                min="0"
                                th:value="${service.servicePrice}"
                                required>
-                        <div class="error" id="servicePriceError">
+                        <div class="error" id="servicePriceError"
+                             th:text="#{manager-service-edit.priceInvalid}">
                             Service price is required and must be a positive number
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="durationMinutes" class="required">Duration (minutes)</label>
+                        <label for="durationMinutes" class="required"
+                               th:text="#{manager-service-edit.duration}">
+                            Duration (minutes)
+                        </label>
                         <input type="number"
                                id="durationMinutes"
                                name="durationMinutes"
@@ -480,13 +515,17 @@
                                max="32767"
                                th:value="${service.durationMinutes}"
                                required>
-                        <div class="error" id="durationMinutesError">
+                        <div class="error" id="durationMinutesError"
+                             th:text="#{manager-service-edit.durationInvalid}">
                             Duration is required and must be between 1 and 32767 minutes
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="serviceDescription">Service Description</label>
+                        <label for="serviceDescription"
+                               th:text="#{manager-service-edit.description}">
+                            Service Description
+                        </label>
                         <textarea id="serviceDescription"
                                   name="serviceDescription"
                                   th:text="${service.serviceDescription}"></textarea>
@@ -499,44 +538,56 @@
                                    name="activeStatus"
                                    value="true"
                                    th:checked="${service.activeStatus}">
-                            <label for="activeStatus">Active Status</label>
+                            <label for="activeStatus"
+                                   th:text="#{common.activeStatus}">
+                                Active Status
+                            </label>
                         </div>
                     </div>
 
-                    <!-- Image Upload Section -->
                     <div class="image-section">
-                        <h3>📷 Service Images</h3>
+                        <h3 th:text="#{manager-service-edit.imagesTitle}">
+                            📷 Service Images
+                        </h3>
                         <div class="image-upload-area">
                             <div class="image-upload-input">
                                 <div class="file-input-wrapper">
                                     <input type="file" id="imageFile" accept="image/*">
                                     <label for="imageFile" class="file-input-label">
                                         <span>📁</span>
-                                        <span>Choose Image</span>
+                                        <span th:text="#{manager-service-edit.chooseImage}">
+                                            Choose Image
+                                        </span>
                                     </label>
                                 </div>
-                                <span class="file-name" id="fileName">No file chosen</span>
+                                <span class="file-name" id="fileName"
+                                      th:text="#{manager-service-edit.noFile}">
+                                    No file chosen
+                                </span>
                                 <button type="button" class="btn-upload" id="uploadBtn" disabled
-                                        onclick="uploadServiceImage()">
+                                        onclick="uploadServiceImage()"
+                                        th:text="#{manager-service-edit.upload}">
                                     Upload
                                 </button>
                             </div>
                             <div id="uploadMessage"></div>
                         </div>
-                        <div class="image-gallery" id="imageGallery">
-                            <!-- Images will be loaded here dynamically -->
-                        </div>
+                        <div class="image-gallery" id="imageGallery"></div>
                     </div>
 
                     <div class="button-group">
                         <button type="submit" class="btn btn-primary">
-                            <span>Update Service</span>
+                            <span th:text="#{manager-service-edit.submit}">
+                                Update Service
+                            </span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/manager/service/list'">
                             <span>✕</span>
-                            <span>Cancel</span>
+                            <span th:text="#{common.cancel}">
+                                Cancel
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -552,7 +603,6 @@
         .getElementById('serviceName')
         .getAttribute('data-original-name');
 
-    // Check for duplicate service name
     function checkDuplicateServiceName(serviceName) {
         if (!serviceName || !serviceName.trim()) {
             document.getElementById('serviceNameWarning').style.display = 'none';
@@ -560,7 +610,6 @@
             return;
         }
 
-        // Don't check if name hasn't changed
         if (serviceName.trim().toLowerCase() === originalServiceName.toLowerCase()) {
             document.getElementById('serviceNameWarning').style.display = 'none';
             isDuplicateName = false;
@@ -568,277 +617,149 @@
         }
 
         fetch('/services?name=' + encodeURIComponent(serviceName.trim()))
-            .then(response => response.text())
+            .then(r => r.text())
             .then(html => {
-                // Parse the response to check if any services exist with exact name match (case-insensitive)
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const serviceElements = doc.querySelectorAll('[data-service-name]');
-
-                let hasExactMatch = false;
-                serviceElements.forEach(elem => {
-                    const existingName = elem.getAttribute('data-service-name');
-                    if (existingName && existingName.toLowerCase() === serviceName.trim().toLowerCase()) {
-                        hasExactMatch = true;
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const els = doc.querySelectorAll('[data-service-name]');
+                let match = false;
+                els.forEach(e => {
+                    if (e.getAttribute('data-service-name')?.toLowerCase() === serviceName.trim().toLowerCase()) {
+                        match = true;
                     }
                 });
-
-                const warningElement = document.getElementById('serviceNameWarning');
-                if (hasExactMatch) {
-                    warningElement.style.display = 'block';
-                    isDuplicateName = true;
-                } else {
-                    warningElement.style.display = 'none';
-                    isDuplicateName = false;
-                }
+                const warn = document.getElementById('serviceNameWarning');
+                warn.style.display = match ? 'block' : 'none';
+                isDuplicateName = match;
             })
-            .catch(error => {
-                console.error('Error checking duplicate name:', error);
-            });
+            .catch(() => console.error('[[#{manager-service-edit.duplicateCheckError}]]'));
     }
 
-    document.getElementById('editServiceForm').addEventListener('submit', function(event) {
-        let isValid = true;
+    document.getElementById('editServiceForm').addEventListener('submit', function(e) {
+        let ok = true;
 
-        // Check for duplicate name
         if (isDuplicateName) {
-            alert('A service with this name already exists. Please choose a different name.');
-            event.preventDefault();
+            alert('[[#{manager-service-edit.duplicateAlert}]]');
+            e.preventDefault();
             return;
         }
 
-        // Validate service name
-        const serviceName = document.getElementById('serviceName');
-        const serviceNameError = document.getElementById('serviceNameError');
-        if (!serviceName.value.trim()) {
-            serviceName.classList.add('invalid');
-            serviceNameError.style.display = 'block';
-            isValid = false;
-        } else {
-            serviceName.classList.remove('invalid');
-            serviceNameError.style.display = 'none';
-        }
+        const checks = [
+            ['serviceName', 'serviceNameError', v => v.trim()],
+            ['serviceCategoryId', 'serviceCategoryIdError', v => v],
+            ['serviceType', 'serviceTypeError', v => v],
+            ['servicePrice', 'servicePriceError', v => v && parseInt(v) >= 0],
+            ['durationMinutes', 'durationMinutesError', v => v && parseInt(v) >= 1 && parseInt(v) <= 32767]
+        ];
 
-        // Validate service category
-        const serviceCategoryId = document.getElementById('serviceCategoryId');
-        const serviceCategoryIdError = document.getElementById('serviceCategoryIdError');
-        if (!serviceCategoryId.value) {
-            serviceCategoryId.classList.add('invalid');
-            serviceCategoryIdError.style.display = 'block';
-            isValid = false;
-        } else {
-            serviceCategoryId.classList.remove('invalid');
-            serviceCategoryIdError.style.display = 'none';
-        }
+        checks.forEach(([id, err, fn]) => {
+            const el = document.getElementById(id);
+            const er = document.getElementById(err);
+            if (!fn(el.value)) {
+                el.classList.add('invalid');
+                er.style.display = 'block';
+                ok = false;
+            } else {
+                el.classList.remove('invalid');
+                er.style.display = 'none';
+            }
+        });
 
-        // Validate service type
-        const serviceType = document.getElementById('serviceType');
-        const serviceTypeError = document.getElementById('serviceTypeError');
-        if (!serviceType.value) {
-            serviceType.classList.add('invalid');
-            serviceTypeError.style.display = 'block';
-            isValid = false;
-        } else {
-            serviceType.classList.remove('invalid');
-            serviceTypeError.style.display = 'none';
-        }
-
-        // Validate service price
-        const servicePrice = document.getElementById('servicePrice');
-        const servicePriceError = document.getElementById('servicePriceError');
-        if (!servicePrice.value || parseInt(servicePrice.value) < 0) {
-            servicePrice.classList.add('invalid');
-            servicePriceError.style.display = 'block';
-            isValid = false;
-        } else {
-            servicePrice.classList.remove('invalid');
-            servicePriceError.style.display = 'none';
-        }
-
-        // Validate duration minutes
-        const durationMinutes = document.getElementById('durationMinutes');
-        const durationMinutesError = document.getElementById('durationMinutesError');
-        const duration = parseInt(durationMinutes.value);
-        if (!durationMinutes.value || duration < 1 || duration > 32767) {
-            durationMinutes.classList.add('invalid');
-            durationMinutesError.style.display = 'block';
-            isValid = false;
-        } else {
-            durationMinutes.classList.remove('invalid');
-            durationMinutesError.style.display = 'none';
-        }
-
-        if (!isValid) {
-            event.preventDefault();
-            alert('Please correct the errors in the form before submitting.');
+        if (!ok) {
+            e.preventDefault();
+            alert('[[#{common.fixFormErrors}]]');
         }
     });
 
-    // Real-time validation on input
     document.getElementById('serviceName').addEventListener('input', function() {
-        if (this.value.trim()) {
-            this.classList.remove('invalid');
-            document.getElementById('serviceNameError').style.display = 'none';
-
-            // Check for duplicate name with debounce
-            clearTimeout(serviceNameCheckTimeout);
-            serviceNameCheckTimeout = setTimeout(() => {
-                checkDuplicateServiceName(this.value);
-            }, 500);
-        } else {
-            document.getElementById('serviceNameWarning').style.display = 'none';
-            isDuplicateName = false;
-        }
+        clearTimeout(serviceNameCheckTimeout);
+        serviceNameCheckTimeout = setTimeout(() => checkDuplicateServiceName(this.value), 500);
     });
 
-    document.getElementById('serviceCategoryId').addEventListener('change', function() {
-        if (this.value) {
-            this.classList.remove('invalid');
-            document.getElementById('serviceCategoryIdError').style.display = 'none';
-        }
-    });
-
-    document.getElementById('serviceType').addEventListener('change', function() {
-        if (this.value) {
-            this.classList.remove('invalid');
-            document.getElementById('serviceTypeError').style.display = 'none';
-        }
-    });
-
-    document.getElementById('servicePrice').addEventListener('input', function() {
-        if (this.value && parseInt(this.value) >= 0) {
-            this.classList.remove('invalid');
-            document.getElementById('servicePriceError').style.display = 'none';
-        }
-    });
-
-    document.getElementById('durationMinutes').addEventListener('input', function() {
-        const duration = parseInt(this.value);
-        if (this.value && duration >= 1 && duration <= 32767) {
-            this.classList.remove('invalid');
-            document.getElementById('durationMinutesError').style.display = 'none';
-        }
-    });
-
-    // ===== IMAGE UPLOAD FUNCTIONALITY =====
     const serviceId = [[${service.id}]];
-    
-    // Handle file input change
+
     document.getElementById('imageFile').addEventListener('change', function() {
-        const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
-        document.getElementById('fileName').textContent = fileName;
-        document.getElementById('uploadBtn').disabled = this.files.length === 0;
+        document.getElementById('fileName').textContent =
+            this.files[0]?.name || '[[#{manager-service-edit.noFile}]]';
+        document.getElementById('uploadBtn').disabled = !this.files.length;
     });
 
-    // Load existing images on page load
     loadServiceImages();
 
     function loadServiceImages() {
         fetch(`/api/services/${serviceId}/images`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.images) {
-                    displayImages(data.images);
-                }
-            })
-            .catch(error => {
-                console.error('Error loading images:', error);
-            });
+            .then(r => r.json())
+            .then(d => d.success && displayImages(d.images));
     }
 
     function displayImages(images) {
-        const gallery = document.getElementById('imageGallery');
-        gallery.innerHTML = '';
-        
-        images.forEach(image => {
-            const imageCard = document.createElement('div');
-            imageCard.className = 'image-card';
-            imageCard.innerHTML = `
-                <img src="${image.imagePath}" alt="Service image" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found'">
-                <div class="image-card-actions">
-                    <button type="button" class="btn-delete-image" onclick="deleteServiceImage(${image.id})">
-                        🗑️ Delete
-                    </button>
+        const g = document.getElementById('imageGallery');
+        g.innerHTML = '';
+        images.forEach(img => {
+            g.insertAdjacentHTML('beforeend', `
+                <div class="image-card">
+                    <img src="${img.imagePath}" alt="Service image">
+                    <div class="image-card-actions">
+                        <button type="button" class="btn-delete-image"
+                                onclick="deleteServiceImage(${img.id})">
+                            🗑️ [[#{manager-service-edit.deleteImage}]]
+                        </button>
+                    </div>
                 </div>
-            `;
-            gallery.appendChild(imageCard);
+            `);
         });
     }
 
     function uploadServiceImage() {
-        const fileInput = document.getElementById('imageFile');
-        const file = fileInput.files[0];
-        
-        if (!file) {
-            showUploadMessage('Please select an image file', 'error');
+        const f = document.getElementById('imageFile').files[0];
+        if (!f) {
+            showUploadMessage('[[#{manager-service-edit.selectImageAlert}]]', 'error');
             return;
         }
 
-        const formData = new FormData();
-        formData.append('file', file);
+        const fd = new FormData();
+        fd.append('file', f);
 
-        const uploadBtn = document.getElementById('uploadBtn');
-        uploadBtn.disabled = true;
-        uploadBtn.textContent = 'Uploading...';
+        const btn = document.getElementById('uploadBtn');
+        btn.disabled = true;
+        btn.textContent = '[[#{manager-service-edit.uploading}]]';
 
-        fetch(`/api/services/${serviceId}/images`, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showUploadMessage('Image uploaded successfully!', 'success');
-                fileInput.value = '';
-                document.getElementById('fileName').textContent = 'No file chosen';
-                loadServiceImages();
-            } else {
-                showUploadMessage(data.message || 'Upload failed', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error uploading image:', error);
-            showUploadMessage('Error uploading image: ' + error.message, 'error');
-        })
-        .finally(() => {
-            uploadBtn.disabled = false;
-            uploadBtn.textContent = 'Upload';
-        });
+        fetch(`/api/services/${serviceId}/images`, { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(d => {
+                showUploadMessage(
+                    d.success ? '[[#{manager-service-edit.uploadSuccess}]]' : (d.message || '[[#{manager-service-edit.uploadFail}]]'),
+                    d.success ? 'success' : 'error'
+                );
+                if (d.success) loadServiceImages();
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = '[[#{manager-service-edit.upload}]]';
+            });
     }
 
-    function deleteServiceImage(imageId) {
-        if (!confirm('Are you sure you want to delete this image?')) {
-            return;
-        }
+    function deleteServiceImage(id) {
+        if (!confirm('[[#{manager-service-edit.deleteConfirm}]]')) return;
 
-        fetch(`/api/services/images/${imageId}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showUploadMessage('Image deleted successfully', 'success');
-                loadServiceImages();
-            } else {
-                showUploadMessage(data.message || 'Delete failed', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting image:', error);
-            showUploadMessage('Error deleting image: ' + error.message, 'error');
-        });
+        fetch(`/api/services/images/${id}`, { method: 'DELETE' })
+            .then(r => r.json())
+            .then(d => {
+                showUploadMessage(
+                    d.success ? '[[#{manager-service-edit.deleteSuccess}]]' : '[[#{manager-service-edit.deleteFail}]]',
+                    d.success ? 'success' : 'error'
+                );
+                if (d.success) loadServiceImages();
+            });
     }
 
-    function showUploadMessage(message, type) {
-        const messageDiv = document.getElementById('uploadMessage');
-        messageDiv.textContent = message;
-        messageDiv.className = `upload-message ${type}`;
-        messageDiv.style.display = 'block';
-        
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-        }, 3000);
+    function showUploadMessage(msg, type) {
+        const m = document.getElementById('uploadMessage');
+        m.textContent = msg;
+        m.className = `upload-message ${type}`;
+        m.style.display = 'block';
+        setTimeout(() => m.style.display = 'none', 3000);
     }
 </script>
+
 </body>
 </html>

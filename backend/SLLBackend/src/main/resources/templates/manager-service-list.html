@@ -320,46 +320,55 @@
 <main class="staff-main services-page">
     <div class="services-layout-inner">
         <section class="services-card">
-            <!-- Header -->
             <div class="services-header-row">
                 <div class="services-title-block section-heading">
-                    <p class="section-kicker">Service Management</p>
-                    <h2>Manage Services</h2>
+                    <p class="section-kicker" th:text="#{manager-service-list.kicker}">
+                        Service Management
+                    </p>
+                    <h2 th:text="#{manager-service-list.title}">
+                        Manage Services
+                    </h2>
                 </div>
                 <div class="services-actions">
                     <a href="/manager/service/create" class="create-btn-pill">
                         <span class="icon">＋</span>
-                        <span>Create New Service</span>
+                        <span th:text="#{manager-service-list.create}">
+                            Create New Service
+                        </span>
                     </a>
                 </div>
             </div>
 
-            <!-- Success/Error Messages -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Search and Filter Bar -->
             <div class="search-panel">
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <h3 th:text="#{common.searchFilters}">
+                            Search &amp; Filters
+                        </h3>
                     </div>
                 </div>
 
                 <form method="get" action="/manager/service/list">
                     <div class="search-form">
                         <div class="filter-group">
-                            <label for="search-name">Search by Name</label>
+                            <label for="search-name" th:text="#{manager-service-list.searchByName}">
+                                Search by Name
+                            </label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter service name..." />
+                                   th:placeholder="#{manager-service-list.searchPlaceholder}" />
                         </div>
 
                         <div class="filter-group">
-                            <label>Service Type</label>
+                            <label th:text="#{manager-service-list.type}">
+                                Service Type
+                            </label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item">
                                     <input type="checkbox"
@@ -367,7 +376,10 @@
                                            name="types"
                                            value="SINGLE"
                                            th:checked="${selectedTypes != null and selectedTypes.contains('SINGLE')}">
-                                    <label for="type-single">Single</label>
+                                    <label for="type-single"
+                                           th:text="#{manager-service-list.type.single}">
+                                        Single
+                                    </label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="checkbox"
@@ -375,13 +387,18 @@
                                            name="types"
                                            value="COMBO"
                                            th:checked="${selectedTypes != null and selectedTypes.contains('COMBO')}">
-                                    <label for="type-combo">Combo</label>
+                                    <label for="type-combo"
+                                           th:text="#{manager-service-list.type.combo}">
+                                        Combo
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="filter-group">
-                            <label>Service Category</label>
+                            <label th:text="#{manager-service-list.category}">
+                                Service Category
+                            </label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item" th:each="category : ${allCategories}">
                                     <input type="checkbox"
@@ -390,7 +407,9 @@
                                            th:value="${category.id}"
                                            th:checked="${selectedCategories != null and selectedCategories.contains(category.id)}">
                                     <label th:for="'category-' + ${category.id}"
-                                           th:text="${category.name}">Category</label>
+                                           th:text="${category.name}">
+                                        Category
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -399,31 +418,34 @@
                     <div class="search-buttons">
                         <button type="submit" class="btn btn-primary">
                             <span>🔎</span>
-                            <span>Search</span>
+                            <span th:text="#{common.search}">
+                                Search
+                            </span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/manager/service/list'">
                             <span>✕</span>
-                            <span>Reset</span>
+                            <span th:text="#{common.reset}">
+                                Reset
+                            </span>
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Services Table -->
             <div class="services-table-wrapper">
                 <table>
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Type</th>
-                        <th>Price</th>
-                        <th>Duration (min)</th>
-                        <th>Active</th>
-                        <th>Actions</th>
+                        <th th:text="#{manager-service-list.name}">Name</th>
+                        <th th:text="#{manager-service-list.category}">Category</th>
+                        <th th:text="#{manager-service-list.type}">Type</th>
+                        <th th:text="#{manager-service-list.price}">Price</th>
+                        <th th:text="#{manager-service-list.duration}">Duration (min)</th>
+                        <th th:text="#{common.active}">Active</th>
+                        <th th:text="#{common.actions}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -435,25 +457,21 @@
                         <td th:text="${#numbers.formatDecimal(svc.servicePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0</td>
                         <td th:text="${svc.durationMinutes}">0</td>
                         <td th:text="${svc.activeStatus}">false</td>
-
                         <td>
-                            <!-- Always show Edit -->
                             <a th:href="@{/manager/service/edit/{id}(id=${svc.id})}" class="edit-link">
-                                <span>Edit</span>
+                                <span th:text="#{common.edit}">Edit</span>
                             </a>
 
-                            <!-- If activeStatus = true → show Deactivate -->
                             <a th:if="${svc.activeStatus}"
                                th:href="@{/manager/service/deactivate/{id}(id=${svc.id})}"
                                class="edit-link danger">
-                                <span>Deactivate</span>
+                                <span th:text="#{common.deactivate}">Deactivate</span>
                             </a>
 
-                            <!-- If activeStatus = false → show Activate -->
                             <a th:if="${!svc.activeStatus}"
                                th:href="@{/manager/service/activate/{id}(id=${svc.id})}"
                                class="edit-link success">
-                                <span>Activate</span>
+                                <span th:text="#{common.activate}">Activate</span>
                             </a>
                         </td>
                     </tr>
@@ -463,5 +481,6 @@
         </section>
     </div>
 </main>
+
 </body>
 </html>

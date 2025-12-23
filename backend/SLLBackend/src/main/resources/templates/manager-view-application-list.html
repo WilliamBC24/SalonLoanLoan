@@ -244,38 +244,36 @@
 <main class="staff-main job-app-page">
     <div class="job-app-layout-inner">
         <section class="job-app-card">
-            <!-- Header -->
+
             <div class="job-app-header-row">
                 <div class="job-app-title-block section-heading">
-                    <p class="section-kicker">HR &amp; Staffing</p>
-                    <h2>Job Applications</h2>
+                    <p class="section-kicker" th:text="#{manager-job-app.kicker}">HR &amp; Staffing</p>
+                    <h2 th:text="#{manager-job-app.title}">Job Applications</h2>
                 </div>
-                <div class="job-app-actions">
-                </div>
+                <div class="job-app-actions"></div>
             </div>
 
-            <!-- Optional alerts (if you use them in controller) -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Empty state -->
             <div th:if="${#lists.isEmpty(applications)}" class="empty-state">
-                <h2>No Applications Found</h2>
-                <p>There are currently no job applications to review.</p>
+                <h2 th:text="#{manager-job-app.emptyTitle}">No Applications Found</h2>
+                <p th:text="#{manager-job-app.emptyDesc}">
+                    There are currently no job applications to review.
+                </p>
             </div>
 
-            <!-- Applications table -->
             <div th:if="${!#lists.isEmpty(applications)}" class="job-app-table-wrapper">
                 <table>
                     <thead>
                     <tr>
-                        <th>Job Name</th>
-                        <th>Applicant Name</th>
-                        <th>Date of Birth</th>
-                        <th>Phone Number</th>
-                        <th>Application Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th th:text="#{manager-job-app.jobName}">Job Name</th>
+                        <th th:text="#{manager-job-app.applicantName}">Applicant Name</th>
+                        <th th:text="#{manager-job-app.dob}">Date of Birth</th>
+                        <th th:text="#{manager-job-app.phone}">Phone Number</th>
+                        <th th:text="#{manager-job-app.applicationDate}">Application Date</th>
+                        <th th:text="#{manager-job-app.status}">Status</th>
+                        <th th:text="#{common.actions}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -286,7 +284,6 @@
                         <td th:text="${app.applicantPhoneNumber}">Phone</td>
                         <td th:text="${app.applicationDate}">YYYY-MM-DD HH:mm</td>
                         <td>
-                            <!-- Map your enum/string to classes as needed -->
                             <span class="status-badge"
                                   th:class="'status-badge status-' + ${#strings.toLowerCase(app.status)}"
                                   th:text="${app.status}">
@@ -295,21 +292,19 @@
                         </td>
                         <td>
                             <div class="actions-cell">
-                                <!-- Accept Form -->
                                 <form th:action="@{/manager/job-application/accept/{id}(id=${app.id})}"
                                       method="post"
                                       class="inline-form">
                                     <button type="submit" class="action-btn btn-accept">
-                                        ✅ <span>Accept</span>
+                                        ✅ <span th:text="#{manager-job-app.accept}">Accept</span>
                                     </button>
                                 </form>
 
-                                <!-- Reject Form -->
                                 <form th:action="@{/manager/job-application/reject/{id}(id=${app.id})}"
                                       method="post"
                                       class="inline-form">
                                     <button type="submit" class="action-btn btn-reject">
-                                        ✖ <span>Reject</span>
+                                        ✖ <span th:text="#{manager-job-app.reject}">Reject</span>
                                     </button>
                                 </form>
                             </div>
@@ -318,8 +313,10 @@
                     </tbody>
                 </table>
             </div>
+
         </section>
     </div>
 </main>
+
 </body>
 </html>

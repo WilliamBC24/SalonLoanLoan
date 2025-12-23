@@ -334,12 +334,16 @@
 <main class="staff-main report-dashboard-page">
     <div class="report-dashboard-layout-inner">
         <section class="report-dashboard-card">
-            <!-- Header -->
             <div class="report-header-row">
                 <div class="report-title-block section-heading">
-                    <p class="section-kicker">Manager Reports</p>
-                    <h2>Monthly Performance Overview</h2>
-                    <p class="report-subtext">
+                    <p class="section-kicker" th:text="#{manager-report-dashboard.kicker}">
+                        Manager Reports
+                    </p>
+                    <h2 th:text="#{manager-report-dashboard.title}">
+                        Monthly Performance Overview
+                    </h2>
+                    <p class="report-subtext"
+                       th:text="#{manager-report-dashboard.subtitle}">
                         Track this month’s revenue, costs, and key reports across appointments and orders.
                     </p>
                 </div>
@@ -351,114 +355,120 @@
                 </div>
             </div>
 
-            <!-- KPI CARDS -->
             <div class="kpi-grid">
-                <!-- Appointments revenue -->
                 <div class="kpi-card">
-                    <div class="kpi-label">Appointments Revenue</div>
+                    <div class="kpi-label" th:text="#{manager-report-dashboard.kpi.appointmentRevenue}">
+                        Appointments Revenue
+                    </div>
                     <div class="kpi-value"
-                         th:text="${#numbers.formatDecimal(monthlyAppointmentRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                         th:text="${#numbers.formatDecimal(monthlyAppointmentRevenue, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                         0 VND
                     </div>
-                    <div class="kpi-caption">Total from completed appointments this month.</div>
+                    <div class="kpi-caption" th:text="#{manager-report-dashboard.kpi.appointmentCaption}">
+                        Total from completed appointments this month.
+                    </div>
                     <div class="kpi-actions-row">
-                        <a class="pill-link"
-                           th:href="@{/manager/report/appointment}">
-                            <span>View report</span>
+                        <a class="pill-link" th:href="@{/manager/report/appointment}">
+                            <span th:text="#{common.viewReport}">View report</span>
                         </a>
-                        <a class="pill-link export"
-                           th:href="@{/manager/report/appointment/export}">
+                        <a class="pill-link export" th:href="@{/manager/report/appointment/export}">
                             <span>⬇</span>
-                            <span>Export Excel</span>
+                            <span th:text="#{common.exportExcel}">Export Excel</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Orders revenue -->
                 <div class="kpi-card">
-                    <div class="kpi-label">Orders Revenue</div>
+                    <div class="kpi-label" th:text="#{manager-report-dashboard.kpi.orderRevenue}">
+                        Orders Revenue
+                    </div>
                     <div class="kpi-value"
-                         th:text="${#numbers.formatDecimal(monthlyOrderRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                         th:text="${#numbers.formatDecimal(monthlyOrderRevenue, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                         0 VND
                     </div>
-                    <div class="kpi-caption">Total from product orders this month.</div>
+                    <div class="kpi-caption" th:text="#{manager-report-dashboard.kpi.orderCaption}">
+                        Total from product orders this month.
+                    </div>
                     <div class="kpi-actions-row">
-                        <a class="pill-link"
-                           th:href="@{/manager/report/order}">
-                            <span>View report</span>
+                        <a class="pill-link" th:href="@{/manager/report/order}">
+                            <span th:text="#{common.viewReport}">View report</span>
                         </a>
-                        <a class="pill-link export"
-                           th:href="@{/manager/report/order/export}">
+                        <a class="pill-link export" th:href="@{/manager/report/order/export}">
                             <span>⬇</span>
-                            <span>Export Excel</span>
+                            <span th:text="#{common.exportExcel}">Export Excel</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Supplies cost -->
                 <div class="kpi-card">
-                    <div class="kpi-label">Supplies Cost</div>
+                    <div class="kpi-label" th:text="#{manager-report-dashboard.kpi.supplyCost}">
+                        Supplies Cost
+                    </div>
                     <div class="kpi-value"
-                         th:text="${#numbers.formatDecimal(monthlySupplyCost, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                         th:text="${#numbers.formatDecimal(monthlySupplyCost, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                         0 VND
                     </div>
-                    <div class="kpi-caption">Total spent on suppliers this month.</div>
+                    <div class="kpi-caption" th:text="#{manager-report-dashboard.kpi.supplyCaption}">
+                        Total spent on suppliers this month.
+                    </div>
                     <div class="kpi-actions-row">
-                        <a class="pill-link"
-                           th:href="@{/manager/report/supplier}">
-                            <span>View report</span>
+                        <a class="pill-link" th:href="@{/manager/report/supplier}">
+                            <span th:text="#{common.viewReport}">View report</span>
                         </a>
-                        <a class="pill-link export"
-                           th:href="@{/manager/report/supplier/export}">
+                        <a class="pill-link export" th:href="@{/manager/report/supplier/export}">
                             <span>⬇</span>
-                            <span>Export Excel</span>
+                            <span th:text="#{common.exportExcel}">Export Excel</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Net income -->
                 <div class="kpi-card">
-                    <div class="kpi-label">Net Income</div>
+                    <div class="kpi-label" th:text="#{manager-report-dashboard.kpi.netIncome}">
+                        Net Income
+                    </div>
                     <div class="kpi-value"
-                         th:text="${#numbers.formatDecimal(monthlyNetIncome, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                         th:text="${#numbers.formatDecimal(monthlyNetIncome, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                         0 VND
                     </div>
-                    <div class="kpi-caption">
+                    <div class="kpi-caption"
+                         th:text="#{manager-report-dashboard.kpi.netIncomeCaption}">
                         Appointments + Orders − Expenses.
                     </div>
                     <div class="kpi-pill"
-                         th:classappend="${monthlyNetIncomeGrowth &lt; 0} ? ' negative'">
-                        <span th:text="${monthlyNetIncomeGrowth &gt;= 0 ? '▲' : '▼'}">▲</span>
+                         th:classappend="${monthlyNetIncomeGrowth < 0} ? ' negative'">
+                        <span th:text="${monthlyNetIncomeGrowth >= 0 ? '▲' : '▼'}">▲</span>
                         <span th:text="${#numbers.formatDecimal(monthlyNetIncomeGrowth, 1, 'POINT', 1, 'COMMA')} + '%'">
                             0.0%
                         </span>
-                        <span>vs. last month</span>
+                        <span th:text="#{manager-report-dashboard.vsLastMonth}">
+                            vs. last month
+                        </span>
                     </div>
                 </div>
             </div>
 
-            <!-- REPORT TILES: 2 top, 2 bottom -->
             <div class="report-tiles">
 
-                <!-- Supplier Report -->
                 <section class="report-tile">
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
-                                <h3 class="report-tile-title">Supplier Report</h3>
-                                <span class="report-tile-meta">
+                                <h3 class="report-tile-title"
+                                    th:text="#{manager-report-dashboard.supplierReport}">
+                                    Supplier Report
+                                </h3>
+                                <span class="report-tile-meta"
+                                      th:text="#{manager-report-dashboard.supplierReportDesc}">
                                     How much you spent on each supplier this month.
                                 </span>
                             </div>
                             <div class="report-tile-actions">
-                                <a class="pill-link"
-                                   th:href="@{/manager/report/supplier}">
-                                    <span>View</span>
+                                <a class="pill-link" th:href="@{/manager/report/supplier}">
+                                    <span th:text="#{common.view}">View</span>
                                 </a>
-                                <a class="pill-link export"
-                                   th:href="@{/manager/report/supplier/export}">
+                                <a class="pill-link export" th:href="@{/manager/report/supplier/export}">
                                     <span>⬇</span>
-                                    <span>Export</span>
+                                    <span th:text="#{common.export}">Export</span>
                                 </a>
                             </div>
                         </div>
@@ -467,15 +477,15 @@
                             <table class="report-table">
                                 <thead>
                                 <tr>
-                                    <th>Supplier</th>
-                                    <th>Total Spent</th>
-                                    <th class="cell-muted">Share</th>
+                                    <th th:text="#{manager-report-dashboard.supplier}">Supplier</th>
+                                    <th th:text="#{manager-report-dashboard.totalSpent}">Total Spent</th>
+                                    <th class="cell-muted" th:text="#{common.share}">Share</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="row : ${supplierSummary}">
                                     <td th:text="${row.supplierName}">Supplier A</td>
-                                    <td th:text="${#numbers.formatDecimal(row.totalSpent, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                    <td th:text="${#numbers.formatDecimal(row.totalSpent, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                                         0 VND
                                     </td>
                                     <td class="cell-muted"
@@ -484,7 +494,8 @@
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(supplierSummary)}">
-                                    <td colspan="3" class="empty-row">
+                                    <td colspan="3" class="empty-row"
+                                        th:text="#{manager-report-dashboard.noSupplierData}">
                                         No supplier data for this period.
                                     </td>
                                 </tr>
@@ -494,25 +505,26 @@
                     </div>
                 </section>
 
-                <!-- Satisfaction Report -->
                 <section class="report-tile">
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
-                                <h3 class="report-tile-title">Satisfaction Report</h3>
-                                <span class="report-tile-meta">
+                                <h3 class="report-tile-title"
+                                    th:text="#{manager-report-dashboard.satisfactionReport}">
+                                    Satisfaction Report
+                                </h3>
+                                <span class="report-tile-meta"
+                                      th:text="#{manager-report-dashboard.satisfactionReportDesc}">
                                     Customer satisfaction across appointments and product orders.
                                 </span>
                             </div>
                             <div class="report-tile-actions">
-                                <a class="pill-link"
-                                   th:href="@{/manager/report/satisfaction}">
-                                    <span>View</span>
+                                <a class="pill-link" th:href="@{/manager/report/satisfaction}">
+                                    <span th:text="#{common.view}">View</span>
                                 </a>
-                                <a class="pill-link export"
-                                   th:href="@{/manager/report/satisfaction/export}">
+                                <a class="pill-link export" th:href="@{/manager/report/satisfaction/export}">
                                     <span>⬇</span>
-                                    <span>Export</span>
+                                    <span th:text="#{common.export}">Export</span>
                                 </a>
                             </div>
                         </div>
@@ -521,21 +533,20 @@
                             <table class="report-table">
                                 <thead>
                                 <tr>
-                                    <th>Segment</th>
-                                    <th>Avg. Rating</th>
-                                    <th>Responses</th>
+                                    <th th:text="#{manager-report-dashboard.segment}">Segment</th>
+                                    <th th:text="#{manager-report-dashboard.avgRating}">Avg. Rating</th>
+                                    <th th:text="#{manager-report-dashboard.responses}">Responses</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="row : ${satisfactionSummary}">
                                     <td th:text="${row.segmentLabel}">Appointments</td>
-                                    <td th:text="${#numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA')}">
-                                        0.0
-                                    </td>
+                                    <td th:text="${#numbers.formatDecimal(row.averageRating, 1, 'POINT', 1, 'COMMA')}">0.0</td>
                                     <td th:text="${row.responseCount}">0</td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(satisfactionSummary)}">
-                                    <td colspan="3" class="empty-row">
+                                    <td colspan="3" class="empty-row"
+                                        th:text="#{manager-report-dashboard.noSatisfactionData}">
                                         No satisfaction data for this period.
                                     </td>
                                 </tr>
@@ -545,25 +556,26 @@
                     </div>
                 </section>
 
-                <!-- Sales Report -->
                 <section class="report-tile">
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
-                                <h3 class="report-tile-title">Sales Report</h3>
-                                <span class="report-tile-meta">
+                                <h3 class="report-tile-title"
+                                    th:text="#{manager-report-dashboard.salesReport}">
+                                    Sales Report
+                                </h3>
+                                <span class="report-tile-meta"
+                                      th:text="#{manager-report-dashboard.salesReportDesc}">
                                     See how much you made from appointments vs. product orders.
                                 </span>
                             </div>
                             <div class="report-tile-actions">
-                                <a class="pill-link"
-                                   th:href="@{/manager/report/sales}">
-                                    <span>View</span>
+                                <a class="pill-link" th:href="@{/manager/report/sales}">
+                                    <span th:text="#{common.view}">View</span>
                                 </a>
-                                <a class="pill-link export"
-                                   th:href="@{/manager/report/sales/export}">
+                                <a class="pill-link export" th:href="@{/manager/report/sales/export}">
                                     <span>⬇</span>
-                                    <span>Export</span>
+                                    <span th:text="#{common.export}">Export</span>
                                 </a>
                             </div>
                         </div>
@@ -572,15 +584,15 @@
                             <table class="report-table">
                                 <thead>
                                 <tr>
-                                    <th>Source</th>
-                                    <th>Gross Sales</th>
-                                    <th class="cell-muted">Share</th>
+                                    <th th:text="#{manager-report-dashboard.source}">Source</th>
+                                    <th th:text="#{manager-report-dashboard.grossSales}">Gross Sales</th>
+                                    <th class="cell-muted" th:text="#{common.share}">Share</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="row : ${salesSummary}">
                                     <td th:text="${row.sourceLabel}">Appointments</td>
-                                    <td th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                    <td th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                                         0 VND
                                     </td>
                                     <td class="cell-muted"
@@ -589,7 +601,8 @@
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(salesSummary)}">
-                                    <td colspan="3" class="empty-row">
+                                    <td colspan="3" class="empty-row"
+                                        th:text="#{manager-report-dashboard.noSalesData}">
                                         No sales data for this period.
                                     </td>
                                 </tr>
@@ -599,25 +612,26 @@
                     </div>
                 </section>
 
-                <!-- Expense Report -->
                 <section class="report-tile">
                     <div class="report-tile-inner">
                         <div class="report-tile-header">
                             <div class="report-tile-title-block">
-                                <h3 class="report-tile-title">Expense Report</h3>
-                                <span class="report-tile-meta">
+                                <h3 class="report-tile-title"
+                                    th:text="#{manager-report-dashboard.expenseReport}">
+                                    Expense Report
+                                </h3>
+                                <span class="report-tile-meta"
+                                      th:text="#{manager-report-dashboard.expenseReportDesc}">
                                     Breakdown of expenses by category for this month.
                                 </span>
                             </div>
                             <div class="report-tile-actions">
-                                <a class="pill-link"
-                                   th:href="@{/manager/report/expense/list}">
-                                    <span>View</span>
+                                <a class="pill-link" th:href="@{/manager/report/expense/list}">
+                                    <span th:text="#{common.view}">View</span>
                                 </a>
-                                <a class="pill-link export"
-                                   th:href="@{/manager/report/expense/list/export}">
+                                <a class="pill-link export" th:href="@{/manager/report/expense/list/export}">
                                     <span>⬇</span>
-                                    <span>Export</span>
+                                    <span th:text="#{common.export}">Export</span>
                                 </a>
                             </div>
                         </div>
@@ -626,15 +640,15 @@
                             <table class="report-table">
                                 <thead>
                                 <tr>
-                                    <th>Category</th>
-                                    <th>Total Expense</th>
-                                    <th class="cell-muted">Share</th>
+                                    <th th:text="#{manager-report-dashboard.category}">Category</th>
+                                    <th th:text="#{manager-report-dashboard.totalExpense}">Total Expense</th>
+                                    <th class="cell-muted" th:text="#{common.share}">Share</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="row : ${expenseSummary}">
                                     <td th:text="${row.categoryName}">Rent</td>
-                                    <td th:text="${#numbers.formatDecimal(row.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                    <td th:text="${#numbers.formatDecimal(row.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                                         0 VND
                                     </td>
                                     <td class="cell-muted"
@@ -643,7 +657,8 @@
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(expenseSummary)}">
-                                    <td colspan="3" class="empty-row">
+                                    <td colspan="3" class="empty-row"
+                                        th:text="#{manager-report-dashboard.noExpenseData}">
                                         No expense data for this period.
                                     </td>
                                 </tr>
@@ -657,5 +672,6 @@
         </section>
     </div>
 </main>
+
 </body>
 </html>

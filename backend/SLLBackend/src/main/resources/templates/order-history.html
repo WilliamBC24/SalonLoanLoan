@@ -196,28 +196,35 @@
 <main class="orders-page">
     <div class="container">
 
-        <!-- Top row -->
         <div class="orders-header-row">
             <div class="section-heading">
-                <p class="section-kicker">Your Activity</p>
-                <h1 class="orders-title">Order History</h1>
+                <p class="section-kicker" th:text="#{orders.kicker}">Your Activity</p>
+                <h1 class="orders-title" th:text="#{orders.title}">Order History</h1>
             </div>
-            <a href="/products" class="orders-back">← Back to Products</a>
+            <a href="/products"
+               class="orders-back"
+               th:text="#{orders.back}">
+                ← Back to Products
+            </a>
         </div>
 
-        <!-- Error alert -->
         <div th:if="${param.error}" class="orders-alert orders-alert-error">
             <span th:text="${param.error}">Error message</span>
         </div>
 
-        <!-- Empty state -->
         <section th:if="${#lists.isEmpty(orders)}" class="orders-empty">
-            <h2>No Orders Yet</h2>
-            <p>You haven't placed any orders. Start shopping now!</p>
-            <a href="/products" class="btn-primary" style="display:inline-block;">Browse Products</a>
+            <h2 th:text="#{orders.empty.title}">No Orders Yet</h2>
+            <p th:text="#{orders.empty.desc}">
+                You haven't placed any orders. Start shopping now!
+            </p>
+            <a href="/products"
+               class="btn-primary"
+               style="display:inline-block;"
+               th:text="#{orders.empty.action}">
+                Browse Products
+            </a>
         </section>
 
-        <!-- Orders list -->
         <section th:if="${!#lists.isEmpty(orders)}" class="order-list">
 
             <article th:each="order : ${orders}" class="order-card">
@@ -225,7 +232,8 @@
                 <div class="order-top">
                     <div>
                         <div class="order-id">
-                            Order #<span th:text="${order.id}">123</span>
+                            <span th:text="#{orders.order}">Order</span>
+                            #<span th:text="${order.id}">123</span>
                         </div>
                         <div class="order-date"
                              th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
@@ -238,36 +246,52 @@
                           th:text="${order.orderStatus}">
                         PENDING
                     </span>
+
                     <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
-                          class="fulfillment-badge pickup">🏪 Pickup</span>
+                          class="fulfillment-badge pickup"
+                          th:text="#{orders.fulfillment.pickup}">
+                        🏪 Pickup
+                    </span>
+
                     <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
-                          class="fulfillment-badge delivery">🚚 Delivery</span>
+                          class="fulfillment-badge delivery"
+                          th:text="#{orders.fulfillment.delivery}">
+                        🚚 Delivery
+                    </span>
                 </div>
 
                 <div class="order-details">
                     <div class="detail-item">
-                        <div class="detail-label">Customer Name</div>
+                        <div class="detail-label" th:text="#{orders.customerName}">
+                            Customer Name
+                        </div>
                         <div class="detail-value" th:text="${order.customerInfo.name}">
                             Customer Name
                         </div>
                     </div>
 
                     <div class="detail-item">
-                        <div class="detail-label">Phone Number</div>
+                        <div class="detail-label" th:text="#{orders.phone}">
+                            Phone Number
+                        </div>
                         <div class="detail-value" th:text="${order.customerInfo.phoneNumber}">
                             0123456789
                         </div>
                     </div>
 
                     <div class="detail-item">
-                        <div class="detail-label">Payment Method</div>
+                        <div class="detail-label" th:text="#{orders.payment}">
+                            Payment Method
+                        </div>
                         <div class="detail-value" th:text="${order.paymentMethod}">
                             BANK_TRANSFER
                         </div>
                     </div>
 
                     <div class="detail-item">
-                        <div class="detail-label">Total Amount</div>
+                        <div class="detail-label" th:text="#{orders.total}">
+                            Total Amount
+                        </div>
                         <div class="detail-value order-total"
                              th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                             0 VND
@@ -277,7 +301,8 @@
 
                 <div class="order-actions">
                     <a th:href="@{/order/details(orderId=${order.id})}"
-                       class="btn-outline">
+                       class="btn-outline"
+                       th:text="#{orders.view}">
                         View Details
                     </a>
 
@@ -285,7 +310,8 @@
                        th:href="@{/order/cancel(orderId=${order.id})}"
                        class="btn-primary"
                        style="background:#dc3545; box-shadow:none;"
-                       onclick="return confirm('Are you sure you want to cancel this order?')">
+                       th:onclick="|return confirm('#{orders.cancel.confirm}')|"
+                       th:text="#{orders.cancel}">
                         Cancel Order
                     </a>
                 </div>
@@ -295,6 +321,7 @@
 
     </div>
 </main>
+
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

@@ -117,46 +117,77 @@
 
 <!-- Shared header -->
 <div th:replace="~{fragments/header :: site-header}"></div>
-
 <main class="login-center">
     <div class="container login-wrapper">
         <div class="login-card">
             <div class="login-title">
                 <h2 th:text="#{staff-login.title}">Staff Login</h2>
-                <p th:text="#{staff-login.subtitle}">Sign in to access the staff dashboard and manage bookings.</p>
+                <p th:text="#{staff-login.subtitle}">
+                    Sign in to access the staff dashboard and manage bookings.
+                </p>
             </div>
 
             <form th:action="@{/auth/staff/login}" method="post">
                 <div>
-                    <label class="form-label" for="username" th:text="#{staff-login.username}">Username</label>
-                    <input class="form-input" type="text" id="username" name="username"
-                           th:placeholder="#{staff-login.username.placeholder}" required>
+                    <label class="form-label"
+                           for="username"
+                           th:text="#{staff-login.username}">
+                        Username
+                    </label>
+                    <input class="form-input"
+                           type="text"
+                           id="username"
+                           name="username"
+                           th:placeholder="#{staff-login.username.placeholder}"
+                           required>
                 </div>
 
                 <div>
-                    <label class="form-label" for="password" th:text="#{staff-login.password}">Password</label>
-                    <input class="form-input" type="password" id="password" name="password"
-                           th:placeholder="#{staff-login.password.placeholder}" required>
+                    <label class="form-label"
+                           for="password"
+                           th:text="#{staff-login.password}">
+                        Password
+                    </label>
+                    <input class="form-input"
+                           type="password"
+                           id="password"
+                           name="password"
+                           th:placeholder="#{staff-login.password.placeholder}"
+                           required>
                 </div>
 
-                <button type="submit" class="btn-primary login-button" th:text="#{staff-login.loginButton}">Login</button>
+                <button type="submit"
+                        class="btn-primary login-button"
+                        th:text="#{staff-login.loginButton}">
+                    Login
+                </button>
 
                 <div class="register-link">
-                    <span th:text="#{staff-login.customerQuestion}">You are a customer?</span>
-                    <a th:href="@{/auth/user/login}" th:text="#{staff-login.customerLoginLink}">Login here</a>
+                    <span th:text="#{staff-login.customerQuestion}">
+                        You are a customer?
+                    </span>
+                    <a th:href="@{/auth/user/login}"
+                       th:text="#{staff-login.customerLoginLink}">
+                        Login here
+                    </a>
                 </div>
 
-                <div th:if="${param.error}" class="message" th:text="#{staff-login.error}">
+                <div th:if="${param.error}"
+                     class="message"
+                     th:text="#{staff-login.error}">
                     Invalid username or password.
                 </div>
 
-                <div th:if="${param.logout}" class="message logout-message" th:text="#{staff-login.logoutSuccess}">
+                <div th:if="${param.logout}"
+                     class="message logout-message"
+                     th:text="#{staff-login.logoutSuccess}">
                     You have been logged out successfully.
                 </div>
             </form>
         </div>
     </div>
 </main>
+
 
 <!-- Shared footer -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

@@ -327,46 +327,43 @@
 <main class="staff-main products-page">
     <div class="products-layout-inner">
         <section class="products-card">
-            <!-- Header -->
             <div class="products-header-row">
                 <div class="products-title-block section-heading">
-                    <p class="section-kicker">Inventory Management</p>
-                    <h2>Manage Products</h2>
+                    <p class="section-kicker" th:text="#{manager-product-list.kicker}">Inventory Management</p>
+                    <h2 th:text="#{manager-product-list.title}">Manage Products</h2>
                 </div>
                 <div class="products-actions">
                     <a href="/manager/products/create" class="create-btn-pill">
                         <span class="icon">＋</span>
-                        <span>Create New Product</span>
+                        <span th:text="#{manager-product-list.create}">Create New Product</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Success/Error Messages -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Search and Filter Bar -->
             <div class="search-panel">
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <h3 th:text="#{manager-product-list.searchTitle}">Search &amp; Filters</h3>
                     </div>
                 </div>
 
                 <form method="get" action="/manager/products/list">
                     <div class="search-form">
                         <div class="filter-group">
-                            <label for="search-name">Search by Name</label>
+                            <label for="search-name" th:text="#{manager-product-list.searchByName}">Search by Name</label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter product name..." />
+                                   th:placeholder="#{manager-product-list.searchPlaceholder}" />
                         </div>
 
                         <div class="filter-group">
-                            <label>Active Status</label>
+                            <label th:text="#{manager-product-list.activeStatus}">Active Status</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -374,7 +371,7 @@
                                            name="activeStatus"
                                            value=""
                                            th:checked="${selectedActiveStatus == null}">
-                                    <label for="status-all">All</label>
+                                    <label for="status-all" th:text="#{common.all}">All</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -382,7 +379,7 @@
                                            name="activeStatus"
                                            value="true"
                                            th:checked="${selectedActiveStatus != null and selectedActiveStatus == true}">
-                                    <label for="status-active">Active Only</label>
+                                    <label for="status-active" th:text="#{common.activeOnly}">Active Only</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="radio"
@@ -390,7 +387,7 @@
                                            name="activeStatus"
                                            value="false"
                                            th:checked="${selectedActiveStatus != null and selectedActiveStatus == false}">
-                                    <label for="status-inactive">Inactive Only</label>
+                                    <label for="status-inactive" th:text="#{common.inactiveOnly}">Inactive Only</label>
                                 </div>
                             </div>
                         </div>
@@ -399,62 +396,68 @@
                     <div class="search-buttons">
                         <button type="submit" class="btn btn-primary">
                             <span>🔎</span>
-                            <span>Search</span>
+                            <span th:text="#{common.search}">Search</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/manager/products/list'">
                             <span>✕</span>
-                            <span>Reset</span>
+                            <span th:text="#{common.reset}">Reset</span>
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Products Table -->
             <div class="products-table-wrapper">
                 <table>
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Price (VND)</th>
-                        <th>Description</th>
-                        <th>Stock</th>
-                        <th>Active</th>
-                        <th>Actions</th>
+                        <th th:text="#{common.id}">ID</th>
+                        <th th:text="#{common.name}">Name</th>
+                        <th th:text="#{common.price}">Price</th>
+                        <th th:text="#{common.description}">Description</th>
+                        <th th:text="#{common.stock}">Stock</th>
+                        <th th:text="#{common.active}">Active</th>
+                        <th th:text="#{common.actions}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="product : ${products}">
                         <td th:text="${product.id}">1</td>
                         <td th:text="${product.productName}">Product name</td>
-                        <td th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0</td>
+                        <td th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">0</td>
                         <td th:text="${product.productDescription}">Description</td>
                         <td>
                             <span th:text="${stockMap[product.id]}">0</span>
                             <span th:if="${stockMap[product.id] == 0}"
-                                  class="stock-out"> (Out of Stock)</span>
+                                  class="stock-out"
+                                  th:text="#{manager-product-list.stock.out}">
+                                (Out of Stock)
+                            </span>
                             <span th:if="${stockMap[product.id] > 0 && stockMap[product.id] < 10}"
-                                  class="stock-low"> (Low)</span>
+                                  class="stock-low"
+                                  th:text="#{manager-product-list.stock.low}">
+                                (Low)
+                            </span>
                         </td>
                         <td th:text="${product.activeStatus}">false</td>
                         <td>
-                            <a th:href="@{/manager/products/edit/{id}(id=${product.id})}" class="edit-link">
+                            <a th:href="@{/manager/products/edit/{id}(id=${product.id})}"
+                               class="edit-link"
+                               th:text="#{common.edit}">
                                 Edit
                             </a>
-                            <!-- If activeStatus = true → show Deactivate -->
                             <a th:if="${product.activeStatus}"
                                th:href="@{/manager/products/deactivate/{id}(id=${product.id})}"
-                               class="edit-link danger">
-                                <span>Deactivate</span>
+                               class="edit-link danger"
+                               th:text="#{common.deactivate}">
+                                Deactivate
                             </a>
-
-                            <!-- If activeStatus = false → show Activate -->
                             <a th:if="${!product.activeStatus}"
                                th:href="@{/manager/products/activate/{id}(id=${product.id})}"
-                               class="edit-link success">
-                                <span>Activate</span>
+                               class="edit-link success"
+                               th:text="#{common.activate}">
+                                Activate
                             </a>
                         </td>
                     </tr>

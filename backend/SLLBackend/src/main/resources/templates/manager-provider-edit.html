@@ -215,88 +215,111 @@
     <div class="provider-edit-layout-inner">
         <section class="provider-edit-card">
 
-            <!-- Header -->
             <div class="provider-header-row">
                 <div class="provider-title-block section-heading">
-                    <p class="section-kicker">Provider Management</p>
-                    <h2 th:text="#{manager-provider-edit.title}">Edit Provider</h2>
+                    <p class="section-kicker" th:text="#{manager-provider-edit.kicker}">
+                        Provider Management
+                    </p>
+                    <h2 th:text="#{manager-provider-edit.title}">
+                        Edit Provider
+                    </h2>
                     <p class="provider-subtext">
-                        ID:
+                        <span th:text="#{common.id}">ID</span>:
                         <span th:text="${supplier.id}">1</span>
                     </p>
                 </div>
                 <div class="provider-actions">
                     <a href="/manager/supplier/list" class="back-link-pill">
                         <span class="icon">←</span>
-                        <span>Back to Provider List</span>
+                        <span th:text="#{manager-provider-edit.back}">
+                            Back to Provider List
+                        </span>
                     </a>
                 </div>
             </div>
 
-            <!-- Error Messages -->
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Form -->
             <form id="editProviderForm"
                   method="post"
                   th:action="@{/manager/supplier/edit/{id}(id=${supplier.id})}"
                   class="form-grid">
                 <div>
                     <div class="form-group">
-                        <label for="supplierName" class="required">Provider Name</label>
+                        <label for="supplierName" class="required"
+                               th:text="#{manager-provider-edit.name}">
+                            Provider Name
+                        </label>
                         <input type="text"
                                id="supplierName"
                                name="supplierName"
                                maxlength="100"
                                th:value="${supplier.supplierName}"
                                required>
-                        <div class="error" id="supplierNameError">
+                        <div class="error" id="supplierNameError"
+                             th:text="#{manager-provider-edit.error.name}">
                             Provider name is required (max 100 characters)
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="supplierCategoryId" class="required">Provider Category</label>
+                        <label for="supplierCategoryId" class="required"
+                               th:text="#{manager-provider-edit.category}">
+                            Provider Category
+                        </label>
                         <select id="supplierCategoryId" name="supplierCategoryId" required>
-                            <option value="">-- Select Category --</option>
+                            <option value="" th:text="#{common.selectCategory}">
+                                -- Select Category --
+                            </option>
                             <option th:each="category : ${categories}"
                                     th:value="${category.id}"
                                     th:text="${category.name}"
                                     th:selected="${category.id == supplier.supplierCategory.id}">
-                                Category
                             </option>
                         </select>
-                        <div class="error" id="supplierCategoryIdError">
+                        <div class="error" id="supplierCategoryIdError"
+                             th:text="#{manager-provider-edit.error.category}">
                             Provider category is required
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="phoneNumber">Phone Number</label>
+                        <label for="phoneNumber"
+                               th:text="#{manager-provider-edit.phone}">
+                            Phone Number
+                        </label>
                         <input type="text"
                                id="phoneNumber"
                                name="phoneNumber"
                                maxlength="20"
                                th:value="${supplier.phoneNumber}">
-                        <div class="error" id="phoneNumberError">
+                        <div class="error" id="phoneNumberError"
+                             th:text="#{manager-provider-edit.error.phone}">
                             Phone number must be max 20 characters
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email"
+                               th:text="#{manager-provider-edit.email}">
+                            Email
+                        </label>
                         <input type="email"
                                id="email"
                                name="email"
                                maxlength="100"
                                th:value="${supplier.email}">
-                        <div class="error" id="emailError">
+                        <div class="error" id="emailError"
+                             th:text="#{manager-provider-edit.error.email}">
                             Email must be valid and max 100 characters
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="note">Note</label>
+                        <label for="note"
+                               th:text="#{common.note}">
+                            Note
+                        </label>
                         <textarea id="note"
                                   name="note"
                                   th:text="${supplier.note}"></textarea>
@@ -304,13 +327,17 @@
 
                     <div class="button-group">
                         <button type="submit" class="btn btn-primary">
-                            <span>Update Provider</span>
+                            <span th:text="#{manager-provider-edit.update}">
+                                Update Provider
+                            </span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/manager/supplier/list'">
                             <span>✕</span>
-                            <span>Cancel</span>
+                            <span th:text="#{common.cancel}">
+                                Cancel
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -319,11 +346,13 @@
     </div>
 </main>
 
-<script>
+<script th:inline="javascript">
+    const msgContactRequired = /*[[#{manager-provider-edit.error.contactRequired}]]*/ '';
+    const msgFixErrors = /*[[#{manager-provider-edit.error.fixForm}]]*/ '';
+
     document.getElementById('editProviderForm').addEventListener('submit', function(event) {
         let isValid = true;
 
-        // Validate provider name
         const supplierName = document.getElementById('supplierName');
         const supplierNameError = document.getElementById('supplierNameError');
         if (!supplierName.value.trim() || supplierName.value.length > 100) {
@@ -335,7 +364,6 @@
             supplierNameError.style.display = 'none';
         }
 
-        // Validate provider category
         const supplierCategoryId = document.getElementById('supplierCategoryId');
         const supplierCategoryIdError = document.getElementById('supplierCategoryIdError');
         if (!supplierCategoryId.value) {
@@ -347,7 +375,6 @@
             supplierCategoryIdError.style.display = 'none';
         }
 
-        // Validate phone number (optional but max 20 chars)
         const phoneNumber = document.getElementById('phoneNumber');
         const phoneNumberError = document.getElementById('phoneNumberError');
         if (phoneNumber.value && phoneNumber.value.length > 20) {
@@ -359,7 +386,6 @@
             phoneNumberError.style.display = 'none';
         }
 
-        // Validate email (optional but must be valid and max 100 chars)
         const email = document.getElementById('email');
         const emailError = document.getElementById('emailError');
         if (email.value) {
@@ -373,23 +399,21 @@
                 emailError.style.display = 'none';
             }
         }
-        
-        // Validate that at least one contact method is provided
-        if ((!phoneNumber.value || phoneNumber.value.trim() === '') && 
+
+        if ((!phoneNumber.value || phoneNumber.value.trim() === '') &&
             (!email.value || email.value.trim() === '')) {
             phoneNumber.classList.add('invalid');
             email.classList.add('invalid');
-            alert('At least one contact method (phone number or email) is required');
+            alert(msgContactRequired);
             isValid = false;
         }
 
         if (!isValid) {
             event.preventDefault();
-            alert('Please correct the errors in the form before submitting.');
+            alert(msgFixErrors);
         }
     });
 
-    // Real-time validation on input
     document.getElementById('supplierName').addEventListener('input', function() {
         const error = document.getElementById('supplierNameError');
         if (this.value.trim() && this.value.length <= 100) {
@@ -422,5 +446,6 @@
         }
     });
 </script>
+
 </body>
 </html>

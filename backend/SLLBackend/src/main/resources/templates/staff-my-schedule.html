@@ -295,73 +295,55 @@
     <div class="schedule-layout-inner">
         <section class="schedule-card">
 
-            <!-- Header -->
             <div class="schedule-header-row">
                 <div class="schedule-title-block section-heading">
-                    <p class="section-kicker">My Shifts</p>
-                    <h2>My Monthly Schedule</h2>
+                    <p class="section-kicker" th:text="#{staff-schedule.kicker}">My Shifts</p>
+                    <h2 th:text="#{staff-schedule.title}">My Monthly Schedule</h2>
                     <p class="schedule-subtext">
-                        See which days you are scheduled to work this month.
+                        <span th:text="#{staff-schedule.subtitle}">
+                            See which days you are scheduled to work this month.
+                        </span>
                         <span th:text="${staffName != null ? '(' + staffName + ')' : ''}"></span>
                     </p>
                 </div>
 
                 <div class="schedule-controls">
-                    <!-- Month navigation -->
-<!--                    <form th:action="@{/staff/my-schedule}" method="get" class="month-nav">-->
-<!--                        <button type="submit"-->
-<!--                                name="monthOffset"-->
-<!--                                th:value="${monthOffset - 1}"-->
-<!--                                title="Previous month">-->
-<!--                            ◀-->
-<!--                        </button>-->
-
-                        <span class="month-label"
-                              th:text="${currentMonthLabel}">March 2025</span>
-
-<!--                        <button type="submit"-->
-<!--                                name="monthOffset"-->
-<!--                                th:value="${monthOffset + 1}"-->
-<!--                                title="Next month">-->
-<!--                            ▶-->
-<!--                        </button>-->
-<!--                    </form>-->
+                    <span class="month-label"
+                          th:text="${currentMonthLabel}">
+                        March 2025
+                    </span>
                 </div>
             </div>
 
-            <!-- Legend -->
             <div class="schedule-legend">
                 <div class="legend-item">
                     <span class="legend-dot-today"></span>
-                    <span>Today</span>
+                    <span th:text="#{staff-schedule.legend.today}">Today</span>
                 </div>
                 <div class="legend-item">
                     <span class="legend-pill am">AM</span>
-                    <span>Morning shift</span>
+                    <span th:text="#{staff-schedule.legend.morning}">Morning shift</span>
                 </div>
                 <div class="legend-item">
                     <span class="legend-pill pm">PM</span>
-                    <span>Afternoon shift</span>
+                    <span th:text="#{staff-schedule.legend.afternoon}">Afternoon shift</span>
                 </div>
                 <div class="legend-item">
-                    <span>Empty day = off</span>
+                    <span th:text="#{staff-schedule.legend.off}">Empty day = off</span>
                 </div>
             </div>
 
-            <!-- Calendar -->
             <div class="calendar-wrapper">
-                <!-- Weekday header -->
                 <div class="calendar-header-row">
-                    <div class="calendar-header-cell">Mon</div>
-                    <div class="calendar-header-cell">Tue</div>
-                    <div class="calendar-header-cell">Wed</div>
-                    <div class="calendar-header-cell">Thu</div>
-                    <div class="calendar-header-cell">Fri</div>
-                    <div class="calendar-header-cell">Sat</div>
-                    <div class="calendar-header-cell">Sun</div>
+                    <div class="calendar-header-cell" th:text="#{common.week.mon}">Mon</div>
+                    <div class="calendar-header-cell" th:text="#{common.week.tue}">Tue</div>
+                    <div class="calendar-header-cell" th:text="#{common.week.wed}">Wed</div>
+                    <div class="calendar-header-cell" th:text="#{common.week.thu}">Thu</div>
+                    <div class="calendar-header-cell" th:text="#{common.week.fri}">Fri</div>
+                    <div class="calendar-header-cell" th:text="#{common.week.sat}">Sat</div>
+                    <div class="calendar-header-cell" th:text="#{common.week.sun}">Sun</div>
                 </div>
 
-                <!-- Days -->
                 <div class="calendar-grid">
                     <div class="calendar-day"
                          th:each="day : ${calendarDays}"
@@ -374,31 +356,39 @@
                         <div class="calendar-day-inner">
                             <div class="calendar-day-header">
                                 <span class="calendar-day-number"
-                                      th:text="${day.date.dayOfMonth}">1</span>
+                                      th:text="${day.date.dayOfMonth}">
+                                    1
+                                </span>
 
                                 <span class="calendar-duty-label"
-                                      th:text="(${day.hasMorningShift} or ${day.hasAfternoonShift}) ? 'On duty' : 'Off'">
+                                      th:text="(${day.hasMorningShift} or ${day.hasAfternoonShift})
+                                               ? #{staff-schedule.status.onDuty}
+                                               : #{staff-schedule.status.off}">
                                     Off
                                 </span>
                             </div>
 
                             <div class="calendar-shifts">
-                                <!-- Morning shift -->
                                 <div class="shift-pill am"
                                      th:if="${day.hasMorningShift}">
                                     <span class="shift-name">AM</span>
-                                    <span class="shift-note">Morning shift</span>
+                                    <span class="shift-note"
+                                          th:text="#{staff-schedule.shift.morning}">
+                                        Morning shift
+                                    </span>
                                 </div>
 
-                                <!-- Afternoon shift -->
                                 <div class="shift-pill pm"
                                      th:if="${day.hasAfternoonShift}">
                                     <span class="shift-name">PM</span>
-                                    <span class="shift-note">Afternoon shift</span>
+                                    <span class="shift-note"
+                                          th:text="#{staff-schedule.shift.afternoon}">
+                                        Afternoon shift
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                    </div><!-- end calendar-day -->
+                    </div>
                 </div>
             </div>
 

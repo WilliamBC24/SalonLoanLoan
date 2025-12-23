@@ -329,200 +329,181 @@
 <main class="order-details-page">
     <div class="container">
 
-        <!-- Top heading + back link -->
+        <!-- Header -->
         <div class="order-header-row">
             <h1>
-                Order Details
+                <span th:text="#{order.details.title}">Order Details</span>
                 <span>#<span th:text="${order.id}">123</span></span>
             </h1>
-            <a href="/order/history" class="back-link">← Back to Order History</a>
+            <a href="/order/history"
+               class="back-link"
+               th:text="#{order.details.back}">
+                ← Back to Order History
+            </a>
         </div>
 
         <!-- Alerts -->
         <div th:if="${param.success}" class="alert alert-success">
-            <span th:text="${param.success}">Success message</span>
+            <span th:text="${param.success}">Success</span>
         </div>
 
         <div th:if="${param.error}" class="alert alert-error">
-            <span th:text="${param.error}">Error message</span>
+            <span th:text="${param.error}">Error</span>
         </div>
 
-        <!-- Layout -->
         <div class="order-details-layout">
 
-            <!-- LEFT: main info -->
+            <!-- LEFT -->
             <div class="order-main-column">
 
-                <!-- Order Information -->
+                <!-- Order Info -->
                 <section class="order-card">
-                    <h2>Order Information</h2>
+                    <h2 th:text="#{order.details.section.orderInfo}">Order Information</h2>
+
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">Order ID</span>
+                            <span class="info-label" th:text="#{order.details.orderId}">Order ID</span>
                             <span class="info-value" th:text="${order.id}">123</span>
                         </div>
+
                         <div class="info-item">
-                            <span class="info-label">Order Date</span>
+                            <span class="info-label" th:text="#{order.details.orderDate}">Order Date</span>
                             <span class="info-value"
-                                  th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
-                                01 Jan 2024 10:00
+                                  th:text="${#temporals.format(order.createdAt,'dd MMM yyyy HH:mm')}">
+                                01 Jan 2024
                             </span>
                         </div>
+
                         <div class="info-item">
-                            <span class="info-label">Status</span>
+                            <span class="info-label" th:text="#{order.details.status}">Status</span>
                             <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
                                   th:text="${order.orderStatus}">
                                 PENDING
                             </span>
                         </div>
+
                         <div class="info-item">
-                            <span class="info-label">Fulfillment</span>
+                            <span class="info-label" th:text="#{order.details.fulfillment}">Fulfillment</span>
+
                             <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
-                                  class="fulfillment-badge pickup">🏪 In-Store Pickup</span>
+                                  class="fulfillment-badge pickup"
+                                  th:text="#{order.details.fulfillment.pickup}">
+                                🏪 In-Store Pickup
+                            </span>
+
                             <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
-                                  class="fulfillment-badge delivery">🚚 Delivery</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Payment Method</span>
-                            <span class="info-value" th:text="${order.paymentMethod}">
-                                BANK_TRANSFER
+                                  class="fulfillment-badge delivery"
+                                  th:text="#{order.details.fulfillment.delivery}">
+                                🚚 Delivery
                             </span>
                         </div>
+
                         <div class="info-item">
-                            <span class="info-label">Voucher</span>
-                            <span class="info-value"
-                                  th:text="${order.appliedVoucher != null ? order.appliedVoucher.voucherCode : 'None'}">
-        None
-    </span>
+                            <span class="info-label" th:text="#{order.details.paymentMethod}">Payment Method</span>
+                            <span th:text="${order.paymentMethod}">BANK_TRANSFER</span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label" th:text="#{order.details.voucher}">Voucher</span>
+                            <span th:text="${order.appliedVoucher != null ? order.appliedVoucher.voucherCode : #messages.msg('order.details.none')}">
+                                None
+                            </span>
                         </div>
 
                         <div class="info-item" th:if="${order.appliedVoucher != null}">
-                            <span class="info-label">Voucher Name</span>
-                            <span class="info-value" th:text="${order.appliedVoucher.voucherName}">
-        Voucher Name
-    </span>
+                            <span class="info-label" th:text="#{order.details.voucherName}">Voucher Name</span>
+                            <span th:text="${order.appliedVoucher.voucherName}">Voucher</span>
                         </div>
                     </div>
                 </section>
 
-                <!-- Customer Information -->
+                <!-- Customer Info -->
                 <section class="order-card">
-                    <h2>Customer Information</h2>
+                    <h2 th:text="#{order.details.section.customerInfo}">Customer Information</h2>
+
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">Name</span>
-                            <span class="info-value" th:text="${order.customerInfo.name}">
-                                Customer Name
-                            </span>
+                            <span class="info-label" th:text="#{order.details.customer.name}">Name</span>
+                            <span th:text="${order.customerInfo.name}">Name</span>
                         </div>
+
                         <div class="info-item">
-                            <span class="info-label">Phone Number</span>
-                            <span class="info-value" th:text="${order.customerInfo.phoneNumber}">
-                                0123456789
+                            <span class="info-label" th:text="#{order.details.customer.phone}">Phone</span>
+                            <span th:text="${order.customerInfo.phoneNumber}">0123</span>
+                        </div>
+
+                        <div class="info-item full-width"
+                             th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
+                            <span class="info-label" th:text="#{order.details.customer.address}">Shipping Address</span>
+                            <span th:text="${order.customerInfo.shippingAddress ?: #messages.msg('order.details.na')}">
+                                N/A
                             </span>
                         </div>
-                        <div class="info-item full-width" th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
-                            <span class="info-label">Shipping Address</span>
-                            <span class="info-value" th:text="${order.customerInfo.shippingAddress ?: 'N/A'}">
-                                123 Main Street, City
+
+                        <div class="info-item full-width"
+                             th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}">
+                            <span class="info-label" th:text="#{order.details.pickupLocation}">Pickup Location</span>
+                            <span th:text="#{order.details.pickupNote}">
+                                📍 Salon Loan Loan - We will notify you when ready!
                             </span>
-                        </div>
-                        <div class="info-item full-width" th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}">
-                            <span class="info-label">Pickup Location</span>
-                            <span class="info-value">📍 Salon Loan Loan - We will notify you when ready!</span>
                         </div>
                     </div>
                 </section>
 
-                <!-- Order Items -->
+                <!-- Items -->
                 <section class="order-card">
-                    <h2>Order Items</h2>
+                    <h2 th:text="#{order.details.section.items}">Order Items</h2>
+
                     <table class="items-table">
                         <thead>
                         <tr>
-                            <th>Product</th>
-                            <th style="width:120px;">Price</th>
-                            <th style="width:80px;">Qty</th>
-                            <th style="width:140px;">Subtotal</th>
+                            <th th:text="#{order.details.item.product}">Product</th>
+                            <th th:text="#{order.details.item.price}">Price</th>
+                            <th th:text="#{order.details.item.qty}">Qty</th>
+                            <th th:text="#{order.details.item.subtotal}">Subtotal</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="item : ${orderItems}">
                             <td>
                                 <a th:href="@{/products/{id}(id=${item.product.id})}"
-                                   th:text="${item.product.productName}"
-                                   class="product-name">
-                                    Product Name
+                                   th:text="${item.product.productName}">
+                                    Product
                                 </a>
                             </td>
-                            <td>
-                                <span class="price"
-                                      th:text="${#numbers.formatDecimal(item.priceAtSale, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-                                    0 VND
-                                </span>
-                            </td>
+                            <td th:text="${#numbers.formatDecimal(item.priceAtSale,0,'COMMA',0,'POINT')} + ' VND'">0</td>
                             <td th:text="${item.quantity}">1</td>
-                            <td>
-                                <span class="price"
-                                      th:text="${#numbers.formatDecimal(item.priceAtSale * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-                                    0 VND
-                                </span>
-                            </td>
+                            <td th:text="${#numbers.formatDecimal(item.priceAtSale * item.quantity,0,'COMMA',0,'POINT')} + ' VND'">0</td>
                         </tr>
                         </tbody>
                     </table>
                 </section>
-
             </div>
 
-            <!-- RIGHT: summary + actions -->
+            <!-- RIGHT -->
             <aside>
                 <section class="order-summary-card">
-                    <h2>Order Summary</h2>
+                    <h2 th:text="#{order.details.summary.title}">Order Summary</h2>
 
                     <div class="summary-item">
-                        <span>Items Subtotal</span>
-                        <span class="price" th:text="${#numbers.formatDecimal(itemsSubtotal, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
+                        <span th:text="#{order.details.summary.subtotal}">Items Subtotal</span>
+                        <span th:text="${#numbers.formatDecimal(itemsSubtotal,0,'COMMA',0,'POINT')} + ' VND'">0</span>
                     </div>
 
-                    <div class="summary-item" th:if="${voucherDiscount != null and voucherDiscount > 0}">
-                        <span>Voucher Discount</span>
-                        <span class="price"
-                              th:text="'-' + ${#numbers.formatDecimal(voucherDiscount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-        -0 VND
-    </span>
+                    <div class="summary-item" th:if="${voucherDiscount > 0}">
+                        <span th:text="#{order.details.summary.voucherDiscount}">Voucher Discount</span>
+                        <span th:text="'-' + ${#numbers.formatDecimal(voucherDiscount,0,'COMMA',0,'POINT')} + ' VND'">-0</span>
                     </div>
 
-                    <div class="summary-item" th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
-                        <span>Shipping Fee</span>
-                        <span class="price" th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
+                    <div class="summary-item"
+                         th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
+                        <span th:text="#{order.details.summary.shipping}">Shipping Fee</span>
+                        <span th:text="${#numbers.formatDecimal(order.shippingFee,0,'COMMA',0,'POINT')} + ' VND'">0</span>
                     </div>
 
                     <div class="summary-total">
-                        <span>Total</span>
-                        <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
-                    </div>
-
-
-                    <!-- QR Payment Box for Bank Transfer -->
-                    <div th:if="${order.paymentMethod == 'BANK_TRANSFER' and order.orderStatus.name() == 'PENDING' and paymentQrUrl != null}"
-                         class="payment-box">
-                        <h3 th:text="#{order.details.payment.bankTransfer.title}">Payment Required</h3>
-                        <p>⚠️ <span th:text="#{order.details.payment.bankTransfer.warning}">Please complete the payment to confirm your order.</span></p>
-                        <img th:src="${paymentQrUrl}" alt="Payment QR Code" />
-                        <p th:text="#{order.details.payment.bankTransfer.instruction}">Scan this QR code to complete your payment.</p>
-                    </div>
-
-                    <!-- QR Payment Box for COD (20% Deposit) -->
-                    <div th:if="${order.paymentMethod == 'COD' and order.orderStatus.name() == 'PENDING' and codDepositQrUrl != null}"
-                         class="payment-box">
-                        <h3 th:text="#{order.details.payment.cod.title}">COD Deposit Required</h3>
-                        <p>⚠️ <span th:text="#{order.details.payment.cod.warning}">You need to pay 20% of the order total before the order gets confirmed for COD.</span></p>
-                        <p style="font-weight: 700; font-size: 1.1rem; margin-top: 0.5rem;">
-                            <span th:text="#{order.details.payment.cod.depositAmount}">Deposit Amount:</span> <span th:text="${#numbers.formatDecimal(codDepositAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
-                        </p>
-                        <img th:src="${codDepositQrUrl}" alt="COD Deposit QR Code" />
-                        <p th:text="#{order.details.payment.cod.instruction}">Scan this QR code to pay the deposit and confirm your order.</p>
+                        <span th:text="#{order.details.summary.total}">Total</span>
+                        <span th:text="${#numbers.formatDecimal(order.totalPrice,0,'COMMA',0,'POINT')} + ' VND'">0</span>
                     </div>
 
                     <!-- Actions -->
@@ -530,20 +511,23 @@
                         <a th:if="${order.orderStatus.name() == 'PENDING' or order.orderStatus.name() == 'CONFIRMED'}"
                            href="#"
                            class="btn btn-danger"
+                           th:text="#{order.details.cancel}"
                            onclick="cancelOrder(event, [[${order.id}]])">
                             Cancel Order
                         </a>
 
-                        <a href="/order/history" class="btn btn-secondary">
-                            Back to Orders
+                        <a href="/order/history"
+                           class="btn btn-secondary"
+                           th:text="#{order.details.back}">
+                            Back
                         </a>
                     </div>
                 </section>
             </aside>
         </div>
-
     </div>
 </main>
+
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

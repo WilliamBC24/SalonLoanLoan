@@ -350,58 +350,65 @@
 <main class="staff-main staff-appointment-create-page">
     <div class="staff-appointment-layout-inner">
         <section class="staff-appointment-card">
-            <!-- Header row -->
+
             <div class="staff-appointment-header-row">
                 <div class="staff-appointment-title-block section-heading">
-                    <p class="section-kicker">Walk-in Customer</p>
+                    <p class="section-kicker" th:text="#{staff-create-appointment.kicker}">Walk-in Customer</p>
                     <h2 th:text="#{staff-create-appointment.title}">Create Appointment</h2>
                 </div>
                 <div class="staff-appointment-actions">
                     <a href="/staff/registration/list" class="back-link-pill">
                         <span class="icon">←</span>
-                        <span>Back to Appointments</span>
+                        <span th:text="#{staff-create-appointment.back}">Back to Appointments</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Messages -->
-            <div th:if="${param.error}" class="message error">
-                Could not create appointment. Please check the information and try again.
+            <div th:if="${param.error}" class="message error"
+                 th:text="#{staff-create-appointment.error}">
+                Could not create appointment.
             </div>
-            <div th:if="${param.success}" class="message success">
+
+            <div th:if="${param.success}" class="message success"
+                 th:text="#{staff-create-appointment.success}">
                 Appointment created successfully.
             </div>
 
-            <h2 id="error"></h2>
-
-            <!-- FORM -->
             <form th:action="@{/staff/registration/create}" method="post" id="appointment-form">
 
                 <div class="appointment-grid">
-                    <!-- ===== Column 1: customer info + date/time ===== -->
+
+                    <!-- COLUMN 1 -->
                     <div class="appointment-col">
                         <div class="appointment-card-inner">
-                            <!-- Customer name -->
-                            <label for="customer-name" class="form-label">Customer Name *</label>
+
+                            <label for="customer-name" class="form-label"
+                                   th:text="#{staff-create-appointment.customerName}">
+                                Customer Name *
+                            </label>
                             <input type="text"
                                    id="customer-name"
                                    name="name"
                                    class="form-input"
-                                   placeholder="Enter customer name"
+                                   th:placeholder="#{staff-create-appointment.customerName.placeholder}"
                                    required>
 
-                            <!-- Phone number -->
-                            <label for="phone-number" class="form-label">Phone Number *</label>
+                            <label for="phone-number" class="form-label"
+                                   th:text="#{staff-create-appointment.phoneNumber}">
+                                Phone Number *
+                            </label>
                             <input type="tel"
                                    id="phone-number"
                                    name="phoneNumber"
                                    class="form-input"
-                                   placeholder="Enter phone number"
+                                   th:placeholder="#{staff-create-appointment.phoneNumber.placeholder}"
                                    required>
                             <div id="phone-warning" class="field-note"></div>
 
-                            <!-- Date -->
-                            <label for="appointment-date" class="form-label">Date *</label>
+                            <label for="appointment-date" class="form-label"
+                                   th:text="#{staff-create-appointment.date}">
+                                Date *
+                            </label>
                             <input type="date"
                                    id="appointment-date"
                                    name="appointmentDate"
@@ -409,11 +416,12 @@
                                    required>
                             <div id="date-warning" class="field-note"></div>
 
-                            <!-- Time slot picker -->
-                            <label class="form-label">Time Slot *</label>
+                            <label class="form-label"
+                                   th:text="#{staff-create-appointment.timeSlot}">
+                                Time Slot *
+                            </label>
                             <div id="time-slot-grid" class="time-slot-grid"></div>
 
-                            <!-- Hidden input to store selected time -->
                             <input type="hidden"
                                    id="appointment-time"
                                    name="appointmentTime">
@@ -422,78 +430,103 @@
                         </div>
                     </div>
 
-                    <!-- ===== Column 2: services search + staff selection ===== -->
+                    <!-- COLUMN 2 -->
                     <div class="appointment-col">
                         <div class="appointment-card-inner">
+
                             <div class="service-search-wrapper">
-                                <label for="service-search" class="form-label">Search Services *</label>
+                                <label for="service-search" class="form-label"
+                                       th:text="#{staff-create-appointment.searchServices}">
+                                    Search Services *
+                                </label>
                                 <input type="text"
                                        id="service-search"
                                        class="form-input"
-                                       placeholder="Type to search services...">
-                                <div class="field-note">
-                                    Time slots update automatically so that the appointment finishes by 22:00.
+                                       th:placeholder="#{staff-create-appointment.searchServices.placeholder}">
+                                <div class="field-note"
+                                     th:text="#{staff-create-appointment.searchServices.note}">
+                                    Time slots update automatically.
                                 </div>
                                 <div class="service-list" id="service-list"></div>
                             </div>
 
-                            <!-- Staff selection -->
                             <div class="staff-select-wrapper">
-                                <label for="staff-select" class="form-label">Assign Staff (optional)</label>
+                                <label for="staff-select" class="form-label"
+                                       th:text="#{staff-create-appointment.assignStaff}">
+                                    Assign Staff
+                                </label>
                                 <select id="staff-select" name="staffId" class="form-input">
-                                    <option value="">Assign automatically</option>
+                                    <option value=""
+                                            th:text="#{staff-create-appointment.assignStaff.auto}">
+                                        Assign automatically
+                                    </option>
                                 </select>
                                 <div id="staff-warning" class="field-note"></div>
                             </div>
+
                         </div>
                     </div>
 
-                    <!-- ===== Column 3: selected services + summary ===== -->
+                    <!-- COLUMN 3 -->
                     <div class="appointment-col">
                         <div class="appointment-card-inner">
-                            <!-- Selected services -->
-                            <label class="form-label">Selected Services *</label>
+
+                            <label class="form-label"
+                                   th:text="#{staff-create-appointment.selectedServices}">
+                                Selected Services *
+                            </label>
+
                             <div class="selected-services">
-                                <div class="selected-services-header">Selected Services:</div>
+                                <div class="selected-services-header"
+                                     th:text="#{staff-create-appointment.selectedServices}">
+                                    Selected Services
+                                </div>
                                 <div class="selected-services-inner">
                                     <ul id="selected-services-list"></ul>
                                 </div>
-                                <input type="hidden" id="selected-services-input" name="selectedServices">
+                                <input type="hidden"
+                                       id="selected-services-input"
+                                       name="selectedServices">
                             </div>
                             <div id="service-warning" class="field-note"></div>
 
-                            <!-- Summary -->
                             <div class="summary">
-                                <p>Estimated Duration:
+                                <p>
+                                    <span th:text="#{staff-create-appointment.estimatedDuration}">Estimated Duration</span>:
                                     <strong><span id="total-duration">0</span> min</strong>
                                 </p>
                                 <input type="hidden" id="total-duration-input" name="totalDuration">
 
-                                <p>Estimated Price:
+                                <p>
+                                    <span th:text="#{staff-create-appointment.estimatedPrice}">Estimated Price</span>:
                                     <strong><span id="total-price">0 VND</span></strong>
                                 </p>
                                 <input type="hidden" id="total-price-input" name="totalPrice">
 
-                                <p>End Time:
+                                <p>
+                                    <span th:text="#{staff-create-appointment.endTime}">End Time</span>:
                                     <strong><span id="end-time">--:--</span></strong>
                                 </p>
                                 <input type="hidden" id="end-time-input" name="endTime">
                                 <div id="end-time-warning" class="field-note"></div>
                             </div>
+
                         </div>
                     </div>
                 </div>
 
-                <!-- Submit -->
                 <div class="submit-row">
-                    <button type="submit" class="btn-primary" id="submit-btn">
+                    <button type="submit" class="btn-primary" id="submit-btn"
+                            th:text="#{staff-create-appointment.submit}">
                         Create Appointment
                     </button>
                 </div>
+
             </form>
         </section>
     </div>
 </main>
+
 
 <script>
     $(document).ready(function() {

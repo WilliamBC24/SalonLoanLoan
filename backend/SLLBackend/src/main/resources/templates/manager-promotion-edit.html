@@ -246,28 +246,32 @@
     <div class="promo-edit-layout-inner">
         <section class="promo-edit-card">
 
-            <!-- Header -->
             <header class="promo-edit-header">
                 <div class="promo-edit-title-block">
-                    <p class="section-kicker">Marketing &amp; Offers</p>
-                    <h2 th:text="#{manager-promotion-edit.title}">Edit Promotion</h2>
-                    <p style="color:#6b7280;font-size:0.85rem;margin:0.25rem 0 0;">
+                    <p class="section-kicker" th:text="#{manager-promotion-edit.kicker}">
+                        Marketing &amp; Offers
+                    </p>
+                    <h2 th:text="#{manager-promotion-edit.title}">
+                        Edit Promotion
+                    </h2>
+                    <p style="color:#6b7280;font-size:0.85rem;margin:0.25rem 0 0;"
+                       th:text="#{manager-promotion-edit.subtitle}">
                         Update promotion details and scheduling information.
                     </p>
                 </div>
                 <div class="promo-edit-actions">
                     <a href="/manager/promotion/list" class="back-link-pill">
                         <span class="icon">←</span>
-                        <span>Back to Promotions</span>
+                        <span th:text="#{manager-promotion-edit.back}">
+                            Back to Promotions
+                        </span>
                     </a>
                 </div>
             </header>
 
-            <!-- Optional alerts if you pass them from controller -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Form -->
             <form id="promotionForm"
                   class="promo-form"
                   method="post"
@@ -276,34 +280,40 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="promotionName">
-                            Promotion Name <span class="required-star">*</span>
+                            <span th:text="#{manager-promotion-edit.name}">Promotion Name</span>
+                            <span class="required-star">*</span>
                         </label>
                         <input type="text"
                                id="promotionName"
                                name="promotionName"
                                th:value="${promotion.promotionName}"
                                required />
-                        <div id="promotionNameError" class="error-message">
+                        <div id="promotionNameError" class="error-message"
+                             th:text="#{manager-promotion-edit.error.nameRequired}">
                             Promotion name is required
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="discountType">
-                            Discount Type <span class="required-star">*</span>
+                            <span th:text="#{manager-promotion-edit.discountType}">Discount Type</span>
+                            <span class="required-star">*</span>
                         </label>
                         <select id="discountType" name="discountType" required>
-                            <option value="">Select discount type</option>
+                            <option value="" th:text="#{common.select}">Select</option>
                             <option value="AMOUNT"
-                                    th:selected="${promotion.discountType != null and promotion.discountType.name() == 'AMOUNT'}">
+                                    th:selected="${promotion.discountType != null and promotion.discountType.name() == 'AMOUNT'}"
+                                    th:text="#{manager-promotion-edit.discountType.amount}">
                                 Amount (VND)
                             </option>
                             <option value="PERCENTAGE"
-                                    th:selected="${promotion.discountType != null and promotion.discountType.name() == 'PERCENTAGE'}">
+                                    th:selected="${promotion.discountType != null and promotion.discountType.name() == 'PERCENTAGE'}"
+                                    th:text="#{manager-promotion-edit.discountType.percentage}">
                                 Percentage (%)
                             </option>
                         </select>
-                        <div id="discountTypeError" class="error-message">
+                        <div id="discountTypeError" class="error-message"
+                             th:text="#{manager-promotion-edit.error.discountTypeRequired}">
                             Please select a discount type
                         </div>
                     </div>
@@ -312,7 +322,10 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="discountAmount">
-                            Discount Amount <span class="required-star">*</span>
+                            <span th:text="#{manager-promotion-edit.discountAmount}">
+                                Discount Amount
+                            </span>
+                            <span class="required-star">*</span>
                         </label>
                         <input type="number"
                                id="discountAmount"
@@ -320,32 +333,36 @@
                                th:value="${promotion.discountAmount}"
                                min="1"
                                required />
-                        <div id="discountAmountError" class="error-message">
+                        <div id="discountAmountError" class="error-message"
+                             th:text="#{manager-promotion-edit.error.discountAmountMin}">
                             Discount amount must be at least 1
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="promotionStatusId">
-                            Status <span class="required-star">*</span>
+                            <span th:text="#{common.status}">Status</span>
+                            <span class="required-star">*</span>
                         </label>
                         <select id="promotionStatusId" name="promotionStatusId" required>
-                            <option value="">Select status</option>
+                            <option value="" th:text="#{common.selectStatus}">Select status</option>
                             <option th:each="status : ${statuses}"
                                     th:value="${status.id}"
                                     th:text="${status.name}"
                                     th:selected="${promotion.promotionStatus != null and promotion.promotionStatus.id == status.id}">
-                                Status
                             </option>
                         </select>
-                        <div id="promotionStatusIdError" class="error-message">
+                        <div id="promotionStatusIdError" class="error-message"
+                             th:text="#{manager-promotion-edit.error.statusRequired}">
                             Please select a status
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="promotionDescription">Description</label>
+                    <label for="promotionDescription" th:text="#{common.description}">
+                        Description
+                    </label>
                     <textarea id="promotionDescription"
                               name="promotionDescription"
                               th:text="${promotion.promotionDescription}"></textarea>
@@ -354,28 +371,36 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="effectiveFrom">
-                            Effective From <span class="required-star">*</span>
+                            <span th:text="#{manager-promotion-edit.effectiveFrom}">
+                                Effective From
+                            </span>
+                            <span class="required-star">*</span>
                         </label>
                         <input type="datetime-local"
                                id="effectiveFrom"
                                name="effectiveFrom"
                                th:value="${#temporals.format(promotion.effectiveFrom, 'yyyy-MM-dd''T''HH:mm')}"
                                required />
-                        <div id="effectiveFromError" class="error-message">
+                        <div id="effectiveFromError" class="error-message"
+                             th:text="#{manager-promotion-edit.error.effectiveFromRequired}">
                             Effective from date is required
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="effectiveTo">
-                            Effective To <span class="required-star">*</span>
+                            <span th:text="#{manager-promotion-edit.effectiveTo}">
+                                Effective To
+                            </span>
+                            <span class="required-star">*</span>
                         </label>
                         <input type="datetime-local"
                                id="effectiveTo"
                                name="effectiveTo"
                                th:value="${#temporals.format(promotion.effectiveTo, 'yyyy-MM-dd''T''HH:mm')}"
                                required />
-                        <div id="effectiveToError" class="error-message">
+                        <div id="effectiveToError" class="error-message"
+                             th:text="#{manager-promotion-edit.error.effectiveToInvalid}">
                             Effective to date is required and must be after effective from date
                         </div>
                     </div>
@@ -383,12 +408,16 @@
 
                 <div class="buttons">
                     <button type="submit" class="submit-btn">
-                        ✓ <span>Update Promotion</span>
+                        ✓ <span th:text="#{manager-promotion-edit.update}">
+                            Update Promotion
+                        </span>
                     </button>
                     <button type="button"
                             class="cancel-btn"
                             onclick="window.location.href='/manager/promotion/list'">
-                        ✕ <span>Cancel</span>
+                        ✕ <span th:text="#{common.cancel}">
+                            Cancel
+                        </span>
                     </button>
                 </div>
 
@@ -396,135 +425,69 @@
         </section>
     </div>
 
-    <script>
+    <script th:inline="javascript">
+        const msgNameRequired = /*[[#{manager-promotion-edit.error.nameRequired}]]*/ '';
+        const msgDiscountTypeRequired = /*[[#{manager-promotion-edit.error.discountTypeRequired}]]*/ '';
+        const msgDiscountAmountMin = /*[[#{manager-promotion-edit.error.discountAmountMin}]]*/ '';
+        const msgEffectiveFromRequired = /*[[#{manager-promotion-edit.error.effectiveFromRequired}]]*/ '';
+        const msgEffectiveToInvalid = /*[[#{manager-promotion-edit.error.effectiveToInvalid}]]*/ '';
+        const msgStatusRequired = /*[[#{manager-promotion-edit.error.statusRequired}]]*/ '';
+
         document.getElementById('promotionForm').addEventListener('submit', function(event) {
             let isValid = true;
 
-            // Validate promotion name
+            function invalidate(input, errorEl, msg) {
+                input.classList.add('invalid');
+                errorEl.textContent = msg;
+                errorEl.style.display = 'block';
+                isValid = false;
+            }
+
+            function validateOk(input, errorEl) {
+                input.classList.remove('invalid');
+                errorEl.style.display = 'none';
+            }
+
             const promotionName = document.getElementById('promotionName');
             const promotionNameError = document.getElementById('promotionNameError');
-            if (!promotionName.value.trim()) {
-                promotionName.classList.add('invalid');
-                promotionNameError.style.display = 'block';
-                isValid = false;
-            } else {
-                promotionName.classList.remove('invalid');
-                promotionNameError.style.display = 'none';
-            }
+            !promotionName.value.trim()
+                ? invalidate(promotionName, promotionNameError, msgNameRequired)
+                : validateOk(promotionName, promotionNameError);
 
-            // Validate discount type
             const discountType = document.getElementById('discountType');
             const discountTypeError = document.getElementById('discountTypeError');
-            if (!discountType.value) {
-                discountType.classList.add('invalid');
-                discountTypeError.style.display = 'block';
-                isValid = false;
-            } else {
-                discountType.classList.remove('invalid');
-                discountTypeError.style.display = 'none';
-            }
+            !discountType.value
+                ? invalidate(discountType, discountTypeError, msgDiscountTypeRequired)
+                : validateOk(discountType, discountTypeError);
 
-            // Validate discount amount
             const discountAmount = document.getElementById('discountAmount');
             const discountAmountError = document.getElementById('discountAmountError');
-            if (!discountAmount.value || parseInt(discountAmount.value) < 1) {
-                discountAmount.classList.add('invalid');
-                discountAmountError.style.display = 'block';
-                isValid = false;
-            } else {
-                discountAmount.classList.remove('invalid');
-                discountAmountError.style.display = 'none';
-            }
+            (!discountAmount.value || parseInt(discountAmount.value) < 1)
+                ? invalidate(discountAmount, discountAmountError, msgDiscountAmountMin)
+                : validateOk(discountAmount, discountAmountError);
 
-            // Validate effective from
             const effectiveFrom = document.getElementById('effectiveFrom');
             const effectiveFromError = document.getElementById('effectiveFromError');
-            if (!effectiveFrom.value) {
-                effectiveFrom.classList.add('invalid');
-                effectiveFromError.style.display = 'block';
-                isValid = false;
-            } else {
-                effectiveFrom.classList.remove('invalid');
-                effectiveFromError.style.display = 'none';
-            }
+            !effectiveFrom.value
+                ? invalidate(effectiveFrom, effectiveFromError, msgEffectiveFromRequired)
+                : validateOk(effectiveFrom, effectiveFromError);
 
-            // Validate effective to
             const effectiveTo = document.getElementById('effectiveTo');
             const effectiveToError = document.getElementById('effectiveToError');
-            if (!effectiveTo.value) {
-                effectiveTo.classList.add('invalid');
-                effectiveToError.style.display = 'block';
-                isValid = false;
-            } else if (effectiveFrom.value && new Date(effectiveTo.value) <= new Date(effectiveFrom.value)) {
-                effectiveTo.classList.add('invalid');
-                effectiveToError.style.display = 'block';
-                isValid = false;
-            } else {
-                effectiveTo.classList.remove('invalid');
-                effectiveToError.style.display = 'none';
-            }
+            (!effectiveTo.value || new Date(effectiveTo.value) <= new Date(effectiveFrom.value))
+                ? invalidate(effectiveTo, effectiveToError, msgEffectiveToInvalid)
+                : validateOk(effectiveTo, effectiveToError);
 
-            // Validate status
             const promotionStatusId = document.getElementById('promotionStatusId');
             const promotionStatusIdError = document.getElementById('promotionStatusIdError');
-            if (!promotionStatusId.value) {
-                promotionStatusId.classList.add('invalid');
-                promotionStatusIdError.style.display = 'block';
-                isValid = false;
-            } else {
-                promotionStatusId.classList.remove('invalid');
-                promotionStatusIdError.style.display = 'none';
-            }
+            !promotionStatusId.value
+                ? invalidate(promotionStatusId, promotionStatusIdError, msgStatusRequired)
+                : validateOk(promotionStatusId, promotionStatusIdError);
 
-            if (!isValid) {
-                event.preventDefault();
-            }
-        });
-
-        // Real-time validation on input
-        document.getElementById('promotionName').addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('invalid');
-                document.getElementById('promotionNameError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('discountType').addEventListener('change', function() {
-            if (this.value) {
-                this.classList.remove('invalid');
-                document.getElementById('discountTypeError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('discountAmount').addEventListener('input', function() {
-            if (this.value && parseInt(this.value) >= 1) {
-                this.classList.remove('invalid');
-                document.getElementById('discountAmountError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('effectiveFrom').addEventListener('change', function() {
-            if (this.value) {
-                this.classList.remove('invalid');
-                document.getElementById('effectiveFromError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('effectiveTo').addEventListener('change', function() {
-            const effectiveFrom = document.getElementById('effectiveFrom').value;
-            if (this.value && (!effectiveFrom || new Date(this.value) > new Date(effectiveFrom))) {
-                this.classList.remove('invalid');
-                document.getElementById('effectiveToError').style.display = 'none';
-            }
-        });
-
-        document.getElementById('promotionStatusId').addEventListener('change', function() {
-            if (this.value) {
-                this.classList.remove('invalid');
-                document.getElementById('promotionStatusIdError').style.display = 'none';
-            }
+            if (!isValid) event.preventDefault();
         });
     </script>
 </main>
+
 </body>
 </html>

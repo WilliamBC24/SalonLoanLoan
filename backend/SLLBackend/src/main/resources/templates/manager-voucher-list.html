@@ -291,62 +291,76 @@
     <div class="voucher-layout-inner">
         <section class="voucher-card">
 
-            <!-- Header -->
             <div class="voucher-header-row">
                 <div class="voucher-title-block section-heading">
-                    <p class="section-kicker">Marketing &amp; Offers</p>
-                    <h2>Manage Vouchers</h2>
+                    <p class="section-kicker" th:text="#{manager-voucher-list.kicker}">
+                        Marketing &amp; Offers
+                    </p>
+                    <h2 th:text="#{manager-voucher-list.title}">
+                        Manage Vouchers
+                    </h2>
                 </div>
                 <a href="/manager/voucher/create" class="create-btn-pill">
-                    ✚ <span>Create New Voucher</span>
+                    ✚ <span th:text="#{manager-voucher-list.create}">Create New Voucher</span>
                 </a>
             </div>
 
-            <!-- Success/Error Messages -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Search and Filter Bar -->
             <div class="voucher-search-bar">
                 <form method="get" action="/manager/voucher/list">
                     <div class="filter-grid">
+
                         <div class="filter-group">
-                            <label for="search-code">Search by Code</label>
+                            <label for="search-code" th:text="#{manager-voucher-list.search.code}">
+                                Search by Code
+                            </label>
                             <input type="text"
                                    id="search-code"
                                    name="code"
                                    th:value="${searchCode}"
-                                   placeholder="Enter voucher code...">
+                                   th:placeholder="#{manager-voucher-list.placeholder.code}">
                         </div>
 
                         <div class="filter-group">
-                            <label for="search-name">Search by Name</label>
+                            <label for="search-name" th:text="#{manager-voucher-list.search.name}">
+                                Search by Name
+                            </label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter voucher name...">
+                                   th:placeholder="#{manager-voucher-list.placeholder.name}">
                         </div>
 
                         <div class="filter-group">
-                            <label for="discount-type">Discount Type</label>
+                            <label for="discount-type" th:text="#{manager-voucher.field.discountType}">
+                                Discount Type
+                            </label>
                             <select id="discount-type" name="discountType">
-                                <option value="">All types</option>
+                                <option value="" th:text="#{common.allTypes}">All types</option>
                                 <option value="AMOUNT"
-                                        th:selected="${selectedDiscountType == 'AMOUNT'}">
+                                        th:selected="${selectedDiscountType == 'AMOUNT'}"
+                                        th:text="#{common.amount}">
                                     Amount
                                 </option>
                                 <option value="PERCENTAGE"
-                                        th:selected="${selectedDiscountType == 'PERCENTAGE'}">
+                                        th:selected="${selectedDiscountType == 'PERCENTAGE'}"
+                                        th:text="#{common.percentage}">
                                     Percentage
                                 </option>
                             </select>
                         </div>
 
                         <div class="filter-group">
-                            <label for="status">Status</label>
+                            <label for="status" th:text="#{manager-voucher.field.status}">
+                                Status
+                            </label>
                             <select id="status" name="statusId">
-                                <option value="">All statuses</option>
+                                <option value="" th:text="#{common.allStatuses}">
+                                    All statuses
+                                </option>
                                 <option th:each="status : ${allStatuses}"
                                         th:value="${status.id}"
                                         th:text="${status.name}"
@@ -355,72 +369,76 @@
                                 </option>
                             </select>
                         </div>
+
                     </div>
 
                     <div class="search-buttons">
                         <button type="submit" class="btn btn-primary">
-                            🔍 <span>Search</span>
+                            🔍 <span th:text="#{common.search}">Search</span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/manager/voucher/list'">
-                            ↺ <span>Reset</span>
+                            ↺ <span th:text="#{common.reset}">Reset</span>
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Vouchers Table -->
             <div class="voucher-table-wrapper">
                 <table>
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Discount Type</th>
-                        <th>Discount Amount</th>
-                        <th>Effective From</th>
-                        <th>Effective To</th>
-                        <th>Max Usage</th>
-                        <th>Used Count</th>
-                        <th>Status</th>
-                        <th style="width:1%;">Actions</th>
+                        <th th:text="#{manager-voucher.field.code}">Code</th>
+                        <th th:text="#{manager-voucher.field.name}">Name</th>
+                        <th th:text="#{manager-voucher.field.discountType}">Discount Type</th>
+                        <th th:text="#{manager-voucher.field.discountAmount}">Discount Amount</th>
+                        <th th:text="#{manager-voucher.field.effectiveFrom}">Effective From</th>
+                        <th th:text="#{manager-voucher.field.effectiveTo}">Effective To</th>
+                        <th th:text="#{manager-voucher.field.maxUsage}">Max Usage</th>
+                        <th th:text="#{manager-voucher.field.usedCount}">Used Count</th>
+                        <th th:text="#{manager-voucher.field.status}">Status</th>
+                        <th style="width:1%;" th:text="#{common.actions}">Actions</th>
                     </tr>
                     </thead>
+
                     <tbody>
                     <tr th:each="voucher : ${vouchers}">
                         <td th:text="${voucher.id}">1</td>
                         <td>
-                            <span class="voucher-code" th:text="${voucher.voucherCode}">CODE123</span>
+                            <span class="voucher-code" th:text="${voucher.voucherCode}">CODE</span>
                         </td>
-                        <td th:text="${voucher.voucherName}">Voucher name</td>
+                        <td th:text="${voucher.voucherName}">Name</td>
                         <td th:text="${voucher.discountType}">AMOUNT</td>
 
                         <td th:text="${voucher.discountType.name() == 'AMOUNT'
-                ? #numbers.formatDecimal(voucher.discountAmount, 0, 'COMMA', 0, 'POINT') + ' VND'
-                : voucher.discountAmount + '%'}">
+                            ? #numbers.formatDecimal(voucher.discountAmount, 0, 'COMMA', 0, 'POINT') + ' VND'
+                            : voucher.discountAmount + '%'}">
                             0
                         </td>
 
                         <td th:text="${#temporals.format(voucher.effectiveFrom, 'yyyy-MM-dd HH:mm')}">
-                            2024-01-01 00:00
+                            -
                         </td>
                         <td th:text="${#temporals.format(voucher.effectiveTo, 'yyyy-MM-dd HH:mm')}">
-                            2024-12-31 23:59
+                            -
                         </td>
-                        <td th:text="${voucher.maxUsage}">100</td>
+
+                        <td th:text="${voucher.maxUsage}">0</td>
                         <td th:text="${voucher.usedCount}">0</td>
+
                         <td>
                             <span class="status-pill"
                                   th:class="'status-pill ' + (${voucher.voucherStatus != null and voucher.voucherStatus.name == 'ACTIVE'} ? 'status-active' : 'status-inactive')"
                                   th:text="${voucher.voucherStatus != null ? voucher.voucherStatus.name : 'N/A'}">
-                                Active
+                                Status
                             </span>
                         </td>
+
                         <td>
                             <a th:href="@{/manager/voucher/edit/{id}(id=${voucher.id})}" class="edit-link">
-                                ✎ <span>Edit</span>
+                                ✎ <span th:text="#{common.edit}">Edit</span>
                             </a>
                         </td>
                     </tr>
@@ -431,6 +449,7 @@
         </section>
     </div>
 </main>
+
 
 </body>
 </html>

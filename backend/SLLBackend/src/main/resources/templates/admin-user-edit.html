@@ -264,8 +264,12 @@
                         <label class="field-label" th:text="#{admin-edit-user-profile.field.gender}">Gender</label>
                         <input type="text"
                                class="field-input"
-                               th:value="${user.gender != null and user.gender.name() == 'MALE' ? #{common.gender.male} : #{common.gender.female}}"
+                               th:with="genderKey=${(user.gender != null and user.gender.name() == 'MALE')
+                           ? 'common.gender.male'
+                           : 'common.gender.female'}"
+                               th:value="#{${genderKey}}"
                                readonly />
+
                     </div>
 
                     <div class="field-group">

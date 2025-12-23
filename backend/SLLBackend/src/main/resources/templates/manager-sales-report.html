@@ -360,12 +360,16 @@
     <div class="sales-report-layout-inner">
         <section class="sales-report-card">
 
-            <!-- HEADER -->
             <div class="report-header-row">
                 <div class="report-header-title section-heading">
-                    <p class="section-kicker">Sales</p>
-                    <h2>Sales Report</h2>
-                    <p class="report-header-sub">
+                    <p class="section-kicker" th:text="#{manager-sales-report.kicker}">
+                        Sales
+                    </p>
+                    <h2 th:text="#{manager-sales-report.title}">
+                        Sales Report
+                    </h2>
+                    <p class="report-header-sub"
+                       th:text="#{manager-sales-report.subtitle}">
                         Compare how much you earn from appointments versus product orders.
                     </p>
                 </div>
@@ -377,11 +381,12 @@
                 </div>
             </div>
 
-            <!-- FILTERS -->
             <section class="filter-card">
                 <div class="filter-header">
                     <div class="filter-header-title">
-                        <span>Filter by time range</span>
+                        <span th:text="#{manager-sales-report.filterTitle}">
+                            Filter by time range
+                        </span>
                     </div>
                 </div>
 
@@ -390,7 +395,10 @@
                       method="get">
                     <div class="filter-fields">
                         <div class="filter-group">
-                            <label for="month-select">Month</label>
+                            <label for="month-select"
+                                   th:text="#{common.month}">
+                                Month
+                            </label>
                             <select id="month-select" name="month">
                                 <option th:each="m : ${monthOptions}"
                                         th:value="${m}"
@@ -402,7 +410,10 @@
                         </div>
 
                         <div class="filter-group">
-                            <label for="year-select">Year</label>
+                            <label for="year-select"
+                                   th:text="#{common.year}">
+                                Year
+                            </label>
                             <select id="year-select" name="year">
                                 <option th:each="y : ${yearOptions}"
                                         th:value="${y}"
@@ -416,18 +427,20 @@
 
                     <div class="filter-actions">
                         <button type="submit" class="btn btn-primary">
-                            <span>Apply</span>
+                            <span th:text="#{common.apply}">
+                                Apply
+                            </span>
                         </button>
                         <a th:href="@{/manager/report/sales}" class="btn btn-secondary">
-                            <span>Reset</span>
+                            <span th:text="#{common.reset}">
+                                Reset
+                            </span>
                         </a>
                     </div>
                 </form>
             </section>
 
-            <!-- SUMMARY CARDS (Appointments / Product Orders) -->
             <section class="sales-summary-grid">
-                <!-- Appointments card (if present) -->
                 <div class="sales-summary-card"
                      th:if="${!#lists.isEmpty(salesSummary)}"
                      th:with="row=${salesSummary[0]}">
@@ -436,7 +449,7 @@
                         Appointments
                     </div>
                     <div class="sales-summary-amount">
-                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                             0 VND
                         </span>
                         <span class="currency"
@@ -444,12 +457,12 @@
                             0.0%
                         </span>
                     </div>
-                    <div class="sales-summary-meta">
+                    <div class="sales-summary-meta"
+                         th:text="#{manager-sales-report.appointmentSummary}">
                         Gross sales from appointments in this period.
                     </div>
                 </div>
 
-                <!-- Orders card (if present) -->
                 <div class="sales-summary-card"
                      th:if="${#lists.size(salesSummary) > 1}"
                      th:with="row=${salesSummary[1]}">
@@ -458,7 +471,7 @@
                         Product Orders
                     </div>
                     <div class="sales-summary-amount">
-                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                        <span th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                             0 VND
                         </span>
                         <span class="currency"
@@ -466,22 +479,25 @@
                             0.0%
                         </span>
                     </div>
-                    <div class="sales-summary-meta">
+                    <div class="sales-summary-meta"
+                         th:text="#{manager-sales-report.orderSummary}">
                         Gross sales from product orders in this period.
                     </div>
                 </div>
             </section>
 
-            <!-- TABLE SECTION -->
             <section>
                 <div class="sales-table-section-header">
                     <div class="sales-table-title">
-                        <h3>Sales by source</h3>
-                        <span>
+                        <h3 th:text="#{manager-sales-report.tableTitle}">
+                            Sales by source
+                        </h3>
+                        <span th:text="#{manager-sales-report.tableSubtitle}">
                             Breakdown of sales by source and share of total.
                         </span>
                     </div>
-                    <div class="sales-meta">
+                    <div class="sales-meta"
+                         th:text="#{manager-sales-report.amountNote}">
                         Amounts shown in VND.
                     </div>
                 </div>
@@ -491,9 +507,15 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Source</th>
-                            <th class="cell-number">Gross Sales</th>
-                            <th class="cell-number">Share</th>
+                            <th th:text="#{manager-sales-report.source}">Source</th>
+                            <th class="cell-number"
+                                th:text="#{manager-sales-report.grossSales}">
+                                Gross Sales
+                            </th>
+                            <th class="cell-number"
+                                th:text="#{common.share}">
+                                Share
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -501,7 +523,7 @@
                             <td th:text="${iterStat.count}">1</td>
                             <td th:text="${row.sourceLabel}">Appointments</td>
                             <td class="cell-number"
-                                th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                th:text="${#numbers.formatDecimal(row.grossSales, 0, 'COMMA', 0, 'POINT')} + ' ' + #{common.vnd}">
                                 0 VND
                             </td>
                             <td class="cell-number cell-muted"
@@ -511,7 +533,8 @@
                         </tr>
 
                         <tr th:if="${#lists.isEmpty(salesSummary)}">
-                            <td colspan="4" class="empty-row">
+                            <td colspan="4" class="empty-row"
+                                th:text="#{manager-sales-report.noData}">
                                 No sales data for the selected period.
                             </td>
                         </tr>
@@ -523,5 +546,6 @@
         </section>
     </div>
 </main>
+
 </body>
 </html>

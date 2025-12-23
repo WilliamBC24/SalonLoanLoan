@@ -332,8 +332,12 @@
                         <label class="field-label" th:text="#{admin-edit-staff-profile.field.endOfContract}">End of Contract</label>
                         <input type="text"
                                class="field-input"
-                               th:value="${staffAccount.staff.endOfContractDate != null ? #temporals.format(staffAccount.staff.endOfContractDate, 'yyyy-MM-dd') : #{common.emDash}}"
+                               th:with="emdash=#{common.emDash}"
+                               th:value="${staffAccount.staff.endOfContractDate != null
+                  ? #temporals.format(staffAccount.staff.endOfContractDate, 'yyyy-MM-dd')
+                  : emdash}"
                                readonly />
+
                     </div>
                 </div>
 

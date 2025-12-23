@@ -465,13 +465,13 @@
             <!-- Header row -->
             <div class="invoice-header-row">
                 <div class="invoice-title-block section-heading">
-                    <p class="section-kicker">Billing &amp; Payments</p>
-                    <h2>Create Appointment Invoice</h2>
+                    <p class="section-kicker" th:text="#{invoice.kicker}">Billing &amp; Payments</p>
+                    <h2 th:text="#{invoice.title}">Create Appointment Invoice</h2>
                 </div>
 
                 <div style="display:flex; gap:0.6rem; align-items:center;">
                     <div class="invoice-meta-pill">
-                        <span>Appointment</span>
+                        <span th:text="#{invoice.meta.appointment}">Appointment</span>
                         <span>#</span>
                         <span class="code" th:text="${appointment.id}">123</span>
                     </div>
@@ -482,212 +482,220 @@
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- GRID: details + form -->
             <div class="invoice-layout-grid">
 
-                <!-- LEFT: Appointment + services -->
+                <!-- LEFT -->
                 <div class="invoice-left-col">
 
                     <!-- Appointment Information -->
                     <section class="invoice-section-card">
-                        <h3>Appointment Information</h3>
+                        <h3 th:text="#{invoice.section.appointmentInfo}">Appointment Information</h3>
+
                         <div class="info-grid">
                             <div class="info-item">
-                                <span class="info-label">Date &amp; Time</span>
+                                <span class="info-label" th:text="#{invoice.label.datetime}">Date &amp; Time</span>
                                 <span class="info-value"
                                       th:text="${#temporals.format(appointment.startTime, 'dd MMM yyyy HH:mm')}">
                                     01 Jan 2025 10:00
                                 </span>
                             </div>
+
                             <div class="info-item">
-                                <span class="info-label">Customer Name</span>
-                                <span class="info-value"
-                                      th:text="${appointment.customerName}">
+                                <span class="info-label" th:text="#{invoice.label.customerName}">Customer Name</span>
+                                <span class="info-value" th:text="${appointment.customerName}">
                                     Customer Name
                                 </span>
                             </div>
+
                             <div class="info-item">
-                                <span class="info-label">Phone Number</span>
-                                <span class="info-value"
-                                      th:text="${appointment.customerPhoneNumber}">
+                                <span class="info-label" th:text="#{invoice.label.phone}">Phone Number</span>
+                                <span class="info-value" th:text="${appointment.customerPhoneNumber}">
                                     0123456789
                                 </span>
                             </div>
+
                             <div class="info-item">
-                                <span class="info-label">Handled By</span>
-                                <span class="info-value"
-                                      th:text="${appointment.assignedStaffName}">
+                                <span class="info-label" th:text="#{invoice.label.staff}">Handled By</span>
+                                <span class="info-value" th:text="${appointment.assignedStaffName}">
                                     Staff Name
                                 </span>
                             </div>
                         </div>
                     </section>
 
-                    <!-- Services Performed -->
+                    <!-- Services -->
                     <section class="invoice-section-card">
-                        <h3>Services Performed</h3>
+                        <h3 th:text="#{invoice.section.services}">Services Performed</h3>
+
                         <table class="services-table">
                             <thead>
                             <tr>
-                                <th>Service</th>
-                                <th style="width:110px;">Staff</th>
-                                <th style="width:110px;">Price</th>
+                                <th th:text="#{invoice.table.service}">Service</th>
+                                <th style="width:110px;" th:text="#{invoice.table.staff}">Staff</th>
+                                <th style="width:110px;" th:text="#{invoice.table.price}">Price</th>
                             </tr>
                             </thead>
+
                             <tbody>
                             <tr th:each="detail : ${appointmentDetails}">
-                                <td class="service-name"
-                                    th:text="${detail.serviceName}">
-                                    Haircut &amp; Styling
+                                <td class="service-name" th:text="${detail.serviceName}">
+                                    Haircut
                                 </td>
-                                <td th:text="${detail.staffName}">
-                                    Loan Loan
-                                </td>
+                                <td th:text="${detail.staffName}">Staff</td>
                                 <td class="price"
                                     th:text="${#numbers.formatDecimal(detail.unitPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     150,000 VND
                                 </td>
                             </tr>
                             </tbody>
+
                             <tfoot>
                             <tr th:if="${invoice.discountAmount != null and invoice.discountAmount > 0}">
-                                <td colspan="2" class="row-total-label">Discount</td>
+                                <td colspan="2"
+                                    class="row-total-label"
+                                    th:text="#{invoice.total.discount}">
+                                    Discount
+                                </td>
                                 <td class="row-total-value"
                                     th:text="'- ' + ${#numbers.formatDecimal(invoice.discountAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     - 0 VND
                                 </td>
                             </tr>
+
                             <tr>
-                                <td colspan="2" class="row-total-label">Total</td>
+                                <td colspan="2"
+                                    class="row-total-label"
+                                    th:text="#{invoice.total.total}">
+                                    Total
+                                </td>
                                 <td class="row-total-value"
                                     th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                     0 VND
                                 </td>
                             </tr>
                             </tfoot>
-
                         </table>
                     </section>
-
                 </div>
 
-                <!-- RIGHT: Rating + Payment + Submit -->
+                <!-- RIGHT -->
                 <aside>
-                    <!-- Wrap form on the right column (rating, notes, payment, submit) -->
                     <form class="invoice-form-card"
                           method="post"
                           th:action="@{/staff/registration/invoice/{id}/complete(id=${appointment.id})}"
                           th:attr="data-completed=${completed}">
-                        <h3>Finalize Invoice</h3>
 
-                        <!-- Hidden IDs -->
+                        <h3 th:text="#{invoice.section.finalize}">Finalize Invoice</h3>
+
                         <input type="hidden" name="appointmentId" th:value="${appointment.id}" />
                         <input type="hidden" name="invoiceId" th:value="${invoice.id}" />
 
-                        <!-- Satisfaction rating -->
+                        <!-- Rating -->
                         <div class="form-group">
-                            <label for="satisfactionRating">Customer Satisfaction</label>
+                            <label th:text="#{invoice.rating.label}">Customer Satisfaction</label>
+
                             <div class="star-rating"
                                  th:classappend="${completed} ? ' readonly'">
-                                <!-- value 5 down to 1 so hover behaves nicely -->
                                 <input type="radio" id="star5" name="satisfactionRating" value="5"
-                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 5}"
+                                       th:checked="${satisfactionRatingValue == 5}"
                                        th:disabled="${completed}">
                                 <label for="star5">★</label>
 
                                 <input type="radio" id="star4" name="satisfactionRating" value="4"
-                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 4}"
+                                       th:checked="${satisfactionRatingValue == 4}"
                                        th:disabled="${completed}">
                                 <label for="star4">★</label>
 
                                 <input type="radio" id="star3" name="satisfactionRating" value="3"
-                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 3}"
+                                       th:checked="${satisfactionRatingValue == 3}"
                                        th:disabled="${completed}">
                                 <label for="star3">★</label>
 
                                 <input type="radio" id="star2" name="satisfactionRating" value="2"
-                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 2}"
+                                       th:checked="${satisfactionRatingValue == 2}"
                                        th:disabled="${completed}">
                                 <label for="star2">★</label>
 
                                 <input type="radio" id="star1" name="satisfactionRating" value="1"
-                                       th:checked="${satisfactionRatingValue != null and satisfactionRatingValue == 1}"
+                                       th:checked="${satisfactionRatingValue == 1}"
                                        th:disabled="${completed}">
                                 <label for="star1">★</label>
                             </div>
-                            <div class="rating-hint">
-                                1 = Very dissatisfied &nbsp;&middot;&nbsp; 5 = Very satisfied
+
+                            <div class="rating-hint"
+                                 th:text="#{invoice.rating.hint}">
+                                1 = Very dissatisfied · 5 = Very satisfied
                             </div>
                         </div>
 
-                        <!-- Public notes -->
+                        <!-- Notes -->
                         <div class="form-group">
-                            <label for="customerNotes">Customer Notes</label>
+                            <label th:text="#{invoice.notes.label}">Customer Notes</label>
                             <textarea id="customerNotes"
                                       name="customerNotes"
-                                      placeholder="Notes about the customer's experience, hair condition, aftercare advice, etc."
+                                      th:placeholder="#{invoice.notes.placeholder}"
                                       th:text="${satisfactionComment}"
                                       th:readonly="${completed}"></textarea>
                         </div>
 
-                        <!-- Payment method (hidden if completed) -->
+                        <!-- Payment -->
                         <div class="form-group" th:if="${!completed}">
-                            <label>Payment Method</label>
-                            <div class="payment-methods" id="paymentMethods">
-                                <label class="payment-option"
-                                       data-value="CASH">
-                                    <input type="radio"
-                                           name="paymentMethod"
-                                           value="CASH"
-                                           checked>
+                            <label th:text="#{invoice.payment.label}">Payment Method</label>
+
+                            <div class="payment-methods">
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="CASH" checked>
                                     <div>
-                                        <div class="payment-option-title">Cash</div>
-                                        <div class="payment-option-desc">
-                                            Customer pays in cash at the salon.
+                                        <div class="payment-option-title"
+                                             th:text="#{invoice.payment.cash}">
+                                            Cash
+                                        </div>
+                                        <div class="payment-option-desc"
+                                             th:text="#{invoice.payment.cash.desc}">
+                                            Pay at salon
                                         </div>
                                     </div>
                                 </label>
 
-                                <label class="payment-option"
-                                       data-value="BANK_TRANSFER">
-                                    <input type="radio"
-                                           name="paymentMethod"
-                                           value="BANK_TRANSFER">
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="BANK_TRANSFER">
                                     <div>
-                                        <div class="payment-option-title">Bank Transfer (VietQR)</div>
-                                        <div class="payment-option-desc">
-                                            Generate VietQR code for the customer to scan and pay.
+                                        <div class="payment-option-title"
+                                             th:text="#{invoice.payment.bank}">
+                                            Bank Transfer
+                                        </div>
+                                        <div class="payment-option-desc"
+                                             th:text="#{invoice.payment.bank.desc}">
+                                            VietQR payment
                                         </div>
                                     </div>
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Summary total -->
+                        <!-- Total -->
                         <div class="summary-total-inline">
-                            <span>Total Amount</span>
+                            <span th:text="#{invoice.total.total}">Total</span>
                             <span th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                                 0 VND
                             </span>
                         </div>
 
-                        <!-- QR payment box (only if not completed AND QR available) -->
-                        <div id="bankTransferBox"
-                             th:if="${!completed} and paymentQrUrl != null"
-                             class="payment-box"
-                             style="display:none;">
-                            <h4>Bank Transfer Payment</h4>
-                            <p>Scan this VietQR code to pay for the appointment.</p>
-                            <img th:src="${paymentQrUrl}" alt="VietQR Payment Code" />
-                            <p>After successful payment, click "Complete Invoice" to confirm.</p>
+                        <!-- QR -->
+                        <div th:if="${!completed} and paymentQrUrl != null"
+                             class="payment-box">
+                            <h4 th:text="#{invoice.qr.title}">Bank Transfer Payment</h4>
+                            <p th:text="#{invoice.qr.desc}">Scan QR to pay</p>
+                            <img th:src="${paymentQrUrl}" alt="VietQR" />
+                            <p th:text="#{invoice.qr.after}">Click complete after payment</p>
                         </div>
 
-                        <!-- Actions (hide Complete button when already completed) -->
                         <div class="invoice-actions" th:if="${!completed}">
                             <button type="submit" class="btn btn-primary">
-                                ✅ <span>Complete Invoice</span>
+                                ✅ <span th:text="#{invoice.submit}">Complete Invoice</span>
                             </button>
                         </div>
+
                     </form>
                 </aside>
 
@@ -695,6 +703,7 @@
         </section>
     </div>
 </main>
+
 
 <script>
     // Payment method UI + QR toggle

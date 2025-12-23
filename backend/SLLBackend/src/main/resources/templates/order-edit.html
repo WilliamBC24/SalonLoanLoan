@@ -180,107 +180,149 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Edit Order Status</h1>
-        <a th:href="@{/order/details(orderId=${order.id})}" class="back-link">← Back to Order Details</a>
-    </div>
+<div class="header">
+    <h1 th:text="#{order.edit.title}">Edit Order Status</h1>
+    <a th:href="@{/order/details(orderId=${order.id})}"
+       class="back-link"
+       th:text="#{order.edit.back}">
+        ← Back to Order Details
+    </a>
+</div>
 
-    <div th:if="${param.error}" class="alert alert-error">
-        <span th:text="${param.error}">Error message</span>
-    </div>
+<div th:if="${param.error}" class="alert alert-error">
+    <span th:text="${param.error}">Error message</span>
+</div>
 
-    <div class="card">
-        <!-- Current Order Information -->
-        <div class="form-section">
-            <h2>Order Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Order ID</span>
-                    <span class="info-value" th:text="${order.id}">123</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Order Date</span>
-                    <span class="info-value" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
+<div class="card">
+    <div class="form-section">
+        <h2 th:text="#{order.edit.section.info}">Order Information</h2>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label" th:text="#{order.edit.orderId}">Order ID</span>
+                <span class="info-value" th:text="${order.id}">123</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label" th:text="#{order.edit.orderDate}">Order Date</span>
+                <span class="info-value"
+                      th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
                         01 Jan 2024 10:00
                     </span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Customer</span>
-                    <span class="info-value" th:text="${order.customerInfo.name}">Customer Name</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Current Status</span>
-                    <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
-                          th:text="${order.orderStatus}">
+            </div>
+
+            <div class="info-item">
+                <span class="info-label" th:text="#{order.edit.customer}">Customer</span>
+                <span class="info-value" th:text="${order.customerInfo.name}">
+                        Customer Name
+                    </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label" th:text="#{order.edit.currentStatus}">Current Status</span>
+                <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
+                      th:text="${order.orderStatus}">
                         PENDING
                     </span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Total Amount</span>
-                    <span class="info-value" th:text="${order.totalPrice} + ' VND'">0 VND</span>
-                </div>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label" th:text="#{order.edit.totalAmount}">Total Amount</span>
+                <span class="info-value"
+                      th:text="${#numbers.formatDecimal(order.totalPrice,0,'COMMA',0,'POINT')} + ' VND'">
+                        0 VND
+                    </span>
+            </div>
+        </div>
+    </div>
+
+    <form id="editStatusForm"
+          action="/order/edit"
+          method="post"
+          onsubmit="return validateForm()">
+        <input type="hidden" name="orderId" th:value="${order.id}" />
+
+        <div class="form-section">
+            <h2 th:text="#{order.edit.section.update}">Update Order Status</h2>
+
+            <div class="form-group">
+                <label for="orderStatus"
+                       th:text="#{order.edit.newStatus}">
+                    New Status *
+                </label>
+
+                <select id="orderStatus" name="orderStatus" required>
+                    <option value=""
+                            th:text="#{order.edit.selectStatus}">
+                        -- Select New Status --
+                    </option>
+
+                    <option th:each="status : ${orderStatuses}"
+                            th:value="${status}"
+                            th:text="${status}"
+                            th:selected="${status == order.orderStatus}">
+                        PENDING
+                    </option>
+                </select>
+
+                <span class="help-text"
+                      th:text="#{order.edit.help}">
+                        Select the new status for this order
+                    </span>
+
+                <span class="error"
+                      id="statusError"
+                      th:text="#{order.edit.error.required}">
+                        Please select a status
+                    </span>
             </div>
         </div>
 
-        <!-- Edit Status Form -->
-        <form id="editStatusForm" action="/order/edit" method="post" onsubmit="return validateForm()">
-            <input type="hidden" name="orderId" th:value="${order.id}" />
-            
-            <div class="form-section">
-                <h2>Update Order Status</h2>
-                <div class="form-group">
-                    <label for="orderStatus">New Status *</label>
-                    <select id="orderStatus" name="orderStatus" required>
-                        <option value="">-- Select New Status --</option>
-                        <option th:each="status : ${orderStatuses}" 
-                                th:value="${status}" 
-                                th:text="${status}"
-                                th:selected="${status == order.orderStatus}">
-                            PENDING
-                        </option>
-                    </select>
-                    <span class="help-text">Select the new status for this order</span>
-                    <span class="error" id="statusError">Please select a status</span>
-                </div>
-            </div>
+        <div class="actions">
+            <button type="submit"
+                    class="btn btn-primary"
+                    th:text="#{order.edit.update}">
+                Update Status
+            </button>
 
-            <div class="actions">
-                <button type="submit" class="btn btn-primary">Update Status</button>
-                <a th:href="@{/order/details(orderId=${order.id})}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
-    </div>
+            <a th:href="@{/order/details(orderId=${order.id})}"
+               class="btn btn-secondary"
+               th:text="#{order.edit.cancel}">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
 
-    <script>
-        function validateForm() {
-            let isValid = true;
+<script>
+    function validateForm() {
+        let isValid = true;
 
-            // Reset errors
-            document.querySelectorAll('.error').forEach(err => err.style.display = 'none');
+        document.querySelectorAll('.error')
+            .forEach(err => err.style.display = 'none');
 
-            // Validate status selection
-            const status = document.getElementById('orderStatus').value;
-            if (!status) {
-                document.getElementById('statusError').style.display = 'block';
-                isValid = false;
-            }
-
-            // Check if status has changed
-            const currentStatus = '[[${order.orderStatus}]]';
-            if (status === currentStatus) {
-                alert('Please select a different status to update');
-                return false;
-            }
-
-            return isValid;
+        const status = document.getElementById('orderStatus').value;
+        if (!status) {
+            document.getElementById('statusError').style.display = 'block';
+            isValid = false;
         }
 
-        // Add real-time validation
-        document.getElementById('orderStatus').addEventListener('change', function() {
+        const currentStatus = '[[${order.orderStatus}]]';
+        if (status === currentStatus) {
+            alert('[[#{order.edit.error.sameStatus}]]');
+            return false;
+        }
+
+        return isValid;
+    }
+
+    document.getElementById('orderStatus')
+        .addEventListener('change', function () {
             if (this.value) {
                 document.getElementById('statusError').style.display = 'none';
             }
         });
-    </script>
+</script>
 </body>
+
 </html>

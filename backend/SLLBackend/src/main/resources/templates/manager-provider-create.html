@@ -207,89 +207,114 @@
 <main class="staff-main provider-create-page">
     <div class="provider-create-layout-inner">
         <section class="provider-create-card">
-            <!-- Header -->
             <div class="provider-header-row">
                 <div class="provider-title-block section-heading">
-                    <p class="section-kicker">Provider Management</p>
-                    <h2>Create New Provider</h2>
+                    <p class="section-kicker" th:text="#{manager-provider-create.kicker}">
+                        Provider Management
+                    </p>
+                    <h2 th:text="#{manager-provider-create.title}">
+                        Create New Provider
+                    </h2>
                 </div>
-                <div class="provider-actions">
-                </div>
+                <div class="provider-actions"></div>
             </div>
 
-            <!-- Error Messages -->
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Form -->
             <form id="createProviderForm"
                   method="post"
                   action="/manager/supplier/create"
                   class="form-grid">
+
                 <div>
                     <div class="form-group">
-                        <label for="supplierName" class="required">Provider Name</label>
+                        <label for="supplierName" class="required"
+                               th:text="#{manager-provider-create.name}">
+                            Provider Name
+                        </label>
                         <input type="text"
                                id="supplierName"
                                name="supplierName"
                                maxlength="100"
                                required>
-                        <div class="error" id="supplierNameError">
+                        <div class="error" id="supplierNameError"
+                             th:text="#{manager-provider-create.error.name}">
                             Provider name is required (max 100 characters)
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="supplierCategoryId" class="required">Provider Category</label>
+                        <label for="supplierCategoryId" class="required"
+                               th:text="#{manager-provider-create.category}">
+                            Provider Category
+                        </label>
                         <select id="supplierCategoryId" name="supplierCategoryId" required>
-                            <option value="">-- Select Category --</option>
+                            <option value="" th:text="#{common.selectCategory}">
+                                -- Select Category --
+                            </option>
                             <option th:each="category : ${categories}"
                                     th:value="${category.id}"
                                     th:text="${category.name}">
-                                Category
                             </option>
                         </select>
-                        <div class="error" id="supplierCategoryIdError">
+                        <div class="error" id="supplierCategoryIdError"
+                             th:text="#{manager-provider-create.error.category}">
                             Provider category is required
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="phoneNumber">Phone Number</label>
+                        <label for="phoneNumber"
+                               th:text="#{manager-provider-create.phone}">
+                            Phone Number
+                        </label>
                         <input type="text"
                                id="phoneNumber"
                                name="phoneNumber"
                                maxlength="20">
-                        <div class="error" id="phoneNumberError">
+                        <div class="error" id="phoneNumberError"
+                             th:text="#{manager-provider-create.error.phone}">
                             Phone number must be max 20 characters
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email"
+                               th:text="#{manager-provider-create.email}">
+                            Email
+                        </label>
                         <input type="email"
                                id="email"
                                name="email"
                                maxlength="100">
-                        <div class="error" id="emailError">
+                        <div class="error" id="emailError"
+                             th:text="#{manager-provider-create.error.email}">
                             Email must be valid and max 100 characters
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="note">Note</label>
+                        <label for="note"
+                               th:text="#{common.note}">
+                            Note
+                        </label>
                         <textarea id="note" name="note"></textarea>
                     </div>
 
                     <div class="button-group">
                         <button type="submit" class="btn btn-primary">
                             <span>➕</span>
-                            <span>Create Provider</span>
+                            <span th:text="#{manager-provider-create.create}">
+                                Create Provider
+                            </span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/manager/supplier/list'">
                             <span>✕</span>
-                            <span>Cancel</span>
+                            <span th:text="#{common.cancel}">
+                                Cancel
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -298,11 +323,13 @@
     </div>
 </main>
 
-<script>
+<script th:inline="javascript">
+    const msgContactRequired = /*[[#{manager-provider-create.error.contactRequired}]]*/ '';
+    const msgFixErrors = /*[[#{manager-provider-create.error.fixForm}]]*/ '';
+
     document.getElementById('createProviderForm').addEventListener('submit', function(event) {
         let isValid = true;
 
-        // Validate provider name
         const supplierName = document.getElementById('supplierName');
         const supplierNameError = document.getElementById('supplierNameError');
         if (!supplierName.value.trim() || supplierName.value.length > 100) {
@@ -314,7 +341,6 @@
             supplierNameError.style.display = 'none';
         }
 
-        // Validate provider category
         const supplierCategoryId = document.getElementById('supplierCategoryId');
         const supplierCategoryIdError = document.getElementById('supplierCategoryIdError');
         if (!supplierCategoryId.value) {
@@ -326,7 +352,6 @@
             supplierCategoryIdError.style.display = 'none';
         }
 
-        // Validate phone number (optional but max 20 chars)
         const phoneNumber = document.getElementById('phoneNumber');
         const phoneNumberError = document.getElementById('phoneNumberError');
         if (phoneNumber.value && phoneNumber.value.length > 20) {
@@ -338,7 +363,6 @@
             phoneNumberError.style.display = 'none';
         }
 
-        // Validate email (optional but must be valid and max 100 chars)
         const email = document.getElementById('email');
         const emailError = document.getElementById('emailError');
         if (email.value) {
@@ -352,23 +376,21 @@
                 emailError.style.display = 'none';
             }
         }
-        
-        // Validate that at least one contact method is provided
-        if ((!phoneNumber.value || phoneNumber.value.trim() === '') && 
+
+        if ((!phoneNumber.value || phoneNumber.value.trim() === '') &&
             (!email.value || email.value.trim() === '')) {
             phoneNumber.classList.add('invalid');
             email.classList.add('invalid');
-            alert('At least one contact method (phone number or email) is required');
+            alert(msgContactRequired);
             isValid = false;
         }
 
         if (!isValid) {
             event.preventDefault();
-            alert('Please correct the errors in the form before submitting.');
+            alert(msgFixErrors);
         }
     });
 
-    // Real-time validation on input
     document.getElementById('supplierName').addEventListener('input', function() {
         const error = document.getElementById('supplierNameError');
         if (this.value.trim() && this.value.length <= 100) {
@@ -401,5 +423,6 @@
         }
     });
 </script>
+
 </body>
 </html>

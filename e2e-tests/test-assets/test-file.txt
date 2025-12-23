@@ -1,0 +1,2 @@
+This is a test text file that should not be accepted as an image upload.
+It is used to test the validation logic in the image upload functionality.

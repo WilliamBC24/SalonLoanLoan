@@ -24,8 +24,13 @@ public class GlobalUserInfo {
             return null;
         }
         boolean isStaff = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_STAFF") ||
-                        a.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(a ->
+                        a.getAuthority().equals("ROLE_STAFF") ||
+                                a.getAuthority().equals("ROLE_ADMIN") ||
+                                a.getAuthority().equals("ROLE_ASSISTANT") ||
+                                a.getAuthority().equals("ROLE_MANAGER")
+                );
+
 
         if (isStaff) {
             return null;

@@ -141,10 +141,6 @@
                     <div class="product-body">
                         <h3 th:text="${product.productName}">Product Name</h3>
 
-                        <p class="product-desc"
-                           th:text="${product.productDescription}">
-                            Description goes here.
-                        </p>
 
                         <p class="price">
                             <span th:text="${#numbers.formatDecimal(product.currentPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>

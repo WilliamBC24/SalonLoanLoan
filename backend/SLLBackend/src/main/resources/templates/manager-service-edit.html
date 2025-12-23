@@ -107,6 +107,12 @@
             border: 1px solid #fecaca;
         }
 
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
         /* ===== FORM ===== */
         .form-grid {
             display: grid;
@@ -411,7 +417,7 @@
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
             
             <!-- Success Messages -->
-            <div th:if="${successMessage}" class="alert" style="background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; padding: 0.7rem 0.9rem; margin-bottom: 1rem; border-radius: 12px; font-size: 0.9rem;" th:text="${successMessage}"></div>
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
 
             <!-- Form -->
             <form id="editServiceForm"

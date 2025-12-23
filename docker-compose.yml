@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  database:
+    build:
+      context: ./database
+      dockerfile: dockerfile
+    container_name: sll-database
+    network_mode: host
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sll}
+      POSTGRES_USER: ${POSTGRES_USER:-sonbui}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sonbui}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      # Mount SQL file to detect changes
+      - ./database/OLTP.sql:/docker-entrypoint-initdb.d/OLTP.sql:ro
+      # Persist database data
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sonbui} -d ${POSTGRES_DB:-sll}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend/SLLBackend
+      dockerfile: Dockerfile
+    container_name: sll-backend
+    network_mode: host
+    environment:
+      DB_URL: jdbc:postgresql://localhost:5432/${POSTGRES_DB:-sll}
+      DB_USER: ${POSTGRES_USER:-sonbui}
+      DB_PASS: ${POSTGRES_PASSWORD:-sonbui}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+    volumes:
+      # Mount source code for hot reload
+      - ./backend/SLLBackend/src:/app/src:ro
+      - ./backend/SLLBackend/build.gradle:/app/build.gradle:ro
+      - ./backend/SLLBackend/settings.gradle:/app/settings.gradle:ro
+      # Mount uploads directory
+      - ./backend/SLLBackend/uploads:/app/uploads
+      # Gradle cache to speed up builds
+      - gradle-cache:/root/.gradle
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  gradle-cache:

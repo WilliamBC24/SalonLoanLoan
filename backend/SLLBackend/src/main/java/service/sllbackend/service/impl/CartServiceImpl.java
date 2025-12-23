@@ -61,8 +61,7 @@ public class CartServiceImpl implements CartService {
             
             // Check if new amount exceeds available stock
             if (newAmount > availableStock) {
-                throw new RuntimeException("Not enough stock. Available: " + availableStock + 
-                        ", Requested: " + newAmount);
+                newAmount = availableStock; // Cap to available stock
             }
             
             cart.setAmount(newAmount);
@@ -70,8 +69,7 @@ public class CartServiceImpl implements CartService {
         } else {
             // Check if amount exceeds available stock
             if (amount > availableStock) {
-                throw new RuntimeException("Not enough stock. Available: " + availableStock + 
-                        ", Requested: " + amount);
+                amount = availableStock; // Cap to available stock
             }
             
             Cart cart = Cart.builder()
@@ -104,8 +102,7 @@ public class CartServiceImpl implements CartService {
         // Check stock availability
         Integer availableStock = inventoryService.getAvailableStock(productId);
         if (amount > availableStock) {
-            throw new RuntimeException("Not enough stock. Available: " + availableStock + 
-                    ", Requested: " + amount);
+            amount = availableStock; // Cap to available stock
         }
         
         UserAccount userAccount = userAccountRepo.findByUsername(username)

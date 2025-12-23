@@ -86,8 +86,8 @@ public class ManagerProductController {
                 return "redirect:/manager/invoices/create";
             }
             
-            redirectAttributes.addFlashAttribute("successMessage", "Product created successfully!");
-            return "redirect:/manager/products/list";
+            redirectAttributes.addFlashAttribute("successMessage", "Product created successfully! You can now add images below.");
+            return "redirect:/manager/products/edit/" + createdProduct.getId();
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating product: " + e.getMessage());
             

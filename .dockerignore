@@ -1,0 +1,27 @@
+# Git
+.git
+.gitignore
+
+# Build outputs
+**/build/
+**/target/
+**/.gradle/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+LICENSE
+
+# Environment
+.env

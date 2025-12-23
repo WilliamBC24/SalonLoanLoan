@@ -354,21 +354,20 @@
 <main class="staff-main orders-edit-page">
     <div class="orders-edit-layout-inner">
         <section class="orders-edit-card">
-            <!-- Header -->
+
             <div class="orders-edit-header-row">
                 <div class="orders-edit-title-block section-heading">
-                    <p class="section-kicker">Online Orders</p>
-                    <h2>Edit Order Status</h2>
+                    <p class="section-kicker" th:text="#{staff-order-edit.kicker}">Online Orders</p>
+                    <h2 th:text="#{staff-order-edit.title}">Edit Order Status</h2>
                 </div>
                 <div class="orders-edit-actions">
                     <a th:href="@{/staff/order/list(orderId=${order.id})}" class="back-link-pill">
                         <span class="icon">←</span>
-                        <span>Back to Order List</span>
+                        <span th:text="#{common.backToOrderList}">Back to Order List</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Error Alert -->
             <div th:if="${param.success}" class="alert alert-success">
                 <span th:text="${param.success}">Success message</span>
             </div>
@@ -377,57 +376,65 @@
                 <span th:text="${param.error}">Error message</span>
             </div>
 
-
-            <!-- Order Information -->
             <div class="form-section">
                 <h3>
                     <span class="icon">📦</span>
-                    <span>Order Information</span>
+                    <span th:text="#{staff-order-edit.orderInfo}">Order Information</span>
                 </h3>
+
                 <div class="info-grid">
                     <div class="info-item">
-                        <span class="info-label">Order ID</span>
+                        <span class="info-label" th:text="#{order.field.id}">Order ID</span>
                         <span class="info-value" th:text="${order.id}">123</span>
                     </div>
+
                     <div class="info-item">
-                        <span class="info-label">Order Date</span>
+                        <span class="info-label" th:text="#{order.field.date}">Order Date</span>
                         <span class="info-value"
                               th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
                             01 Jan 2024 10:00
                         </span>
                     </div>
+
                     <div class="info-item">
-                        <span class="info-label">Customer</span>
+                        <span class="info-label" th:text="#{order.field.customer}">Customer</span>
                         <span class="info-value" th:text="${order.customerInfo.name}">
                             Customer Name
                         </span>
                     </div>
+
                     <div class="info-item">
-                        <span class="info-label">Current Status</span>
+                        <span class="info-label" th:text="#{order.field.currentStatus}">Current Status</span>
                         <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
                               th:text="${order.orderStatus}">
                             PENDING
                         </span>
                     </div>
+
                     <div class="info-item">
-                        <span class="info-label">Fulfillment Type</span>
-                        <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
-                              class="fulfillment-badge pickup">🏪 In-Store Pickup</span>
-                        <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
-                              class="fulfillment-badge delivery">🚚 Delivery</span>
+                        <span class="info-label" th:text="#{order.field.fulfillment}">Fulfillment Type</span>
+                        <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
+                              class="fulfillment-badge pickup"
+                              th:text="#{order.fulfillment.pickup}">
+                            🏪 In-Store Pickup
+                        </span>
+                        <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
+                              class="fulfillment-badge delivery"
+                              th:text="#{order.fulfillment.delivery}">
+                            🚚 Delivery
+                        </span>
                     </div>
+
                     <div class="info-item">
-                        <span class="info-label">Total Amount</span>
+                        <span class="info-label" th:text="#{order.field.totalAmount}">Total Amount</span>
                         <span class="info-value"
                               th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-    0 VND
-</span>
-
+                            0 VND
+                        </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Edit Status Form -->
             <form id="editStatusForm"
                   action="/staff/order/edit"
                   method="post"
@@ -436,17 +443,20 @@
                 <input type="hidden" name="orderId" th:value="${order.id}" />
 
                 <div class="form-section">
-                    <h3>
-                        <span>Update Order Status</span>
-                    </h3>
+                    <h3 th:text="#{staff-order-edit.updateTitle}">Update Order Status</h3>
 
                     <div class="form-group">
-                        <label for="orderStatus">New Status *</label>
+                        <label for="orderStatus" th:text="#{staff-order-edit.newStatus}">New Status *</label>
+
                         <select id="orderStatus"
                                 name="orderStatus"
-                                th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'PICKED_UP' and order.orderStatus.name() != 'CANCELLED'}"
+                                th:if="${order.orderStatus.name() != 'DELIVERED'
+                                        and order.orderStatus.name() != 'PICKED_UP'
+                                        and order.orderStatus.name() != 'CANCELLED'}"
                                 required>
-                            <option value="">-- Select New Status --</option>
+                            <option value="" th:text="#{common.selectPlaceholder}">
+                                -- Select New Status --
+                            </option>
                             <option th:each="status : ${orderStatuses}"
                                     th:value="${status}"
                                     th:text="${status}"
@@ -454,38 +464,54 @@
                                 PENDING
                             </option>
                         </select>
-                        <p class="help-text">Select a different status to update this order.</p>
-                        <span class="error" id="statusError">Please select a status</span>
+
+                        <p class="help-text" th:text="#{staff-order-edit.help}">
+                            Select a different status to update this order.
+                        </p>
+
+                        <span class="error" id="statusError"
+                              th:text="#{staff-order-edit.error.selectStatus}">
+                            Please select a status
+                        </span>
                     </div>
                 </div>
 
-                <div class="actions"  th:if="${order.orderStatus.name() != 'DELIVERED' and order.orderStatus.name() != 'PICKED_UP' and order.orderStatus.name() != 'CANCELLED'}">
+                <div class="actions"
+                     th:if="${order.orderStatus.name() != 'DELIVERED'
+                             and order.orderStatus.name() != 'PICKED_UP'
+                             and order.orderStatus.name() != 'CANCELLED'}">
+
                     <button type="submit" class="btn-pill-primary">
-                        <span>Update Status</span>
+                        <span th:text="#{common.update}">Update Status</span>
                     </button>
+
                     <a th:href="@{/staff/order/list(orderId=${order.id})}"
                        class="btn-pill-secondary">
-                        <span>Cancel</span>
+                        <span th:text="#{common.cancel}">Cancel</span>
                     </a>
                 </div>
             </form>
-            <div th:if="${order.orderStatus.name() == 'DELIVERED' or order.orderStatus.name() == 'PICKED_UP'}" class="complete-note">
-                <strong>✓ Order Completed</strong>
-                <span>
-                        This order is completed.
-                        Status can no longer be changed.
-                    </span>
+
+            <div th:if="${order.orderStatus.name() == 'DELIVERED' or order.orderStatus.name() == 'PICKED_UP'}"
+                 class="complete-note">
+                <strong th:text="#{staff-order-edit.completed.title}">✓ Order Completed</strong>
+                <span th:text="#{staff-order-edit.completed.desc}">
+                    This order is completed. Status can no longer be changed.
+                </span>
             </div>
-            <div th:if="${order.orderStatus.name() == 'CANCELLED'}" class="complete-note">
-                <strong>X Order Cancelled</strong>
-                <span>
-                        This order is marked as cancelled.
-                        Status can no longer be changed.
-                    </span>
+
+            <div th:if="${order.orderStatus.name() == 'CANCELLED'}"
+                 class="complete-note">
+                <strong th:text="#{staff-order-edit.cancelled.title}">X Order Cancelled</strong>
+                <span th:text="#{staff-order-edit.cancelled.desc}">
+                    This order is marked as cancelled. Status can no longer be changed.
+                </span>
             </div>
+
         </section>
     </div>
 </main>
+
 
 <script>
     function validateForm() {

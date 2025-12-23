@@ -121,46 +121,88 @@
 <main class="login-center">
     <div class="container login-wrapper">
         <div class="login-card">
+
             <div class="login-title">
                 <h2 th:text="#{user-login.title}">User Login</h2>
-                <p th:text="#{user-login.subtitle}">Sign in to manage your appointments and bookings.</p>
+                <p th:text="#{user-login.subtitle}">
+                    Sign in to manage your appointments and bookings.
+                </p>
             </div>
 
             <form th:action="@{/auth/user/login}" method="post">
+
                 <div>
-                    <label class="form-label" for="username" th:text="#{user-login.username}">Username</label>
-                    <input class="form-input" type="text" id="username" name="username"
-                           th:placeholder="#{user-login.username.placeholder}" required>
+                    <label class="form-label"
+                           for="username"
+                           th:text="#{user-login.username}">
+                        Username
+                    </label>
+                    <input class="form-input"
+                           type="text"
+                           id="username"
+                           name="username"
+                           th:placeholder="#{user-login.username.placeholder}"
+                           required>
                 </div>
 
                 <div>
-                    <label class="form-label" for="password" th:text="#{user-login.password}">Password</label>
-                    <input class="form-input" type="password" id="password" name="password"
-                           th:placeholder="#{user-login.password.placeholder}" required>
+                    <label class="form-label"
+                           for="password"
+                           th:text="#{user-login.password}">
+                        Password
+                    </label>
+                    <input class="form-input"
+                           type="password"
+                           id="password"
+                           name="password"
+                           th:placeholder="#{user-login.password.placeholder}"
+                           required>
                 </div>
 
-                <button type="submit" class="btn-primary login-button" th:text="#{user-login.loginButton}">Login</button>
+                <button type="submit"
+                        class="btn-primary login-button"
+                        th:text="#{user-login.loginButton}">
+                    Login
+                </button>
 
-                <div th:if="${param.error}" class="message" th:text="#{user-login.error}">
+                <div th:if="${param.error}"
+                     class="message"
+                     th:text="#{user-login.error}">
                     Invalid username or password.
                 </div>
 
-                <div th:if="${param.logout}" class="message logout-message" th:text="#{user-login.logoutSuccess}">
+                <div th:if="${param.logout}"
+                     class="message logout-message"
+                     th:text="#{user-login.logoutSuccess}">
                     You have been logged out successfully.
                 </div>
+
             </form>
 
             <div class="register-link">
-                Don’t have an account?
-                <a th:href="@{/auth/user/register}">Register here</a>
+                <span th:text="#{user-login.noAccount}">
+                    Don’t have an account?
+                </span>
+                <a th:href="@{/auth/user/register}"
+                   th:text="#{user-login.registerLink}">
+                    Register here
+                </a>
             </div>
+
             <div class="register-link">
-                You are a staff?
-                <a th:href="@{/auth/staff/login}">Login here</a>
+                <span th:text="#{user-login.staffQuestion}">
+                    You are a staff?
+                </span>
+                <a th:href="@{/auth/staff/login}"
+                   th:text="#{user-login.staffLoginLink}">
+                    Login here
+                </a>
             </div>
+
         </div>
     </div>
 </main>
+
 
 <!-- Shared footer -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

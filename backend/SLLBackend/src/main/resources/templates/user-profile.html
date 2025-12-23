@@ -257,54 +257,81 @@
         <!-- LEFT: MAIN PROFILE INFO -->
         <section class="profile-card">
             <div class="profile-title section-heading text-center">
-                <p class="section-kicker">Your Account</p>
-                <h2 th:text="#{user-profile.title}">User Profile</h2>
+                <p class="section-kicker"
+                   th:text="#{user-profile.kicker}">
+                    Your Account
+                </p>
+                <h2 th:text="#{user-profile.title}">
+                    User Profile
+                </h2>
             </div>
 
-            <h3 class="profile-section-title">Account Information</h3>
+            <h3 class="profile-section-title"
+                th:text="#{user-profile.section.account}">
+                Account Information
+            </h3>
+
             <div class="profile-items">
                 <div class="profile-item">
-                    <strong>Username</strong>
+                    <strong th:text="#{user-profile.username}">Username</strong>
                     <span th:text="${user.username}">—</span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Email</strong>
+                    <strong th:text="#{user-profile.email}">Email</strong>
                     <span th:text="${user.email ?: '—'}">—</span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Phone Number</strong>
+                    <strong th:text="#{user-profile.phone}">Phone Number</strong>
                     <span th:text="${user.phoneNumber ?: '—'}">—</span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Phone Verified</strong>
-                    <span th:text="${user.phoneVerified ? 'Yes' : 'No'}">—</span>
+                    <strong th:text="#{user-profile.phoneVerified}">Phone Verified</strong>
+                    <span th:text="${user.phoneVerified ? #{common.yes} : #{common.no}}">
+                        —
+                    </span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Gender</strong>
+                    <strong th:text="#{user-profile.gender}">Gender</strong>
                     <span th:text="${user.gender ?: '—'}">—</span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Birth Date</strong>
-                    <span th:text="${user.birthDate != null ? #temporals.format(user.birthDate, 'dd MMM yyyy') : '—'}">—</span>
+                    <strong th:text="#{user-profile.birthDate}">Birth Date</strong>
+                    <span th:text="${user.birthDate != null
+                        ? #temporals.format(user.birthDate, 'dd MMM yyyy')
+                        : '—'}">
+                        —
+                    </span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Account Status</strong>
+                    <strong th:text="#{user-profile.status}">Account Status</strong>
                     <span th:text="${user.accountStatus}">—</span>
                 </div>
             </div>
 
             <div class="button-row">
-                <a th:href="@{/}" class="btn-outline" style="padding:0.6rem 1.3rem;">Back to Home</a>
-                <a th:href="@{/user/profile/edit}" class="btn-primary" style="padding:0.6rem 1.3rem;">Edit Profile</a>
+                <a th:href="@{/}"
+                   class="btn-outline"
+                   style="padding:0.6rem 1.3rem;"
+                   th:text="#{common.backHome}">
+                    Back to Home
+                </a>
+                <a th:href="@{/user/profile/edit}"
+                   class="btn-primary"
+                   style="padding:0.6rem 1.3rem;"
+                   th:text="#{common.editProfile}">
+                    Edit Profile
+                </a>
             </div>
 
-            <div th:if="${param.updated}" class="alert-success">
+            <div th:if="${param.updated}"
+                 class="alert-success"
+                 th:text="#{user-profile.updateSuccess}">
                 Profile updated successfully!
             </div>
         </section>
@@ -324,40 +351,74 @@
 
             <div class="quick-stats">
                 <div class="stat">
-                    <div class="num" th:text="${orderCount != null ? orderCount : 0}">0</div>
-                    <div class="label">Orders</div>
+                    <div class="num"
+                         th:text="${orderCount != null ? orderCount : 0}">
+                        0
+                    </div>
+                    <div class="label"
+                         th:text="#{user-profile.stats.orders}">
+                        Orders
+                    </div>
                 </div>
                 <div class="stat">
-                    <div class="num" th:text="${appointmentCount != null ? appointmentCount : 0}">0</div>
-                    <div class="label">Appointments</div>
+                    <div class="num"
+                         th:text="${appointmentCount != null ? appointmentCount : 0}">
+                        0
+                    </div>
+                    <div class="label"
+                         th:text="#{user-profile.stats.appointments}">
+                        Appointments
+                    </div>
                 </div>
             </div>
 
             <div class="loyalty-card">
-                <h3>Loyalty Program</h3>
+                <h3 th:text="#{user-profile.loyalty.title}">
+                    Loyalty Program
+                </h3>
 
                 <div class="loyalty-row">
-                    <span class="loyalty-label">Level</span>
+                    <span class="loyalty-label"
+                          th:text="#{user-profile.loyalty.level}">
+                        Level
+                    </span>
                     <span class="loyalty-value">
                         <span class="loyalty-badge"
-                              th:text="${user.loyalty != null and user.loyalty.level != null ? user.loyalty.level.name : '—'}">—</span>
+                              th:text="${user.loyalty != null and user.loyalty.level != null
+                                ? user.loyalty.level.name
+                                : '—'}">
+                            —
+                        </span>
                     </span>
                 </div>
 
                 <div class="loyalty-row">
-                    <span class="loyalty-label">Points</span>
+                    <span class="loyalty-label"
+                          th:text="#{user-profile.loyalty.points}">
+                        Points
+                    </span>
                     <span class="loyalty-value"
-                          th:text="${user.loyalty != null ? user.loyalty.point : 0}">0</span>
+                          th:text="${user.loyalty != null ? user.loyalty.point : 0}">
+                        0
+                    </span>
                 </div>
 
                 <div class="loyalty-row">
-                    <span class="loyalty-label">Next level in</span>
+                    <span class="loyalty-label"
+                          th:text="#{user-profile.loyalty.next}">
+                        Next level in
+                    </span>
                     <span class="loyalty-value"
-                          th:text="${user.loyalty != null and user.loyalty.level != null ? (user.loyalty.level.pointRequired - user.loyalty.point) : '—'}">—</span>
+                          th:text="${user.loyalty != null and user.loyalty.level != null
+                            ? (user.loyalty.level.pointRequired - user.loyalty.point)
+                            : '—'}">
+                        —
+                    </span>
                 </div>
             </div>
 
-            <div class="side-note">
+            <div class="side-note"
+                 th:text="#{user-profile.tip}">
                 Keep earning points with every order and appointment — higher levels unlock better perks.
             </div>
 
@@ -365,6 +426,7 @@
 
     </div>
 </main>
+
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

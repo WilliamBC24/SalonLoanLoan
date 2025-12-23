@@ -300,14 +300,22 @@
             <div class="edit-title">
                 <div>
                     <h2 th:text="#{user-profile-edit.title}">Edit Profile</h2>
-                    <p class="edit-sub">Update your information below.</p>
+                    <p class="edit-sub" th:text="#{user-profile-edit.subtitle}">
+                        Update your information below.
+                    </p>
                 </div>
 
-                <a th:href="@{/user/profile}" class="btn-outline" style="padding:.45rem 1rem;">
+                <a th:href="@{/user/profile}"
+                   class="btn-outline"
+                   style="padding:.45rem 1rem;"
+                   th:text="#{common.back}">
                     Back
                 </a>
             </div>
-            <div th:if="${param.error}" class="message error">
+
+            <div th:if="${param.error}"
+                 class="message error"
+                 th:text="#{user-profile-edit.error}">
                 Invalid input
             </div>
 
@@ -315,40 +323,71 @@
 
                 <!-- Account -->
                 <div class="form-section">
-                    <h3>Account</h3>
+                    <h3 th:text="#{user-profile-edit.section.account}">Account</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label" for="username">Username</label>
-                            <input type="text" id="username" name="username"
+                            <label class="form-label"
+                                   for="username"
+                                   th:text="#{user-profile-edit.username}">
+                                Username
+                            </label>
+                            <input type="text"
+                                   id="username"
+                                   name="username"
                                    class="form-input"
                                    th:value="${user.username}"/>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="email">Email</label>
-                            <input type="email" id="email" name="email"
+                            <label class="form-label"
+                                   for="email"
+                                   th:text="#{user-profile-edit.email}">
+                                Email
+                            </label>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
                                    class="form-input"
                                    th:value="${user.email}"/>
                         </div>
-
                     </div>
                 </div>
 
                 <!-- Personal -->
                 <div class="form-section">
-                    <h3>Personal</h3>
+                    <h3 th:text="#{user-profile-edit.section.personal}">Personal</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label" for="gender">Gender</label>
-                            <select id="gender" name="gender" class="form-select">
-                                <option th:selected="${user.gender == 'MALE'}" value="MALE">Male</option>
-                                <option th:selected="${user.gender == 'FEMALE'}" value="FEMALE">Female</option>
+                            <label class="form-label"
+                                   for="gender"
+                                   th:text="#{user-profile-edit.gender}">
+                                Gender
+                            </label>
+                            <select id="gender"
+                                    name="gender"
+                                    class="form-select">
+                                <option value="MALE"
+                                        th:selected="${user.gender == 'MALE'}"
+                                        th:text="#{common.gender.male}">
+                                    Male
+                                </option>
+                                <option value="FEMALE"
+                                        th:selected="${user.gender == 'FEMALE'}"
+                                        th:text="#{common.gender.female}">
+                                    Female
+                                </option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="birthDate">Birth Date</label>
-                            <input type="date" id="birthDate" name="birthDate"
+                            <label class="form-label"
+                                   for="birthDate"
+                                   th:text="#{user-profile-edit.birthDate}">
+                                Birth Date
+                            </label>
+                            <input type="date"
+                                   id="birthDate"
+                                   name="birthDate"
                                    class="form-input"
                                    th:value="${#temporals.format(user.birthDate, 'yyyy-MM-dd')}"/>
                         </div>
@@ -357,11 +396,17 @@
 
                 <!-- Contact -->
                 <div class="form-section">
-                    <h3>Contact</h3>
+                    <h3 th:text="#{user-profile-edit.section.contact}">Contact</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label" for="phoneNumber">Phone Number</label>
-                            <input type="text" id="phoneNumber" name="phoneNumber"
+                            <label class="form-label"
+                                   for="phoneNumber"
+                                   th:text="#{user-profile-edit.phone}">
+                                Phone Number
+                            </label>
+                            <input type="text"
+                                   id="phoneNumber"
+                                   name="phoneNumber"
                                    class="form-input"
                                    th:value="${user.phoneNumber}"/>
                         </div>
@@ -370,8 +415,18 @@
 
                 <!-- Buttons -->
                 <div class="button-row">
-                    <a th:href="@{/user/profile}" class="btn-outline" style="padding:.6rem 1.3rem;">Cancel</a>
-                    <button type="submit" class="btn-primary" style="padding:.6rem 1.3rem;">Save Changes</button>
+                    <a th:href="@{/user/profile}"
+                       class="btn-outline"
+                       style="padding:.6rem 1.3rem;"
+                       th:text="#{common.cancel}">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="btn-primary"
+                            style="padding:.6rem 1.3rem;"
+                            th:text="#{common.save}">
+                        Save Changes
+                    </button>
                 </div>
 
             </form>
@@ -381,53 +436,84 @@
         <aside class="profile-side">
 
             <div class="avatar-block">
-                <!-- Placeholder avatar; swap with real user image if you have one -->
                 <div class="avatar">
                     <span th:text="${#strings.substring(user.username,0,1)}">U</span>
                 </div>
 
                 <div class="avatar-meta">
                     <h4 th:text="${user.username}">Username</h4>
-                    <p th:text="${user.email}">email@example.com</p>
+                    <p th:text="${user.email ?: '—'}">email@example.com</p>
                 </div>
             </div>
 
-            <!-- Optional quick stats (safe placeholders if backend not ready) -->
+            <!-- Stats -->
             <div class="quick-stats">
                 <div class="stat">
-                    <div class="num" th:text="${orderCount != null ? orderCount : 0}">0</div>
-                    <div class="label">Orders</div>
+                    <div class="num"
+                         th:text="${orderCount != null ? orderCount : 0}">
+                        0
+                    </div>
+                    <div class="label"
+                         th:text="#{user-profile-edit.stats.orders}">
+                        Orders
+                    </div>
                 </div>
                 <div class="stat">
-                    <div class="num" th:text="${appointmentCount != null ? appointmentCount : 0}">0</div>
-                    <div class="label">Appointments</div>
+                    <div class="num"
+                         th:text="${appointmentCount != null ? appointmentCount : 0}">
+                        0
+                    </div>
+                    <div class="label"
+                         th:text="#{user-profile-edit.stats.appointments}">
+                        Appointments
+                    </div>
                 </div>
             </div>
+
+            <!-- Loyalty -->
             <div class="loyalty-card">
-                <h3>Loyalty Program</h3>
+                <h3 th:text="#{user-profile-edit.loyalty.title}">
+                    Loyalty Program
+                </h3>
 
                 <div class="loyalty-row">
-                    <span class="loyalty-label">Level</span>
+                    <span class="loyalty-label"
+                          th:text="#{user-profile-edit.loyalty.level}">
+                        Level
+                    </span>
                     <span class="loyalty-value">
                         <span class="loyalty-badge"
-                              th:text="${user.loyalty != null and user.loyalty.level != null ? user.loyalty.level.name : '—'}">—</span>
+                              th:text="${user.loyalty != null and user.loyalty.level != null ? user.loyalty.level.name : '—'}">
+                            —
+                        </span>
                     </span>
                 </div>
 
                 <div class="loyalty-row">
-                    <span class="loyalty-label">Points</span>
+                    <span class="loyalty-label"
+                          th:text="#{user-profile-edit.loyalty.points}">
+                        Points
+                    </span>
                     <span class="loyalty-value"
-                          th:text="${user.loyalty != null ? user.loyalty.point : 0}">0</span>
+                          th:text="${user.loyalty != null ? user.loyalty.point : 0}">
+                        0
+                    </span>
                 </div>
 
                 <div class="loyalty-row">
-                    <span class="loyalty-label">Next level in</span>
+                    <span class="loyalty-label"
+                          th:text="#{user-profile-edit.loyalty.next}">
+                        Next level in
+                    </span>
                     <span class="loyalty-value"
-                          th:text="${user.loyalty != null and user.loyalty.level != null ? (user.loyalty.level.pointRequired - user.loyalty.point) : '—'}">—</span>
+                          th:text="${user.loyalty != null and user.loyalty.level != null ? (user.loyalty.level.pointRequired - user.loyalty.point) : '—'}">
+                        —
+                    </span>
                 </div>
             </div>
 
-            <div class="side-note">
+            <div class="side-note"
+                 th:text="#{user-profile-edit.tip}">
                 Tip: Keep your phone number up to date so we can confirm appointments and deliveries quickly.
             </div>
 
@@ -435,6 +521,7 @@
 
     </div>
 </main>
+
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

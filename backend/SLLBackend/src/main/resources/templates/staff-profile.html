@@ -208,59 +208,71 @@
         <!-- LEFT: MAIN STAFF INFO -->
         <section class="profile-card">
             <div class="profile-title section-heading text-center">
-                <p class="section-kicker">Staff Account</p>
+                <p class="section-kicker" th:text="#{staff-profile.kicker}">Staff Account</p>
                 <h2 th:text="#{staff-profile.title}">Staff Profile</h2>
             </div>
 
-            <h3 class="profile-section-title">Account Info</h3>
+            <h3 class="profile-section-title" th:text="#{staff-profile.accountInfo}">
+                Account Info
+            </h3>
+
             <div class="profile-items">
                 <div class="profile-item">
-                    <strong>Username</strong>
+                    <strong th:text="#{staff-profile.field.username}">Username</strong>
                     <span th:text="${staffAccount.username}">—</span>
                 </div>
             </div>
 
-            <h3 class="profile-section-title">Staff Details</h3>
+            <h3 class="profile-section-title" th:text="#{staff-profile.staffDetails}">
+                Staff Details
+            </h3>
+
             <div class="profile-items">
                 <div class="profile-item">
-                    <strong>Name</strong>
+                    <strong th:text="#{staff-profile.field.name}">Name</strong>
                     <span th:text="${staffAccount.name}">—</span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Email</strong>
+                    <strong th:text="#{staff-profile.field.email}">Email</strong>
                     <span th:text="${staffAccount.email ?: '—'}">—</span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Date Hired</strong>
+                    <strong th:text="#{staff-profile.field.dateHired}">Date Hired</strong>
                     <span th:text="${#temporals.format(staffAccount.dateHired, 'dd MMM yyyy')}">—</span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>SSN</strong>
+                    <strong th:text="#{staff-profile.field.ssn}">SSN</strong>
                     <span th:text="${staffAccount.socialSecurityNum ?: '—'}">—</span>
                 </div>
 
                 <div class="profile-item">
-                    <strong>Status</strong>
+                    <strong th:text="#{staff-profile.field.status}">Status</strong>
                     <span th:text="${staffAccount.staffStatus}">—</span>
                 </div>
             </div>
 
             <div class="button-row">
-                <a th:href="@{/staff/profile/edit}" class="btn-primary" style="padding:0.6rem 1.3rem;">Edit Profile</a>
+                <a th:href="@{/staff/profile/edit}"
+                   class="btn-primary"
+                   style="padding:0.6rem 1.3rem;"
+                   th:text="#{staff-profile.editButton}">
+                    Edit Profile
+                </a>
             </div>
 
-            <div th:if="${param.updated}" class="alert-success">
+            <div th:if="${param.updated}"
+                 class="alert-success"
+                 th:text="#{staff-profile.updateSuccess}">
                 Profile updated successfully!
             </div>
         </section>
 
-
-
     </div>
 </main>
+
 
 </body>
 </html>

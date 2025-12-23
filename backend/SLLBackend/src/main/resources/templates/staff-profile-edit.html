@@ -140,20 +140,31 @@
         <section class="edit-card">
             <div class="edit-title">
                 <h2 th:text="#{staff-profile-edit.title}">Edit Staff Profile</h2>
-                <p th:text="#{staff-profile-edit.description}">Update staff details below.</p>
-            </div>
-            <div th:if="${param.error}" class="message error">
-                Invalid inputs
+                <p th:text="#{staff-profile-edit.description}">
+                    Update staff details below.
+                </p>
             </div>
 
+            <div th:if="${param.error}"
+                 class="message error"
+                 th:text="#{staff-profile-edit.error}">
+                Invalid inputs
+            </div>
 
             <form th:action="@{/staff/profile/update}" method="post">
 
                 <!-- Account Info -->
-                <h3 class="section-subtitle">Account Info</h3>
+                <h3 class="section-subtitle"
+                    th:text="#{staff-profile-edit.accountInfo}">
+                    Account Info
+                </h3>
+
                 <div class="form-grid">
                     <div class="form-field">
-                        <label class="form-label">Username</label>
+                        <label class="form-label"
+                               th:text="#{staff-profile-edit.field.username}">
+                            Username
+                        </label>
                         <input type="text"
                                class="form-input"
                                th:value="${staffAccount.username}"
@@ -161,19 +172,29 @@
                     </div>
 
                     <div class="form-field">
-                        <label class="form-label">Active</label>
+                        <label class="form-label"
+                               th:text="#{staff-profile-edit.field.active}">
+                            Active
+                        </label>
                         <input type="text"
                                class="form-input"
-                               th:value="${staffAccount.active ? 'Yes' : 'No'}"
+                               th:value="${staffAccount.active ? #messages.msg('common.yes') : #messages.msg('common.no')}"
                                readonly>
                     </div>
                 </div>
 
                 <!-- Staff Details -->
-                <h3 class="section-subtitle">Staff Details</h3>
+                <h3 class="section-subtitle"
+                    th:text="#{staff-profile-edit.staffDetails}">
+                    Staff Details
+                </h3>
+
                 <div class="form-grid">
                     <div class="form-field">
-                        <label class="form-label">Name</label>
+                        <label class="form-label"
+                               th:text="#{staff-profile-edit.field.name}">
+                            Name
+                        </label>
                         <input type="text"
                                name="name"
                                class="form-input"
@@ -181,7 +202,10 @@
                     </div>
 
                     <div class="form-field">
-                        <label class="form-label">Email</label>
+                        <label class="form-label"
+                               th:text="#{staff-profile-edit.field.email}">
+                            Email
+                        </label>
                         <input type="email"
                                name="email"
                                class="form-input"
@@ -189,7 +213,10 @@
                     </div>
 
                     <div class="form-field">
-                        <label class="form-label">Date Hired</label>
+                        <label class="form-label"
+                               th:text="#{staff-profile-edit.field.dateHired}">
+                            Date Hired
+                        </label>
                         <input type="text"
                                class="form-input"
                                th:value="${#temporals.format(staffAccount.dateHired, 'dd MMM yyyy')}"
@@ -197,7 +224,10 @@
                     </div>
 
                     <div class="form-field">
-                        <label class="form-label">SSN</label>
+                        <label class="form-label"
+                               th:text="#{staff-profile-edit.field.ssn}">
+                            SSN
+                        </label>
                         <input type="text"
                                class="form-input"
                                th:value="${staffAccount.socialSecurityNum ?: '—'}"
@@ -205,7 +235,10 @@
                     </div>
 
                     <div class="form-field">
-                        <label class="form-label">Status</label>
+                        <label class="form-label"
+                               th:text="#{staff-profile-edit.field.status}">
+                            Status
+                        </label>
                         <input type="text"
                                class="form-input"
                                th:value="${staffAccount.staffStatus}"
@@ -215,10 +248,16 @@
 
                 <!-- Buttons -->
                 <div class="button-row">
-                    <a href="/staff/profile" class="btn-outline" style="padding:.6rem 1.3rem;">
+                    <a th:href="@{/staff/profile}"
+                       class="btn-outline"
+                       style="padding:.6rem 1.3rem;"
+                       th:text="#{common.cancel}">
                         Cancel
                     </a>
-                    <button type="submit" class="btn-primary" style="padding:.6rem 1.3rem;">
+                    <button type="submit"
+                            class="btn-primary"
+                            style="padding:.6rem 1.3rem;"
+                            th:text="#{common.saveChanges}">
                         Save Changes
                     </button>
                 </div>
@@ -228,6 +267,7 @@
 
     </div>
 </main>
+
 
 </body>
 </html>

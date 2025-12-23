@@ -313,14 +313,14 @@
 <main class="staff-main orders-page">
     <div class="orders-layout-inner">
         <section class="orders-card">
+
             <!-- Header -->
             <div class="orders-header-row">
                 <div class="orders-title-block section-heading">
-                    <p class="section-kicker">Online Orders</p>
-                    <h2>Manage Orders</h2>
+                    <p class="section-kicker" th:text="#{staff-orders.kicker}">Online Orders</p>
+                    <h2 th:text="#{staff-orders.title}">Manage Orders</h2>
                 </div>
-                <div class="orders-actions">
-                </div>
+                <div class="orders-actions"></div>
             </div>
 
             <!-- Alerts -->
@@ -334,84 +334,119 @@
 
             <!-- Empty State -->
             <div th:if="${#lists.isEmpty(orders)}" class="empty-state">
-                <h2>No Orders Yet</h2>
-                <p>No orders have been placed in the system.</p>
+                <h2 th:text="#{staff-orders.empty.title}">No Orders Yet</h2>
+                <p th:text="#{staff-orders.empty.desc}">
+                    No orders have been placed in the system.
+                </p>
             </div>
 
             <!-- Order Cards -->
             <div th:if="${!#lists.isEmpty(orders)}" class="order-list">
                 <article th:each="order : ${orders}" class="order-card">
+
                     <header class="order-header">
                         <div class="order-meta">
                             <div class="order-id">
-                                Order #<span th:text="${order.id}">123</span>
+                                <span th:text="#{order.field.id}">Order</span>
+                                #<span th:text="${order.id}">123</span>
                             </div>
                             <div class="order-date"
                                  th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">
                                 01 Jan 2024 10:00
                             </div>
                         </div>
+
                         <span th:class="'order-status status-' + ${#strings.toLowerCase(order.orderStatus)}"
                               th:text="${order.orderStatus}">
                             PENDING
                         </span>
-                        <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
-                              class="fulfillment-badge pickup">🏪 Pickup</span>
-                        <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}" 
-                              class="fulfillment-badge delivery">🚚 Delivery</span>
+
+                        <span th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
+                              class="fulfillment-badge pickup"
+                              th:text="#{order.fulfillment.pickup}">
+                            🏪 Pickup
+                        </span>
+                        <span th:unless="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}"
+                              class="fulfillment-badge delivery"
+                              th:text="#{order.fulfillment.delivery}">
+                            🚚 Delivery
+                        </span>
                     </header>
 
                     <div class="order-details">
                         <div class="detail-item">
-                            <span class="detail-label">Customer Name</span>
+                            <span class="detail-label" th:text="#{order.field.customer}">
+                                Customer Name
+                            </span>
                             <span class="detail-value" th:text="${order.customerInfo.name}">
                                 Customer Name
                             </span>
                         </div>
 
                         <div class="detail-item">
-                            <span class="detail-label">Phone Number</span>
+                            <span class="detail-label" th:text="#{order.field.phone}">
+                                Phone Number
+                            </span>
                             <span class="detail-value" th:text="${order.customerInfo.phoneNumber}">
                                 0123456789
                             </span>
                         </div>
 
-                        <div class="detail-item" th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
-                            <span class="detail-label">Shipping Address</span>
-                            <span class="detail-value" th:text="${order.customerInfo.shippingAddress ?: 'N/A'}">
+                        <div class="detail-item"
+                             th:if="${order.fulfillmentType == null or order.fulfillmentType.name() != 'IN_STORE_PICKUP'}">
+                            <span class="detail-label" th:text="#{order.field.shippingAddress}">
+                                Shipping Address
+                            </span>
+                            <span class="detail-value"
+                                  th:text="${order.customerInfo.shippingAddress ?: 'N/A'}">
                                 Address
                             </span>
                         </div>
 
-                        <div class="detail-item" th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}">
-                            <span class="detail-label">Pickup Location</span>
-                            <span class="detail-value">Salon Loan Loan</span>
+                        <div class="detail-item"
+                             th:if="${order.fulfillmentType != null and order.fulfillmentType.name() == 'IN_STORE_PICKUP'}">
+                            <span class="detail-label" th:text="#{order.field.pickupLocation}">
+                                Pickup Location
+                            </span>
+                            <span class="detail-value" th:text="#{order.pickup.location}">
+                                Salon Loan Loan
+                            </span>
                         </div>
+
                         <div class="detail-item">
-                            <span class="detail-label">Payment Method</span>
+                            <span class="detail-label" th:text="#{order.field.paymentMethod}">
+                                Payment Method
+                            </span>
                             <span class="detail-value" th:text="${order.paymentMethod}">
                                 BANK_TRANSFER
                             </span>
                         </div>
 
                         <div class="detail-item">
-                            <span class="detail-label">Total Amount</span>
+                            <span class="detail-label" th:text="#{order.field.totalAmount}">
+                                Total Amount
+                            </span>
                             <span class="detail-value order-total"
                                   th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-        0 VND
-    </span>
+                                0 VND
+                            </span>
                         </div>
                     </div>
 
                     <div class="order-actions">
-                        <a th:href="@{/staff/order/edit(orderId=${order.id})}" class="edit-link">
-                            <span>Edit Status</span>
+                        <a th:href="@{/staff/order/edit(orderId=${order.id})}"
+                           class="edit-link"
+                           th:text="#{staff-orders.editStatus}">
+                            Edit Status
                         </a>
                     </div>
+
                 </article>
             </div>
+
         </section>
     </div>
 </main>
+
 </body>
 </html>

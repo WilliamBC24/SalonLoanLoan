@@ -170,15 +170,21 @@
     <div class="container">
 
         <div class="section-heading text-center">
-            <p class="section-kicker">Your Appointments</p>
-            <h2>Appointment History</h2>
+            <p class="section-kicker" th:text="#{user-appointment-history.kicker}">
+                Your Appointments
+            </p>
+            <h2 th:text="#{user-appointment-history.title}">
+                Appointment History
+            </h2>
         </div>
 
-        <!-- Search & Filter -->
         <div class="search-bar">
             <form method="get" th:action="@{/user/appointment-history}">
                 <div class="filter-group">
-                    <label>Appointment Status:</label>
+                    <label th:text="#{user-appointment-history.statusLabel}">
+                        Appointment Status:
+                    </label>
+
                     <div class="checkbox-group">
                         <label class="checkbox-item">
                             <input type="checkbox"
@@ -186,7 +192,7 @@
                                    name="statuses"
                                    value=""
                                    th:checked="${selectedStatuses == null}">
-                            <span>All</span>
+                            <span th:text="#{common.all}">All</span>
                         </label>
 
                         <label class="checkbox-item"
@@ -202,30 +208,46 @@
                 </div>
 
                 <div class="search-buttons">
-                    <button type="submit" class="btn-primary" th:text="#{common.search}">Search</button>
+                    <button type="submit"
+                            class="btn-primary"
+                            th:text="#{common.search}">
+                        Search
+                    </button>
                     <button type="button"
                             class="btn-outline"
-                            onclick="window.location.href='/user/appointment-history'">
+                            onclick="window.location.href='/user/appointment-history'"
+                            th:text="#{common.reset}">
                         Reset
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- Appointments List -->
-        <div th:if="${#lists.isEmpty(appointments)}" class="empty-state">
+        <div th:if="${#lists.isEmpty(appointments)}"
+             class="empty-state"
+             th:text="#{user-appointment-history.empty}">
             You don't have any appointments yet.
         </div>
 
-        <div class="appointment-list" th:if="${!#lists.isEmpty(appointments)}">
+        <div class="appointment-list"
+             th:if="${!#lists.isEmpty(appointments)}">
 
-            <article class="appointment-card" th:each="appt : ${appointments}">
+            <article class="appointment-card"
+                     th:each="appt : ${appointments}">
 
                 <div class="appointment-header">
                     <div>
-                        <div class="appointment-name" th:text="${appt.name}">Name</div>
+                        <div class="appointment-name"
+                             th:text="${appt.name}">
+                            Name
+                        </div>
                         <div class="appointment-phone">
-                            Phone: <span th:text="${appt.phoneNumber}">Phone</span>
+                            <span th:text="#{user-appointment-history.phone}">
+                                Phone:
+                            </span>
+                            <span th:text="${appt.phoneNumber}">
+                                Phone
+                            </span>
                         </div>
                     </div>
 
@@ -242,14 +264,18 @@
 
                 <div class="appointment-meta">
                     <div class="appointment-meta-item">
-                        Registered:
+                        <span th:text="#{user-appointment-history.registered}">
+                            Registered:
+                        </span>
                         <span th:text="${#temporals.format(appt.registeredAt, 'yyyy-MM-dd HH:mm')}">
                             2025-01-01 10:00
                         </span>
                     </div>
 
                     <div class="appointment-meta-item">
-                        Scheduled:
+                        <span th:text="#{user-appointment-history.scheduled}">
+                            Scheduled:
+                        </span>
                         <span th:text="${#temporals.format(appt.scheduledAt, 'yyyy-MM-dd HH:mm')}">
                             2025-01-01 11:00
                         </span>
@@ -258,7 +284,8 @@
 
                 <div class="appointment-actions">
                     <a th:href="@{/user/appointment-history/view/{id}(id=${appt.id})}"
-                       class="btn-outline view-link-btn">
+                       class="btn-outline view-link-btn"
+                       th:text="#{user-appointment-history.view}">
                         View details
                     </a>
                 </div>
@@ -269,6 +296,7 @@
 
     </div>
 </main>
+
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

@@ -292,82 +292,102 @@
 <main class="staff-main registration-page">
     <div class="registration-layout-inner">
         <section class="registration-card">
-            <!-- Header -->
+
             <div class="registration-header-row">
                 <div class="registration-title-block section-heading">
-                    <p class="section-kicker">Appointment Management</p>
-                    <h2>Staff Registrations</h2>
+                    <p class="section-kicker"
+                       th:text="#{staff-registration.kicker}">
+                        Appointment Management
+                    </p>
+                    <h2 th:text="#{staff-registration.title}">
+                        Staff Registrations
+                    </h2>
                 </div>
-                <div class="registration-actions">
-                </div>
+                <div class="registration-actions"></div>
             </div>
 
-            <!-- Optional success/error messages -->
-            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+            <div th:if="${successMessage}"
+                 class="alert alert-success"
+                 th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}"
+                 class="alert alert-error"
+                 th:text="${errorMessage}"></div>
 
-            <!-- Search and Filter Bar -->
             <div class="search-panel">
                 <div class="search-header">
                     <div class="search-header-title">
                         <span class="emoji">🔍</span>
-                        <h3>Search &amp; Filters</h3>
+                        <h3 th:text="#{staff-registration.searchTitle}">
+                            Search &amp; Filters
+                        </h3>
                     </div>
                 </div>
 
-                <form method="get" action="/staff/registration/list">
+                <form method="get" th:action="@{/staff/registration/list}">
                     <div class="search-form">
-                        <!-- Name search -->
+
                         <div class="filter-group">
-                            <label for="search-name">Search by Phone Number</label>
+                            <label for="search-name"
+                                   th:text="#{staff-registration.searchPhone}">
+                                Search by Phone Number
+                            </label>
                             <input type="text"
                                    id="search-name"
                                    name="name"
                                    th:value="${searchName}"
-                                   placeholder="Enter phone number..." />
+                                   th:placeholder="#{staff-registration.searchPhone.placeholder}" />
                         </div>
 
-                        <!-- Appointment status checkboxes -->
                         <div class="filter-group">
-                            <label>Registration Status</label>
+                            <label th:text="#{staff-registration.statusLabel}">
+                                Registration Status
+                            </label>
                             <div class="checkbox-group">
-                                <div class="checkbox-item" th:each="status : ${allStatuses}">
+                                <div class="checkbox-item"
+                                     th:each="status : ${allStatuses}">
                                     <input type="checkbox"
                                            th:id="${status.name()}"
                                            name="statuses"
                                            th:value="${status.name()}"
                                            th:checked="${selectedStatuses != null and selectedStatuses.contains(status.name())}">
-                                    <label th:for="${status.name()}" th:text="${status.name()}">STATUS</label>
+                                    <label th:for="${status.name()}"
+                                           th:text="${status.name()}">
+                                        STATUS
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="search-buttons">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit"
+                                class="btn btn-primary">
                             <span>🔎</span>
-                            <span>Search</span>
+                            <span th:text="#{common.search}">
+                                Search
+                            </span>
                         </button>
                         <button type="button"
                                 class="btn btn-secondary"
                                 onclick="window.location.href='/staff/registration/list'">
                             <span>✕</span>
-                            <span>Reset</span>
+                            <span th:text="#{common.reset}">
+                                Reset
+                            </span>
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Registrations Table -->
             <div class="registrations-table-wrapper">
                 <table>
                     <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Registered At</th>
-                        <th>Scheduled At</th>
-                        <th>Actions</th>
+                        <th th:text="#{staff-registration.table.name}">Name</th>
+                        <th th:text="#{staff-registration.table.status}">Status</th>
+                        <th th:text="#{staff-registration.table.registeredAt}">Registered At</th>
+                        <th th:text="#{staff-registration.table.scheduledAt}">Scheduled At</th>
+                        <th th:text="#{staff-registration.table.actions}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -381,7 +401,9 @@
                             -
                         </td>
                         <td>
-                            <a th:href="@{/staff/registration/view/{id}(id=${appointment.id})}" class="view-link">
+                            <a th:href="@{/staff/registration/view/{id}(id=${appointment.id})}"
+                               class="view-link"
+                               th:text="#{staff-registration.view}">
                                 View Details
                             </a>
                         </td>
@@ -389,8 +411,10 @@
                     </tbody>
                 </table>
             </div>
+
         </section>
     </div>
 </main>
+
 </body>
 </html>

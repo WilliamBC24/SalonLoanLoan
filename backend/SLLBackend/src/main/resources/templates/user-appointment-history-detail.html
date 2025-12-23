@@ -250,11 +250,13 @@
 
         <section class="appointment-card">
 
-            <!-- Top header -->
             <div class="appointment-header-row">
                 <div class="appointment-title">
-                    <h2>Appointment Details</h2>
-                    <p class="appointment-sub">
+                    <h2 th:text="#{user-appointment-detail.title}">
+                        Appointment Details
+                    </h2>
+                    <p class="appointment-sub"
+                       th:text="#{user-appointment-detail.subtitle}">
                         Review your booking information and services.
                     </p>
                 </div>
@@ -266,18 +268,27 @@
                         PENDING
                     </span>
 
-                    <a th:href="@{/user/appointment-history}" class="btn-outline" style="padding:.45rem 1rem;">
+                    <a th:href="@{/user/appointment-history}"
+                       class="btn-outline"
+                       style="padding:.45rem 1rem;"
+                       th:text="#{user-appointment-detail.back}">
                         Back to Appointments
                     </a>
                 </div>
             </div>
 
-            <!-- Appointment meta -->
-            <h3 class="meta-section-title">Appointment Summary</h3>
+            <h3 class="meta-section-title"
+                th:text="#{user-appointment-detail.summary}">
+                Appointment Summary
+            </h3>
 
             <div class="appointment-meta-grid">
+
                 <div class="meta-item">
-                    <div class="meta-label">Registered At</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.registeredAt}">
+                        Registered At
+                    </div>
                     <div class="meta-value"
                          th:text="${#temporals.format(appointmentDetails.appointment.registeredAt, 'dd MMM yyyy HH:mm')}">
                         01 Jan 2025 10:00
@@ -285,7 +296,10 @@
                 </div>
 
                 <div class="meta-item">
-                    <div class="meta-label">Scheduled Date</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.scheduledDate}">
+                        Scheduled Date
+                    </div>
                     <div class="meta-value"
                          th:text="${#temporals.format(appointmentDetails.scheduledStart, 'dd MMM yyyy')}">
                         02 Jan 2025
@@ -293,7 +307,10 @@
                 </div>
 
                 <div class="meta-item">
-                    <div class="meta-label">Time</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.time}">
+                        Time
+                    </div>
                     <div class="meta-value meta-value-highlight"
                          th:text="${#temporals.format(appointmentDetails.scheduledStart, 'HH:mm')} + ' - ' + ${#temporals.format(appointmentDetails.scheduledEnd, 'HH:mm')}">
                         14:00 - 15:30
@@ -301,7 +318,10 @@
                 </div>
 
                 <div class="meta-item">
-                    <div class="meta-label">Estimated Duration</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.duration}">
+                        Estimated Duration
+                    </div>
                     <div class="meta-value"
                          th:text="${totalDuration != null ? totalDuration + ' min' : '—'}">
                         0 min
@@ -309,7 +329,10 @@
                 </div>
 
                 <div class="meta-item">
-                    <div class="meta-label">Total Price</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.totalPrice}">
+                        Total Price
+                    </div>
                     <div class="meta-value meta-value-highlight"
                          th:text="${totalPrice != null ? #numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}">
                         0 VND
@@ -317,7 +340,10 @@
                 </div>
 
                 <div class="meta-item">
-                    <div class="meta-label">Customer Name</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.customerName}">
+                        Customer Name
+                    </div>
                     <div class="meta-value"
                          th:text="${appointmentDetails.appointment.name}">
                         Customer Name
@@ -325,7 +351,10 @@
                 </div>
 
                 <div class="meta-item">
-                    <div class="meta-label">Phone Number</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.phone}">
+                        Phone Number
+                    </div>
                     <div class="meta-value"
                          th:text="${appointmentDetails.appointment.phoneNumber}">
                         0123456789
@@ -333,7 +362,10 @@
                 </div>
 
                 <div class="meta-item" th:if="${appointmentDetails.actualStart != null}">
-                    <div class="meta-label">Actual Start</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.actualStart}">
+                        Actual Start
+                    </div>
                     <div class="meta-value"
                          th:text="${#temporals.format(appointmentDetails.actualStart, 'dd MMM yyyy HH:mm')}">
                         02 Jan 2025 14:05
@@ -341,7 +373,10 @@
                 </div>
 
                 <div class="meta-item" th:if="${appointmentDetails.actualEnd != null}">
-                    <div class="meta-label">Actual End</div>
+                    <div class="meta-label"
+                         th:text="#{user-appointment-detail.actualEnd}">
+                        Actual End
+                    </div>
                     <div class="meta-value"
                          th:text="${#temporals.format(appointmentDetails.actualEnd, 'dd MMM yyyy HH:mm')}">
                         02 Jan 2025 15:35
@@ -349,29 +384,40 @@
                 </div>
             </div>
 
-            <!-- Services -->
-            <div class="services-section" th:if="${requestedServices != null and !#lists.isEmpty(requestedServices)}">
-                <h3 class="meta-section-title">Requested Services</h3>
+            <div class="services-section"
+                 th:if="${requestedServices != null and !#lists.isEmpty(requestedServices)}">
+
+                <h3 class="meta-section-title"
+                    th:text="#{user-appointment-detail.services}">
+                    Requested Services
+                </h3>
 
                 <div class="services-header-row">
-                    <span>Service</span>
-                    <span>Staff</span>
-                    <span style="text-align:right;">Price</span>
+                    <span th:text="#{user-appointment-detail.service}">Service</span>
+                    <span th:text="#{user-appointment-detail.staff}">Staff</span>
+                    <span style="text-align:right;"
+                          th:text="#{user-appointment-detail.price}">
+                        Price
+                    </span>
                 </div>
 
                 <div class="service-list">
                     <div class="service-row" th:each="item : ${requestedServices}">
                         <div>
                             <div class="service-main-title"
-                                 th:text="${item.service.serviceName}">Service Name</div>
+                                 th:text="${item.service.serviceName}">
+                                Service Name
+                            </div>
                             <div class="service-main-meta">
                                 <span th:if="${item.service.durationMinutes != null}"
-                                      th:text="${item.service.durationMinutes} + ' min'">60 min</span>
+                                      th:text="${item.service.durationMinutes} + ' min'">
+                                    60 min
+                                </span>
                             </div>
                         </div>
 
                         <div class="service-staff"
-                             th:text="${item.responsibleStaff != null ? item.responsibleStaff.name : 'Not assigned'}">
+                             th:text="${item.responsibleStaff != null ? item.responsibleStaff.name : #messages.msgOrNull('user-appointment-detail.notAssigned')}">
                             Not assigned
                         </div>
 
@@ -384,12 +430,21 @@
 
                 <div class="services-summary">
                     <div class="summary-item" th:if="${totalDuration != null}">
-                        <span class="summary-item-label">Estimated Duration:</span>
+                        <span class="summary-item-label"
+                              th:text="#{user-appointment-detail.duration}">
+                            Estimated Duration:
+                        </span>
                         <span class="summary-item-value"
-                              th:text="${totalDuration} + ' min'">0 min</span>
+                              th:text="${totalDuration} + ' min'">
+                            0 min
+                        </span>
                     </div>
+
                     <div class="summary-item" th:if="${totalPrice != null}">
-                        <span class="summary-item-label">Total Price:</span>
+                        <span class="summary-item-label"
+                              th:text="#{user-appointment-detail.totalPrice}">
+                            Total Price:
+                        </span>
                         <span class="summary-item-value price"
                               th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                             0 VND
@@ -398,15 +453,15 @@
                 </div>
             </div>
 
-            <div class="alert-note">
-                If you need to reschedule or cancel this appointment, please contact the salon directly
-                at least a few hours before your scheduled time.
+            <div class="alert-note"
+                 th:text="#{user-appointment-detail.note}">
+                If you need to reschedule or cancel this appointment, please contact the salon directly.
             </div>
 
         </section>
-
     </div>
 </main>
+
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: site-footer}"></div>

@@ -63,7 +63,7 @@ public class DataLoader implements CommandLineRunner {
 		registerJobPosting();
 		registerJobApplication();
 		registerAppointments();
-		registerShiftTemplates();
+		// registerShiftTemplates();
 		registerPaymentTypes();
 		registerExpenseCategories();
 		registerStaffPositions();

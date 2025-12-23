@@ -91,8 +91,9 @@ public class ManagerServiceController {
                 .build();
             
             serviceRepo.save(service);
-            redirectAttributes.addFlashAttribute("successMessage", "Service created successfully!");
-            return "redirect:/manager/service/list";
+            // Redirect to edit page so user can add images
+            redirectAttributes.addFlashAttribute("successMessage", "Service created successfully! You can now add images.");
+            return "redirect:/manager/service/edit/" + service.getId();
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating service: " + e.getMessage());
             return "redirect:/manager/service/create";

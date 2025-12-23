@@ -145,6 +145,47 @@ public class ManagerProductController {
         List<Product> products = productsService.getProducts(null, null);
         return ResponseEntity.ok(products);
     }
+    
+    @PostMapping("/api/create")
+    @ResponseBody
+    public ResponseEntity<?> createProductApi(
+            @RequestParam String productName,
+            @RequestParam Integer currentPrice,
+            @RequestParam String productDescription,
+            @RequestParam(required = false, defaultValue = "false") Boolean activeStatus) {
+        
+        try {
+            // Check for duplicate product name
+            if (productRepo.existsByProductNameIgnoreCase(productName)) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "A product with the name '" + productName + "' already exists");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            Product product = Product.builder()
+                .productName(productName)
+                .currentPrice(currentPrice)
+                .productDescription(productDescription)
+                .activeStatus(activeStatus)
+                .build();
+            
+            Product createdProduct = productsService.createProduct(product);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Product created successfully!");
+            response.put("productId", createdProduct.getId());
+            response.put("productName", createdProduct.getProductName());
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Error creating product: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 
     @GetMapping("/activate/{id}")
     public String activateProduct(@PathVariable Integer id) {

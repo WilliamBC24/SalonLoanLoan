@@ -215,6 +215,160 @@
         .btn-secondary:hover {
             background: #f3f4f6;
         }
+
+        .alert-success {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* ===== IMAGE UPLOAD ===== */
+        .image-section {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fafafa;
+            display: none;
+        }
+
+        .image-section.visible {
+            display: block;
+        }
+
+        .image-section h3 {
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            color: #374151;
+        }
+
+        .image-upload-area {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .image-upload-input {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 1rem;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .file-input-label:hover {
+            background: #f3f4f6;
+        }
+
+        .file-name {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .btn-upload {
+            padding: 0.45rem 0.9rem;
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn-upload:hover {
+            background: #059669;
+        }
+
+        .btn-upload:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .image-card {
+            position: relative;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .image-card-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .btn-delete-image {
+            background: rgba(220, 38, 38, 0.9);
+            color: #ffffff;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-delete-image:hover {
+            background: rgba(185, 28, 28, 1);
+        }
+
+        .upload-message {
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .upload-message.success {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .upload-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
     </style>
 </head>
 <body class="staff-layout">
@@ -243,10 +397,13 @@
 
             <!-- Error Messages -->
             <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+            
+            <!-- Success Message (shown after product creation) -->
+            <div id="successMessage" class="alert alert-success" style="display: none;"></div>
 
             <!-- Form -->
-            <form id="createProductForm" method="post" th:action="@{/manager/products/create}" class="form-grid">
-                <div>
+            <form id="createProductForm" class="form-grid">
+                <div id="formFieldsSection">
                     <div class="form-group">
                         <label for="productName" class="required" th:text="#{manager.productCreate.field.productName}">
                             Product Name
@@ -291,8 +448,8 @@
                         </label>
                     </div>
 
-                    <div class="button-group">
-                        <button type="submit" class="btn btn-primary">
+                    <div class="button-group" id="createButtonGroup">
+                        <button type="submit" class="btn btn-primary" id="createBtn">
                             <span>➕</span>
                             <span th:text="#{manager.productCreate.action.create}">Create Product</span>
                         </button>
@@ -301,6 +458,42 @@
                                 th:onclick="|window.location.href='@{/manager/products/list}'|">
                             <span>✕</span>
                             <span th:text="#{common.cancel}">Cancel</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Image Upload Section (shown after product creation) -->
+                    <div class="image-section" id="imageSection">
+                        <h3>📷 Product Images</h3>
+                        <div class="image-upload-area">
+                            <div class="image-upload-input">
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="imageFile" accept="image/*">
+                                    <label for="imageFile" class="file-input-label">
+                                        <span>📁</span>
+                                        <span>Choose Image</span>
+                                    </label>
+                                </div>
+                                <span class="file-name" id="fileName">No file chosen</span>
+                                <button type="button" class="btn-upload" id="uploadBtn" disabled onclick="uploadProductImage()">
+                                    Upload
+                                </button>
+                            </div>
+                            <div id="uploadMessage" class="upload-message"></div>
+                        </div>
+                        <div class="image-gallery" id="imageGallery">
+                            <!-- Images will be loaded here dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Done Button (shown after product creation) -->
+                    <div class="button-group" id="doneButtonGroup" style="display: none;">
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='/manager/products/list'">
+                            <span>✓</span>
+                            <span>Done - Go to Product List</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='/manager/products/create'">
+                            <span>➕</span>
+                            <span>Create Another Product</span>
                         </button>
                     </div>
                 </div>
@@ -312,6 +505,7 @@
 <script th:inline="javascript">
     let productNameCheckTimeout;
     let isDuplicateName = false;
+    let createdProductId = null;
 
     const DUPLICATE_NAME_ALERT = /*[[#{manager.productCreate.alert.duplicateName}]]*/ 'A product with this name already exists. Please choose a different name.';
 
@@ -326,7 +520,6 @@
         fetch(/*[[@{/products(name=${'__NAME__'})}]]*/ '/products?name=__NAME__'.replace('__NAME__', encodeURIComponent(productName.trim())))
             .then(response => response.text())
             .then(html => {
-                // Parse the response to check if any products exist with exact name match (case-insensitive)
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const productElements = doc.querySelectorAll('[data-product-name]');
@@ -348,22 +541,19 @@
                     isDuplicateName = false;
                 }
             })
-            .catch(error => {
-                console.error('Error checking duplicate name:', error);
-            });
+            .catch(error => console.error('Error checking duplicate name:', error));
     }
 
     document.getElementById('createProductForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
         let isValid = true;
 
-        // Check for duplicate name
         if (isDuplicateName) {
             alert(DUPLICATE_NAME_ALERT);
-            event.preventDefault();
             return;
         }
 
-        // Validate product name
         const productName = document.getElementById('productName');
         const productNameError = document.getElementById('productNameError');
         if (!productName.value.trim()) {
@@ -375,7 +565,6 @@
             productNameError.style.display = 'none';
         }
 
-        // Validate current price (min=0 but your rule says > 0)
         const currentPrice = document.getElementById('currentPrice');
         const currentPriceError = document.getElementById('currentPriceError');
         if (!currentPrice.value || Number(currentPrice.value) <= 0) {
@@ -387,7 +576,6 @@
             currentPriceError.style.display = 'none';
         }
 
-        // Validate product description
         const productDescription = document.getElementById('productDescription');
         const productDescriptionError = document.getElementById('productDescriptionError');
         if (!productDescription.value.trim()) {
@@ -399,9 +587,58 @@
             productDescriptionError.style.display = 'none';
         }
 
-        if (!isValid) {
-            event.preventDefault();
-        }
+        if (!isValid) return;
+
+        // Submit via AJAX
+        const createBtn = document.getElementById('createBtn');
+        createBtn.disabled = true;
+        createBtn.innerHTML = '<span>⏳</span> <span>Creating...</span>';
+
+        const formData = new FormData();
+        formData.append('productName', productName.value.trim());
+        formData.append('currentPrice', currentPrice.value);
+        formData.append('productDescription', productDescription.value.trim());
+        formData.append('activeStatus', document.getElementById('activeStatus').checked);
+
+        fetch('/manager/products/api/create', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                createdProductId = data.productId;
+                
+                // Show success message
+                const successMsg = document.getElementById('successMessage');
+                successMsg.textContent = data.message + ' You can now add images below.';
+                successMsg.style.display = 'block';
+                
+                // Disable form fields
+                productName.disabled = true;
+                currentPrice.disabled = true;
+                productDescription.disabled = true;
+                document.getElementById('activeStatus').disabled = true;
+                
+                // Hide create button, show done buttons
+                document.getElementById('createButtonGroup').style.display = 'none';
+                document.getElementById('doneButtonGroup').style.display = 'flex';
+                
+                // Show image section
+                document.getElementById('imageSection').classList.add('visible');
+                
+            } else {
+                alert(data.message || 'Error creating product');
+                createBtn.disabled = false;
+                createBtn.innerHTML = '<span>➕</span> <span>Create Product</span>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error creating product. Please try again.');
+            createBtn.disabled = false;
+            createBtn.innerHTML = '<span>➕</span> <span>Create Product</span>';
+        });
     });
 
     // Real-time validation on input
@@ -410,12 +647,8 @@
         if (this.value.trim()) {
             this.classList.remove('invalid');
             error.style.display = 'none';
-
-            // Check for duplicate name with debounce
             clearTimeout(productNameCheckTimeout);
-            productNameCheckTimeout = setTimeout(() => {
-                checkDuplicateProductName(this.value);
-            }, 500);
+            productNameCheckTimeout = setTimeout(() => checkDuplicateProductName(this.value), 500);
         } else {
             document.getElementById('productNameWarning').style.display = 'none';
             isDuplicateName = false;
@@ -437,6 +670,117 @@
             error.style.display = 'none';
         }
     });
+
+    // ===== IMAGE UPLOAD FUNCTIONALITY =====
+    document.getElementById('imageFile').addEventListener('change', function() {
+        const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+        document.getElementById('fileName').textContent = fileName;
+        document.getElementById('uploadBtn').disabled = this.files.length === 0;
+    });
+
+    function loadProductImages() {
+        if (!createdProductId) return;
+        
+        fetch(`/api/products/${createdProductId}/images`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.images) displayImages(data.images);
+            })
+            .catch(error => console.error('Error loading images:', error));
+    }
+
+    function displayImages(images) {
+        const gallery = document.getElementById('imageGallery');
+        gallery.innerHTML = '';
+
+        images.forEach(image => {
+            const imageCard = document.createElement('div');
+            imageCard.className = 'image-card';
+            imageCard.innerHTML = `
+                <img src="${image.imagePath || ''}" alt="Product image" 
+                     onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found'">
+                <div class="image-card-actions">
+                    <button type="button" class="btn-delete-image" onclick="deleteProductImage(${image.id})">
+                        🗑️ Delete
+                    </button>
+                </div>
+            `;
+            gallery.appendChild(imageCard);
+        });
+    }
+
+    function uploadProductImage() {
+        if (!createdProductId) {
+            showUploadMessage('Please create the product first', 'error');
+            return;
+        }
+
+        const fileInput = document.getElementById('imageFile');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            showUploadMessage('Please select an image file', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const uploadBtn = document.getElementById('uploadBtn');
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Uploading...';
+
+        fetch(`/api/products/${createdProductId}/images`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showUploadMessage('Image uploaded successfully!', 'success');
+                fileInput.value = '';
+                document.getElementById('fileName').textContent = 'No file chosen';
+                loadProductImages();
+            } else {
+                showUploadMessage(data.message || 'Upload failed', 'error');
+            }
+        })
+        .catch(err => {
+            console.error('Error uploading image:', err);
+            showUploadMessage('Error uploading image', 'error');
+        })
+        .finally(() => {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Upload';
+        });
+    }
+
+    function deleteProductImage(imageId) {
+        if (!confirm('Are you sure you want to delete this image?')) return;
+
+        fetch(`/api/products/images/${imageId}`, { method: 'DELETE' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showUploadMessage('Image deleted successfully', 'success');
+                    loadProductImages();
+                } else {
+                    showUploadMessage(data.message || 'Delete failed', 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Error deleting image:', err);
+                showUploadMessage('Error deleting image', 'error');
+            });
+    }
+
+    function showUploadMessage(message, type) {
+        const messageDiv = document.getElementById('uploadMessage');
+        messageDiv.textContent = message;
+        messageDiv.className = `upload-message ${type}`;
+        messageDiv.style.display = 'block';
+        setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+    }
 </script>
 </body>
 </html>

@@ -1,7 +1,10 @@
 package service.sllbackend.web.mvc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import lombok.RequiredArgsConstructor;
 import service.sllbackend.entity.Service;
@@ -90,10 +94,10 @@ public class ManagerServiceController {
                 .activeStatus(activeStatus)
                 .build();
             
-            serviceRepo.save(service);
+            Service savedService = serviceRepo.save(service);
             // Redirect to edit page so user can add images
             redirectAttributes.addFlashAttribute("successMessage", "Service created successfully! You can now add images.");
-            return "redirect:/manager/service/edit/" + service.getId();
+            return "redirect:/manager/service/edit/" + savedService.getId();
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating service: " + e.getMessage());
             return "redirect:/manager/service/create";
@@ -170,5 +174,55 @@ public class ManagerServiceController {
 
         serviceRepo.save(service);
         return "redirect:/manager/service/list";
+    }
+    
+    @PostMapping("/api/create")
+    @ResponseBody
+    public ResponseEntity<?> createServiceApi(
+            @RequestParam String serviceName,
+            @RequestParam Integer serviceCategoryId,
+            @RequestParam String serviceType,
+            @RequestParam Integer servicePrice,
+            @RequestParam Short durationMinutes,
+            @RequestParam(required = false) String serviceDescription,
+            @RequestParam(required = false, defaultValue = "false") Boolean activeStatus) {
+        
+        try {
+            // Check for duplicate service name
+            if (serviceRepo.existsByServiceNameIgnoreCase(serviceName)) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "A service with the name '" + serviceName + "' already exists");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            ServiceCategory category = serviceCategoryRepo.findById(serviceCategoryId)
+                .orElseThrow(() -> new RuntimeException("Service category not found"));
+            
+            Service service = Service.builder()
+                .serviceName(serviceName)
+                .serviceCategory(category)
+                .serviceType(ServiceType.valueOf(serviceType))
+                .servicePrice(servicePrice)
+                .durationMinutes(durationMinutes)
+                .serviceDescription(serviceDescription)
+                .activeStatus(activeStatus)
+                .build();
+            
+            Service savedService = serviceRepo.save(service);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Service created successfully!");
+            response.put("serviceId", savedService.getId());
+            response.put("serviceName", savedService.getServiceName());
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Error creating service: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

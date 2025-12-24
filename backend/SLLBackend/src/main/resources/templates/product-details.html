@@ -588,9 +588,12 @@
                 No reviews yet.
             </div>
 
-            <div th:if="${canRate}" class="rating-form">
-                <h3 th:text="${userFeedback != null ? #{product.rating.update} : #{product.rating.write}}">
+            <div th:if="${canRate}" class="rating-form"> 
+                <h3 th:if="${userFeedback == null}" th:text="#{product.rating.write}">
                     Write a Review
+                </h3>
+                <h3 th:if="${userFeedback != null}" th:text="#{product.rating.update}">
+                    Update Review
                 </h3>
 
                 <form th:action="@{/products/rate}"
@@ -660,7 +663,14 @@
 
                     <button type="submit"
                             class="btn-primary submit-rating-btn"
-                            th:text="${userFeedback != null ? #{product.rating.updateBtn} : #{product.rating.submit}}">
+                            th:if="${userFeedback != null}"
+                            th:text="#{product.rating.updateBtn}">
+                        Update Review
+                    </button>
+                    <button type="submit"
+                            class="btn-primary submit-rating-btn"
+                            th:if="${userFeedback == null}"
+                            th:text="#{product.rating.submit}">
                         Submit Review
                     </button>
                 </form>

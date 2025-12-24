@@ -506,6 +506,26 @@
                         <span th:text="${#numbers.formatDecimal(order.totalPrice,0,'COMMA',0,'POINT')} + ' VND'">0</span>
                     </div>
 
+                    <!-- QR Payment for Bank Transfer -->
+                    <div th:if="${paymentQrUrl != null}" class="payment-box">
+                        <h3 th:text="#{order.details.payment.bankTransfer.title}">Payment Required</h3>
+                        <p th:text="#{order.details.payment.bankTransfer.warning}">Please complete the payment to confirm your order.</p>
+                        <img th:src="${paymentQrUrl}" alt="VietQR" />
+                        <p th:text="#{order.details.payment.bankTransfer.instruction}">Scan this QR code to complete your payment.</p>
+                    </div>
+
+                    <!-- QR Payment for COD 20% Deposit -->
+                    <div th:if="${codDepositQrUrl != null}" class="payment-box">
+                        <h3 th:text="#{order.details.payment.cod.title}">COD Deposit Required</h3>
+                        <p th:text="#{order.details.payment.cod.warning}">You need to pay 20% of the order total before the order gets confirmed for COD.</p>
+                        <p>
+                            <strong th:text="#{order.details.payment.cod.depositAmount}">Deposit Amount:</strong>
+                            <span th:text="${#numbers.formatDecimal(codDepositAmount,0,'COMMA',0,'POINT')} + ' VND'">0</span>
+                        </p>
+                        <img th:src="${codDepositQrUrl}" alt="VietQR" />
+                        <p th:text="#{order.details.payment.cod.instruction}">Scan this QR code to pay the deposit and confirm your order.</p>
+                    </div>
+
                     <!-- Actions -->
                     <div class="order-actions">
                         <a th:if="${order.orderStatus.name() == 'PENDING' or order.orderStatus.name() == 'CONFIRMED'}"
